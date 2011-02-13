@@ -15,7 +15,7 @@ namespace Orient\Contract;
 
 interface OrientDB_REST
 {
-  function __construct($hostname, $port, $username, $password);
+  function __construct(HttpDriver $driver, $hostname, $port, $username, $password);
 
   function connect($database);
 

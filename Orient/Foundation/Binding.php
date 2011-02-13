@@ -31,11 +31,13 @@ class Binding implements Contract\OrientDB_REST
    * @param String $username
    * @param String $password
    */
-  function  __construct($host = '127.0.0.1', $port = 2480, $username = null, $password = null)
+  function  __construct(Contract\HttpDriver $driver, $host = '127.0.0.1', $port = 2480, $username = null, $password = null, $database = null)
   {
     $this->server   = $host . ($port ? sprintf(':%s', $port) : false) ;
     $this->username = $username;
     $this->password = $password;
+    $this->database = $database;
+    $this->driver   = $driver;
 
     $this->setAuthentication($username, $password);
   }
@@ -44,8 +46,20 @@ class Binding implements Contract\OrientDB_REST
    * @param String $database
    * @return mixed
    */
+  public function class_($class, $database = false, $method = 'GET')
+  {
+    $this->database = $database ?: $this->database;
+    $this->checkDatabase(__METHOD__);
+
+    return $this->getHttpDriver()->get($this->server . '/class/' . $this->database . '/' . $class);
+  }
+
+  /**
+   * @param String $database
+   * @return mixed
+   */
   public function connect($database)
-  {    
+  {
     return $this->getHttpDriver()->get($this->server . '/database/' . $database);
   }
 
@@ -74,7 +88,14 @@ class Binding implements Contract\OrientDB_REST
       $this->authentication = false;
     }
 
+    $this->getHttpDriver()->setAuthentication($this->authentication);
+    
     return $this->authentication;
+  }
+
+  public function setDatabase($database)
+  {
+    $this->database = $database;
   }
 
   /**
@@ -85,7 +106,6 @@ class Binding implements Contract\OrientDB_REST
   public function setHttpDriver(Contract\HttpDriver $driver)
   {
     $this->driver = $driver;
-    $this->driver->setAuthentication($this->authentication);
   }
 
   /**
@@ -101,6 +121,16 @@ class Binding implements Contract\OrientDB_REST
     }
 
     throw new \Exception('You must inject an http driver to the Orient instance via setHttpDriver');
+  }
+
+  protected function checkDatabase($method)
+  {
+    if (!is_null($this->database))
+    {
+      return true;
+    }
+
+    throw new \Exception(sprintf('In order to perform a %s you must specify a database', $method));
   }
 }
 

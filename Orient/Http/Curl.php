@@ -13,6 +13,7 @@ use Orient\Contract;
 class Curl implements Contract\HttpDriver
 {
   protected $client;
+  protected $credential;
 
   public function __construct($location = null)
   {
@@ -22,6 +23,12 @@ class Curl implements Contract\HttpDriver
   public function execute($method, $location)
   {
     curl_setopt($this->client, CURLOPT_URL, $location);
+
+    if ($this->authentication)
+    {
+      curl_setopt($this->client, CURLOPT_USERPWD, $this->authentication);
+    }
+    
     curl_setopt($this->client, CURLOPT_HEADER, 1);
     curl_setopt($this->client, CURLOPT_RETURNTRANSFER, true);
 
@@ -30,7 +37,7 @@ class Curl implements Contract\HttpDriver
 
     if ($response)
     {
-      return new Response($response);
+      return $response;
     }
 
     return false;
@@ -66,10 +73,7 @@ class Curl implements Contract\HttpDriver
 
   public function setAuthentication($credential)
   {
-    if ($credential)
-    {
-      curl_setopt($this->client, CURLOPT_USERPWD, base64_encode($credential));
-    }
+    $this->authentication = $credential;
   }
 }
 
