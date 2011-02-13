@@ -29,11 +29,9 @@ class Binding implements Contract\OrientDB_REST
     $this->setAuthentication($username, $password);
   }
 
-  public function connect($database, $method = 'get')
-  {
-    $method = strtolower($method);
-    
-    return $this->getHttpDriver()->$method($this->server . '/database/' . $database);
+  public function connect($database)
+  {    
+    return $this->getHttpDriver()->get($this->server . '/database/' . $database);
   }
 
   public function getAuthentication()

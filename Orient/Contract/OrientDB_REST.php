@@ -13,7 +13,7 @@ interface OrientDB_REST
 {
   function __construct($hostname, $port, $username, $password);
 
-  function connect($database, $method);
+  function connect($database);
 
   function getHttpDriver();
 
