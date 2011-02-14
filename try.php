@@ -15,4 +15,4 @@ $orient = new Orient\Foundation\Binding($driver, '127.0.0.1', '2480', 'admin', '
 
 $orient->setAuthentication('admin', 'admin');
 $orient->setDatabase('demo');
-var_dump($orient->class_('Address'));
+var_dump($orient->class_('MyOdino', false, 'post'));

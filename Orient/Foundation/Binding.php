@@ -46,12 +46,24 @@ class Binding implements Contract\OrientDB_REST
    * @param String $database
    * @return mixed
    */
-  public function class_($class, $database = false, $method = 'GET')
+  public function class_($class, $database = false, $method = 'GET', $body = null)
   {
     $this->database = $database ?: $this->database;
+    $method         = strtolower($method);
+    $location       = $this->server . '/class/' . $this->database . '/' . $class;
     $this->checkDatabase(__METHOD__);
 
-    return $this->getHttpDriver()->get($this->server . '/class/' . $this->database . '/' . $class);
+    // TODO: better a strategy here?
+    if ($method == 'get')
+    {
+      return $this->getHttpDriver()->get($location);
+    }
+    elseif ($method == 'post')
+    {
+      return $this->getHttpDriver()->post($location, $body);
+    }
+
+    // TODO: Implement a 405 response
   }
 
   /**
