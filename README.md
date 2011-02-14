@@ -10,6 +10,8 @@ Documentation: http://code.google.com/p/orient
 
 Just begun, it's an interface for the quite RESTful APIs of Orient.
 
+APIs will definitely change.
+
 ## Still to implement
 
 * Class

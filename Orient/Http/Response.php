@@ -14,6 +14,8 @@ class Response
   protected $headers;
   protected $raw_headers;
   protected $status_code;
+  protected $body;
+  protected $response;
 
   public function __construct($response)
   {
