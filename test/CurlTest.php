@@ -32,6 +32,7 @@ class CurlTest extends PHPUnit_Framework_TestCase
   public function testPost()
   {
     $client       = new Orient\Http\Curl();
+
     $postData     = '1=postdata&2=poststuff';
     $postPrinter  = '127.0.0.1/orient/test/postprinter.php';
     $response     = $client->post($postPrinter, $postData);

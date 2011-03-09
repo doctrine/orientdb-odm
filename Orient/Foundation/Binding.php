@@ -43,30 +43,65 @@ class Binding implements Contract\OrientDB_REST
   }
 
   /**
+   * Deletes a class.
+   *
+   * @param String $class
    * @param String $database
-   * @return mixed
+   * @return Http\Response
    */
-  public function class_($class, $database = false, $method = 'GET', $body = null)
+  public function deleteClass($class, $database = false)
   {
-    $this->database = $database ?: $this->database;
-    $method         = strtolower($method);
+    $this->resolveDatabase($database);
     $location       = $this->server . '/class/' . $this->database . '/' . $class;
-    $this->checkDatabase(__METHOD__);
 
-    // TODO: better a strategy here?
-    if ($method == 'get')
-    {
-      return $this->getHttpDriver()->get($location);
-    }
-    elseif ($method == 'post')
-    {
-      return $this->getHttpDriver()->post($location, $body);
-    }
-
-    // TODO: Implement a 405 response
+    return $this->getHttpDriver()->delete($location);
   }
 
   /**
+   * Gets a class and its records.
+   *
+   * @param String $class
+   * @param String $database
+   * @return Http\Response
+   */
+  public function getClass($class, $database = false)
+  {
+    $this->resolveDatabase($database);
+    $location = $this->server . '/class/' . $this->database . '/' . $class;
+
+    return $this->getHttpDriver()->get($location);
+  }
+
+  /**
+   * Creates a new class.
+   *
+   * @param String $class
+   * @param String $database
+   * @param String $body
+   * @return Http\Response
+   */
+  public function postClass($class, $database = false, $body = null)
+  {
+    $this->resolveDatabase($database);
+    $location = $this->server . '/class/' . $this->database . '/' . $class;
+
+    return $this->getHttpDriver()->post($location, $body);
+  }
+
+  /**
+   * Assigns a database to the current instance.
+   *
+   * @param String $database
+   */
+  protected function resolveDatabase($database = false)
+  {
+    $this->database = $database ?: $this->database;
+    $this->checkDatabase(__METHOD__);
+  }
+
+  /**
+   * Connects the instance to a DB.
+   *
    * @param String $database
    * @return mixed
    */
@@ -75,6 +110,31 @@ class Binding implements Contract\OrientDB_REST
     return $this->getHttpDriver()->get($this->server . '/database/' . $database);
   }
 
+  /**
+   * Disconnect this instance from the server.
+   *
+   * @return Http\Response
+   */
+  public function disconnect()
+  {
+    return $this->getHttpDriver()->get($this->server . '/disconnect');
+  }
+
+  /**
+   * Gets the current server
+   *
+   * @return Http\Response
+   */
+  public function getServer()
+  {
+    return $this->getHttpDriver()->get($this->server . '/server');
+  }
+
+  /**
+   * Gets the authentication token.
+   *
+   * @return String
+   */
   public function getAuthentication()
   {
     return $this->authentication;
@@ -105,6 +165,11 @@ class Binding implements Contract\OrientDB_REST
     return $this->authentication;
   }
 
+  /**
+   * Sets the database for the current instance.
+   *
+   * @param String $database
+   */
   public function setDatabase($database)
   {
     $this->database = $database;
@@ -135,14 +200,20 @@ class Binding implements Contract\OrientDB_REST
     throw new \Exception('You must inject an http driver to the Orient instance via setHttpDriver');
   }
 
-  protected function checkDatabase($method)
+  /**
+   * Checks wheter the current object is able to perform a request on a DB.
+   *
+   * @return true
+   * @throws Exception
+   */
+  protected function checkDatabase()
   {
     if (!is_null($this->database))
     {
       return true;
     }
 
-    throw new \Exception(sprintf('In order to perform a %s you must specify a database', $method));
+    throw new \Exception(sprintf('In order to perform the operation you must specify a database'));
   }
 }
 

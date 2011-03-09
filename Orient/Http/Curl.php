@@ -14,6 +14,7 @@ class Curl implements Contract\HttpDriver
 {
   protected $client;
   protected $credential;
+  protected $authentication;
 
   public function __construct($location = null)
   {
@@ -33,11 +34,11 @@ class Curl implements Contract\HttpDriver
     curl_setopt($this->client, CURLOPT_RETURNTRANSFER, true);
 
     $response = curl_exec($this->client);
-    curl_close($this->client);
+    $this->restart();
 
     if ($response)
     {
-      return $response;
+      return new Response($response);
     }
 
     return false;
@@ -74,6 +75,15 @@ class Curl implements Contract\HttpDriver
   public function setAuthentication($credential)
   {
     $this->authentication = $credential;
+  }
+
+  /**
+   * Restarts the current cURL client
+   */
+  protected function restart()
+  {
+    curl_close($this->client);
+    $this->client = curl_init();
   }
 }
 

@@ -14,16 +14,22 @@ APIs will definitely change.
 
 ## Still to implement
 
-* Class
 * Cluster
 * Command
 * Database
-* Disconnect
 * Document
 * Dictionary
 * Query
-* Server
 
 ## Implemented
 
 * Connect
+* Class
+* Disconnect
+* Server
+
+## Orient issues
+
+Here I post some thoughts about Orient's HTTP interface.
+
+(empty)
