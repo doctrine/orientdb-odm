@@ -28,6 +28,20 @@ class BindingTest extends PHPUnit_Framework_TestCase
     $orient->setAuthentication('admin', 'admin');
     $orient->setDatabase('demo');
     $this->assertEquals('HTTP/1.1 200 OK', $orient->connect('demo')->getStatusCode());
+    $this->assertEquals('HTTP/1.1 200 OK',$orient->cluster('Address')->getStatusCode());
+    $this->assertEquals('HTTP/1.1 200 OK',$orient->cluster('Address',false,1)->getStatusCode());
+
+
+    // ===========
+    // = Cluster =
+    // ===========
+    $result  = json_decode($orient->cluster('Address',false,1)->getBody(),true);
+    $this->assertEquals('Address', $result['schema']['name'], 'The cluster is wrong');
+    $this->assertEquals(1, count($result['result']), 'The limi is wrong');
+    
+    $result  = json_decode($orient->cluster('City',false,10)->getBody(),true);
+    $this->assertEquals('City', $result['schema']['name'], 'The cluster is wrong');
+    $this->assertEquals(10, count($result['result']),  'The limit is wrong' );
 
     //var_dump($orient->connect('demo')->getStatusCode());
     //$orient->setAuthentication('server', 'server');

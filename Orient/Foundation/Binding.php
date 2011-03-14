@@ -98,6 +98,19 @@ class Binding implements Contract\OrientDB_REST
     $this->database = $database ?: $this->database;
     $this->checkDatabase(__METHOD__);
   }
+  
+  /**
+   * @param String $cluster
+   * @param boolean $database
+   * @return mixed
+   */
+  public function cluster($cluster, $database = false, $limit = null)
+  {
+    $this->resolveDatabase($database);
+    $path = $this->server . '/cluster/'. $this->database .'/' . $cluster . ($limit ? '/' . $limit : '') ; 
+
+    return $this->getHttpDriver()->get($path);
+  }
 
   /**
    * Connects the instance to a DB.
