@@ -14,19 +14,19 @@ APIs will definitely change.
 
 ## Still to implement
 
-* Database
+* Database (POST, DELETE)
 * Document
-* Dictionary
-* Query
 
 ## Implemented
 
+* Database (GET)
 * Command
 * Connect
 * Class
 * Disconnect
 * Server
 * Cluster
+* Query
 
 ## Orient issues
 

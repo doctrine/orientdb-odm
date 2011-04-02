@@ -142,11 +142,10 @@ class Binding implements Contract\OrientDB_REST
   public function command($sql, $database = null)
   {
     $this->resolveDatabase($database);
-    $location = $this->server . '/command/' . $this->database . '/sql/' . \urlencode($sql);
+    $location = $this->server . '/command/' . $this->database . '/sql/' . urlencode($sql);
 
     return $this->getHttpDriver()->post($location, null);
   }
-
 
   public function getDatabase($database = null)
   {
@@ -156,19 +155,22 @@ class Binding implements Contract\OrientDB_REST
     return $this->getHttpDriver()->get($location);
   }
 
-  public function postDatabase($database)
-  {
-    $location = $this->server . '/database/' . $database;
-
-    return $this->getHttpDriver()->post($location, null);
-  }
-
-  public function deleteDatabase($database = null)
+  public function query($sql, $database = null, $limit = null, $fetchPlan = null)
   {
     $this->resolveDatabase($database);
-    $location = $this->server . '/database/' . $this->database;
+    $location = $this->server . '/query/' . $this->database . '/sql/' . urlencode($sql);
 
-    return $this->getHttpDriver()->delete($location, null);
+    if ($limit)
+    {
+      $location .= '/' . (int) $limit;
+
+      if ($fetchPlan)
+      {
+        $location .= '/' . $fetchPlan;
+      }
+    }
+
+    return $this->getHttpDriver()->get($location);
   }
 
   /**

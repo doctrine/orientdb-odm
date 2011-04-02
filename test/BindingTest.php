@@ -67,7 +67,13 @@ class BindingTest extends PHPUnit_Framework_TestCase
     // ohhhh problems, can't delete DB
     //$this->assertEquals(self::_204, $orient->postDatabase('db.' . rand(0, 999))->getStatusCode(), 'ry to create a database that exists');
 
-    
+
+    // ===========
+    // = Query =
+    // ===========
+    $orient->setDatabase('demo');
+    $this->assertEquals(self::_200, $orient->query('select from Address')->getStatusCode(), 'executes a SELECT');
+    $this->assertEquals(self::_500, $orient->query("update Profile set online = false")->getStatusCode(), 'tries to xecute an UPDATE with the quesry command');
 
     //var_dump($orient->connect('demo')->getStatusCode());
     //$orient->setAuthentication('server', 'server');
