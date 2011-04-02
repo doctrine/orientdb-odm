@@ -20,6 +20,11 @@ spl_autoload_register(function ($className){
  */
 class BindingTest extends PHPUnit_Framework_TestCase
 {
+  const _401 = 'HTTP/1.1 401 Unauthorized';
+  const _200 = 'HTTP/1.1 200 OK';
+  const _204 = 'HTTP/1.1 204 OK';
+  const _500 = 'HTTP/1.1 500 Internal Server Error';
+
   public function testConnect()
   {
     $driver = new Orient\Http\Curl();
@@ -27,9 +32,9 @@ class BindingTest extends PHPUnit_Framework_TestCase
 
     $orient->setAuthentication('admin', 'admin');
     $orient->setDatabase('demo');
-    $this->assertEquals('HTTP/1.1 200 OK', $orient->connect('demo')->getStatusCode());
-    $this->assertEquals('HTTP/1.1 200 OK',$orient->cluster('Address')->getStatusCode());
-    $this->assertEquals('HTTP/1.1 200 OK',$orient->cluster('Address',false,1)->getStatusCode());
+    $this->assertEquals(self::_200, $orient->connect('demo')->getStatusCode());
+    $this->assertEquals(self::_200, $orient->cluster('Address')->getStatusCode());
+    $this->assertEquals(self::_200, $orient->cluster('Address',false,1)->getStatusCode());
 
 
     // ===========
@@ -46,10 +51,23 @@ class BindingTest extends PHPUnit_Framework_TestCase
     // ===========
     // = Command =
     // ===========
-    $this->assertEquals('HTTP/1.1 200 OK', $orient->command('select from Address')->getStatusCode(), 'execute a simple select');
-    $this->assertEquals('HTTP/1.1 200 OK', $orient->command("select from City where name = 'Rome'")->getStatusCode(), 'execute a select with WHERE condition');
-    $this->assertEquals('HTTP/1.1 200 OK', $orient->command('select from City where name = "Rome"')->getStatusCode(), 'execute another select with WHERE condition');
-    $this->assertEquals('HTTP/1.1 500 Internal Server Error', $orient->command("OMG OMG OMG")->getStatusCode(), 'execute a wrong SQL command');
+    $this->assertEquals(self::_200, $orient->command('select from Address')->getStatusCode(), 'execute a simple select');
+    $this->assertEquals(self::_200, $orient->command("select from City where name = 'Rome'")->getStatusCode(), 'execute a select with WHERE condition');
+    $this->assertEquals(self::_200, $orient->command('select from City where name = "Rome"')->getStatusCode(), 'execute another select with WHERE condition');
+    $this->assertEquals(self::_500, $orient->command("OMG OMG OMG")->getStatusCode(), 'execute a wrong SQL command');
+    # HTTPTODO: status code should be 400 or 404
+
+    // ===========
+    // = Database =
+    // ===========
+    $this->assertEquals(self::_200, $orient->getDatabase('demo')->getStatusCode(), 'get informations about an existing database');
+    $this->assertEquals(self::_401, $orient->getDatabase("OMGOMGOMG")->getStatusCode(), 'get informations about a non-existing database');
+    # HTTPTODO: status code should be  404
+    //$orient->setAuthentication('root', 'EAD5A71FAD21DB3216567E4BACD711C3E39AD0C953CEAEC4EC1464A5C645A6FC');
+    // ohhhh problems, can't delete DB
+    //$this->assertEquals(self::_204, $orient->postDatabase('db.' . rand(0, 999))->getStatusCode(), 'ry to create a database that exists');
+
+    
 
     //var_dump($orient->connect('demo')->getStatusCode());
     //$orient->setAuthentication('server', 'server');

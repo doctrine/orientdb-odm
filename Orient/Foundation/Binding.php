@@ -87,17 +87,6 @@ class Binding implements Contract\OrientDB_REST
 
     return $this->getHttpDriver()->post($location, $body);
   }
-
-  /**
-   * Assigns a database to the current instance.
-   *
-   * @param String $database
-   */
-  protected function resolveDatabase($database = false)
-  {
-    $this->database = $database ?: $this->database;
-    $this->checkDatabase(__METHOD__);
-  }
   
   /**
    * @param String $cluster
@@ -141,6 +130,56 @@ class Binding implements Contract\OrientDB_REST
   public function getServer()
   {
     return $this->getHttpDriver()->get($this->server . '/server');
+  }
+
+  /**
+   * Executes a raw SQL query on the given DB.
+   *
+   * @param String $sql
+   * @param String $database
+   * @return Http\Response
+   */
+  public function command($sql, $database = null)
+  {
+    $this->resolveDatabase($database);
+    $location = $this->server . '/command/' . $this->database . '/sql/' . \urlencode($sql);
+
+    return $this->getHttpDriver()->post($location, null);
+  }
+
+
+  public function getDatabase($database = null)
+  {
+    $this->resolveDatabase($database);
+    $location = $this->server . '/database/' . $this->database;
+
+    return $this->getHttpDriver()->get($location);
+  }
+
+  public function postDatabase($database)
+  {
+    $location = $this->server . '/database/' . $database;
+
+    return $this->getHttpDriver()->post($location, null);
+  }
+
+  public function deleteDatabase($database = null)
+  {
+    $this->resolveDatabase($database);
+    $location = $this->server . '/database/' . $this->database;
+
+    return $this->getHttpDriver()->delete($location, null);
+  }
+
+  /**
+   * Assigns a database to the current instance.
+   *
+   * @param String $database
+   */
+  protected function resolveDatabase($database = false)
+  {
+    $this->database = $database ?: $this->database;
+    $this->checkDatabase(__METHOD__);
   }
 
   /**
@@ -227,14 +266,6 @@ class Binding implements Contract\OrientDB_REST
     }
 
     throw new \Exception(sprintf('In order to perform the operation you must specify a database'));
-  }
-
-  public function command($sql, $database = null)
-  {
-    $this->resolveDatabase($database);
-    $location = $this->server . '/command/' . $this->database . '/sql/' . \urlencode($sql);
-
-    return $this->getHttpDriver()->post($location, null);
   }
 }
 

@@ -28,4 +28,6 @@ interface OrientDB_REST
 //  function getClass();
 //  function cluster($cluster, $database = false, $limit = null);
 //  function getServer();
+  //  function command();
+  //  function getDatabase();
 }
