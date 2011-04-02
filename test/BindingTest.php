@@ -43,6 +43,14 @@ class BindingTest extends PHPUnit_Framework_TestCase
     $this->assertEquals('City', $result['schema']['name'], 'The cluster is wrong');
     $this->assertEquals(10, count($result['result']),  'The limit is wrong' );
 
+    // ===========
+    // = Command =
+    // ===========
+    $this->assertEquals('HTTP/1.1 200 OK', $orient->command('select from Address')->getStatusCode(), 'execute a simple select');
+    $this->assertEquals('HTTP/1.1 200 OK', $orient->command("select from City where name = 'Rome'")->getStatusCode(), 'execute a select with WHERE condition');
+    $this->assertEquals('HTTP/1.1 200 OK', $orient->command('select from City where name = "Rome"')->getStatusCode(), 'execute another select with WHERE condition');
+    $this->assertEquals('HTTP/1.1 500 Internal Server Error', $orient->command("OMG OMG OMG")->getStatusCode(), 'execute a wrong SQL command');
+
     //var_dump($orient->connect('demo')->getStatusCode());
     //$orient->setAuthentication('server', 'server');
     //var_dump($orient->getServer('demo')->getStatusCode());

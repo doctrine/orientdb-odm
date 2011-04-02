@@ -22,4 +22,10 @@ interface OrientDB_REST
   function getHttpDriver();
 
   function setHttpDriver(HttpDriver $driver);
+
+//  function deleteClass();
+//  function postClass();
+//  function getClass();
+//  function cluster($cluster, $database = false, $limit = null);
+//  function getServer();
 }

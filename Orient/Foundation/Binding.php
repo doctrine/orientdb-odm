@@ -228,5 +228,13 @@ class Binding implements Contract\OrientDB_REST
 
     throw new \Exception(sprintf('In order to perform the operation you must specify a database'));
   }
+
+  public function command($sql, $database = null)
+  {
+    $this->resolveDatabase($database);
+    $location = $this->server . '/command/' . $this->database . '/sql/' . \urlencode($sql);
+
+    return $this->getHttpDriver()->post($location, null);
+  }
 }
 

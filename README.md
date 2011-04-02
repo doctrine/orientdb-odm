@@ -14,8 +14,6 @@ APIs will definitely change.
 
 ## Still to implement
 
-* Cluster
-* Command
 * Database
 * Document
 * Dictionary
@@ -23,10 +21,12 @@ APIs will definitely change.
 
 ## Implemented
 
+* Command
 * Connect
 * Class
 * Disconnect
 * Server
+* Cluster
 
 ## Orient issues
 
