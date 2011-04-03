@@ -89,6 +89,8 @@ class Binding implements Contract\OrientDB_REST
   }
   
   /**
+   * Gets informations about a cluster.
+   *
    * @param String $cluster
    * @param boolean $database
    * @return mixed
@@ -96,9 +98,9 @@ class Binding implements Contract\OrientDB_REST
   public function cluster($cluster, $database = false, $limit = null)
   {
     $this->resolveDatabase($database);
-    $path = $this->server . '/cluster/'. $this->database .'/' . $cluster . ($limit ? '/' . $limit : '') ; 
+    $location = $this->server . '/cluster/'. $this->database .'/' . $cluster . ($limit ? '/' . $limit : '') ;
 
-    return $this->getHttpDriver()->get($path);
+    return $this->getHttpDriver()->get($location);
   }
 
   /**
@@ -147,6 +149,12 @@ class Binding implements Contract\OrientDB_REST
     return $this->getHttpDriver()->post($location, null);
   }
 
+  /**
+   * Gets informations about a DB.
+   *
+   * @param String $database
+   * @return Http\Response
+   */
   public function getDatabase($database = null)
   {
     $this->resolveDatabase($database);
@@ -155,6 +163,16 @@ class Binding implements Contract\OrientDB_REST
     return $this->getHttpDriver()->get($location);
   }
 
+  /**
+   * Executes a raw query. It differs from the command because Orient defines
+   * a query a a SELECT only.
+   *
+   * @param String $sql       The query
+   * @param String $database
+   * @param Int $limit        Results limit, default 20
+   * @param String $fetchPlan 
+   * @return Orient\Response
+   */
   public function query($sql, $database = null, $limit = null, $fetchPlan = null)
   {
     $this->resolveDatabase($database);
