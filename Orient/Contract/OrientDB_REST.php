@@ -32,4 +32,7 @@ interface OrientDB_REST
   //  function getDatabase();
   //  function query();
   //  function getDocument();
+  //  function deleteDocument();
+  //  function postDocument();
+  //  function putDocument();
 }

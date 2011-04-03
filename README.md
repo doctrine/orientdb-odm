@@ -10,14 +10,10 @@ Documentation: http://code.google.com/p/orient
 
 Almost finished: we will develop a custome mapper which will sit on top of this low-level binding.
 
-## Still to implement
-
-* Document (PUT)
-
 ## Implemented
 
 * Database
-* Document (GET, POST, DELETE)
+* Document
 * Command
 * Connect
 * Class

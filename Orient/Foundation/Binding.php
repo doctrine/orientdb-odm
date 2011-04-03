@@ -213,6 +213,14 @@ class Binding implements Contract\OrientDB_REST
     return $this->getHttpDriver()->post($location, $document);
   }
 
+  public function putDocument($rid, $document, $database = null)
+  {
+    $this->resolveDatabase($database);
+    $location = $this->server . '/document/' . $this->database . '/' . $rid;
+
+    return $this->getHttpDriver()->put($location, $document);
+  }
+
   public function deleteDocument($rid, $database = null)
   {
     $this->resolveDatabase($database);

@@ -15,7 +15,7 @@ spl_autoload_register(function ($className){
  *
  * @package    Orient
  * @subpackage Test
- * @author     Alessnadro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
  */
 class BindingTest extends PHPUnit_Framework_TestCase
@@ -121,10 +121,14 @@ class BindingTest extends PHPUnit_Framework_TestCase
     $this->assertEquals(self::_500, $this->orient->getDocument('999:0')->getStatusCode(), 'retrieves a document from a non existing cluster');
     $this->assertEquals(self::_200, $this->orient->getDocument('1:0')->getStatusCode(), 'retrieves a valid document');
 
-    $document = json_encode(array('content' => array('_class' => 'Address', 'name' => 'Test')));
+    $document = json_encode(array('_class' => 'Address', 'name' => 'Test'));
 
     $createDocument = $this->orient->postDocument($document);
+    $rid            = $createDocument->getBody();
     $this->assertEquals(self::_201, $createDocument->getStatusCode(), 'creates a valid document');
+    $document = json_encode(array('@rid' => $rid,'_class' => 'Address', 'name' => 'Test'));
+    $this->assertEquals(self::_200, $this->orient->putDocument($rid, $document)->getStatusCode(), 'updates a valid document');
+    $this->assertEquals(self::_500, $this->orient->putDocument('9991', $document)->getStatusCode(), 'updates a non valid document');
     $this->assertEquals(self::_204, $this->orient->deleteDocument($createDocument->getBody())->getStatusCode(), 'deletes a valid document');
     $this->assertEquals(self::_500, $this->orient->deleteDocument('999:1')->getStatusCode(), 'deletes a non existing document');
     $this->assertEquals(self::_500, $this->orient->deleteDocument('9991')->getStatusCode(), 'deletes a non valid document');
