@@ -8,18 +8,16 @@ Documentation: http://code.google.com/p/orient
 
 ## Current status of this library
 
-Just begun, it's an interface for the quite RESTful APIs of Orient.
-
-APIs will definitely change.
+Almost finished: we will develop a custome mapper which will sit on top of this low-level binding.
 
 ## Still to implement
 
-* Database (POST, DELETE)
-* Document
+* Document (PUT)
 
 ## Implemented
 
-* Database (GET)
+* Database
+* Document (GET, POST, DELETE)
 * Command
 * Connect
 * Class
@@ -27,9 +25,3 @@ APIs will definitely change.
 * Server
 * Cluster
 * Query
-
-## Orient issues
-
-Here I post some thoughts about Orient's HTTP interface.
-
-(empty)

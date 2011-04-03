@@ -182,13 +182,43 @@ class Binding implements Contract\OrientDB_REST
     {
       $location .= '/' . (int) $limit;
 
-      if ($fetchPlan)
-      {
-        $location .= '/' . $fetchPlan;
-      }
+      $locations = $this->addFetchPlan($fetchPlan, $location);
     }
 
     return $this->getHttpDriver()->get($location);
+  }
+
+  /**
+   * Retrieves a record
+   *
+   * @param String $rid
+   * @param String $database
+   * @param String $fetchPlan
+   * @return Orient\Response
+   */
+  public function getDocument($rid, $database = null, $fetchPlan = null)
+  {
+    $this->resolveDatabase($database);
+    $location = $this->server . '/document/' . $this->database . '/' . $rid;
+    $location = $this->addFetchPlan($fetchPlan, $location);
+
+    return $this->getHttpDriver()->get($location);
+  }
+
+  public function postDocument($document, $database = null)
+  {
+    $this->resolveDatabase($database);
+    $location = $this->server . '/document/' . $this->database;
+
+    return $this->getHttpDriver()->post($location, $document);
+  }
+
+  public function deleteDocument($rid, $database = null)
+  {
+    $this->resolveDatabase($database);
+    $location = $this->server . '/document/' . $this->database . '/' . $rid;
+
+    return $this->getHttpDriver()->delete($location);
   }
 
   /**
@@ -286,6 +316,23 @@ class Binding implements Contract\OrientDB_REST
     }
 
     throw new \Exception(sprintf('In order to perform the operation you must specify a database'));
+  }
+
+  /**
+   * Appends the fetchPlan to the location.
+   *
+   * @param String $fetchPlan
+   * @param String $location
+   * @return String
+   */
+  protected function addFetchPlan($fetchPlan, $location)
+  {
+    if ($fetchPlan)
+    {
+      $location .= '/' . $fetchPlan;
+    }
+
+    return $location;
   }
 }
 

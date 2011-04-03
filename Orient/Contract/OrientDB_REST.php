@@ -31,4 +31,5 @@ interface OrientDB_REST
   //  function command();
   //  function getDatabase();
   //  function query();
+  //  function getDocument();
 }

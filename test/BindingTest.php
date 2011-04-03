@@ -24,6 +24,7 @@ class BindingTest extends PHPUnit_Framework_TestCase
   const _201 = 'HTTP/1.1 201 Created';
   const _204 = 'HTTP/1.1 204 OK';
   const _401 = 'HTTP/1.1 401 Unauthorized';
+  const _404 = 'HTTP/1.1 404 Not Found';
   const _500 = 'HTTP/1.1 500 Internal Server Error';
 
   public function initialize()
@@ -107,6 +108,26 @@ class BindingTest extends PHPUnit_Framework_TestCase
     $this->orient->setDatabase('demo');
     $this->assertEquals(self::_200, $this->orient->query('select from Address')->getStatusCode(), 'executes a SELECT');
     $this->assertEquals(self::_500, $this->orient->query("update Profile set online = false")->getStatusCode(), 'tries to xecute an UPDATE with the quesry command');
+  }
+
+  public function testDocument()
+  {
+    $this->initialize();
+    $this->orient->setDatabase('demo');
+    $this->orient->setAuthentication('admin', 'admin');
+
+    $this->assertEquals(self::_500, $this->orient->getDocument('991')->getStatusCode(), 'retrieves a document with an invalid RID');
+    $this->assertEquals(self::_404, $this->orient->getDocument('9:0')->getStatusCode(), 'retrieves a non existing document');
+    $this->assertEquals(self::_500, $this->orient->getDocument('999:0')->getStatusCode(), 'retrieves a document from a non existing cluster');
+    $this->assertEquals(self::_200, $this->orient->getDocument('1:0')->getStatusCode(), 'retrieves a valid document');
+
+    $document = json_encode(array('content' => array('_class' => 'Address', 'name' => 'Test')));
+
+    $createDocument = $this->orient->postDocument($document);
+    $this->assertEquals(self::_201, $createDocument->getStatusCode(), 'creates a valid document');
+    $this->assertEquals(self::_204, $this->orient->deleteDocument($createDocument->getBody())->getStatusCode(), 'deletes a valid document');
+    $this->assertEquals(self::_500, $this->orient->deleteDocument('999:1')->getStatusCode(), 'deletes a non existing document');
+    $this->assertEquals(self::_500, $this->orient->deleteDocument('9991')->getStatusCode(), 'deletes a non valid document');
   }
 }
 
