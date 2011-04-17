@@ -14,30 +14,34 @@
  */
 namespace Orient\Foundation;
 
-use Orient\Http;
-use Orient\Contract;
+use Orient\Contract\Protocol;
+use Orient\Contract\Http;
 
-class Binding implements Contract\OrientDB_REST
+class Binding implements Protocol\Http
 {
   protected $server;
-  protected $driver;
+  protected $client;
   protected $username;
   protected $password;
   protected $authentication;
 
   /**
+   * Instantiates a new instance of a Orient binding.
+   *
+   * @api
+   * @param Http\Client $client
    * @param String $host
    * @param String $port
    * @param String $username
    * @param String $password
    */
-  function  __construct(Contract\HttpDriver $driver, $host = '127.0.0.1', $port = 2480, $username = null, $password = null, $database = null)
+  public function  __construct(Http\Client $client, $host = '127.0.0.1', $port = 2480, $username = null, $password = null, $database = null)
   {
     $this->server   = $host . ($port ? sprintf(':%s', $port) : false) ;
     $this->username = $username;
     $this->password = $password;
     $this->database = $database;
-    $this->driver   = $driver;
+    $this->client   = $client;
 
     $this->setAuthentication($username, $password);
   }
@@ -45,133 +49,145 @@ class Binding implements Contract\OrientDB_REST
   /**
    * Deletes a class.
    *
-   * @param String $class
-   * @param String $database
-   * @return Http\Response
+   * @api
+   * @param   String $class
+   * @param   String $database
+   * @return  Orient\Http\Response
    */
   public function deleteClass($class, $database = false)
   {
     $this->resolveDatabase($database);
-    $location       = $this->server . '/class/' . $this->database . '/' . $class;
+    $location = $this->getClassLocation($class);
 
-    return $this->getHttpDriver()->delete($location);
+    return $this->getHttpClient()->delete($location);
   }
 
   /**
    * Gets a class and its records.
    *
-   * @param String $class
-   * @param String $database
-   * @return Http\Response
+   * @api
+   * @param   String $class
+   * @param   String $database
+   * @return  Orient\Http\Response
    */
   public function getClass($class, $database = false)
   {
     $this->resolveDatabase($database);
-    $location = $this->server . '/class/' . $this->database . '/' . $class;
+    $location = $this->getClassLocation($class);
 
-    return $this->getHttpDriver()->get($location);
+    return $this->getHttpClient()->get($location);
   }
 
   /**
    * Creates a new class.
    *
-   * @param String $class
-   * @param String $database
-   * @param String $body
-   * @return Http\Response
+   * @api
+   * @param   String $class
+   * @param   String $database
+   * @param   String $body
+   * @return  Orient\Http\Response
    */
   public function postClass($class, $database = false, $body = null)
   {
     $this->resolveDatabase($database);
-    $location = $this->server . '/class/' . $this->database . '/' . $class;
+    $location = $this->getClassLocation($class);
 
-    return $this->getHttpDriver()->post($location, $body);
+    return $this->getHttpClient()->post($location, $body);
   }
   
   /**
    * Gets informations about a cluster.
    *
-   * @param String $cluster
-   * @param boolean $database
-   * @return mixed
+   * @api
+   * @param   String $cluster
+   * @param   boolean $database
+   * @return  Orient\Http\Response
    */
   public function cluster($cluster, $database = false, $limit = null)
   {
     $this->resolveDatabase($database);
-    $location = $this->server . '/cluster/'. $this->database .'/' . $cluster . ($limit ? '/' . $limit : '') ;
+    $location = $this->getClusterLocation($cluster, $limit);
 
-    return $this->getHttpDriver()->get($location);
+    return $this->getHttpClient()->get($location);
   }
 
   /**
    * Connects the instance to a DB.
    *
-   * @param String $database
-   * @return mixed
+   * @api
+   * @param   String $database
+   * @return  Orient\Http\Response
    */
   public function connect($database)
   {
-    return $this->getHttpDriver()->get($this->server . '/database/' . $database);
+    $location = $this->getDatabaseLocation($database);
+
+    return $this->getHttpClient()->get($location);
   }
 
   /**
    * Disconnect this instance from the server.
    *
-   * @return Http\Response
+   * @api
+   * @return Orient\Http\Response
    */
   public function disconnect()
   {
-    return $this->getHttpDriver()->get($this->server . '/disconnect');
+    return $this->getHttpClient()->get($this->server . '/disconnect');
   }
 
   /**
    * Gets the current server
    *
-   * @return Http\Response
+   * @api
+   * @return Orient\Http\Response
    */
   public function getServer()
   {
-    return $this->getHttpDriver()->get($this->server . '/server');
+    return $this->getHttpClient()->get($this->server . '/server');
   }
 
   /**
    * Executes a raw SQL query on the given DB.
    *
-   * @param String $sql
-   * @param String $database
-   * @return Http\Response
+   * @api
+   * @param   String $sql
+   * @param   String $database
+   * @return  Orient\Http\Response
    */
   public function command($sql, $database = null)
   {
     $this->resolveDatabase($database);
     $location = $this->server . '/command/' . $this->database . '/sql/' . urlencode($sql);
 
-    return $this->getHttpDriver()->post($location, null);
+    return $this->getHttpClient()->post($location, null);
   }
 
   /**
    * Gets informations about a DB.
    *
-   * @param String $database
-   * @return Http\Response
+   * @api
+   * @param   String $database
+   * @return  Orient\Http\Response
    */
   public function getDatabase($database = null)
   {
     $this->resolveDatabase($database);
-    $location = $this->server . '/database/' . $this->database;
+    $location = $this->getDatabaseLocation($this->database);
 
-    return $this->getHttpDriver()->get($location);
+    return $this->getHttpclient()->get($location);
   }
 
   /**
    * Executes a raw query. It differs from the command because Orient defines
    * a query a a SELECT only.
    *
-   * @param String $sql       The query
-   * @param String $database
-   * @param Int $limit        Results limit, default 20
-   * @param String $fetchPlan 
-   * @return Orient\Response
+   * @api
+   * @param   String $sql           The query
+   * @param   String $database
+   * @param   Int $limit            Results limit, default 20
+   * @param   String $fetchPlan
+   * @return  Orient\Http\Response
    */
   public function query($sql, $database = null, $limit = null, $fetchPlan = null)
   {
@@ -185,16 +201,17 @@ class Binding implements Contract\OrientDB_REST
       $locations = $this->addFetchPlan($fetchPlan, $location);
     }
 
-    return $this->getHttpDriver()->get($location);
+    return $this->getHttpClient()->get($location);
   }
 
   /**
    * Retrieves a record
    *
-   * @param String $rid
-   * @param String $database
-   * @param String $fetchPlan
-   * @return Orient\Response
+   * @api
+   * @param   String $rid
+   * @param   String $database
+   * @param   String $fetchPlan
+   * @return  Orient\Http\Response
    */
   public function getDocument($rid, $database = null, $fetchPlan = null)
   {
@@ -202,31 +219,56 @@ class Binding implements Contract\OrientDB_REST
     $location = $this->server . '/document/' . $this->database . '/' . $rid;
     $location = $this->addFetchPlan($fetchPlan, $location);
 
-    return $this->getHttpDriver()->get($location);
+    return $this->getHttpClient()->get($location);
   }
 
+  /**
+   * Creates a new record.
+   *
+   * @api
+   * @param   String $document
+   * @param   String $database
+   * @return  Orient\Http\Response
+   */
   public function postDocument($document, $database = null)
   {
     $this->resolveDatabase($database);
     $location = $this->server . '/document/' . $this->database;
 
-    return $this->getHttpDriver()->post($location, $document);
+    return $this->getHttpClient()->post($location, $document);
   }
 
+  /**
+   * Updates an existing record.
+   *
+   * @api
+   * @param   String $rid
+   * @param   String $document
+   * @param   String $database
+   * @return  Orient\Http\Response
+   */
   public function putDocument($rid, $document, $database = null)
   {
     $this->resolveDatabase($database);
     $location = $this->server . '/document/' . $this->database . '/' . $rid;
 
-    return $this->getHttpDriver()->put($location, $document);
+    return $this->getHttpClient()->put($location, $document);
   }
 
+  /**
+   * Deletes a document
+   *
+   * @api
+   * @param   String $rid
+   * @param   String $database
+   * @return  Orient\Http\Response
+   */
   public function deleteDocument($rid, $database = null)
   {
     $this->resolveDatabase($database);
     $location = $this->server . '/document/' . $this->database . '/' . $rid;
 
-    return $this->getHttpDriver()->delete($location);
+    return $this->getHttpClient()->delete($location);
   }
 
   /**
@@ -237,7 +279,7 @@ class Binding implements Contract\OrientDB_REST
   protected function resolveDatabase($database = false)
   {
     $this->database = $database ?: $this->database;
-    $this->checkDatabase(__METHOD__);
+    $this->checkDatabase();
   }
 
   /**
@@ -255,9 +297,9 @@ class Binding implements Contract\OrientDB_REST
    * password are valid.
    * The authentication attribute is in HTTP header style.
    *
-   * @param String $username
-   * @param String $password
-   * @return bool
+   * @param   String $username
+   * @param   String $password
+   * @return  bool
    */
   public function setAuthentication($username = null, $password = null)
   {
@@ -270,9 +312,7 @@ class Binding implements Contract\OrientDB_REST
       $this->authentication = false;
     }
 
-    $this->getHttpDriver()->setAuthentication($this->authentication);
-    
-    return $this->authentication;
+    return $this->getHttpclient()->setAuthentication($this->authentication);
   }
 
   /**
@@ -286,28 +326,28 @@ class Binding implements Contract\OrientDB_REST
   }
 
   /**
-   * Injects the HttpDriver instance inside the binding.
+   * Injects the HttpClient instance inside the binding.
    *
-   * @param Contract\HttpDriver $driver
+   * @param Contract\Httpclient $client
    */
-  public function setHttpDriver(Contract\HttpDriver $driver)
+  public function setHttpClient(Http\Client $client)
   {
-    $this->driver = $driver;
+    $this->client = $client;
   }
 
   /**
-   * Returns the HttpDriver of the binding.
+   * Returns the Httpclient of the binding.
    *
-   * @return Contract\HttpDriver
+   * @return Contract\Httpclient
    */
-  public function getHttpDriver()
+  public function getHttpClient()
   {
-    if ($this->driver instanceOf Contract\HttpDriver)
+    if ($this->client instanceOf Http\Client)
     {
-      return $this->driver;
+      return $this->client;
     }
 
-    throw new \Exception('You must inject an http driver to the Orient instance via setHttpDriver');
+    throw new \Exception('You must inject an http client to the Orient instance via setHttpclient');
   }
 
   /**
@@ -329,9 +369,9 @@ class Binding implements Contract\OrientDB_REST
   /**
    * Appends the fetchPlan to the location.
    *
-   * @param String $fetchPlan
-   * @param String $location
-   * @return String
+   * @param   String $fetchPlan
+   * @param   String $location
+   * @return  String
    */
   protected function addFetchPlan($fetchPlan, $location)
   {
@@ -341,6 +381,40 @@ class Binding implements Contract\OrientDB_REST
     }
 
     return $location;
+  }
+
+  /**
+   * Returns the location of a Class.
+   *
+   * @param   String $class
+   * @return  String
+   */
+  final protected function getClassLocation($class)
+  {
+    return $this->server . '/class/' . $this->database . '/' . $class;
+  }
+
+  /**
+   * Returns the location of a Cluster.
+   *
+   * @param   String  $cluster
+   * @param   Integer $limit
+   * @return  String
+   */
+  final protected function getClusterLocation($cluster, $limit = null)
+  {
+    return $this->server . '/cluster/'. $this->database .'/' . $cluster . ($limit ? '/' . $limit : '');
+  }
+
+  /**
+   * Returns the location of a Database.
+   *
+   * @param   String $database
+   * @return  String
+   */
+  final protected function getDatabaseLocation($database)
+  {
+    return $this->server . '/database/' . $database;
   }
 }
 

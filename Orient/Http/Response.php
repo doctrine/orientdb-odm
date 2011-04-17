@@ -17,6 +17,11 @@ class Response
   protected $body;
   protected $response;
 
+  /**
+   * Constructs a new object from an existing HTTP response.
+   *
+   * @param String $response
+   */
   public function __construct($response)
   {
     $parts = explode("\r\n\r\n", $response);
@@ -32,16 +37,31 @@ class Response
     return $this->getResponse();
   }
 
+  /**
+   * Returns the body of the response.
+   *
+   * @return String
+   */
   public function getBody()
   {
     return $this->body;
   }
 
+  /**
+   * Returns the whole response.
+   *
+   * @return String
+   */
   public function getResponse()
   {
     return $this->getRawHeaders() . $this->getBody();
   }
 
+  /**
+   * Builds headers array from a well-formatted string.
+   *
+   * @param String $headers
+   */
   public function buildHeaders($headers)
   {
     $parts = explode("\r\n", $headers);
@@ -56,11 +76,21 @@ class Response
     }
   }
 
+  /**
+   * Returns the status code of the response.
+   *
+   * @return String
+   */
   public function getStatusCode()
   {
     return $this->status_code;
   }
 
+  /**
+   * Returns all the headers as a string.
+   *
+   * @return String
+   */
   protected function getRawHeaders()
   {
     return $this->raw_headers;

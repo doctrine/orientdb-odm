@@ -1,26 +1,41 @@
 <?php
 
 /**
- * Request class
+ * Http client class
  *
  * @package    Orient
  * @subpackage Http
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
-namespace Orient\Http;
-use Orient\Contract;
+namespace Orient\Http\Client;
+use Orient\Contract\Http;
+use Orient\Http\Response;
+use Orient\Exception\Http\Response\Void as VoidResponse;
 
-class Curl implements Contract\HttpDriver
+class Curl implements Http\Client
 {
   protected $client;
   protected $credential;
   protected $authentication;
 
+  /**
+   * Creates a new Curl instance.
+   *
+   * @param String $location
+   */
   public function __construct($location = null)
   {
     $this->client = curl_init($location);
   }
 
+  /**
+   * Executes a Curl.
+   *
+   * @param   String $method
+   * @param   String $location
+   * @return  Response
+   * @throws  Inconsistent
+   */
   public function execute($method, $location)
   {
     curl_setopt($this->client, CURLOPT_URL, $location);
@@ -36,14 +51,20 @@ class Curl implements Contract\HttpDriver
     $response = curl_exec($this->client);
     $this->restart();
 
-    if ($response)
+    if (!$response)
     {
-      return new Response($response);
+      throw new VoidResponse(__CLASS__, $location);
     }
 
-    return false;
+    return new Response($response);
   }
 
+  /**
+   * Executes a DELETE on a resource.
+   *
+   * @param  String $location
+   * @return Response
+   */
   public function delete($location)
   {
     curl_setopt ($this->client, CURLOPT_CUSTOMREQUEST, 'DELETE');
@@ -51,11 +72,24 @@ class Curl implements Contract\HttpDriver
     return $this->execute('DELETE', $location);
   }
 
+  /**
+   * GETs a resource.
+   *
+   * @param   String $location
+   * @return  Response
+   */
   public function get($location)
   {
     return $this->execute('GET', $location);
   }
 
+  /**
+   * Executes a POST on a location.
+   *
+   * @param   String $location
+   * @param   String $body
+   * @return  Response
+   */
   public function post($location, $body)
   {
     curl_setopt ($this->client, CURLOPT_POST, 1);
@@ -64,6 +98,13 @@ class Curl implements Contract\HttpDriver
     return $this->execute('POST', $location);
   }
 
+  /**
+   * PUTs a resource.
+   *
+   * @param   String $location
+   * @param   String $body
+   * @return  Response
+   */
   public function put($location, $body)
   {
     curl_setopt($this->client, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -72,9 +113,17 @@ class Curl implements Contract\HttpDriver
     return $this->execute('POST', $location);
   }
 
+  /**
+   * Sets the authentication string for the next HTTP requests.
+   *
+   * @param String $credential
+   * @return String
+   */
   public function setAuthentication($credential)
   {
     $this->authentication = $credential;
+
+    return $this->authentication;
   }
 
   /**

@@ -29,7 +29,7 @@ class BindingTest extends PHPUnit_Framework_TestCase
 
   public function initialize()
   {
-    $this->driver = new Orient\Http\Curl();
+    $this->driver = new Orient\Http\Client\Curl();
     $this->orient = new Orient\Foundation\Binding($this->driver, '127.0.0.1', '2480', 'admin', 'admin');
   }
 
@@ -132,6 +132,15 @@ class BindingTest extends PHPUnit_Framework_TestCase
     $this->assertEquals(self::_204, $this->orient->deleteDocument($createDocument->getBody())->getStatusCode(), 'deletes a valid document');
     $this->assertEquals(self::_500, $this->orient->deleteDocument('999:1')->getStatusCode(), 'deletes a non existing document');
     $this->assertEquals(self::_500, $this->orient->deleteDocument('9991')->getStatusCode(), 'deletes a non valid document');
+  }
+
+  /**
+   * @expectedException Orient\Exception\Http\Response\Void
+   */
+  public function testClient()
+  {
+    $this->initialize();
+    $this->driver->get('1.1.1.1');
   }
 }
 
