@@ -9,7 +9,9 @@
  */
 namespace Orient\Exception\Http\Response;
 
-class Void extends \Exception
+use \Orient\Exception;
+
+class Void extends Exception
 {
   const MESSAGE = 'The %s client has been unable to retrieve a response for the resource at %s';
 

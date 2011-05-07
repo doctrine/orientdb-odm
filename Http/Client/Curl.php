@@ -8,11 +8,11 @@
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 namespace Orient\Http\Client;
-use Orient\Contract\Http;
+
 use Orient\Http\Response;
 use Orient\Exception\Http\Response\Void as VoidResponse;
 
-class Curl implements Http\Client
+class Curl implements \Orient\Contract\Http\Client
 {
   protected $client;
   protected $credential;

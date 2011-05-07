@@ -12,6 +12,7 @@
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 namespace Orient\Contract\Protocol;
+
 use Orient\Contract\Http\Client;
 
 interface Http
