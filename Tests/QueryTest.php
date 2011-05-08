@@ -17,80 +17,35 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
   public function testSelect()
   {
-    $this->query = new \Orient\Query();
-    $tokens = array(
-        ':Projections' => array(),
-        ':Target' => array(),
-        ':Where' => array(),
-        ':OrderBy' => array(),
-        ':Limit' => array(),
-        ':Range' => array(),
-    );
-    $this->assertEquals($tokens, $this->query->getTokens());
+    $query  = new \Orient\Query(array('myClass'));
+    $query->select(array('name', 'username', 'email'))
+          ->from(array('12:0', '12:1'), false)
+          ->where('any() traverse ( any() like "%danger%" )')
+          ->orWhere("1 = ?", 1)
+          ->limit(20)
+          ->orderBy('username')
+          ->orderBy('name', true, true)
+          ->range("12:0", "12:1");
+    $sql    = 
+      'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = "1" ORDER BY name, username LIMIT 20 RANGE 12:0, 12:1'
+    ;
 
-    $this->query = new \Orient\Query(array('myClass'));
-    $query = 'SELECT FROM myClass';
+    $this->assertEquals($sql, $query->getRaw());
+  }
 
-    $this->assertEquals($query, $this->query->getRaw());
+  public function testInsert()
+  {
+    $query  = new \Orient\Query(array('myClass'));
+    $query->insert()
+          ->into("myClass")
+          ->fields(array('name', 'relation', 'links'))
+          ->values(array(
+            'hello', array('10:1'), array('10:1', '11:1')
+          ));
+    $sql    =
+      'INSERT INTO myClass (name, relation, links) VALUES ("hello", 10:1, [10:1, 11:1])'
+    ;
 
-    $this->query->select(array('name'));
-    $query = 'SELECT name FROM myClass';
-
-    $this->assertEquals($query, $this->query->getRaw());
-
-    $this->query->select(array('city'));
-    $query = 'SELECT name, city FROM myClass';
-
-    $this->assertEquals($query, $this->query->getRaw());
-
-    $this->query->select(array('city'));
-    $query = 'SELECT name, city FROM myClass';
-
-    $this->assertEquals($query, $this->query->getRaw());
-
-    $this->query->select(array('city'), false);
-    $query = 'SELECT city FROM myClass';
-
-    $this->assertEquals($query, $this->query->getRaw());
-
-    $this->query->from(array('City'));
-    $query = 'SELECT city FROM [myClass, City]';
-
-    $this->assertEquals($query, $this->query->getRaw());
-
-    $this->query->from(array('City'), false);
-    $query = 'SELECT city FROM City';
-
-    $this->assertEquals($query, $this->query->getRaw());
-
-    $this->query->from(array('City'));
-    $query = 'SELECT city FROM City';
-
-    $this->assertEquals($query, $this->query->getRaw());
-
-    $this->query->where("city = ?", 'Milan');
-    $query = 'SELECT city FROM City WHERE city = "Milan"';
-
-    $this->assertEquals($query, $this->query->getRaw());
-
-    $this->query->where("city = ?", 'Turin');
-    $query = 'SELECT city FROM City WHERE city = "Turin"';
-
-    $this->assertEquals($query, $this->query->getRaw());
-
-    $this->query->andWhere("city = ?", 'Bologna');
-    $query = 'SELECT city FROM City WHERE city = "Turin" AND city = "Bologna"';
-
-    $this->assertEquals($query, $this->query->getRaw());
-
-    $this->query->orWhere("city = ?", 'Roma');
-    $query = 'SELECT city FROM City WHERE city = "Turin" AND city = "Bologna" OR city = "Roma"';
-
-    $this->assertEquals($query, $this->query->getRaw());
-
-    $this->query->resetWhere();
-    $query = 'SELECT city FROM City';
-
-    $this->assertEquals($query, $this->query->getRaw());
+    $this->assertEquals($sql, $query->getRaw());
   }
 }

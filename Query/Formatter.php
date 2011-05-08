@@ -118,6 +118,47 @@ class Formatter
   }
 
   /**
+   * Formats the FIELDS clause.
+   *
+   * @param   array   $fields
+   * @return  string
+   */
+  public function formatFields(array $fields)
+  {
+    return count($fields) ? $this->implode($fields) : NULL;
+  }
+
+  /**
+   * Formats the VALUES clause.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatValues(array $values)
+  {
+    foreach ($values as $key => $value)
+    {
+      if (is_array($value))
+      {
+        if (count($value) > 1)
+        {
+          $values[$key] = "[" . $this->implode($value) . "]";
+        }
+        else
+        {
+          $values[$key] = array_shift($value);
+        }
+      }
+      else
+      {
+        $values[$key] = '"' . $value . '"';
+      }
+    }
+
+    return count($values) ? $this->implode($values) : NULL;
+  }
+
+  /**
    * Removes whitespaces from the beginng and the end of the $text.
    *
    * @param   string $text

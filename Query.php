@@ -10,6 +10,9 @@
 
 namespace Orient;
 
+use \Orient\Query\Command\Insert;
+use \Orient\Query\Command\Select;
+
 class Query
 {
   protected $command = NULL;
@@ -22,9 +25,9 @@ class Query
    */
   public function __construct(array $target = NULL, $command = 'select')
   {
-    $command = "\\Orient\\Query\\Command\\" . ucfirst($command);
+    $this->command  = new Select($target);
 
-    $this->command = new $command($target);
+    return $this;
   }
 
   /**
@@ -36,6 +39,22 @@ class Query
   public function andWhere($condition, $value = NULL)
   {
     $this->command->where($condition, $value, true, "AND");
+
+    return $this;
+  }
+
+  /**
+   * Sets the fields to query.
+   *
+   * @param   array   $fields
+   * @param   boolean $append
+   * @return  Query
+   */
+  public function fields(array $fields, $append = true)
+  {
+    $this->command->fields($fields, $append);
+
+    return $this;
   }
 
   /**
@@ -47,6 +66,8 @@ class Query
   public function from(array $target, $append = true)
   {
     $this->command->from($target, $append);
+
+    return $this;
   }
 
   /**
@@ -72,6 +93,57 @@ class Query
   }
 
   /**
+   * Converts the query into an INSERT.
+   *
+   * @return Query
+   */
+  public function insert()
+  {
+    $this->command = new Insert();
+
+    return $this;
+  }
+
+  /**
+   * Inserts the INTO clause to a query.
+   *
+   * @param   string $target
+   * @return  Query
+   */
+  public function into($target)
+  {
+    $this->command->into($target);
+
+    return $this;
+  }
+
+  /**
+   * Adds a limit to the current query.
+   *
+   * @return  $this
+   */
+  public function limit($limit)
+  {
+    $this->command->limit($limit);
+
+    return $this;
+  }
+
+  /**
+   * Orders the query.
+   *
+   * @param array   $order
+   * @param boolean $append
+   * @param boolean $first
+   */
+  public function orderBy($order, $append = true, $first = false)
+  {
+    $this->command->orderBy($order, $append, $first);
+
+    return $this;
+  }
+
+  /**
    * Adds an OR clause to the query.
    *
    * @param string  $condition
@@ -80,6 +152,18 @@ class Query
   public function orWhere($condition, $value = NULL)
   {
     $this->command->where($condition, $value, true, "OR");
+
+    return $this;
+  }
+
+  /**
+   * Resets the RANGE condition.
+   */
+  public function range($left = NULL, $right = NULL)
+  {
+    $this->command->range($left, $right);
+
+    return $this;
   }
 
   /**
@@ -88,6 +172,8 @@ class Query
   public function resetWhere()
   {
     $this->command->resetWhere();
+
+    return $this;
   }
 
   /**
@@ -99,6 +185,15 @@ class Query
   public function select(array $projections, $append = true)
   {
     $this->command->select($projections, $append);
+
+    return $this;
+  }
+
+  public function values(array $values, $append = true)
+  {
+    $this->command->values($values, $append);
+    
+    return $this;
   }
 
   /**
@@ -110,6 +205,8 @@ class Query
   public function where($condition, $value = NULL)
   {
     $this->command->where($condition, $value);
+
+    return $this;
   }
 }
 

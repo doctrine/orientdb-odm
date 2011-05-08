@@ -140,7 +140,7 @@ class Command implements \Orient\Contract\Query\Command
       }
     }
 
-    $this->tokens[$token] = array_unique($this->tokens[$token]);
+    $this->tokens[$token] = array_unique($this->tokens[$token], SORT_REGULAR);
   }
 
   /**

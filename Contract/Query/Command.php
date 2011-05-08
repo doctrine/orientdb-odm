@@ -7,6 +7,7 @@
  * @package    Orient
  * @subpackage Contract
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @todo       Add all the query methods
  */
 
 namespace Orient\Contract\Query;
