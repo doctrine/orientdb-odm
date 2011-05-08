@@ -25,7 +25,8 @@ EOF;
 
   public function __construct($token, $commandClass)
   {
-    $schema = $commandClass::SCHEMA;
+    $ref    = new \ReflectionClass($commandClass);
+    $schema = $ref->getConstant('SCHEMA') ?: "undefined";
 
     $this->message = sprintf(self::MESSAGE, $token, $commandClass, $schema);
   }

@@ -21,3 +21,14 @@ Some things will change (implementation of better interfaces, naming conventions
 ## Current status of the mapper
 
 Just started. Things will come.
+
+## Tests
+
+In order to run the tests you only need phpunit.
+
+cd /path/to/repo
+phpunit --colors Tests/
+
+The binding test directly connects to a working OrientDB instance, so you'll need, only for this test, to start the OrientDB server, with an empty
+database ( the demo one goes well ) and add the server admin credentials into your /orientdbpath/config/orientdb-server-config.xml file
+(just add the admin/admin credentials).

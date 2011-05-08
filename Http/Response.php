@@ -58,11 +58,21 @@ class Response
   }
 
   /**
+   * Returns the status code of the response.
+   *
+   * @return String
+   */
+  public function getStatusCode()
+  {
+    return $this->status_code;
+  }
+
+  /**
    * Builds headers array from a well-formatted string.
    *
    * @param String $headers
    */
-  public function buildHeaders($headers)
+  protected function buildHeaders($headers)
   {
     $parts = explode("\r\n", $headers);
 
@@ -74,16 +84,6 @@ class Response
       $header = explode(':', $header);
       $this->headers[$header[0]] = $header[1];
     }
-  }
-
-  /**
-   * Returns the status code of the response.
-   *
-   * @return String
-   */
-  public function getStatusCode()
-  {
-    return $this->status_code;
   }
 
   /**

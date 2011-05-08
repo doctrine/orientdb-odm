@@ -1,15 +1,5 @@
 <?php
 
-spl_autoload_register(function ($className){
-    $path = __DIR__ . '/../../' . str_replace('\\', '/', $className) . '.php';
-
-    if (file_exists($path))
-    {
-      include($path);
-    }
-  }
-);
-
 /**
  * QueryTest
  *
@@ -26,7 +16,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
   }
 
   public function testSelect()
-  {   
+  {
     $this->query = new \Orient\Query();
     $tokens = array(
         ':Projections' => array(),
@@ -40,17 +30,17 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     $this->query = new \Orient\Query(array('myClass'));
     $query = 'SELECT FROM myClass';
-    
+
     $this->assertEquals($query, $this->query->getRaw());
 
     $this->query->select(array('name'));
     $query = 'SELECT name FROM myClass';
 
     $this->assertEquals($query, $this->query->getRaw());
-    
+
     $this->query->select(array('city'));
     $query = 'SELECT name, city FROM myClass';
-    
+
     $this->assertEquals($query, $this->query->getRaw());
 
     $this->query->select(array('city'));
@@ -104,4 +94,3 @@ class QueryTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($query, $this->query->getRaw());
   }
 }
-

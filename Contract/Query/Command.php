@@ -13,6 +13,8 @@ namespace Orient\Contract\Query;
 
 interface Command
 {
+  const SCHEMA = NULL;
+
   public function __construct(array $target = NULL);
 
   public function getRaw();

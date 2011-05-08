@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Query class
+ * Query class to build queries execute by an OrientDB's protocol adapter.
  *
  * @package    Orient
  * @subpackage Query

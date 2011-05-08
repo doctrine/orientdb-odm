@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Exception class
+ * This is a general Exception class for the Orient library.
  *
  * @package    Orient
  * @subpackage Exception

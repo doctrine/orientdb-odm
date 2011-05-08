@@ -1,15 +1,5 @@
 <?php
 
-spl_autoload_register(function ($className){
-    $path = __DIR__ . '/../../' . str_replace('\\', '/', $className) . '.php';
-
-    if (file_exists($path))
-    {
-      include($path);
-    }
-  }
-);
-
 /**
  * BindingTest
  *
@@ -42,6 +32,12 @@ class BindingTest extends PHPUnit_Framework_TestCase
     $this->assertEquals(self::_401, $this->orient->connect('ZOMG')->getStatusCode());
     $this->orient->setAuthentication('admin', 'admin');
     $this->assertEquals(self::_200, $this->orient->connect('demo')->getStatusCode());
+  }
+
+  public function testDisconnect()
+  {
+    $this->initialize();
+    $this->assertEquals("Logged out", $this->orient->disconnect()->getBody());
   }
 
   public function testClass()
@@ -99,6 +95,14 @@ class BindingTest extends PHPUnit_Framework_TestCase
     //$this->assertEquals(self::_204, $this->orient->postDatabase('db.' . rand(0, 999))->getStatusCode(), 'ry to create a database that exists');
   }
 
+  public function testGetServer()
+  {
+    $this->initialize();
+    $this->orient->setDatabase('demo');
+    $this->orient->setAuthentication('admin', 'admin');
+    $this->assertEquals(self::_200, $this->orient->getServer()->getStatusCode());
+  }
+
   public function testQuery()
   {
     $this->initialize();
@@ -107,7 +111,48 @@ class BindingTest extends PHPUnit_Framework_TestCase
 
     $this->orient->setDatabase('demo');
     $this->assertEquals(self::_200, $this->orient->query('select from Address')->getStatusCode(), 'executes a SELECT');
+    $this->assertEquals(self::_200, $this->orient->query('select from Address', NULL, 10)->getStatusCode(), 'executes a SELECT with LIMIT');
     $this->assertEquals(self::_500, $this->orient->query("update Profile set online = false")->getStatusCode(), 'tries to xecute an UPDATE with the quesry command');
+  }
+
+  public function testGetAuthentication()
+  {
+    $this->initialize();
+    $this->orient->setDatabase('demo');
+    $this->orient->setAuthentication('admin', 'admin');
+
+    $this->assertEquals($this->orient->getAuthentication(), 'admin:admin', 'gets the authentication credentials');
+  }
+
+  public function testSetAuthentication()
+  {
+    $this->driver = new Orient\Http\Client\Curl();
+    $this->orient = new Orient\Foundation\Binding($this->driver, '127.0.0.1', '2480');
+    $this->orient->setAuthentication();
+
+    $this->assertEquals($this->orient->getAuthentication(), false, 'sets no authentication in the current request');
+
+    $this->orient->setAuthentication('admin', 'admin');
+    $this->assertEquals($this->orient->getAuthentication(), 'admin:admin', 'sets the credentials for the current request');
+  }
+
+  public function testSetHttpClient()
+  {
+    $client = $this->getMock("Orient\Http\Client\Curl");
+    $this->orient = new Orient\Foundation\Binding($client);
+
+    $this->assertEquals($client, $this->orient->getHttpClient());
+    $this->assertInstanceOf("Orient\Http\Client\Curl", $this->orient->getHttpClient());
+  }
+
+  /**
+   * @expectedException \Exception
+   */
+  public function testCheckDatabase()
+  {
+    $client = $this->getMock("Orient\Http\Client\Curl");
+    $this->orient = new Orient\Foundation\Binding($client);
+    $this->orient->deleteClass('MyClass');
   }
 
   public function testDocument()
