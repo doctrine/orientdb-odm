@@ -26,8 +26,6 @@ class Query
   public function __construct(array $target = NULL, $command = 'select')
   {
     $this->command  = new Select($target);
-
-    return $this;
   }
 
   /**
