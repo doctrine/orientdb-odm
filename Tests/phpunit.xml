@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit backupGlobals="true"
+         bootstrap="bootstrap.php"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         forceCoversAnnotation="false"
+         mapTestClassNameToCoveredClassName="false"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         syntaxCheck="false"
+         testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
+         strict="false"
+         verbose="false">
+
+  <testsuites>
+      <testsuite name="Query builder">
+          <directory>./Query</directory>
+          <file>./Tests/QueryTest.php</file>
+      </testsuite>
+      <testsuite name="HTTP">
+          <directory>./Http</directory>
+      </testsuite>
+      <testsuite name="Binding">
+          <directory>./Foundation</directory>
+      </testsuite>
+  </testsuites>
+</phpunit>
