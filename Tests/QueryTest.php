@@ -54,7 +54,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($query, $this->query->getRaw());
 
     $this->query->from(array('City'));
-    $query = 'SELECT city FROM myClass, City';
+    $query = 'SELECT city FROM [myClass, City]';
 
     $this->assertEquals($query, $this->query->getRaw());
 

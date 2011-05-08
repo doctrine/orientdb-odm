@@ -12,11 +12,28 @@
 namespace Orient\Query;
 
 use Orient\Exception\Query\Command as CommandException;
+use Orient\Contract\Query\Formatter;
 
-abstract class Command implements \Orient\Contract\Query\Command
+class Command implements \Orient\Contract\Query\Command
 {
   protected   $tokens     = array();
   protected   $statement  = NULL;
+
+  /**
+   * Intstantiates a new object and sets a potential target and query $formatter.
+   *
+   * @param array     $target
+   * @param Formatter $formatter
+   */
+  public function  __construct(array $target = NULL, Formatter $formatter = NULL)
+  {
+    if (!$formatter)
+    {
+      $formatter = new \Orient\Query\Formatter();
+    }
+    
+    $this->formatter  = $formatter;
+  }
 
   /**
    * Sets the token for the from clause. You can $append your values.
@@ -59,6 +76,12 @@ abstract class Command implements \Orient\Contract\Query\Command
     return $tokens;
   }
 
+  /**
+   * Returns the value of a token.
+   *
+   * @param   string $token
+   * @return  mixed
+   */
   public function getTokenValue($token)
   {   
     return $this->checkToken($this->tokenize($token));
@@ -94,15 +117,58 @@ abstract class Command implements \Orient\Contract\Query\Command
     $this->setToken('Where', array("{$clause} " . $condition), $append);
   }
 
-  protected function appendToken($token, $values)
+  /**
+   * Appends a token to the query, without deleting existing values for the
+   * given $token.
+   *
+   * @param string  $token
+   * @param mixed   $values
+   * @param boolean $first
+   */
+  protected function appendToken($token, $values, $first = false)
   {
     foreach($values as $key => $value)
     {
-      $this->tokens[$token][] = $value;
+      if ($first)
+      {
+        array_unshift($this->tokens[$token], $value);
+      }
+      else
+      {
+        $method = "appendTokenAs" . ucfirst(gettype($key));
+        $this->$method($token, $key, $value);
+      }
     }
 
     $this->tokens[$token] = array_unique($this->tokens[$token]);
   }
+
+  /**
+   * Appends $value to the query $token, using $key to identify the $value in
+   * the token array.
+   * With this method you set a token value and can retrieve it by its key.
+   *
+   * @param string  $token
+   * @param string  $key
+   * @param mixed   $value
+   */
+  protected function appendTokenAsString($token, $key, $value)
+  {
+    $this->tokens[$token][$key] = $value;
+  }
+
+  /**
+   * Appends $value to the query $token.
+   *
+   * @param string  $token
+   * @param string  $key
+   * @param mixed   $value
+   */
+  protected function appendTokenAsInteger($token, $key, $value)
+  {
+    $this->tokens[$token][] = $value;
+  }
+
 
   /**
    * Checks if a token is set, returning it if it is.
@@ -121,10 +187,16 @@ abstract class Command implements \Orient\Contract\Query\Command
     throw new CommandException\TokenNotFound($token, get_called_class());
   }
 
+  protected function getFormatter()
+  {
+    return $this->formatter;
+  }
+
   /**
    * Returns the values to replace command's schema tokens.
    *
-   * @return array
+   * @return  array
+   * @todo    hardcoded dependency
    */
   protected function getTokenReplaces()
   {
@@ -132,12 +204,8 @@ abstract class Command implements \Orient\Contract\Query\Command
 
     foreach ($this->tokens as $token => $value)
     {
-      if (is_array($value))
-      {
-        $value = implode(', ', $value);
-      }
-
-      $replaces[$token] = $value;
+      $method           = "format" . $this->getFormatter()->untokenize($token);
+      $replaces[$token] = $this->getFormatter()->$method(array_filter($value));
     }
 
     return $replaces;
@@ -147,16 +215,16 @@ abstract class Command implements \Orient\Contract\Query\Command
    * Build the command replacing schema tokens with actual values and cleaning
    * the command synthax.
    *
-   * @return string
+   * @return  string
+   * @todo    better way to format the string
    */
   protected function getValidStatement()
   {
     $statement = $this->replaceTokens($this->statement);
     $statement = str_replace("  ", " ", $statement);
-    $statement = str_replace(", AND", " AND", $statement);
-    $statement = str_replace(", OR", " OR", $statement);
-
-    return rtrim(ltrim($statement));
+    $statement = str_replace("  ", " ", $statement);
+    
+    return $this->getFormatter()->btrim($statement);
   }
 
   /**
@@ -179,10 +247,10 @@ abstract class Command implements \Orient\Contract\Query\Command
    * @param   string                                  $token
    * @param   mixed                                   $tokenValue
    * @param   boolean                                 $append
+   * @param   boolean                                 $first
    * @return  true
-   * @todo    Nesting of IF kills kittahs
    */
-  protected function setToken($token, $tokenValue, $append = true)
+  protected function setToken($token, $tokenValue, $append = true, $first = false)
   {
     $token = $this->tokenize($token);
     $this->checkToken($token);
@@ -191,7 +259,7 @@ abstract class Command implements \Orient\Contract\Query\Command
     {
       if ($append)
       {
-        $this->appendToken($token, $tokenValue);
+        $this->appendToken($token, $tokenValue, $first);
       }
       else
       {
@@ -213,10 +281,11 @@ abstract class Command implements \Orient\Contract\Query\Command
    *
    * @param   string $token
    * @return  string
+   * @todo    hardcoded dependecy
    */
   protected function tokenize($token)
   {
-    return ":$token";
+    return $this->getFormatter()->tokenize($token);
   }
 }
 

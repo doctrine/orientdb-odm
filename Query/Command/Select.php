@@ -11,11 +11,10 @@
 namespace Orient\Query\Command;
 
 use \Orient\Exception\Query\Command as CommandException;
+use \Orient\Contract\Query\Formatter;
 
 class Select extends \Orient\Query\Command
-{
-  protected $tokens     = array();
-  
+{  
   const SCHEMA          =
     "SELECT :Projections FROM :Target :Where :OrderBy :Limit :Range"
   ;
@@ -25,8 +24,10 @@ class Select extends \Orient\Query\Command
    *
    * @param array $target
    */
-  public function __construct(array $target = NULL)
+  public function __construct(array $target = NULL, Formatter $formatterClass = NULL)
   {
+    parent::__construct($target, $formatterClass);
+
     $this->statement  = self::SCHEMA;
     $this->tokens     = $this->getTokens();
 
@@ -45,6 +46,53 @@ class Select extends \Orient\Query\Command
   public function select(array $projections, $append = true)
   {
     $this->setToken('Projections', $projections, $append);
+  }
+
+  /**
+   * Orders the query.
+   *
+   * @param array   $order
+   * @param boolean $append
+   * @param boolean $first
+   */
+  public function orderBy($order, $append = true, $first = false)
+  {
+    $this->setToken('OrderBy', array($order), $append, $first);
+  }
+
+  /**
+   * Sets a limit to the SELECT.
+   *
+   * @param integer $limit
+   */
+  public function limit($limit)
+  {
+    $this->setToken('Limit', array((int) $limit), false);
+  }
+
+  /**
+   * Adds the range to the select.
+   *
+   * @param integer $limit
+   */
+  public function range($left = NULL, $right = NULL)
+  {
+    $range  = array();
+    $params = array('left', 'right');
+
+    foreach ($params as $param)
+    {
+      if ($$param)
+      {
+        $range[$param]   = $$param;
+      }
+      elseif ($$param === false)
+      {
+        $range[$param]   = NULL;
+      }
+    }
+
+    $this->setToken('Range', $range);
   }
 }
 

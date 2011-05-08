@@ -15,8 +15,10 @@ class MockCommand extends Command
 {
   const SCHEMA = ":Target :Where";
 
-  public function  __construct(array $target = NULL)
+  public function  __construct(array $target = NULL, \Orient\Contract\Query\Formatter $formatter = NULL)
   {
+    parent::__construct($target, $formatter);
+
     $this->statement  = self::SCHEMA;
     $this->tokens     = $this->getTokens();
   }
