@@ -27,8 +27,8 @@
       <testsuite name="HTTP">
           <directory>./Http</directory>
       </testsuite>
-      <testsuite name="Binding">
+<!--      <testsuite name="Binding">
           <directory>./Foundation</directory>
-      </testsuite>
+      </testsuite>-->
   </testsuites>
 </phpunit>

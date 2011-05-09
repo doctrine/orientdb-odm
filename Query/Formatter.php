@@ -11,7 +11,7 @@
 
 namespace Orient\Query;
 
-class Formatter
+class Formatter implements \Orient\Contract\Query\Formatter
 {
   /**
    * Tokenizes a string.
@@ -44,6 +44,21 @@ class Formatter
   public function formatProjections(array $projections)
   {
     return $this->implode($projections);
+  }
+
+  public function formatPermission(array $permission)
+  {
+    return $this->implode($permission);
+  }
+
+  public function formatResource(array $resource)
+  {
+    return $this->implode($resource);
+  }
+
+  public function formatRole(array $role)
+  {
+    return $this->implode($role);
   }
 
   /**

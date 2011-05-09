@@ -28,6 +28,12 @@ interface Formatter
 
   public function formatRange(array $range);
 
+  public function formatPermission(array $permission);
+
+  public function formatResource(array $resource);
+
+  public function formatRole(array $role);
+
   public function btrim($text);
 }
 

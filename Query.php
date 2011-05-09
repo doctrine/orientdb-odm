@@ -10,6 +10,7 @@
 
 namespace Orient;
 
+use \Orient\Query\Command\Grant;
 use \Orient\Query\Command\Insert;
 use \Orient\Query\Command\Select;
 
@@ -91,6 +92,19 @@ class Query
   }
 
   /**
+   * Converts the query into an GRANT with $permission.
+   *
+   * @return Query
+   */
+  public function grant($permission)
+  {
+    $this->command = new Grant();
+    $this->command->grant($permission);
+
+    return $this;
+  }
+
+  /**
    * Converts the query into an INSERT.
    *
    * @return Query
@@ -123,6 +137,19 @@ class Query
   public function limit($limit)
   {
     $this->command->limit($limit);
+
+    return $this;
+  }
+
+  /**
+   * Sets the ON clause of a query.
+   *
+   * @param   string $on
+   * @return  Query
+   */
+  public function on($on)
+  {
+    $this->command->on($on);
 
     return $this;
   }
@@ -183,6 +210,19 @@ class Query
   public function select(array $projections, $append = true)
   {
     $this->command->select($projections, $append);
+
+    return $this;
+  }
+
+  /**
+   * Adds a subject to the query.
+   *
+   * @param   string   $to
+   * @return  Query
+   */
+  public function to($to)
+  {
+    $this->command->to($to);
 
     return $this;
   }

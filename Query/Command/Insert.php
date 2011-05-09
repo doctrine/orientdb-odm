@@ -10,7 +10,6 @@
 
 namespace Orient\Query\Command;
 
-use \Orient\Exception\Query\Command as CommandException;
 use \Orient\Contract\Query\Formatter;
 
 class Insert extends \Orient\Query\Command
@@ -20,9 +19,8 @@ class Insert extends \Orient\Query\Command
   ;
 
   /**
-   * Builds a Select object injecting the $target into the FROM clause.
-   *
    * @param array $target
+   * @param Formatter $formatterClass
    */
   public function __construct(array $target = NULL, Formatter $formatterClass = NULL)
   {
@@ -39,12 +37,17 @@ class Insert extends \Orient\Query\Command
 
   public function into($target)
   {
+    if (is_array($target))
+    {
+      $target = array_shift($target);
+    }
+
     $this->setToken('Target', array($target), false);
   }
 
-  public function values(array $values, $append)
+  public function values(array $values, $append = true)
   {
-    $this->setToken('Values', $values, true);
+    $this->setToken('Values', $values, $append);
   }
 }
 
