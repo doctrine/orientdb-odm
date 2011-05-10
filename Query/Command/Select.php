@@ -28,9 +28,6 @@ class Select extends \Orient\Query\Command
   {
     parent::__construct($target, $formatterClass);
 
-    $this->statement  = self::SCHEMA;
-    $this->tokens     = $this->getTokens();
-
     if ($target)
     {
       $this->setToken('Target', $target);

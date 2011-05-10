@@ -18,18 +18,6 @@ class Insert extends \Orient\Query\Command
     "INSERT INTO :Target (:Fields) VALUES (:Values)"
   ;
 
-  /**
-   * @param array $target
-   * @param Formatter $formatterClass
-   */
-  public function __construct(array $target = NULL, Formatter $formatterClass = NULL)
-  {
-    parent::__construct($target, $formatterClass);
-
-    $this->statement  = self::SCHEMA;
-    $this->tokens     = $this->getTokens();
-  }
-
   public function fields(array $fields, $append = true)
   {
     $this->setToken('Fields', $fields, $append);

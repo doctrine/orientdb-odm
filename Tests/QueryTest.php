@@ -104,4 +104,18 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     $this->assertEquals($sql, $query->getRaw());
   }
+
+  public function testRevoke()
+  {
+    $query  = new \Orient\Query();
+    $query->revoke("read")
+          ->to("myUser")
+          ->to("myOtherUser")
+          ->on("server");
+    $sql    =
+      'REVOKE read ON server TO myOtherUser'
+    ;
+
+    $this->assertEquals($sql, $query->getRaw());
+  }
 }

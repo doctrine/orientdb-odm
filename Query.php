@@ -10,7 +10,8 @@
 
 namespace Orient;
 
-use \Orient\Query\Command\Grant;
+use \Orient\Query\Command\Credential\Grant;
+use \Orient\Query\Command\Credential\Revoke;
 use \Orient\Query\Command\Insert;
 use \Orient\Query\Command\Select;
 
@@ -197,6 +198,19 @@ class Query
   public function resetWhere()
   {
     $this->command->resetWhere();
+
+    return $this;
+  }
+
+  /**
+   * Converts the query into an REVOKE with $permission.
+   *
+   * @return Query
+   */
+  public function revoke($permission)
+  {
+    $this->command = new Revoke();
+    $this->command->revoke($permission);
 
     return $this;
   }

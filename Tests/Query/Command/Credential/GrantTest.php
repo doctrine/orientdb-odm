@@ -12,7 +12,7 @@ class GrantTest extends PHPUnit_Framework_TestCase
 {
   public function testSchema()
   {
-    $grant  = new \Orient\Query\Command\Grant();
+    $grant  = new \Orient\Query\Command\Credential\Grant();
     $queryClass   = get_class($grant);
     $tokens       = array(
         ':Permission'   => array(),
@@ -29,7 +29,7 @@ class GrantTest extends PHPUnit_Framework_TestCase
 
   public function testConstruct()
   {
-    $grant = new \Orient\Query\Command\Grant();
+    $grant = new \Orient\Query\Command\Credential\Grant();
     $query = 'GRANT ON TO';
 
     $this->assertEquals($query, $grant->getRaw());
@@ -37,13 +37,13 @@ class GrantTest extends PHPUnit_Framework_TestCase
 
   public function testGrant()
   {
-    $grant = new \Orient\Query\Command\Grant();
+    $grant = new \Orient\Query\Command\Credential\Grant();
     $grant->grant('ALL');
     $query = 'GRANT ALL ON TO';
 
     $this->assertEquals($query, $grant->getRaw());
 
-    $grant = new \Orient\Query\Command\Grant();
+    $grant = new \Orient\Query\Command\Credential\Grant();
     $grant->grant('READ');
     $query = 'GRANT READ ON TO';
 
@@ -52,13 +52,13 @@ class GrantTest extends PHPUnit_Framework_TestCase
 
   public function testOn()
   {
-    $grant = new \Orient\Query\Command\Grant();
+    $grant = new \Orient\Query\Command\Credential\Grant();
     $grant->on('resource');
     $query = 'GRANT ON resource TO';
 
     $this->assertEquals($query, $grant->getRaw());
 
-    $grant = new \Orient\Query\Command\Grant();
+    $grant = new \Orient\Query\Command\Credential\Grant();
     $grant->on('resource2');
     $query = 'GRANT ON resource2 TO';
 
@@ -67,13 +67,13 @@ class GrantTest extends PHPUnit_Framework_TestCase
 
   public function testTo()
   {
-    $grant = new \Orient\Query\Command\Grant();
+    $grant = new \Orient\Query\Command\Credential\Grant();
     $grant->to('user');
     $query = 'GRANT ON TO user';
 
     $this->assertEquals($query, $grant->getRaw());
 
-    $grant = new \Orient\Query\Command\Grant();
+    $grant = new \Orient\Query\Command\Credential\Grant();
     $grant->to('user2');
     $query = 'GRANT ON TO user2';
 

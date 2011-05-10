@@ -27,6 +27,10 @@ class Command implements \Orient\Contract\Query\Command
    */
   public function  __construct(array $target = NULL, Formatter $formatter = NULL)
   {
+    $class            = get_called_class();
+    $this->statement  = $class::SCHEMA;
+    $this->tokens     = $this->getTokens();
+    
     if (!$formatter)
     {
       $formatter = new \Orient\Query\Formatter();
