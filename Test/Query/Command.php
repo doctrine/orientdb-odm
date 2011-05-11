@@ -9,9 +9,11 @@
  * @version
  */
 
-use Orient\Query\Command;
+namespace Orient\Test\Query;
 
-class MockCommand extends Command
+use Orient\Query;
+
+class MockCommand extends Query\Command
 {
   const SCHEMA = ":Target :Where";
 
@@ -24,7 +26,7 @@ class MockCommand extends Command
   }
 }
 
-class CommandTest extends PHPUnit_Framework_TestCase
+class Command extends PHPUnit_Framework_TestCase
 {
   public function testFrom()
   {

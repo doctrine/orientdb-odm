@@ -8,7 +8,10 @@
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
  */
-class RevokeTest extends PHPUnit_Framework_TestCase
+
+namespace Orient\Test\Query\Command\Credential;
+
+class Revoke extends PHPUnit_Framework_TestCase
 {
   public function testSchema()
   {

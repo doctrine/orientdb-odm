@@ -8,7 +8,10 @@
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
  */
-class InsertTest extends PHPUnit_Framework_TestCase
+
+namespace Orient\Test\Query\Command;
+
+class Insert extends PHPUnit_Framework_TestCase
 {
   public function testSchema()
   {

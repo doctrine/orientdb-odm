@@ -9,25 +9,23 @@
  * @version
  */
 
+namespace Orient\Test;
+
 use Orient\Query\Command\Select;
 use Orient\Query\Command\Insert;
+use Orient\Test\PHPUnit\TestCase;
 
-class QueryTest extends PHPUnit_Framework_TestCase
-{
-  public function initialize()
+class QueryTest extends TestCase
+{ 
+  public function getTestInstance(array $target = array())
   {
-    $this->query = new \Orient\Query();
+    return new \Orient\Query($target);
   }
-
+  
   public function testGetTokens()
   {
-    $query  = new \Orient\Query(array('myClass'));
-
-    $this->assertEquals(Select::getTokens(), $query->getTokens());
-
-    $query  = new \Orient\Query();
-
-    $this->assertEquals(Insert::getTokens(), $query->insert()->getTokens());
+    $this->assertTokens(Select::getTokens(), $this->getTestInstance()->getTokens());
+    $this->assertTokens(Insert::getTokens(), $this->getTestInstance()->insert()->getTokens());
   }
 
   public function testSelect()

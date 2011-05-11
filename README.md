@@ -37,4 +37,4 @@ In order to run the tests you only need phpunit >= 3.5.
 
 cd /path/to/repo
 
-phpunit --colors Tests/
+phpunit --configuration=Test/PHPUnit/phpunit.xml

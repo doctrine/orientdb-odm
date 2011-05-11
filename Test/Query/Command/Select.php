@@ -8,7 +8,10 @@
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
  */
-class SelectTest extends PHPUnit_Framework_TestCase
+
+namespace Orient\Test\Query\Command;
+
+class Select extends PHPUnit_Framework_TestCase
 {
   public function testSchema()
   {

@@ -19,16 +19,16 @@
          strict="false"
          verbose="false">
 
-  <testsuites>
+    <testsuites>
       <testsuite name="Query builder">
-          <directory>./Query</directory>
-          <file>./Tests/QueryTest.php</file>
+          <directory>../Query</directory>
+          <file>./Query.php</file>
       </testsuite>
       <testsuite name="HTTP">
-          <directory>./Http</directory>
+          <directory>../Http</directory>
       </testsuite>
-<!--      <testsuite name="Binding">
+    <!--      <testsuite name="Binding">
           <directory>./Foundation</directory>
       </testsuite>-->
-  </testsuites>
+    </testsuites>
 </phpunit>
