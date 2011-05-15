@@ -33,13 +33,15 @@ Not started yet.
 
 ## Tests
 
-In order to run the tests you only need phpunit >= 3.5.
+In order to run the tests you only need to:
 
-cd /path/to/repo
-
-phpunit --configuration=Test/PHPUnit/phpunit.xml
+    cd /path/to/repo
+    phpunit --configuration=Test/PHPUnit/phpunit.xml
 
 ## Requirements
 
-PHP 5.3.5
+PHP >= 5.3.5
+
+PHPUnit >= 3.5
+
 OrientDB 0.9.25

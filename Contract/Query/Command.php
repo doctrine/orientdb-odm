@@ -21,5 +21,13 @@ interface Command
   public function __construct(array $target = NULL, Formatter $formatter = NULL);
 
   public function getRaw();
+
+  public static function getTokens();
+
+  public function from(array $target, $append = true);
+
+  public function getTokenValue($token);
+
+  public function where($condition, $value = NULL, $append = false, $clause = "WHERE");
 }
 

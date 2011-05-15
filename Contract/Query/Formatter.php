@@ -34,6 +34,10 @@ interface Formatter
 
   public function formatRole(array $role);
 
+  public function formatValues(array $values);
+
+  public function formatFields(array $fields);
+
   public function btrim($text);
 }
 
