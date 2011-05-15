@@ -10,14 +10,19 @@
 
 namespace Orient;
 
-use \Orient\Query\Command\Credential\Grant;
-use \Orient\Query\Command\Credential\Revoke;
-use \Orient\Query\Command\Insert;
-use \Orient\Query\Command\Select;
+use Orient\Query\Command\Credential\Grant;
+use Orient\Query\Command\Credential\Revoke;
+use Orient\Query\Command\Insert;
+use Orient\Query\Command\Select;
+use Orient\Contract\Query\Command\Select  as SelectInterface;
+use Orient\Contract\Query\Command\Insert  as InsertInterface;
+use Orient\Contract\Query\Command\Grant   as GrantInterface;
+use Orient\Contract\Query\Command\Revoke  as RevokeInterface;
 
 class Query
 {
-  protected $command = NULL;
+  protected $command  = NULL;
+  protected $commands = array();
 
   /**
    * Builds a query with the given $command on the given $target.
@@ -25,9 +30,14 @@ class Query
    * @param array   $target
    * @param string  $command
    */
-  public function __construct(array $target = NULL, $command = 'select')
+  public function __construct(array $commands)
   {
-    $this->command  = new Select($target);
+    foreach ($commands as $id => $command)
+    {
+      $this->commands[$id] = $command;
+    }
+
+    $this->command = $this->getCommand('select');
   }
 
   /**
@@ -88,7 +98,7 @@ class Query
   public function getTokens()
   {
     $command = $this->command;
-    
+
     return $command::getTokens();
   }
 
@@ -99,7 +109,7 @@ class Query
    */
   public function grant($permission)
   {
-    $this->command = new Grant();
+    $this->command = $this->getCommand('grant');
     $this->command->grant($permission);
 
     return $this;
@@ -112,7 +122,7 @@ class Query
    */
   public function insert()
   {
-    $this->command = new Insert();
+    $this->command = $this->getCommand('insert');
 
     return $this;
   }
@@ -259,6 +269,22 @@ class Query
     $this->command->where($condition, $value);
 
     return $this;
+  }
+
+  /**
+   * Returns on of the commands that belong to the query.
+   *
+   * @param   string $id
+   * @return  mixed
+   */
+  protected function getCommand($id)
+  {
+    if (isset($this->commands[$id]))
+    {
+      return $this->commands[$id];
+    }
+
+    throw new \Exception(sprintf("command %s not found in %s", $id, get_called_class()));
   }
 }
 

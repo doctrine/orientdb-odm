@@ -12,9 +12,10 @@ namespace Orient\Query\Command;
 
 use Orient\Exception\Query\Command as CommandException;
 use Orient\Contract\Query\Formatter;
-use \Orient\Query\Command;
+use Orient\Query\Command;
+use Orient\Contract\Query\Command\Select as SelectInterface;
 
-class Select extends Command
+class Select extends Command implements SelectInterface
 {  
   const SCHEMA          =
     "SELECT :Projections FROM :Target :Where :OrderBy :Limit :Range"

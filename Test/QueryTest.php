@@ -13,6 +13,8 @@ namespace Orient\Test;
 
 use Orient\Query\Command\Select;
 use Orient\Query\Command\Insert;
+use Orient\Query\Command\Credential\Grant;
+use Orient\Query\Command\Credential\Revoke;
 use Orient\Test\PHPUnit\TestCase;
 use Orient\Query;
 
@@ -20,18 +22,30 @@ class QueryTest extends TestCase
 { 
   public function setup()
   {
-    $this->query = new Query();
+    $this->query = new Query($this->getCommands());
+  }
+
+  public static function getCommands()
+  {
+    return array(
+        'select'  => new Select(),
+        'insert'  => new Insert(),
+        'grant'   => new Grant(),
+        'revoke'  => new Revoke()
+    );
   }
   
   public function testTheQueryTokensAreValid()
   {
     $this->assertTokens(Select::getTokens(), $this->query->getTokens());
     $this->assertTokens(Insert::getTokens(), $this->query->insert()->getTokens());
+    $this->assertTokens(Grant::getTokens(), $this->query->grant('what')->getTokens());
+    $this->assertTokens(Revoke::getTokens(), $this->query->revoke('what')->getTokens());
   }
 
   public function testYouCanCreateASelect()
   {
-    $this->query  = new Query(array('myClass'));
+    $this->query  = new Query(array('select' => new Select(array('myClass'))));
     $this->query->select(array('name', 'username', 'email'))
           ->from(array('12:0', '12:1'), false)
           ->where('any() traverse ( any() like "%danger%" )')
@@ -50,7 +64,7 @@ class QueryTest extends TestCase
 
   public function testYouCanResetAllTheWheresOfAQuery()
   {
-    $this->query  = new Query(array('myClass'));
+    $this->query  = new Query(array('select' => new Select(array('myClass'))));
     $this->query->where('the sky = ?', 'blue');
     $sql    =
       'SELECT FROM myClass WHERE the sky = "blue"'
@@ -65,7 +79,7 @@ class QueryTest extends TestCase
 
     $this->assertCommandGives($sql, $this->query->getRaw());
 
-    $this->query  = new Query(array('myClass'));
+    $this->query  = new Query(array('select' => new Select(array('myClass'))));
     $this->query->where('the sky = ?', 'blue');
     $sql    =
       'SELECT FROM myClass WHERE the sky = "blue"'
@@ -76,6 +90,7 @@ class QueryTest extends TestCase
 
   public function testYouCanCreateAnInsert()
   {
+    $this->query  = new Query($this->getCommands());
     $this->query->insert()
           ->into("myClass")
           ->fields(array('name', 'relation', 'links'))
@@ -91,6 +106,7 @@ class QueryTest extends TestCase
 
   public function testYouCanCreateAGrant()
   {
+    $this->query  = new Query($this->getCommands());
     $this->query->grant("read")
           ->to("myUser")
           ->to("myOtherUser")
@@ -104,6 +120,7 @@ class QueryTest extends TestCase
 
   public function testYouCanCreateARevoke()
   {
+    $this->query  = new Query($this->getCommands());
     $this->query->revoke("read")
           ->to("myUser")
           ->to("myOtherUser")
