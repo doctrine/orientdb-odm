@@ -54,6 +54,20 @@ class Query
     return $this;
   }
 
+  public function createClass($class)
+  {
+    $this->manageClass('create', $class);
+
+    return $this;
+  }
+
+  public function dropClass($class)
+  {
+    $this->manageClass('drop', $class);
+
+    return $this;
+  }
+
   /**
    * Sets the fields to query.
    *
@@ -286,6 +300,12 @@ class Query
     }
 
     throw new Exception(sprintf("command %s not found in %s", $id, get_called_class()));
+  }
+
+  protected function manageClass($action, $class)
+  {
+    $this->command = $this->getCommand($action);
+    $this->command->setClass($class);
   }
 }
 

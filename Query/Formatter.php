@@ -48,6 +48,11 @@ class Formatter implements FormatterContract
     return $this->implode($projections);
   }
 
+  public function formatClass(array $class)
+  {
+    return $this->implode($class);
+  }
+
   public function formatPermission(array $permission)
   {
     return $this->implode($permission);

@@ -15,6 +15,8 @@ use Orient\Query\Command\Select;
 use Orient\Query\Command\Insert;
 use Orient\Query\Command\Credential\Grant;
 use Orient\Query\Command\Credential\Revoke;
+use Orient\Query\Command\OClass\Create;
+use Orient\Query\Command\OClass\Drop;
 use Orient\Test\PHPUnit\TestCase;
 use Orient\Query;
 
@@ -31,7 +33,9 @@ class QueryTest extends TestCase
         'select'  => new Select(),
         'insert'  => new Insert(),
         'grant'   => new Grant(),
-        'revoke'  => new Revoke()
+        'revoke'  => new Revoke(),
+        'create'  => new Create(),
+        'drop'    => new Drop(),
     );
   }
   
@@ -41,6 +45,7 @@ class QueryTest extends TestCase
     $this->assertTokens(Insert::getTokens(), $this->query->insert()->getTokens());
     $this->assertTokens(Grant::getTokens(), $this->query->grant('what')->getTokens());
     $this->assertTokens(Revoke::getTokens(), $this->query->revoke('what')->getTokens());
+    $this->assertTokens(Create::getTokens(), $this->query->createClass('what')->getTokens());
   }
 
   public function testYouCanCreateASelect()
@@ -138,5 +143,27 @@ class QueryTest extends TestCase
   public function testWithoutInjectingCommandAnExceptionIsRaised()
   {
     $this->query  = new Query(array());
+  }
+
+  public function testCreationOfAClass()
+  {
+    $this->query  = new Query($this->getCommands());
+    $this->query->createClass("read");
+    $sql    =
+      'CREATE CLASS read'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
+  }
+
+  public function testRemovalOfAClass()
+  {
+    $this->query  = new Query($this->getCommands());
+    $this->query->dropClass("read");
+    $sql    =
+      'DROP CLASS read'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
   }
 }

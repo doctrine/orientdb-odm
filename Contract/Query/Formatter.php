@@ -18,6 +18,8 @@ interface Formatter
 
   public function formatProjections(array $projections);
 
+  public function formatClass(array $class);
+
   public function formatTarget(array $target);
 
   public function formatWhere(array $where);
