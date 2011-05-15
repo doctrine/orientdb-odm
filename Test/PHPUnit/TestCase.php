@@ -10,6 +10,20 @@ namespace Orient\Test\PHPUnit;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
+  public function assertCommandGives($expected, $got)
+  {
+    $message = "The raw command does not match the given SQL query";
+
+    return $this->assertEquals($expected, $got, $message);
+  }
+
+  public function assertStatusCode($expected, $got)
+  {
+    $message = "The status code of the response is wrong";
+
+    return $this->assertEquals($expected, $got, $message);
+  }
+
   public function assertTokens($expected, $got)
   {
     $message = "The given command tokens do not match";

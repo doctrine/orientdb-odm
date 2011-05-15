@@ -25,7 +25,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
     $this->assertEquals("AB", $toString);
   }
 
-  public function testGetResponse()
+  public function testRetrieveTheWholeResponse()
   {
     $response = new Http\Response("A\r\n\r\nB");
 

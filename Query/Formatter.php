@@ -11,7 +11,9 @@
 
 namespace Orient\Query;
 
-class Formatter implements \Orient\Contract\Query\Formatter
+use \Orient\Contract\Query\Formatter as FormatterContract;
+
+class Formatter implements FormatterContract
 {
   /**
    * Tokenizes a string.

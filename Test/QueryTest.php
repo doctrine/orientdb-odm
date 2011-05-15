@@ -14,24 +14,25 @@ namespace Orient\Test;
 use Orient\Query\Command\Select;
 use Orient\Query\Command\Insert;
 use Orient\Test\PHPUnit\TestCase;
+use Orient\Query;
 
 class QueryTest extends TestCase
 { 
-  public function getTestInstance(array $target = array())
+  public function setup()
   {
-    return new \Orient\Query($target);
+    $this->query = new Query();
   }
   
-  public function testGetTokens()
+  public function testTheQueryTokensAreValid()
   {
-    $this->assertTokens(Select::getTokens(), $this->getTestInstance()->getTokens());
-    $this->assertTokens(Insert::getTokens(), $this->getTestInstance()->insert()->getTokens());
+    $this->assertTokens(Select::getTokens(), $this->query->getTokens());
+    $this->assertTokens(Insert::getTokens(), $this->query->insert()->getTokens());
   }
 
-  public function testSelect()
+  public function testYouCanCreateASelect()
   {
-    $query  = new \Orient\Query(array('myClass'));
-    $query->select(array('name', 'username', 'email'))
+    $this->query  = new Query(array('myClass'));
+    $this->query->select(array('name', 'username', 'email'))
           ->from(array('12:0', '12:1'), false)
           ->where('any() traverse ( any() like "%danger%" )')
           ->orWhere("1 = ?", 1)
@@ -44,39 +45,38 @@ class QueryTest extends TestCase
       'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = "1" AND links = "1" ORDER BY name, username LIMIT 20 RANGE 12:0, 12:1'
     ;
 
-    $this->assertEquals($sql, $query->getRaw());
+    $this->assertCommandGives($sql, $this->query->getRaw());
   }
 
-  public function testResetWhere()
+  public function testYouCanResetAllTheWheresOfAQuery()
   {
-    $query  = new \Orient\Query(array('myClass'));
-    $query->where('the sky = ?', 'blue');
+    $this->query  = new Query(array('myClass'));
+    $this->query->where('the sky = ?', 'blue');
     $sql    =
       'SELECT FROM myClass WHERE the sky = "blue"'
     ;
 
-    $this->assertEquals($sql, $query->getRaw());
+    $this->assertCommandGives($sql, $this->query->getRaw());
 
-    $query->resetWhere();
+    $this->query->resetWhere();
     $sql    =
       'SELECT FROM myClass'
     ;
 
-    $this->assertEquals($sql, $query->getRaw());
+    $this->assertCommandGives($sql, $this->query->getRaw());
 
-    $query  = new \Orient\Query(array('myClass'));
-    $query->where('the sky = ?', 'blue');
+    $this->query  = new Query(array('myClass'));
+    $this->query->where('the sky = ?', 'blue');
     $sql    =
       'SELECT FROM myClass WHERE the sky = "blue"'
     ;
 
-    $this->assertEquals($sql, $query->getRaw());
+    $this->assertCommandGives($sql, $this->query->getRaw());
   }
 
-  public function testInsert()
+  public function testYouCanCreateAnInsert()
   {
-    $query  = new \Orient\Query(array('myClass'));
-    $query->insert()
+    $this->query->insert()
           ->into("myClass")
           ->fields(array('name', 'relation', 'links'))
           ->values(array(
@@ -86,13 +86,12 @@ class QueryTest extends TestCase
       'INSERT INTO myClass (name, relation, links) VALUES ("hello", 10:1, [10:1, 11:1])'
     ;
 
-    $this->assertEquals($sql, $query->getRaw());
+    $this->assertCommandGives($sql, $this->query->getRaw());
   }
 
-  public function testGrant()
+  public function testYouCanCreateAGrant()
   {
-    $query  = new \Orient\Query();
-    $query->grant("read")
+    $this->query->grant("read")
           ->to("myUser")
           ->to("myOtherUser")
           ->on("server");
@@ -100,13 +99,12 @@ class QueryTest extends TestCase
       'GRANT read ON server TO myOtherUser'
     ;
 
-    $this->assertEquals($sql, $query->getRaw());
+    $this->assertCommandGives($sql, $this->query->getRaw());
   }
 
-  public function testRevoke()
+  public function testYouCanCreateARevoke()
   {
-    $query  = new \Orient\Query();
-    $query->revoke("read")
+    $this->query->revoke("read")
           ->to("myUser")
           ->to("myOtherUser")
           ->on("server");
@@ -114,6 +112,6 @@ class QueryTest extends TestCase
       'REVOKE read ON server TO myOtherUser'
     ;
 
-    $this->assertEquals($sql, $query->getRaw());
+    $this->assertEquals($sql, $this->query->getRaw());
   }
 }

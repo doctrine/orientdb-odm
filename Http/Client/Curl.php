@@ -11,8 +11,9 @@ namespace Orient\Http\Client;
 
 use Orient\Http\Response;
 use Orient\Exception\Http\Response\Void as VoidResponse;
+use Orient\Contract\Http\Client as HttpClient;
 
-class Curl implements \Orient\Contract\Http\Client
+class Curl implements HttpClient
 {
   protected $client;
   protected $credential;

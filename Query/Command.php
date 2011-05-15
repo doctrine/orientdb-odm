@@ -12,9 +12,11 @@
 namespace Orient\Query;
 
 use Orient\Exception\Query\Command as CommandException;
-use Orient\Contract\Query\Formatter;
+use Orient\Contract\Query\Formatter as FormatterContract;
+use Orient\Query\Formatter;
+use Orient\Contract\Query\Command as CommandContract;
 
-class Command implements \Orient\Contract\Query\Command
+class Command implements CommandContract
 {
   protected   $tokens     = array();
   protected   $statement  = NULL;
@@ -25,15 +27,15 @@ class Command implements \Orient\Contract\Query\Command
    * @param array     $target
    * @param Formatter $formatter
    */
-  public function  __construct(array $target = NULL, Formatter $formatter = NULL)
+  public function  __construct(array $target = NULL, FormatterContract $formatter = NULL)
   {
     $class            = get_called_class();
     $this->statement  = $class::SCHEMA;
     $this->tokens     = $this->getTokens();
     
-    if (!$formatter)
+    if (is_null($formatter))
     {
-      $formatter = new \Orient\Query\Formatter();
+      $formatter = new Formatter();
     }
     
     $this->formatter  = $formatter;

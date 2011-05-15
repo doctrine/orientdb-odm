@@ -11,8 +11,9 @@
 namespace Orient\Query\Command;
 
 use Orient\Contract\Query\Formatter;
+use Orient\Query\Command;
 
-abstract class Credential extends \Orient\Query\Command
+abstract class Credential extends Command
 {
   public function setPermission($permission)
   {

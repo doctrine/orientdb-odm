@@ -10,9 +10,10 @@
 
 namespace Orient\Query\Command\Credential;
 
-use \Orient\Contract\Query\Formatter;
+use Orient\Contract\Query\Formatter;
+use Orient\Query\Command\Credential;
 
-class Grant extends \Orient\Query\Command\Credential
+class Grant extends Credential
 {
   const SCHEMA          =
     "GRANT :Permission ON :Resource TO :Role"

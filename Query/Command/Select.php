@@ -10,10 +10,11 @@
 
 namespace Orient\Query\Command;
 
-use \Orient\Exception\Query\Command as CommandException;
-use \Orient\Contract\Query\Formatter;
+use Orient\Exception\Query\Command as CommandException;
+use Orient\Contract\Query\Formatter;
+use \Orient\Query\Command;
 
-class Select extends \Orient\Query\Command
+class Select extends Command
 {  
   const SCHEMA          =
     "SELECT :Projections FROM :Target :Where :OrderBy :Limit :Range"
