@@ -130,6 +130,15 @@ class Query
     return $this;
   }
 
+  public function findReferences($rid, array $classes = array(), $append = true)
+  {
+    $this->command = $this->getCommand('references.find');
+    $this->command->find($rid);
+    $this->command->in($classes, $append);
+
+    return $this;
+  }
+
   /**
    * Converts the query into an INSERT.
    *

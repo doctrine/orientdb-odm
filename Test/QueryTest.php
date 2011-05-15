@@ -17,6 +17,7 @@ use Orient\Query\Command\Credential\Grant;
 use Orient\Query\Command\Credential\Revoke;
 use Orient\Query\Command\OClass\Create;
 use Orient\Query\Command\OClass\Drop;
+use Orient\Query\Command\Reference\Find;
 use Orient\Query\Command\Property\Drop as DropProperty;
 use Orient\Query\Command\Property\Create as CreateProperty;
 use Orient\Test\PHPUnit\TestCase;
@@ -40,6 +41,7 @@ class QueryTest extends TestCase
         'class.drop'      => new Drop(),
         'property.drop'   => new DropProperty(),
         'property.create' => new CreateProperty(),
+        'references.find' => new Find(),
     );
   }
   
@@ -205,6 +207,38 @@ class QueryTest extends TestCase
     $this->query->create("run", "forrest", "type", "Friend");
     $sql    =
       'CREATE PROPERTY run.forrest type Friend'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
+  }
+
+  public function testFindReferences()
+  {
+    $this->query  = new Query($this->getCommands());
+    $this->query->findReferences("1:1");
+    $sql    =
+      'FIND REFERENCES 1:1'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
+
+    $this->query->findReferences("1:2", array('class'));
+    $sql    =
+      'FIND REFERENCES 1:2 [class]'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
+
+    $this->query->findReferences("1:3", array('class2', 'cluster:class3'));
+    $sql    =
+      'FIND REFERENCES 1:3 [class, class2, cluster:class3]'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
+
+    $this->query->findReferences("1:3", array('class'), false);
+    $sql    =
+      'FIND REFERENCES 1:3 [class]'
     ;
 
     $this->assertEquals($sql, $this->query->getRaw());

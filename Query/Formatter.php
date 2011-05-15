@@ -68,6 +68,19 @@ class Formatter implements FormatterInterface
     return $this->implode($resource);
   }
 
+  public function formatRid(array $rid)
+  {
+    return $this->implode($rid);
+  }
+
+  public function formatClassList(array $classList)
+  {
+    if (count($classList))
+    {
+      return "[" . $this->implode($classList) . "]";
+    }
+  }
+
   public function formatRole(array $role)
   {
     return $this->implode($role);
