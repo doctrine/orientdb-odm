@@ -131,4 +131,12 @@ class QueryTest extends TestCase
 
     $this->assertEquals($sql, $this->query->getRaw());
   }
+
+  /**
+   * @expectedException Orient\Exception
+   */
+  public function testWithoutInjectingCommandAnExceptionIsRaised()
+  {
+    $this->query  = new Query(array());
+  }
 }

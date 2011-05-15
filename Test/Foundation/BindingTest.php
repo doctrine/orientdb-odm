@@ -176,6 +176,22 @@ class BindingTest extends TestCase
     $this->assertStatusCode(self::_500, $this->orient->deleteDocument('9991')->getStatusCode(), 'deletes a non valid document');
   }
 
+  public function testSettingHttpClient()
+  {
+    $client = new Curl();
+
+    $this->assertFalse($client === $this->orient->getHttpClient());
+
+    $this->orient->setHttpClient($client);
+    
+    $this->assertTrue($client === $this->orient->getHttpClient());
+  }
+
+  public function testFetchplanIsHandledCorrectly()
+  {
+    $response = $this->orient->getDocument('1:1', 'demo', 'myFetchplan');
+  }
+
   /**
    * @expectedException Orient\Exception\Http\Response\Void
    */

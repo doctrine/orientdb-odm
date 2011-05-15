@@ -342,12 +342,7 @@ class Binding implements Protocol\Http
    */
   public function getHttpClient()
   {
-    if ($this->client instanceOf Http\Client)
-    {
-      return $this->client;
-    }
-
-    throw new \Exception('You must inject an http client to the Orient instance via setHttpclient');
+    return $this->client;
   }
 
   /**

@@ -14,6 +14,7 @@ use Orient\Query\Command\Credential\Grant;
 use Orient\Query\Command\Credential\Revoke;
 use Orient\Query\Command\Insert;
 use Orient\Query\Command\Select;
+use Orient\Exception;
 use Orient\Contract\Query\Command\Select  as SelectInterface;
 use Orient\Contract\Query\Command\Insert  as InsertInterface;
 use Orient\Contract\Query\Command\Grant   as GrantInterface;
@@ -284,7 +285,7 @@ class Query
       return $this->commands[$id];
     }
 
-    throw new \Exception(sprintf("command %s not found in %s", $id, get_called_class()));
+    throw new Exception(sprintf("command %s not found in %s", $id, get_called_class()));
   }
 }
 
