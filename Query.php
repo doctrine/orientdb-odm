@@ -54,16 +54,23 @@ class Query
     return $this;
   }
 
-  public function createClass($class)
+  public function create($class)
   {
     $this->manageClass('create', $class);
 
     return $this;
   }
 
-  public function dropClass($class)
+  public function drop($class, $property = NULL)
   {
-    $this->manageClass('drop', $class);
+    if ($property)
+    {
+      $this->manageProperty('drop', $class, $property);
+    }
+    else
+    {
+      $this->manageClass('drop', $class);
+    }
 
     return $this;
   }
@@ -304,8 +311,15 @@ class Query
 
   protected function manageClass($action, $class)
   {
-    $this->command = $this->getCommand($action);
+    $this->command = $this->getCommand("class." . $action);
     $this->command->setClass($class);
+  }
+
+  protected function manageProperty($action, $class, $property)
+  {
+    $this->command = $this->getCommand("property." . $action);
+    $this->command->property($property);
+    $this->command->on($class);
   }
 }
 

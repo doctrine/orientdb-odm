@@ -32,6 +32,8 @@ interface Formatter
 
   public function formatPermission(array $permission);
 
+  public function formatProperty(array $property);
+
   public function formatResource(array $resource);
 
   public function formatRole(array $role);

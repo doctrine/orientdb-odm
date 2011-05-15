@@ -17,6 +17,7 @@ use Orient\Query\Command\Credential\Grant;
 use Orient\Query\Command\Credential\Revoke;
 use Orient\Query\Command\OClass\Create;
 use Orient\Query\Command\OClass\Drop;
+use Orient\Query\Command\Property\Drop as DropProperty;
 use Orient\Test\PHPUnit\TestCase;
 use Orient\Query;
 
@@ -30,12 +31,13 @@ class QueryTest extends TestCase
   public static function getCommands()
   {
     return array(
-        'select'  => new Select(),
-        'insert'  => new Insert(),
-        'grant'   => new Grant(),
-        'revoke'  => new Revoke(),
-        'create'  => new Create(),
-        'drop'    => new Drop(),
+        'select'          => new Select(),
+        'insert'          => new Insert(),
+        'grant'           => new Grant(),
+        'revoke'          => new Revoke(),
+        'class.create'    => new Create(),
+        'class.drop'      => new Drop(),
+        'property.drop'   => new DropProperty(),
     );
   }
   
@@ -45,7 +47,9 @@ class QueryTest extends TestCase
     $this->assertTokens(Insert::getTokens(), $this->query->insert()->getTokens());
     $this->assertTokens(Grant::getTokens(), $this->query->grant('what')->getTokens());
     $this->assertTokens(Revoke::getTokens(), $this->query->revoke('what')->getTokens());
-    $this->assertTokens(Create::getTokens(), $this->query->createClass('what')->getTokens());
+    $this->assertTokens(Create::getTokens(), $this->query->create('what')->getTokens());
+    $this->assertTokens(Drop::getTokens(), $this->query->drop('what')->getTokens());
+    $this->assertTokens(DropProperty::getTokens(), $this->query->drop('what', 'hallo')->getTokens());
   }
 
   public function testYouCanCreateASelect()
@@ -148,7 +152,7 @@ class QueryTest extends TestCase
   public function testCreationOfAClass()
   {
     $this->query  = new Query($this->getCommands());
-    $this->query->createClass("read");
+    $this->query->create("read");
     $sql    =
       'CREATE CLASS read'
     ;
@@ -159,9 +163,27 @@ class QueryTest extends TestCase
   public function testRemovalOfAClass()
   {
     $this->query  = new Query($this->getCommands());
-    $this->query->dropClass("read");
+    $this->query->drop("read");
     $sql    =
       'DROP CLASS read'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
+  }
+
+  public function testRemovalOfAProperty()
+  {
+    $this->query  = new Query($this->getCommands());
+    $this->query->drop("read", "hallo");
+    $sql    =
+      'DROP PROPERTY read.hallo'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
+
+    $this->query->drop("run", "forrest");
+    $sql    =
+      'DROP PROPERTY run.forrest'
     ;
 
     $this->assertEquals($sql, $this->query->getRaw());
