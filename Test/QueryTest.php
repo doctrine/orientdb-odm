@@ -18,6 +18,7 @@ use Orient\Query\Command\Credential\Revoke;
 use Orient\Query\Command\OClass\Create;
 use Orient\Query\Command\OClass\Drop;
 use Orient\Query\Command\Property\Drop as DropProperty;
+use Orient\Query\Command\Property\Create as CreateProperty;
 use Orient\Test\PHPUnit\TestCase;
 use Orient\Query;
 
@@ -38,6 +39,7 @@ class QueryTest extends TestCase
         'class.create'    => new Create(),
         'class.drop'      => new Drop(),
         'property.drop'   => new DropProperty(),
+        'property.create' => new CreateProperty(),
     );
   }
   
@@ -50,6 +52,7 @@ class QueryTest extends TestCase
     $this->assertTokens(Create::getTokens(), $this->query->create('what')->getTokens());
     $this->assertTokens(Drop::getTokens(), $this->query->drop('what')->getTokens());
     $this->assertTokens(DropProperty::getTokens(), $this->query->drop('what', 'hallo')->getTokens());
+    $this->assertTokens(CreateProperty::getTokens(), $this->query->create('what', 'hallo', "a")->getTokens());
   }
 
   public function testYouCanCreateASelect()
@@ -184,6 +187,24 @@ class QueryTest extends TestCase
     $this->query->drop("run", "forrest");
     $sql    =
       'DROP PROPERTY run.forrest'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
+  }
+
+  public function testCreationOfAProperty()
+  {
+    $this->query  = new Query($this->getCommands());
+    $this->query->create("read", "hallo", "type");
+    $sql    =
+      'CREATE PROPERTY read.hallo type'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
+
+    $this->query->create("run", "forrest", "type", "Friend");
+    $sql    =
+      'CREATE PROPERTY run.forrest type Friend'
     ;
 
     $this->assertEquals($sql, $this->query->getRaw());

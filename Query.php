@@ -54,23 +54,16 @@ class Query
     return $this;
   }
 
-  public function create($class)
+  public function create($class, $property = NULL, $type = NULL, $linked = NULL)
   {
-    $this->manageClass('create', $class);
+    $this->executeClassOrPropertyCommand('create', $class, $property, $type, $linked);
 
     return $this;
   }
 
   public function drop($class, $property = NULL)
   {
-    if ($property)
-    {
-      $this->manageProperty('drop', $class, $property);
-    }
-    else
-    {
-      $this->manageClass('drop', $class);
-    }
+    $this->executeClassOrPropertyCommand('drop', $class, $property);
 
     return $this;
   }
@@ -309,17 +302,42 @@ class Query
     throw new Exception(sprintf("command %s not found in %s", $id, get_called_class()));
   }
 
+  /**
+   * Sets the right class command based on the $action.
+   *
+   * @param string $action
+   * @param string $class
+   */
   protected function manageClass($action, $class)
   {
     $this->command = $this->getCommand("class." . $action);
     $this->command->setClass($class);
   }
 
-  protected function manageProperty($action, $class, $property)
+  /**
+   * Sets the right property command based on the $action.
+   *
+   * @param string $action
+   * @param string $class
+   * @param string $property
+   */
+  protected function manageProperty($action, $class, $property, $type = NULL, $linked = NULL)
   {
     $this->command = $this->getCommand("property." . $action);
-    $this->command->property($property);
+    $this->command->property($property, $type, $linked);
     $this->command->on($class);
+  }
+
+  protected function executeClassOrPropertyCommand($action, $class, $property = NULL, $type = NULL, $linked = NULL)
+  {
+    if ($property)
+    {
+      $this->manageProperty($action, $class, $property, $type, $linked);
+    }
+    else
+    {
+      $this->manageClass($action, $class);
+    }
   }
 }
 

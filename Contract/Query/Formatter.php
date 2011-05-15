@@ -40,6 +40,10 @@ interface Formatter
 
   public function formatValues(array $values);
 
+  public function formatType(array $type);
+
+  public function formatLinked(array $type);
+
   public function formatFields(array $fields);
 
   public function btrim($text);

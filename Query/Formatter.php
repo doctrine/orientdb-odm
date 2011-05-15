@@ -73,6 +73,16 @@ class Formatter implements FormatterInterface
     return $this->implode($role);
   }
 
+  public function formatType(array $type)
+  {
+    return $this->implode($type);
+  }
+
+  public function formatLinked(array $linked)
+  {
+    return $this->implode($linked);
+  }
+
   /**
    * Formats the target.
    *
