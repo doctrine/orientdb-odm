@@ -19,6 +19,8 @@ use Orient\Query\Command\OClass\Create;
 use Orient\Query\Command\OClass\Drop;
 use Orient\Query\Command\Reference\Find;
 use Orient\Query\Command\Property\Drop as DropProperty;
+use Orient\Query\Command\Index\Drop as DropIndex;
+use Orient\Query\Command\Index\Create as CreateIndex;
 use Orient\Query\Command\Property\Create as CreateProperty;
 use Orient\Test\PHPUnit\TestCase;
 use Orient\Query;
@@ -42,6 +44,8 @@ class QueryTest extends TestCase
         'property.drop'   => new DropProperty(),
         'property.create' => new CreateProperty(),
         'references.find' => new Find(),
+        'index.drop'      => new DropIndex(),
+        'index.create'    => new CreateIndex(),
     );
   }
   
@@ -55,6 +59,8 @@ class QueryTest extends TestCase
     $this->assertTokens(Drop::getTokens(), $this->query->drop('what')->getTokens());
     $this->assertTokens(DropProperty::getTokens(), $this->query->drop('what', 'hallo')->getTokens());
     $this->assertTokens(CreateProperty::getTokens(), $this->query->create('what', 'hallo', "a")->getTokens());
+    $this->assertTokens(CreateIndex::getTokens(), $this->query->index('what', 'hallo')->getTokens());
+    $this->assertTokens(DropIndex::getTokens(), $this->query->unindex('what', 'hallo')->getTokens());
   }
 
   public function testYouCanCreateASelect()
@@ -239,6 +245,28 @@ class QueryTest extends TestCase
     $this->query->findReferences("1:3", array('class'), false);
     $sql    =
       'FIND REFERENCES 1:3 [class]'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
+  }
+
+  public function testDroppingAnIndex()
+  {
+    $this->query  = new Query($this->getCommands());
+    $this->query->unindex("class", "property");
+    $sql    =
+      'DROP INDEX class.property'
+    ;
+
+    $this->assertEquals($sql, $this->query->getRaw());
+  }
+
+  public function testCreatingAnIndex()
+  {
+    $this->query  = new Query($this->getCommands());
+    $this->query->index("class", "property");
+    $sql    =
+      'CREATE INDEX class.property'
     ;
 
     $this->assertEquals($sql, $this->query->getRaw());

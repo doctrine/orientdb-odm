@@ -140,6 +140,21 @@ class Query
   }
 
   /**
+   * Creates a index
+   *
+   * @param   string $class
+   * @param   string $property
+   * @return  Query
+   */
+  public function index($class, $property)
+  {
+    $this->command = $this->getCommand('index.create');
+    $this->command->create($class, $property);
+
+    return $this;
+  }
+
+  /**
    * Converts the query into an INSERT.
    *
    * @return Query
@@ -279,6 +294,21 @@ class Query
   {
     $this->command->values($values, $append);
     
+    return $this;
+  }
+
+  /**
+   * Removes a index
+   *
+   * @param   string $class
+   * @param   string $property
+   * @return  Query
+   */
+  public function unindex($class, $property)
+  {
+    $this->command = $this->getCommand('index.drop');
+    $this->command->drop($class, $property);
+
     return $this;
   }
 
