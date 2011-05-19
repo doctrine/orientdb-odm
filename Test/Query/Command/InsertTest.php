@@ -64,11 +64,6 @@ class InsertTest extends TestCase
 
     $this->assertCommandGives($query, $this->insert->getRaw());
 
-    $this->insert->into(array('name', 'username'), true);
-    $query = 'INSERT INTO name () VALUES ()';
-
-    $this->assertCommandGives($query, $this->insert->getRaw());
-
     $this->insert->into('town', false);
     $query = 'INSERT INTO town () VALUES ()';
 

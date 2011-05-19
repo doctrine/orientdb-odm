@@ -20,15 +20,15 @@ class Property extends Command
     
     $this->setProperty($property);
   }
-  
-  public function setProperty($property)
-  {
-    $this->setToken('Property', $property);
-  }
 
   public function on($class)
   {
     $this->setToken('Class', $class);
+  }
+  
+  protected function setProperty($property)
+  {
+    $this->setToken('Property', $property);
   }
 }
 

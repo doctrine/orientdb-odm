@@ -3,8 +3,8 @@
 /**
  * Revoke class
  *
- * @package    
- * @subpackage 
+ * @package    Orient
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 

@@ -21,7 +21,7 @@ class OClass extends Command
     $this->setClass($class);
   }
   
-  public function setClass($class)
+  protected function setClass($class)
   {
     return $this->setToken('Class', $class);
   }

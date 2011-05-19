@@ -23,7 +23,7 @@ class Delete extends Command
     $this->setClass($from);
   }
   
-  public function setClass($class)
+  protected function setClass($class)
   {
     $this->setToken('Class', $class);
   }

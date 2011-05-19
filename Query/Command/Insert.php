@@ -26,11 +26,6 @@ class Insert extends Command
 
   public function into($target)
   {
-    if (is_array($target))
-    {
-      $target = array_shift($target);
-    }
-
     $this->setToken('Target', $target);
   }
 
