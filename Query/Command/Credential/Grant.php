@@ -28,6 +28,6 @@ class Grant extends Credential
   
   public function permission($permission)
   {
-    $this->setToken('Permission', array($permission), false);
+    $this->setToken('Permission', $permission);
   }
 }

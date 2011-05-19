@@ -23,7 +23,7 @@ class OClass extends Command
   
   public function setClass($class)
   {
-    return $this->setToken('Class', array($class), false);
+    return $this->setToken('Class', $class);
   }
 }
 

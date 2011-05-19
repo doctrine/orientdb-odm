@@ -21,7 +21,7 @@ class Insert extends Command
 
   public function fields(array $fields, $append = true)
   {
-    $this->setToken('Fields', $fields, $append);
+    $this->setTokenValues('Fields', $fields, $append);
   }
 
   public function into($target)
@@ -31,12 +31,12 @@ class Insert extends Command
       $target = array_shift($target);
     }
 
-    $this->setToken('Target', array($target), false);
+    $this->setToken('Target', $target);
   }
 
   public function values(array $values, $append = true)
   {
-    $this->setToken('Values', $values, $append);
+    $this->setTokenValues('Values', $values, $append);
   }
 }
 

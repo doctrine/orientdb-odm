@@ -36,7 +36,7 @@ class Command implements CommandContract
    */
   public function from(array $target, $append = true)
   {
-    $this->setToken('Target', $target, $append);
+    $this->setTokenvalues('Target', $target, $append);
   }
 
   /**
@@ -107,7 +107,7 @@ class Command implements CommandContract
   {
     $condition = str_replace("?", '"' .$value . '"', $condition);
 
-    $this->setToken('Where', array("{$clause} " . $condition), $append);
+    $this->setTokenValues('Where', array("{$clause} " . $condition), $append);
   }
 
   /**
@@ -233,31 +233,45 @@ class Command implements CommandContract
 
     return str_replace(array_keys($replaces), $replaces, $statement);
   }
+  
+  /**
+   * Sets a single value for a token, 
+   *
+   * @param   string  $token
+   * @param   string  $tokenValue
+   * @param   boolean $append
+   * @param   boolean $first 
+   * @return  true
+   */
+  public function setToken($token, $tokenValue, $append = false, $first = false)
+  {
+    return $this->setTokenValues($token, array($tokenValue), $append, $first);
+  }
 
   /**
    * Sets a token, and can be appended with the given $append.
    *
-   * @param   string                                  $token
-   * @param   mixed                                   $tokenValue
-   * @param   boolean                                 $append
-   * @param   boolean                                 $first
+   * @param   string   $token
+   * @param   array    $tokenValues
+   * @param   boolean  $append
+   * @param   boolean  $first
    * @return  true
    */
-  protected function setToken($token, $tokenValue, $append = true, $first = false)
+  protected function setTokenValues($token, array $tokenValues, $append = true, $first = false)
   {
     $token = $this->tokenize($token);
     $this->checkToken($token);
 
-    if (is_array($this->tokens[$token]) && is_array($tokenValue))
+    if (is_array($this->tokens[$token]) && is_array($tokenValues))
     {
       if ($append)
       {
-        $this->appendToken($token, $tokenValue, $first);
+        $this->appendToken($token, $tokenValues, $first);
       }
       else
       {
         $this->unsetToken($token);
-        $this->tokens[$token] = $tokenValue;
+        $this->tokens[$token] = $tokenValues;
       }
     }
 

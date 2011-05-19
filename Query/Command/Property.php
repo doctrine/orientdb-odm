@@ -23,12 +23,12 @@ class Property extends Command
   
   public function setProperty($property)
   {
-    $this->setToken('Property', array($property), false);
+    $this->setToken('Property', $property);
   }
 
   public function on($class)
   {
-    $this->setToken('Class', array($class), false);
+    $this->setToken('Class', $class);
   }
 }
 

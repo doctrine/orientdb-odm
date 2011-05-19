@@ -32,7 +32,7 @@ class Select extends Command implements SelectInterface
 
     if ($target)
     {
-      $this->setToken('Target', $target);
+      $this->setTokenValues('Target', $target);
     }
   }
 
@@ -44,7 +44,7 @@ class Select extends Command implements SelectInterface
    */
   public function select(array $projections, $append = true)
   {
-    $this->setToken('Projections', $projections, $append);
+    $this->setTokenValues('Projections', $projections, $append);
   }
 
   /**
@@ -56,7 +56,7 @@ class Select extends Command implements SelectInterface
    */
   public function orderBy($order, $append = true, $first = false)
   {
-    $this->setToken('OrderBy', array($order), $append, $first);
+    $this->setToken('OrderBy', $order, $append, $first);
   }
 
   /**
@@ -66,7 +66,7 @@ class Select extends Command implements SelectInterface
    */
   public function limit($limit)
   {
-    $this->setToken('Limit', array((int) $limit), false);
+    $this->setToken('Limit', (int) $limit);
   }
 
   /**
@@ -91,7 +91,7 @@ class Select extends Command implements SelectInterface
       }
     }
 
-    $this->setToken('Range', $range);
+    $this->setTokenValues('Range', $range);
   }
 }
 

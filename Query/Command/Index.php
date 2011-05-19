@@ -18,7 +18,7 @@ class Index extends Command
   {
     parent::__construct();
     
-    $this->setToken('Class', array($class), false);
-    $this->setToken('Property', array($property), false);
+    $this->setToken('Class', $class);
+    $this->setToken('Property', $property);
   }
 }

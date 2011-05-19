@@ -20,8 +20,8 @@ class Create extends Property
   {
     parent::__construct($property);
     
-    $this->setToken('Type', array($type), false);
-    $this->setToken('Linked', array($linked), false);
+    $this->setToken('Type', $type);
+    $this->setToken('Linked', $linked);
   }
 }
 

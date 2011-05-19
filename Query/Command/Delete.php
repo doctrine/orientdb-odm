@@ -25,7 +25,7 @@ class Delete extends Command
   
   public function setClass($class)
   {
-    $this->setToken('Class', array($class), false);
+    $this->setToken('Class', $class);
   }
 }
 

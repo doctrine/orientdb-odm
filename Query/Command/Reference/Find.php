@@ -25,12 +25,12 @@ class Find extends Command
 
   public function setRid($rid)
   {
-    $this->setToken('Rid', array($rid), false);
+    $this->setToken('Rid', $rid);
   }
 
   public function in(array $classes, $append = true)
   {
-    $this->setToken('ClassList', $classes, $append);
+    $this->setTokenValues('ClassList', $classes, $append);
   }
 }
 

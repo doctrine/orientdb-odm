@@ -17,16 +17,16 @@ abstract class Credential extends Command
 {
   public function setPermission($permission)
   {
-    $this->setToken('Permission', array($permission), false);
+    $this->setToken('Permission', $permission);
   }
 
   public function on($resource)
   {
-    $this->setToken('Resource', array($resource), false);
+    $this->setToken('Resource', $resource);
   }
 
   public function to($role)
   {
-    $this->setToken('Role', array($role), false);
+    $this->setToken('Role', $role);
   }
 }
