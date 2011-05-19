@@ -10,16 +10,12 @@
 
 namespace Orient\Query\Command\Index;
 
+use Orient\Query\Command\Index;
+
 use Orient\Query\Command;
 
-class Create extends Command
+class Create extends Index
 {
   const SCHEMA = "CREATE INDEX :Class.:Property";
-
-  public function create($class, $property)
-  {
-    $this->setToken('Class', array($class), false);
-    $this->setToken('Property', array($property), false);
-  }
 }
 

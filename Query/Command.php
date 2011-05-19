@@ -21,24 +21,11 @@ class Command implements CommandContract
   protected   $tokens     = array();
   protected   $statement  = NULL;
 
-  /**
-   * Intstantiates a new object and sets a potential target and query $formatter.
-   *
-   * @param array     $target
-   * @param Formatter $formatter
-   */
-  public function  __construct(array $target = NULL, FormatterContract $formatter = NULL)
+  public function  __construct()
   {
     $class            = get_called_class();
     $this->statement  = $class::SCHEMA;
     $this->tokens     = $this->getTokens();
-    
-    if (is_null($formatter))
-    {
-      $formatter = new Formatter();
-    }
-    
-    $this->formatter  = $formatter;
   }
 
   /**
@@ -195,7 +182,7 @@ class Command implements CommandContract
 
   protected function getFormatter()
   {
-    return $this->formatter;
+    return new Formatter();
   }
 
   /**

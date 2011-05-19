@@ -10,16 +10,10 @@
 
 namespace Orient\Query\Command\Index;
 
-use Orient\Query\Command;
+use Orient\Query\Command\Index;
 
-class Drop extends Command
+class Drop extends Index
 {
   const SCHEMA = "DROP INDEX :Class.:Property";
-
-  public function drop($class, $property)
-  {
-    $this->setToken('Class', array($class), false);
-    $this->setToken('Property', array($property), false);
-  }
 }
 

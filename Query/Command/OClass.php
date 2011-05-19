@@ -14,6 +14,13 @@ use Orient\Query\Command;
 
 class OClass extends Command
 {
+  public function __construct($class)
+  {
+    parent::__construct();
+    
+    $this->setClass($class);
+  }
+  
   public function setClass($class)
   {
     return $this->setToken('Class', array($class), false);

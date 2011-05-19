@@ -15,8 +15,15 @@ use Orient\Query\Command;
 class Find extends Command
 {
   const SCHEMA = "FIND REFERENCES :Rid :ClassList";
+  
+  public function __construct($rid)
+  {
+    parent::__construct();
+    
+    $this->setRid($rid);
+  }
 
-  public function find($rid)
+  public function setRid($rid)
   {
     $this->setToken('Rid', array($rid), false);
   }

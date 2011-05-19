@@ -16,10 +16,10 @@ class Create extends Property
 {
   const SCHEMA = "CREATE PROPERTY :Class.:Property :Type :Linked";
 
-  public function property($property, $type = NULL, $linked = NULL)
+  public function __construct($property, $type = NULL, $linked = NULL)
   {
-    parent::property($property);
-
+    parent::__construct($property);
+    
     $this->setToken('Type', array($type), false);
     $this->setToken('Linked', array($linked), false);
   }

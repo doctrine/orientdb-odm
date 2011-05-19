@@ -19,7 +19,14 @@ class Grant extends Credential
     "GRANT :Permission ON :Resource TO :Role"
   ;
 
-  public function grant($permission)
+  public function __construct($permission)
+  {
+    parent::__construct();
+    
+    $this->permission($permission);
+  }
+  
+  public function permission($permission)
   {
     $this->setToken('Permission', array($permission), false);
   }

@@ -13,6 +13,7 @@ namespace Orient\Test;
 
 use Orient\Query\Command\Select;
 use Orient\Query\Command\Insert;
+use Orient\Query\Command\Delete;
 use Orient\Query\Command\Credential\Grant;
 use Orient\Query\Command\Credential\Revoke;
 use Orient\Query\Command\OClass\Create;
@@ -29,24 +30,7 @@ class QueryTest extends TestCase
 { 
   public function setup()
   {
-    $this->query = new Query($this->getCommands());
-  }
-
-  public static function getCommands()
-  {
-    return array(
-        'select'          => new Select(),
-        'insert'          => new Insert(),
-        'grant'           => new Grant(),
-        'revoke'          => new Revoke(),
-        'class.create'    => new Create(),
-        'class.drop'      => new Drop(),
-        'property.drop'   => new DropProperty(),
-        'property.create' => new CreateProperty(),
-        'references.find' => new Find(),
-        'index.drop'      => new DropIndex(),
-        'index.create'    => new CreateIndex(),
-    );
+    $this->query = new Query();
   }
   
   public function testTheQueryTokensAreValid()
@@ -84,7 +68,7 @@ class QueryTest extends TestCase
 
   public function testYouCanResetAllTheWheresOfAQuery()
   {
-    $this->query  = new Query(array('select' => new Select(array('myClass'))));
+    $this->query  = new Query(array('myClass'));
     $this->query->where('the sky = ?', 'blue');
     $sql    =
       'SELECT FROM myClass WHERE the sky = "blue"'
@@ -99,7 +83,7 @@ class QueryTest extends TestCase
 
     $this->assertCommandGives($sql, $this->query->getRaw());
 
-    $this->query  = new Query(array('select' => new Select(array('myClass'))));
+    $this->query  = new Query(array('myClass'));
     $this->query->where('the sky = ?', 'blue');
     $sql    =
       'SELECT FROM myClass WHERE the sky = "blue"'
@@ -110,7 +94,7 @@ class QueryTest extends TestCase
 
   public function testYouCanCreateAnInsert()
   {
-    $this->query  = new Query($this->getCommands());
+    $this->query  = new Query();
     $this->query->insert()
           ->into("myClass")
           ->fields(array('name', 'relation', 'links'))
@@ -126,7 +110,7 @@ class QueryTest extends TestCase
 
   public function testYouCanCreateAGrant()
   {
-    $this->query  = new Query($this->getCommands());
+    $this->query  = new Query();
     $this->query->grant("read")
           ->to("myUser")
           ->to("myOtherUser")
@@ -140,7 +124,7 @@ class QueryTest extends TestCase
 
   public function testYouCanCreateARevoke()
   {
-    $this->query  = new Query($this->getCommands());
+    $this->query  = new Query();
     $this->query->revoke("read")
           ->to("myUser")
           ->to("myOtherUser")
@@ -152,17 +136,9 @@ class QueryTest extends TestCase
     $this->assertEquals($sql, $this->query->getRaw());
   }
 
-  /**
-   * @expectedException Orient\Exception
-   */
-  public function testWithoutInjectingCommandAnExceptionIsRaised()
-  {
-    $this->query  = new Query(array());
-  }
-
   public function testCreationOfAClass()
   {
-    $this->query  = new Query($this->getCommands());
+    $this->query  = new Query();
     $this->query->create("read");
     $sql    =
       'CREATE CLASS read'
@@ -173,7 +149,7 @@ class QueryTest extends TestCase
 
   public function testRemovalOfAClass()
   {
-    $this->query  = new Query($this->getCommands());
+    $this->query  = new Query();
     $this->query->drop("read");
     $sql    =
       'DROP CLASS read'
@@ -184,7 +160,7 @@ class QueryTest extends TestCase
 
   public function testRemovalOfAProperty()
   {
-    $this->query  = new Query($this->getCommands());
+    $this->query  = new Query();
     $this->query->drop("read", "hallo");
     $sql    =
       'DROP PROPERTY read.hallo'
@@ -202,7 +178,7 @@ class QueryTest extends TestCase
 
   public function testCreationOfAProperty()
   {
-    $this->query  = new Query($this->getCommands());
+    $this->query  = new Query();
     $this->query->create("read", "hallo", "type");
     $sql    =
       'CREATE PROPERTY read.hallo type'
@@ -220,7 +196,7 @@ class QueryTest extends TestCase
 
   public function testFindReferences()
   {
-    $this->query  = new Query($this->getCommands());
+    $this->query  = new Query();
     $this->query->findReferences("1:1");
     $sql    =
       'FIND REFERENCES 1:1'
@@ -235,9 +211,9 @@ class QueryTest extends TestCase
 
     $this->assertEquals($sql, $this->query->getRaw());
 
-    $this->query->findReferences("1:3", array('class2', 'cluster:class3'));
+    $this->query->in(array('class2', 'cluster:class3'));
     $sql    =
-      'FIND REFERENCES 1:3 [class, class2, cluster:class3]'
+      'FIND REFERENCES 1:2 [class, class2, cluster:class3]'
     ;
 
     $this->assertEquals($sql, $this->query->getRaw());
@@ -252,7 +228,7 @@ class QueryTest extends TestCase
 
   public function testDroppingAnIndex()
   {
-    $this->query  = new Query($this->getCommands());
+    $this->query  = new Query();
     $this->query->unindex("class", "property");
     $sql    =
       'DROP INDEX class.property'
@@ -263,12 +239,26 @@ class QueryTest extends TestCase
 
   public function testCreatingAnIndex()
   {
-    $this->query  = new Query($this->getCommands());
+    $this->query  = new Query();
     $this->query->index("class", "property");
     $sql    =
       'CREATE INDEX class.property'
     ;
 
     $this->assertEquals($sql, $this->query->getRaw());
+  }
+
+  public function testDeleteSQLQuery()
+  {
+    $this->query  = new Query();
+    $this->query->delete("Profile")
+                ->where("1 = ?", 1)
+                ->andWhere("links = ?", 1);
+    
+    $sql    =
+      'DELETE FROM Profile WHERE 1 = "1" AND links = "1"'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
   }
 }

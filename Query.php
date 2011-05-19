@@ -23,7 +23,20 @@ use Orient\Contract\Query\Command\Revoke  as RevokeInterface;
 class Query
 {
   protected $command  = NULL;
-  protected $commands = array();
+  protected $commands = array(
+    'select'          =>  'Orient\Query\Command\Select',
+    'insert'          =>  'Orient\Query\Command\Insert',
+    'delete'          =>  'Orient\Query\Command\Delete',
+    'grant'           =>  'Orient\Query\Command\Credential\Grant',
+    'revoke'          =>  'Orient\Query\Command\Credential\Revoke',
+    'class.create'    =>  'Orient\Query\Command\OClass\Create',
+    'class.drop'      =>  'Orient\Query\Command\OClass\Drop',
+    'references.find' =>  'Orient\Query\Command\Reference\Find',
+    'property.create' =>  'Orient\Query\Command\Property\Create',
+    'property.drop'   =>  'Orient\Query\Command\Property\Drop',
+    'index.drop'      =>  'Orient\Query\Command\Index\Drop',
+    'index.create'    =>  'Orient\Query\Command\Index\Create',
+  );
 
   /**
    * Builds a query with the given $command on the given $target.
@@ -31,14 +44,12 @@ class Query
    * @param array   $target
    * @param string  $command
    */
-  public function __construct(array $commands)
-  {
-    foreach ($commands as $id => $command)
-    {
-      $this->commands[$id] = $command;
-    }
+  public function __construct(array $target = NULL, array $commands = array())
+  { 
+    $this->setCommands($commands);
 
-    $this->command = $this->getCommand('select');
+    $commandClass   = $this->getCommandClass('select');
+    $this->command  = new $commandClass($target);
   }
 
   /**
@@ -58,6 +69,14 @@ class Query
   {
     $this->executeClassOrPropertyCommand('create', $class, $property, $type, $linked);
 
+    return $this;
+  }
+  
+  public function delete($from)
+  {
+    $commandClass   = $this->getCommandClass('delete');
+    $this->command  = new $commandClass($from);
+    
     return $this;
   }
 
@@ -123,18 +142,25 @@ class Query
    * @return Query
    */
   public function grant($permission)
-  {
-    $this->command = $this->getCommand('grant');
-    $this->command->grant($permission);
+  {    
+    $commandClass   = $this->getCommandClass('grant');
+    $this->command  = new $commandClass($permission);
 
     return $this;
   }
 
   public function findReferences($rid, array $classes = array(), $append = true)
   {
-    $this->command = $this->getCommand('references.find');
-    $this->command->find($rid);
+    $commandClass   = $this->getCommandClass('references.find');
+    $this->command  = new $commandClass($rid);
     $this->command->in($classes, $append);
+
+    return $this;
+  }
+  
+  public function in(array $in, $append = true)
+  {
+    $this->command->in($in, $append);
 
     return $this;
   }
@@ -148,8 +174,8 @@ class Query
    */
   public function index($class, $property)
   {
-    $this->command = $this->getCommand('index.create');
-    $this->command->create($class, $property);
+    $commandClass = $this->getCommandClass('index.create');
+    $this->command  = new $commandClass($class, $property);
 
     return $this;
   }
@@ -161,7 +187,8 @@ class Query
    */
   public function insert()
   {
-    $this->command = $this->getCommand('insert');
+    $commandClass   = $this->getCommandClass('insert');
+    $this->command  = new $commandClass;
 
     return $this;
   }
@@ -258,8 +285,8 @@ class Query
    */
   public function revoke($permission)
   {
-    $this->command = new Revoke();
-    $this->command->revoke($permission);
+    $commandClass   = $this->getCommandClass('revoke');
+    $this->command  = new $commandClass($permission);
 
     return $this;
   }
@@ -306,8 +333,8 @@ class Query
    */
   public function unindex($class, $property)
   {
-    $this->command = $this->getCommand('index.drop');
-    $this->command->drop($class, $property);
+    $commandClass   = $this->getCommandClass('index.drop');
+    $this->command  = new $commandClass($class, $property);
 
     return $this;
   }
@@ -331,7 +358,7 @@ class Query
    * @param   string $id
    * @return  mixed
    */
-  protected function getCommand($id)
+  protected function getCommandClass($id)
   {
     if (isset($this->commands[$id]))
     {
@@ -348,9 +375,9 @@ class Query
    * @param string $class
    */
   protected function manageClass($action, $class)
-  {
-    $this->command = $this->getCommand("class." . $action);
-    $this->command->setClass($class);
+  {    
+    $commandClass   = $this->getCommandClass("class." . $action);
+    $this->command  = new $commandClass($class);
   }
 
   /**
@@ -362,9 +389,10 @@ class Query
    */
   protected function manageProperty($action, $class, $property, $type = NULL, $linked = NULL)
   {
-    $this->command = $this->getCommand("property." . $action);
-    $this->command->property($property, $type, $linked);
+    $commandClass   = $this->getCommandClass("property." . $action);
+    $this->command  = new $commandClass($property, $type, $linked);
     $this->command->on($class);
+    
   }
 
   protected function executeClassOrPropertyCommand($action, $class, $property = NULL, $type = NULL, $linked = NULL)
@@ -377,6 +405,19 @@ class Query
     {
       $this->manageClass($action, $class);
     }
+  }
+  
+  /**
+   * Sets the internal command classes to use
+   *
+   * @param   array $commands
+   * @return  true
+   */
+  protected function setCommands(array $commands)
+  {
+    $this->commands = array_merge($this->commands, $commands);
+    
+    return true;
   }
 }
 

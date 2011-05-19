@@ -14,7 +14,14 @@ use Orient\Query\Command;
 
 class Property extends Command
 {
-  public function property($property)
+  public function __construct($property)
+  {
+    parent::__construct();
+    
+    $this->setProperty($property);
+  }
+  
+  public function setProperty($property)
   {
     $this->setToken('Property', array($property), false);
   }

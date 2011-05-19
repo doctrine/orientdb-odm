@@ -18,8 +18,6 @@ interface Command
 {
   const SCHEMA = NULL;
 
-  public function __construct(array $target = NULL, Formatter $formatter = NULL);
-
   public function getRaw();
 
   public static function getTokens();

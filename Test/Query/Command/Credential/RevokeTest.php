@@ -18,7 +18,7 @@ class RevokeTest extends TestCase
 {
   public function setUp()
   {
-    $this->revoke = new Revoke();
+    $this->revoke = new Revoke('myPermission');
   }
 
   public function testRevokeHasSomeKnownTokens()
@@ -34,19 +34,18 @@ class RevokeTest extends TestCase
 
   public function testSynthaxIsRightAfterObjectCreation()
   {
-    $query = 'REVOKE ON TO';
+    $query = 'REVOKE myPermission ON TO';
 
     $this->assertCommandGives($query, $this->revoke->getRaw());
   }
 
   public function testRevokeCommandWorksAndCanBeOverwritten()
   {
-    $this->revoke->revoke('ALL');
-    $query = 'REVOKE ALL ON TO';
+    $query = 'REVOKE myPermission ON TO';
 
     $this->assertCommandGives($query, $this->revoke->getRaw());
 
-    $this->revoke->revoke('READ');
+    $this->revoke->setPermission('READ');
     $query = 'REVOKE READ ON TO';
 
     $this->assertCommandGives($query, $this->revoke->getRaw());

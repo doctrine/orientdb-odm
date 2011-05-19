@@ -18,7 +18,7 @@ class GrantTest extends TestCase
 {
   public function setup()
   {
-    $this->grant  = new Grant();
+    $this->grant  = new Grant('myPermission');
   }
 
   public function testSchema()
@@ -34,19 +34,18 @@ class GrantTest extends TestCase
 
   public function testSynthaxIsRightAfterConstruction()
   {
-    $query = 'GRANT ON TO';
+    $query = 'GRANT myPermission ON TO';
 
     $this->assertCommandGives($query, $this->grant->getRaw());
   }
 
   public function testGrantCommandWorksAndCanBeOverWritten()
   {
-    $this->grant->grant('ALL');
-    $query = 'GRANT ALL ON TO';
+    $query = 'GRANT myPermission ON TO';
 
     $this->assertCommandGives($query, $this->grant->getRaw());
 
-    $this->grant->grant('READ');
+    $this->grant->permission('READ');
     $query = 'GRANT READ ON TO';
 
     $this->assertCommandGives($query, $this->grant->getRaw());

@@ -26,9 +26,9 @@ class Select extends Command implements SelectInterface
    *
    * @param array $target
    */
-  public function __construct(array $target = NULL, Formatter $formatterClass = NULL)
+  public function __construct(array $target = NULL)
   {
-    parent::__construct($target, $formatterClass);
+    parent::__construct();
 
     if ($target)
     {
