@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Orient package.
+ *
+ * (c) Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 /**
  * The aim of a Formatter class is to manipulate token values and format them
  * in order to build valid OrientDB's SQL expressions.
