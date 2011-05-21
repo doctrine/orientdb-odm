@@ -247,8 +247,68 @@ class Formatter implements FormatterInterface
     return count($values) ? $this->implode($values) : NULL;
   }
 
+  public function formatUpdates(array $updates)
+  {
+    $string = "";
+
+    foreach ($updates as $key => $update)
+    {
+      $string .= ' ' . $key . ' = "' . $update . '",';
+    }
+
+    return substr($string, 0, strlen($string) - 1);
+  }
+
+  public function formatMapUpdates(array $updates)
+  {
+    $string = "";
+
+    foreach ($updates as $key => $update)
+    {
+      $finalChar = '"';
+
+      if (is_array($update) && count($update))
+      {
+        foreach ($update as $k => $value)
+        {
+          $update = $k . '", ' . $value;
+        }
+
+        $finalChar = NULL;
+      }
+
+      $string .= ' ' . $key . ' = "' . $update . $finalChar . ',';
+    }
+
+    return substr($string, 0, strlen($string) - 1);
+  }
+
+  public function formatRidUpdates(array $updates)
+  {
+    foreach ($updates as $key => $value)
+    {
+      if (is_array($value))
+      {
+        if (count($value) > 1)
+        {
+          $updates[$key] = "$key = [" . $this->implode($value) . "]";
+        }
+        else
+        {
+          $updates[$key] = array_shift($value);
+        }
+      }
+      else
+      {
+        $updates[$key] = "$key = " . $value;
+      }
+    }
+
+    return count($updates) ? $this->implode($updates) : NULL;
+  }
+
   /**
-   * Removes whitespaces from the beginng and the end of the $text.
+   * Removes whitespaces from the beginning and the end of the $text.
    *
    * @param   string $text
    * @return  string

@@ -36,6 +36,10 @@ class Query
     'select'          =>  'Orient\Query\Command\Select',
     'insert'          =>  'Orient\Query\Command\Insert',
     'delete'          =>  'Orient\Query\Command\Delete',
+    'update'          =>  'Orient\Query\Command\Update',
+    'update.add'      =>  'Orient\Query\Command\Update\Add',
+    'update.remove'   =>  'Orient\Query\Command\Update\Remove',
+    'update.put'   =>  'Orient\Query\Command\Update\Put',
     'grant'           =>  'Orient\Query\Command\Credential\Grant',
     'revoke'          =>  'Orient\Query\Command\Credential\Revoke',
     'class.create'    =>  'Orient\Query\Command\OClass\Create',
@@ -60,6 +64,14 @@ class Query
 
     $commandClass   = $this->getCommandClass('select');
     $this->command  = new $commandClass($target);
+  }
+
+  public function add(array $updates, $class, $append = true)
+  {
+    $commandClass   = $this->getCommandClass('update.add');
+    $this->command  = new $commandClass($updates, $class, $append);
+
+    return $this->command;
   }
 
   /**
@@ -260,6 +272,14 @@ class Query
     return $this->command->range($left, $right);
   }
 
+  public function remove(array $updates, $class, $append = true)
+  {
+    $commandClass   = $this->getCommandClass('update.remove');
+    $this->command  = new $commandClass($updates, $class, $append);
+
+    return $this->command;
+  }
+
   /**
    * Resets the WHERE conditions.
    */
@@ -321,6 +341,22 @@ class Query
   {
     $commandClass   = $this->getCommandClass('index.drop');
     $this->command  = new $commandClass($class, $property);
+
+    return $this->command;
+  }
+
+  public function put(array $values, $class, $append = true)
+  {
+    $commandClass   = $this->getCommandClass('update.put');
+    $this->command  = new $commandClass($values, $class, $append);
+
+    return $this->command;
+  }
+
+  public function update($class)
+  {
+    $commandClass   = $this->getCommandClass('update');
+    $this->command  = new $commandClass($class);
 
     return $this->command;
   }

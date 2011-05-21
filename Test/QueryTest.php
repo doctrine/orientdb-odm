@@ -280,4 +280,44 @@ class QueryTest extends TestCase
 
     $this->assertCommandGives($sql, $this->query->getRaw());
   }
+
+  public function testUpdating()
+  {
+    $this->query->update('class')
+                ->set(array('first' => 'uno', 'nano' => 'due'))
+                ->where('prop = ?', 'val');
+
+    $sql    =
+      'UPDATE class SET first = "uno", nano = "due" WHERE prop = "val"'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query->add(array('first' => '10:22', 'nano' => array('10:1', '10:2')), 'class')
+                ->where('prop = ?', 'val');
+
+    $sql    =
+      'UPDATE class ADD first = 10:22, nano = [10:1, 10:2] WHERE prop = "val"'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query->remove(array('first' => 'uno', 'nano' => 'due'), 'class')
+                ->where('prop = ?', 'val');
+
+    $sql    =
+      'UPDATE class REMOVE first = "uno", nano = "due" WHERE prop = "val"'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query->put(array('first' => array('key' => 'value'), 'nano' => 'due'), 'class')
+                ->where('prop = ?', 'val');
+
+    $sql    =
+      'UPDATE class PUT first = "key", value, nano = "due" WHERE prop = "val"'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+  }
 }

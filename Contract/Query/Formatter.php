@@ -54,6 +54,12 @@ interface Formatter
 
   public function formatName(array $name);
 
+  public function formatUpdates(array $updates);
+
+  public function formatMapUpdates(array $updates);
+
+  public function formatRidUpdates(array $updates);
+
   public function formatDestinationClass(array $class);
 
   public function formatDestinationProperty(array $property);
