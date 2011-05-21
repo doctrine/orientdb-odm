@@ -33,6 +33,8 @@ class Property extends Command
   public function on($class)
   {
     $this->setToken('Class', $class);
+
+    return $this;
   }
   
   protected function setProperty($property)

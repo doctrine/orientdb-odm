@@ -33,10 +33,14 @@ abstract class Credential extends Command
   public function on($resource)
   {
     $this->setToken('Resource', $resource);
+
+    return $this;
   }
 
   public function to($role)
   {
     $this->setToken('Role', $role);
+
+    return $this;
   }
 }

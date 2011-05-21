@@ -54,6 +54,8 @@ class Select extends Command implements SelectInterface
   public function select(array $projections, $append = true)
   {
     $this->setTokenValues('Projections', $projections, $append);
+
+    return $this;
   }
 
   /**
@@ -66,6 +68,8 @@ class Select extends Command implements SelectInterface
   public function orderBy($order, $append = true, $first = false)
   {
     $this->setToken('OrderBy', $order, $append, $first);
+
+    return $this;
   }
 
   /**
@@ -76,6 +80,8 @@ class Select extends Command implements SelectInterface
   public function limit($limit)
   {
     $this->setToken('Limit', (int) $limit);
+
+    return $this;
   }
 
   /**

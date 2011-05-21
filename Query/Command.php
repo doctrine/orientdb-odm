@@ -37,6 +37,11 @@ class Command implements CommandContract
     $this->tokens     = $this->getTokens();
   }
 
+  public function andWhere($condition, $value = NULL)
+  {
+    return $this->where($condition, $value, true, "AND");
+  }
+
   /**
    * Sets the token for the from clause. You can $append your values.
    *
@@ -46,6 +51,8 @@ class Command implements CommandContract
   public function from(array $target, $append = true)
   {
     $this->setTokenvalues('Target', $target, $append);
+
+    return $this;
   }
 
   /**
@@ -89,6 +96,11 @@ class Command implements CommandContract
     return $this->checkToken($this->tokenize($token));
   }
 
+  public function orWhere($condition, $value = NULL)
+  {
+    return $this->where($condition, $value, true, "OR");
+  }
+
   /**
    * Deletes all the WHERE conditions in the current command.
    *
@@ -117,6 +129,8 @@ class Command implements CommandContract
     $condition = str_replace("?", '"' .$value . '"', $condition);
 
     $this->setTokenValues('Where', array("{$clause} " . $condition), $append);
+
+    return $this;
   }
 
   /**

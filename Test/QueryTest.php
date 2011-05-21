@@ -49,7 +49,7 @@ class QueryTest extends TestCase
 
   public function testYouCanCreateASelect()
   {
-    $this->query  = new Query(array('select' => new Select(array('myClass'))));
+    $this->query  = new Query();
     $this->query->select(array('name', 'username', 'email'))
           ->from(array('12:0', '12:1'), false)
           ->where('any() traverse ( any() like "%danger%" )')

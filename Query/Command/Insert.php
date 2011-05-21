@@ -31,16 +31,22 @@ class Insert extends Command
   public function fields(array $fields, $append = true)
   {
     $this->setTokenValues('Fields', $fields, $append);
+
+    return $this;
   }
 
   public function into($target)
   {
     $this->setToken('Target', $target);
+
+    return $this;
   }
 
   public function values(array $values, $append = true)
   {
     $this->setTokenValues('Values', $values, $append);
+
+    return $this;
   }
 }
 

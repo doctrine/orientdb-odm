@@ -70,16 +70,12 @@ class Query
    */
   public function andWhere($condition, $value = NULL)
   {
-    $this->command->where($condition, $value, true, "AND");
-
-    return $this;
+    return $this->command->andwhere($condition, $value);
   }
 
   public function create($class, $property = NULL, $type = NULL, $linked = NULL)
   {
-    $this->executeClassOrPropertyCommand('create', $class, $property, $type, $linked);
-
-    return $this;
+    return $this->executeClassOrPropertyCommand('create', $class, $property, $type, $linked);
   }
   
   public function delete($from)
@@ -92,9 +88,7 @@ class Query
 
   public function drop($class, $property = NULL)
   {
-    $this->executeClassOrPropertyCommand('drop', $class, $property);
-
-    return $this;
+    return $this->executeClassOrPropertyCommand('drop', $class, $property);
   }
 
   /**
@@ -106,9 +100,7 @@ class Query
    */
   public function fields(array $fields, $append = true)
   {
-    $this->command->fields($fields, $append);
-
-    return $this;
+    return $this->command->fields($fields, $append);
   }
 
   /**
@@ -119,9 +111,7 @@ class Query
    */
   public function from(array $target, $append = true)
   {
-    $this->command->from($target, $append);
-
-    return $this;
+    return $this->command->from($target, $append);
   }
 
   /**
@@ -141,9 +131,7 @@ class Query
    */
   public function getTokens()
   {
-    $command = $this->command;
-
-    return $command::getTokens();
+    return $this->command->getTokens();
   }
 
   /**
@@ -156,7 +144,7 @@ class Query
     $commandClass   = $this->getCommandClass('grant');
     $this->command  = new $commandClass($permission);
 
-    return $this;
+    return $this->command;
   }
 
   public function findReferences($rid, array $classes = array(), $append = true)
@@ -165,14 +153,12 @@ class Query
     $this->command  = new $commandClass($rid);
     $this->command->in($classes, $append);
 
-    return $this;
+    return $this->command;
   }
   
   public function in(array $in, $append = true)
   {
-    $this->command->in($in, $append);
-
-    return $this;
+    return $this->command->in($in, $append);
   }
 
   /**
@@ -187,7 +173,7 @@ class Query
     $commandClass = $this->getCommandClass('index.create');
     $this->command  = new $commandClass($class, $property);
 
-    return $this;
+    return $this->command;
   }
 
   /**
@@ -200,7 +186,7 @@ class Query
     $commandClass   = $this->getCommandClass('insert');
     $this->command  = new $commandClass;
 
-    return $this;
+    return $this->command;
   }
 
   /**
@@ -211,9 +197,7 @@ class Query
    */
   public function into($target)
   {
-    $this->command->into($target);
-
-    return $this;
+    return $this->command->into($target);
   }
 
   /**
@@ -223,9 +207,7 @@ class Query
    */
   public function limit($limit)
   {
-    $this->command->limit($limit);
-
-    return $this;
+    return $this->command->limit($limit);
   }
 
   public function link($class, $property, $alias, $inverse = false)
@@ -244,9 +226,7 @@ class Query
    */
   public function on($on)
   {
-    $this->command->on($on);
-
-    return $this;
+    return $this->command->on($on);
   }
 
   /**
@@ -258,9 +238,7 @@ class Query
    */
   public function orderBy($order, $append = true, $first = false)
   {
-    $this->command->orderBy($order, $append, $first);
-
-    return $this;
+    return $this->command->orderBy($order, $append, $first);
   }
 
   /**
@@ -271,9 +249,7 @@ class Query
    */
   public function orWhere($condition, $value = NULL)
   {
-    $this->command->where($condition, $value, true, "OR");
-
-    return $this;
+    return $this->command->orWhere($condition, $value);
   }
 
   /**
@@ -281,9 +257,7 @@ class Query
    */
   public function range($left = NULL, $right = NULL)
   {
-    $this->command->range($left, $right);
-
-    return $this;
+    return $this->command->range($left, $right);
   }
 
   /**
@@ -306,7 +280,7 @@ class Query
     $commandClass   = $this->getCommandClass('revoke');
     $this->command  = new $commandClass($permission);
 
-    return $this;
+    return $this->command;
   }
 
   /**
@@ -317,9 +291,7 @@ class Query
    */
   public function select(array $projections, $append = true)
   {
-    $this->command->select($projections, $append);
-
-    return $this;
+    return $this->command->select($projections, $append);
   }
 
   /**
@@ -330,16 +302,12 @@ class Query
    */
   public function to($to)
   {
-    $this->command->to($to);
-
-    return $this;
+    return $this->command->to($to);
   }
 
   public function values(array $values, $append = true)
   {
-    $this->command->values($values, $append);
-    
-    return $this;
+    return $this->command->values($values, $append);
   }
 
   /**
@@ -354,7 +322,7 @@ class Query
     $commandClass   = $this->getCommandClass('index.drop');
     $this->command  = new $commandClass($class, $property);
 
-    return $this;
+    return $this->command;
   }
 
   /**
@@ -365,9 +333,7 @@ class Query
    */
   public function where($condition, $value = NULL)
   {
-    $this->command->where($condition, $value);
-
-    return $this;
+    return $this->command->where($condition, $value);
   }
 
   /**
@@ -396,6 +362,8 @@ class Query
   {    
     $commandClass   = $this->getCommandClass("class." . $action);
     $this->command  = new $commandClass($class);
+
+    return $this->command;
   }
 
   /**
@@ -410,18 +378,19 @@ class Query
     $commandClass   = $this->getCommandClass("property." . $action);
     $this->command  = new $commandClass($property, $type, $linked);
     $this->command->on($class);
-    
+
+    return $this->command;
   }
 
   protected function executeClassOrPropertyCommand($action, $class, $property = NULL, $type = NULL, $linked = NULL)
   {
     if ($property)
     {
-      $this->manageProperty($action, $class, $property, $type, $linked);
+      return $this->manageProperty($action, $class, $property, $type, $linked);
     }
     else
     {
-      $this->manageClass($action, $class);
+      return $this->manageClass($action, $class);
     }
   }
   
