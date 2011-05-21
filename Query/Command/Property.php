@@ -19,9 +19,10 @@
 
 namespace Orient\Query\Command;
 
+use Orient\Contract\Query\Command\Property as PropertyInterface;
 use Orient\Query\Command;
 
-class Property extends Command
+class Property extends Command implements PropertyInterface
 {
   public function __construct($property)
   {

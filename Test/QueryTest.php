@@ -11,18 +11,6 @@
 
 namespace Orient\Test;
 
-use Orient\Query\Command\Select;
-use Orient\Query\Command\Insert;
-use Orient\Query\Command\Delete;
-use Orient\Query\Command\Credential\Grant;
-use Orient\Query\Command\Credential\Revoke;
-use Orient\Query\Command\OClass\Create;
-use Orient\Query\Command\OClass\Drop;
-use Orient\Query\Command\Reference\Find;
-use Orient\Query\Command\Property\Drop as DropProperty;
-use Orient\Query\Command\Index\Drop as DropIndex;
-use Orient\Query\Command\Index\Create as CreateIndex;
-use Orient\Query\Command\Property\Create as CreateProperty;
 use Orient\Test\PHPUnit\TestCase;
 use Orient\Query;
 
@@ -81,6 +69,10 @@ class QueryTest extends TestCase
 
   public function testRemovalOfAProperty()
   {
+    $this->assertInstanceOf('\Orient\Query\Command\Property\Drop', $this->query->drop('p', 'h'));
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Property', $this->query->drop('p', 'h'));
+
+    
     $this->query  = new Query();
     $this->query->drop("read", "hallo");
     $sql    =
