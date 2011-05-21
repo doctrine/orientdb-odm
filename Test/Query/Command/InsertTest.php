@@ -87,5 +87,19 @@ class InsertTest extends TestCase
 
     $this->assertCommandGives($query, $this->insert->getRaw());
   }
+
+  public function testUsingTheFluentInterface()
+  {
+    $this->insert->into("myClass")
+                 ->fields(array('name', 'relation', 'links'))
+                 ->values(array(
+                   'hello', array('10:1'), array('10:1', '11:1')
+                 ));
+    $sql    =
+      'INSERT INTO myClass (name, relation, links) VALUES ("hello", 10:1, [10:1, 11:1])'
+    ;
+
+    $this->assertCommandGives($sql, $this->insert->getRaw());
+  }
 }
 

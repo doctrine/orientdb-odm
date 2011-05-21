@@ -32,130 +32,51 @@ class QueryTest extends TestCase
   {
     $this->query = new Query();
   }
-  
-  public function testTheQueryTokensAreValid()
-  {
-    $this->assertTokens(Select::getTokens(), $this->query->getTokens());
-    $this->assertTokens(Insert::getTokens(), $this->query->insert()->getTokens());
-    $this->assertTokens(Grant::getTokens(), $this->query->grant('what')->getTokens());
-    $this->assertTokens(Revoke::getTokens(), $this->query->revoke('what')->getTokens());
-    $this->assertTokens(Create::getTokens(), $this->query->create('what')->getTokens());
-    $this->assertTokens(Drop::getTokens(), $this->query->drop('what')->getTokens());
-    $this->assertTokens(DropProperty::getTokens(), $this->query->drop('what', 'hallo')->getTokens());
-    $this->assertTokens(CreateProperty::getTokens(), $this->query->create('what', 'hallo', "a")->getTokens());
-    $this->assertTokens(CreateIndex::getTokens(), $this->query->index('what', 'hallo')->getTokens());
-    $this->assertTokens(DropIndex::getTokens(), $this->query->unindex('what', 'hallo')->getTokens());
-  }
 
-  public function testYouCanCreateASelect()
+  public function testSelect()
   {
-    $this->query  = new Query();
-    $this->query->select(array('name', 'username', 'email'))
-          ->from(array('12:0', '12:1'), false)
-          ->where('any() traverse ( any() like "%danger%" )')
-          ->orWhere("1 = ?", 1)
-          ->andWhere("links = ?", 1)
-          ->limit(20)
-          ->orderBy('username')
-          ->orderBy('name', true, true)
-          ->range("12:0", "12:1");
-    $sql    =
-      'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = "1" AND links = "1" ORDER BY name, username LIMIT 20 RANGE 12:0, 12:1'
-    ;
-
-    $this->assertCommandGives($sql, $this->query->getRaw());
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Select', $this->query->select(array()));
   }
 
   public function testYouCanResetAllTheWheresOfAQuery()
   {
     $this->query  = new Query(array('myClass'));
     $this->query->where('the sky = ?', 'blue');
-    $sql    =
-      'SELECT FROM myClass WHERE the sky = "blue"'
-    ;
-
-    $this->assertCommandGives($sql, $this->query->getRaw());
-
     $this->query->resetWhere();
     $sql    =
       'SELECT FROM myClass'
     ;
 
     $this->assertCommandGives($sql, $this->query->getRaw());
-
-    $this->query  = new Query(array('myClass'));
-    $this->query->where('the sky = ?', 'blue');
-    $sql    =
-      'SELECT FROM myClass WHERE the sky = "blue"'
-    ;
-
-    $this->assertCommandGives($sql, $this->query->getRaw());
   }
 
-  public function testYouCanCreateAnInsert()
+  public function testInsert()
   {
-    $this->query  = new Query();
-    $this->query->insert()
-          ->into("myClass")
-          ->fields(array('name', 'relation', 'links'))
-          ->values(array(
-            'hello', array('10:1'), array('10:1', '11:1')
-          ));
-    $sql    =
-      'INSERT INTO myClass (name, relation, links) VALUES ("hello", 10:1, [10:1, 11:1])'
-    ;
-
-    $this->assertCommandGives($sql, $this->query->getRaw());
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Insert', $this->query->insert());
   }
 
-  public function testYouCanCreateAGrant()
+  public function testGrant()
   {
-    $this->query  = new Query();
-    $this->query->grant("read")
-          ->to("myUser")
-          ->to("myOtherUser")
-          ->on("server");
-    $sql    =
-      'GRANT read ON server TO myOtherUser'
-    ;
-
-    $this->assertCommandGives($sql, $this->query->getRaw());
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Credential', $this->query->grant('p'));
+    $this->assertInstanceOf('\Orient\Query\Command\Credential\Grant', $this->query->grant('p'));
   }
 
   public function testYouCanCreateARevoke()
   {
-    $this->query  = new Query();
-    $this->query->revoke("read")
-          ->to("myUser")
-          ->to("myOtherUser")
-          ->on("server");
-    $sql    =
-      'REVOKE read ON server TO myOtherUser'
-    ;
-
-    $this->assertEquals($sql, $this->query->getRaw());
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Credential', $this->query->revoke('p'));
+    $this->assertInstanceOf('\Orient\Query\Command\Credential\Revoke', $this->query->revoke('p'));
   }
 
   public function testCreationOfAClass()
   {
-    $this->query  = new Query();
-    $this->query->create("read");
-    $sql    =
-      'CREATE CLASS read'
-    ;
-
-    $this->assertEquals($sql, $this->query->getRaw());
+    $this->assertInstanceOf('\Orient\Query\Command\OClass\Create', $this->query->create('p'));
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\OClass', $this->query->create('p'));
   }
 
   public function testRemovalOfAClass()
   {
-    $this->query  = new Query();
-    $this->query->drop("read");
-    $sql    =
-      'DROP CLASS read'
-    ;
-
-    $this->assertEquals($sql, $this->query->getRaw());
+    $this->assertInstanceOf('\Orient\Query\Command\OClass\Drop', $this->query->drop('p'));
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\OClass', $this->query->drop('p'));
   }
 
   public function testRemovalOfAProperty()

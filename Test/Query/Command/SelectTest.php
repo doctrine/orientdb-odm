@@ -133,5 +133,23 @@ class SelectTest extends TestCase
 
     $this->assertCommandGives($query, $this->select->getRaw());
   }
+
+  public function testUsingTheFluentInterface()
+  {
+    $this->select->select(array('name', 'username', 'email'), false)
+          ->from(array('12:0', '12:1'), false)
+          ->where('any() traverse ( any() like "%danger%" )')
+          ->orWhere("1 = ?", 1)
+          ->andWhere("links = ?", 1)
+          ->limit(20)
+          ->orderBy('username')
+          ->orderBy('name', true, true)
+          ->range("12:0", "12:1");
+    $sql    =
+      'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = "1" AND links = "1" ORDER BY name, username LIMIT 20 RANGE 12:0, 12:1'
+    ;
+
+    $this->assertCommandGives($sql, $this->select->getRaw());
+  }
 }
 

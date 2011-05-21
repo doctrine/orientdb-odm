@@ -20,14 +20,23 @@
 
 namespace Orient\Query\Command;
 
-use Orient\Contract\Query\Formatter;
+use Orient\Contract\Query\Command\Credential as CredentialInterface;
 use Orient\Query\Command;
 
-abstract class Credential extends Command
+abstract class Credential extends Command implements CredentialInterface
 {
-  public function setPermission($permission)
+  public function __construct($permission)
+  {
+    parent::__construct();
+
+    $this->permission($permission);
+  }
+
+  public function permission($permission)
   {
     $this->setToken('Permission', $permission);
+
+    return $this;
   }
 
   public function on($resource)

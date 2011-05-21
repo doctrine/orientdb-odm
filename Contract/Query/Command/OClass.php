@@ -10,22 +10,17 @@
  */
 
 /**
- * Revoke class
+ * Select interface
  *
  * @package    Orient
- * @subpackage Query
+ * @subpackage Contract
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Orient\Query\Command\Credential;
+namespace Orient\Contract\Query\Command;
 
-use Orient\Contract\Query\Formatter;
-use Orient\Query\Command\Credential;
-
-class Revoke extends Credential
+interface OClass
 {
-  const SCHEMA          =
-    "REVOKE :Permission ON :Resource TO :Role"
-  ;
+  public function __construct($class);
 }
 

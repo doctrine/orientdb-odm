@@ -10,22 +10,21 @@
  */
 
 /**
- * Revoke class
+ * Insert interface
  *
  * @package    Orient
- * @subpackage Query
+ * @subpackage Contract
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Orient\Query\Command\Credential;
+namespace Orient\Contract\Query\Command;
 
-use Orient\Contract\Query\Formatter;
-use Orient\Query\Command\Credential;
-
-class Revoke extends Credential
+interface Insert
 {
-  const SCHEMA          =
-    "REVOKE :Permission ON :Resource TO :Role"
-  ;
+  public function fields(array $fields, $append = true);
+
+  public function into($target);
+
+  public function values(array $values, $append = true);
 }
 

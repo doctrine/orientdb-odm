@@ -16,25 +16,25 @@ use Orient\Query\Command\Credential;
 
 class CredentialStub extends Credential
 {
-  const SCHEMA = "STUB ON :Resource TO :Role";
+  const SCHEMA = "STUB :Permission ON :Resource TO :Role";
 }
 
 class CredentialTest extends TestCase
 {
   public function setUp()
   {
-    $this->credential = new CredentialStub();
+    $this->credential = new CredentialStub('p');
   }
 
   public function testOnCommandWorksAndCanBeOverwritten()
   {
     $this->credential->on('resource');
-    $query = 'STUB ON resource TO';
+    $query = 'STUB p ON resource TO';
 
     $this->assertCommandGives($query, $this->credential->getRaw());
 
     $this->credential->on('resource2');
-    $query = 'STUB ON resource2 TO';
+    $query = 'STUB p ON resource2 TO';
 
     $this->assertCommandGives($query, $this->credential->getRaw());
   }
@@ -42,12 +42,12 @@ class CredentialTest extends TestCase
   public function testToCommandWorksAndCanBeOverwritten()
   {
     $this->credential->to('user');
-    $query = 'STUB ON TO user';
+    $query = 'STUB p ON TO user';
 
     $this->assertCommandGives($query, $this->credential->getRaw());
 
     $this->credential->to('user2');
-    $query = 'STUB ON TO user2';
+    $query = 'STUB p ON TO user2';
 
     $this->assertCommandGives($query, $this->credential->getRaw());
   }

@@ -45,10 +45,23 @@ class RevokeTest extends TestCase
 
     $this->assertCommandGives($query, $this->revoke->getRaw());
 
-    $this->revoke->setPermission('READ');
+    $this->revoke->permission('READ');
     $query = 'REVOKE READ ON TO';
 
     $this->assertCommandGives($query, $this->revoke->getRaw());
+  }
+
+  public function testUsingTheFluentInterface()
+  {
+    $this->revoke->permission("read")
+          ->to("myUser")
+          ->to("myOtherUser")
+          ->on("server");
+    $sql    =
+      'REVOKE read ON server TO myOtherUser'
+    ;
+
+    $this->assertEquals($sql, $this->revoke->getRaw());
   }
 }
 

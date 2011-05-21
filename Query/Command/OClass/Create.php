@@ -19,9 +19,10 @@
 
 namespace Orient\Query\Command\OClass;
 
+use Orient\Contract\Query\Command\OClass as OClassInterface;
 use Orient\Query\Command\OClass;
 
-class Create extends OClass
+class Create extends OClass implements OClassInterface
 {
   const SCHEMA = "CREATE CLASS :Class";
 }

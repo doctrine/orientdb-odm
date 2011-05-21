@@ -20,9 +20,10 @@
 namespace Orient\Query\Command;
 
 use Orient\Contract\Query\Formatter;
+use Orient\Contract\Query\Command\Insert as InsertInterface;
 use Orient\Query\Command;
 
-class Insert extends Command
+class Insert extends Command implements InsertInterface
 {
   const SCHEMA          =
     "INSERT INTO :Target (:Fields) VALUES (:Values)"

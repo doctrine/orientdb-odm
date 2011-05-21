@@ -19,24 +19,12 @@
 
 namespace Orient\Query\Command\Credential;
 
-use Orient\Contract\Query\Formatter;
+use Orient\Contract\Query\Command\Credential as CredentialInterface;
 use Orient\Query\Command\Credential;
 
-class Grant extends Credential
+class Grant extends Credential implements CredentialInterface
 {
   const SCHEMA          =
     "GRANT :Permission ON :Resource TO :Role"
   ;
-
-  public function __construct($permission)
-  {
-    parent::__construct();
-    
-    $this->permission($permission);
-  }
-  
-  public function permission($permission)
-  {
-    $this->setToken('Permission', $permission);
-  }
 }
