@@ -45,6 +45,7 @@ class Query
     'property.drop'   =>  'Orient\Query\Command\Property\Drop',
     'index.drop'      =>  'Orient\Query\Command\Index\Drop',
     'index.create'    =>  'Orient\Query\Command\Index\Create',
+    'link'            =>  'Orient\Query\Command\Link',
   );
 
   /**
@@ -225,6 +226,14 @@ class Query
     $this->command->limit($limit);
 
     return $this;
+  }
+
+  public function link($class, $property, $alias, $inverse = false)
+  {
+    $commandClass   = $this->getCommandClass('link');
+    $this->command  =  new $commandClass($class, $property, $alias, $inverse);
+
+    return $this->command;
   }
 
   /**

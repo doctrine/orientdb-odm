@@ -46,6 +46,18 @@ interface Formatter
 
   public function formatFields(array $fields);
 
+  public function formatInverse(array $inverse);
+
+  public function formatSourceClass(array $class);
+  
+  public function formatSourceProperty(array $property);
+
+  public function formatName(array $name);
+
+  public function formatDestinationClass(array $class);
+
+  public function formatDestinationProperty(array $property);
+
   public function btrim($text);
 }
 

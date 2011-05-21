@@ -105,6 +105,36 @@ class Formatter implements FormatterInterface
     return $this->implode($linked);
   }
 
+  public function formatInverse(array $inverse)
+  {
+    return $this->implode($inverse);
+  }
+
+  public function formatSourceClass(array $class)
+  {
+    return $this->implode($class);
+  }
+
+  public function formatSourceProperty(array $property)
+  {
+    return $this->implode($property);
+  }
+
+  public function formatDestinationClass(array $class)
+  {
+    return $this->implode($class);
+  }
+
+  public function formatDestinationProperty(array $property)
+  {
+    return $this->implode($property);
+  }
+
+  public function formatName(array $name)
+  {
+    return $this->implode($name);
+  }
+
   /**
    * Formats the target.
    *
