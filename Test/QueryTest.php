@@ -81,9 +81,9 @@ class QueryTest extends TestCase
 
     $this->assertEquals($sql, $this->query->getRaw());
 
-    $this->query->drop("run", "forrest");
+    $this->query->drop("run", "forrest")->on('c');
     $sql    =
-      'DROP PROPERTY run.forrest'
+      'DROP PROPERTY c.forrest'
     ;
 
     $this->assertEquals($sql, $this->query->getRaw());
@@ -91,7 +91,9 @@ class QueryTest extends TestCase
 
   public function testCreationOfAProperty()
   {
-    $this->query  = new Query();
+    $this->assertInstanceOf('\Orient\Query\Command\Property\Create', $this->query->create('p', 'h'));
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Property', $this->query->create('p', 'h'));
+    
     $this->query->create("read", "hallo", "type");
     $sql    =
       'CREATE PROPERTY read.hallo type'
@@ -109,31 +111,12 @@ class QueryTest extends TestCase
 
   public function testFindReferences()
   {
-    $this->query  = new Query();
-    $this->query->findReferences("1:1");
-    $sql    =
-      'FIND REFERENCES 1:1'
-    ;
-
-    $this->assertEquals($sql, $this->query->getRaw());
-
-    $this->query->findReferences("1:2", array('class'));
-    $sql    =
-      'FIND REFERENCES 1:2 [class]'
-    ;
-
-    $this->assertEquals($sql, $this->query->getRaw());
+    $this->assertInstanceOf('\Orient\Query\Command\Reference\Find', $this->query->findReferences("1:1"));
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Reference\Find', $this->query->findReferences("1:1"));
 
     $this->query->in(array('class2', 'cluster:class3'));
     $sql    =
-      'FIND REFERENCES 1:2 [class, class2, cluster:class3]'
-    ;
-
-    $this->assertEquals($sql, $this->query->getRaw());
-
-    $this->query->findReferences("1:3", array('class'), false);
-    $sql    =
-      'FIND REFERENCES 1:3 [class]'
+      'FIND REFERENCES 1:1 [class2, cluster:class3]'
     ;
 
     $this->assertEquals($sql, $this->query->getRaw());
@@ -141,7 +124,9 @@ class QueryTest extends TestCase
 
   public function testDroppingAnIndex()
   {
-    $this->query  = new Query();
+    $this->assertInstanceOf('\Orient\Query\Command\Index\Drop', $this->query->unindex("class", "property"));
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Index', $this->query->unindex("class", "property"));
+
     $this->query->unindex("class", "property");
     $sql    =
       'DROP INDEX class.property'
@@ -152,7 +137,9 @@ class QueryTest extends TestCase
 
   public function testCreatingAnIndex()
   {
-    $this->query  = new Query();
+    $this->assertInstanceOf('\Orient\Query\Command\Index\Create', $this->query->index("class", "property"));
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Index', $this->query->index("class", "property"));
+    
     $this->query->index("class", "property");
     $sql    =
       'CREATE INDEX class.property'
@@ -163,7 +150,6 @@ class QueryTest extends TestCase
 
   public function testDeleteSQLQuery()
   {
-    $this->query  = new Query();
     $this->query->delete("Profile")
                 ->where("1 = ?", 1)
                 ->andWhere("links = ?", 1);

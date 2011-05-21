@@ -19,9 +19,10 @@
 
 namespace Orient\Query\Command;
 
+use Orient\Contract\Query\Command\Index as IndexInterface;
 use Orient\Query\Command;
 
-class Index extends Command
+class Index extends Command implements IndexInterface
 {  
   public function __construct($class, $property)
   {

@@ -19,9 +19,10 @@
 
 namespace Orient\Query\Command\Reference;
 
+use Orient\Contract\Query\Command\Reference\Find as FindInterface;
 use Orient\Query\Command;
 
-class Find extends Command
+class Find extends Command implements FindInterface
 {
   const SCHEMA = "FIND REFERENCES :Rid :ClassList";
   
@@ -35,6 +36,8 @@ class Find extends Command
   public function in(array $classes, $append = true)
   {
     $this->setTokenValues('ClassList', $classes, $append);
+
+    return $this;
   }
   
   protected function setRid($rid)
