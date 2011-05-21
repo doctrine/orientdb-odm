@@ -10,7 +10,7 @@
  */
 
 /**
- * Drop class
+ * This class lets you build SQL statements to drop a class from OrientDB.
  *
  * @package    Orient
  * @subpackage Query

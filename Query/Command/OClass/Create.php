@@ -10,7 +10,7 @@
  */
 
 /**
- * Create class
+ * This class lets you build SQL statements to create a class in OrientDB.
  *
  * @package    Orient
  * @subpackage Query

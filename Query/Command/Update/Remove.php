@@ -21,12 +21,20 @@ namespace Orient\Query\Command\Update;
 
 use Orient\Query\Command\Update;
 
-class REMOVE extends Update
+class Remove extends Update
 {
   const SCHEMA =
     "UPDATE :Class REMOVE :Updates :Where"
   ;
 
+  /**
+   * Builds a new statement setting the $values to remove in the given $class.
+   * The values to remove can be appended with the $append parameter.
+   *
+   * @param array   $values
+   * @param string  $class
+   * @param boolean $append
+   */
   public function __construct(array $values, $class, $append = true)
   {
     parent::__construct($class);

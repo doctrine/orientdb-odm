@@ -10,7 +10,7 @@
  */
 
 /**
- * Create class
+ * This class lets you build SQL statements to create a property in a class.
  *
  * @package    Orient
  * @subpackage Query
@@ -25,6 +25,14 @@ class Create extends Property
 {
   const SCHEMA = "CREATE PROPERTY :Class.:Property :Type :Linked";
 
+  /**
+   * Generates a valid SQL statements to add $property of type $type
+   * linked to $linked.
+   *
+   * @param string $property
+   * @param string $type
+   * @param string $linked
+   */
   public function __construct($property, $type = NULL, $linked = NULL)
   {
     parent::__construct($property);

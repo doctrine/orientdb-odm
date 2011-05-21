@@ -10,7 +10,7 @@
  */
 
 /**
- * Update class
+ * This is a central point to manipulate SQL statements dealing with updates.
  *
  * @package    Orient
  * @subpackage Query
@@ -27,6 +27,11 @@ class Update extends Command
     "UPDATE :Class SET :Updates :Where"
   ;
 
+  /**
+   * Builds a new statement, setting the $class.
+   *
+   * @param string $class
+   */
   public function __construct($class)
   {
     parent::__construct();
@@ -34,6 +39,14 @@ class Update extends Command
     $this->setToken('Class', $class);
   }
 
+  /**
+   * Set the $values of the updates to be done.
+   * You can $appnd the values.
+   *
+   * @param   array   $values
+   * @param   boolean $append
+   * @return  Update
+   */
   public function set(array $values, $append = true)
   {
     $this->setTokenValues('Updates', $values, $append);

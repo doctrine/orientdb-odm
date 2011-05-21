@@ -10,7 +10,8 @@
  */
 
 /**
- * Response class
+ * This class wraps an HTTP response to easily manage some HTTP headers and
+ * the body.
  *
  * @package    
  * @subpackage 

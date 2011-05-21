@@ -29,6 +29,13 @@ class Insert extends Command implements InsertInterface
     "INSERT INTO :Target (:Fields) VALUES (:Values)"
   ;
 
+  /**
+   * Sets the fields to insert within the query.
+   *
+   * @param   array   $fields
+   * @param   boolean $append
+   * @return  Insert
+   */
   public function fields(array $fields, $append = true)
   {
     $this->setTokenValues('Fields', $fields, $append);
@@ -36,6 +43,12 @@ class Insert extends Command implements InsertInterface
     return $this;
   }
 
+  /**
+   * Sets the class in which the query will insert informations.
+   *
+   * @param   string $target
+   * @return  Insert
+   */
   public function into($target)
   {
     $this->setToken('Target', $target);
@@ -43,6 +56,13 @@ class Insert extends Command implements InsertInterface
     return $this;
   }
 
+  /**
+   * Sets the $values to insert.
+   *
+   * @param   array   $values
+   * @param   boolean $append
+   * @return  Insert
+   */
   public function values(array $values, $append = true)
   {
     $this->setTokenValues('Values', $values, $append);

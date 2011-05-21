@@ -10,7 +10,7 @@
  */
 
 /**
- * Grant class
+ * The Grant class it's used to build GRANT SQL statements.
  *
  * @package    Orient
  * @subpackage Query

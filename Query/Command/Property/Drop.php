@@ -10,7 +10,8 @@
  */
 
 /**
- * Drop class
+ * This class handles the generation of SQL statements to remove properties
+ * from a class.
  *
  * @package    Orient
  * @subpackage Query

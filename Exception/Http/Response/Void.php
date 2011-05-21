@@ -24,6 +24,13 @@ class Void extends Exception
 {
   const MESSAGE = 'The %s client has been unable to retrieve a response for the resource at %s';
 
+  /**
+   * Generates an exception giving information about the client which performed
+   * the request and the unreachable location.
+   *
+   * @param string $client
+   * @param string $location
+   */
   public function __construct($client, $location)
   {
     $this->message = sprintf(self::MESSAGE, $client, $location);

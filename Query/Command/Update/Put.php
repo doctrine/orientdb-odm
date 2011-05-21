@@ -10,7 +10,8 @@
  */
 
 /**
- * Put class
+ * This class manages the creation of SQL statements to update map properties
+ * of a record.
  *
  * @package    Orient
  * @subpackage Query
@@ -27,6 +28,15 @@ class Put extends Update
     "UPDATE :Class PUT :MapUpdates :Where"
   ;
 
+  /**
+   * Creates a new statement assigning the $values to update in the given
+   * $class.
+   * The values can be appended through $append.
+   *
+   * @param array   $values
+   * @param string  $class
+   * @param boolean $append
+   */
   public function __construct(array $values, $class, $append = true)
   {
     parent::__construct($class);

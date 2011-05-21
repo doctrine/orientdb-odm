@@ -11,7 +11,8 @@
 
 
 /**
- * Credential class
+ * This class manages the generation of SQL statements able to assign or revoke
+ * permissions inside OrientDB.
  *
  * @package    Orient
  * @subpackage Query
@@ -25,6 +26,11 @@ use Orient\Query\Command;
 
 abstract class Credential extends Command implements CredentialInterface
 {
+  /**
+   * Creates a new statement, setting the $permission.
+   *
+   * @param string $permission
+   */
   public function __construct($permission)
   {
     parent::__construct();
@@ -32,6 +38,12 @@ abstract class Credential extends Command implements CredentialInterface
     $this->permission($permission);
   }
 
+  /**
+   * Sets a permission for the query.
+   *
+   * @param   string $permission
+   * @return  Credential
+   */
   public function permission($permission)
   {
     $this->setToken('Permission', $permission);
@@ -39,6 +51,12 @@ abstract class Credential extends Command implements CredentialInterface
     return $this;
   }
 
+  /**
+   * Sets the $resource on which the credential is given.
+   *
+   * @param   string $resource
+   * @return  Credential
+   */
   public function on($resource)
   {
     $this->setToken('Resource', $resource);
@@ -46,6 +64,12 @@ abstract class Credential extends Command implements CredentialInterface
     return $this;
   }
 
+  /**
+   * Sets the $role having the credential on a resource.
+   *
+   * @param   string $role
+   * @return  Credential
+   */
   public function to($role)
   {
     $this->setToken('Role', $role);

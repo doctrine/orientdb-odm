@@ -10,7 +10,7 @@
  */
 
 /**
- * Create class
+ * This class handles the SQL statement to generate an index into the DB.
  *
  * @package    Orient
  * @subpackage Query

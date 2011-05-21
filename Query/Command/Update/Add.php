@@ -10,7 +10,8 @@
  */
 
 /**
- * Add class
+ * This class manages the creation of a SQL statement able to add a relation in
+ * a record's attribute.
  *
  * @package    Orient
  * @subpackage Query
@@ -27,6 +28,14 @@ class Add extends Update
     "UPDATE :Class ADD :RidUpdates :Where"
   ;
 
+  /**
+   * Builds a new statement setting the $values in the given $class.
+   * You can $append the values.
+   *
+   * @param array   $values
+   * @param string  $class
+   * @param boolean $append
+   */
   public function __construct(array $values, $class, $append = true)
   {
     parent::__construct($class);

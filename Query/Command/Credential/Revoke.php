@@ -10,7 +10,7 @@
  */
 
 /**
- * Revoke class
+ * The Revoke class is used to build REVOKE sql statements.
  *
  * @package    Orient
  * @subpackage Query

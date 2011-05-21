@@ -10,7 +10,7 @@
  */
 
 /**
- * Http client class
+ * This class represents an HTTP client based on Curl.
  *
  * @package    Orient
  * @subpackage Http

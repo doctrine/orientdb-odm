@@ -30,6 +30,10 @@ class Command implements CommandContract
   protected   $tokens     = array();
   protected   $statement  = NULL;
 
+  /**
+   * Builds a new object, creating the SQL statement from the class SCHEMA
+   * and initializing the tokens.
+   */
   public function  __construct()
   {
     $class            = get_called_class();
@@ -37,6 +41,14 @@ class Command implements CommandContract
     $this->tokens     = $this->getTokens();
   }
 
+  /**
+   * Sets a where token using the AND operator.
+   * If the $condition contains a "?", it will be replaced by the $value.
+   *
+   * @param   string $condition
+   * @param   string $value
+   * @return  Command
+   */
   public function andWhere($condition, $value = NULL)
   {
     return $this->where($condition, $value, true, "AND");
@@ -108,10 +120,7 @@ class Command implements CommandContract
    */
   public function resetWhere()
   {
-    $token                = 'Where';
-    $token                = $this->tokenize($token);
-    $this->checkToken($token);
-    $this->tokens[$token] = array();
+    $this->clearToken('Where');
 
     return true;
   }
@@ -203,6 +212,25 @@ class Command implements CommandContract
     throw new CommandException\TokenNotFound($token, get_called_class());
   }
 
+  /**
+   * Clears the value of a token.
+   *
+   * @param string $token
+   */
+  protected function clearToken($token)
+  {
+    $token                = $this->tokenize($token);
+    $this->checkToken($token);
+    $this->tokens[$token] = array();
+  }
+
+  /**
+   * Returns a brand new instance of a Formatter in order to format query
+   * tokens.
+   *
+   * @return  Formatter
+   * @todo    The dependency is hardcoded
+   */
   protected function getFormatter()
   {
     return new Formatter();
@@ -212,7 +240,6 @@ class Command implements CommandContract
    * Returns the values to replace command's schema tokens.
    *
    * @return  array
-   * @todo    hardcoded dependency
    */
   protected function getTokenReplaces()
   {
@@ -272,7 +299,7 @@ class Command implements CommandContract
   }
 
   /**
-   * Sets a token, and can be appended with the given $append.
+   * Sets the values of a token, and can be appended with the given $append.
    *
    * @param   string   $token
    * @param   array    $tokenValues
@@ -301,6 +328,11 @@ class Command implements CommandContract
     return true;
   }
 
+  /**
+   * Deletes a token.
+   *
+   * @param string $token
+   */
   protected function unsetToken($token)
   {
     unset($this->tokens[$token]);

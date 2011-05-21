@@ -14,8 +14,8 @@
  *
  * This class is the foundation of the library : it's the low-level binding
  * connecting to Orient.
- * It's also responsible of incapsulating a proper client which requests to
- * Orient.
+ * It's also responsible of incapsulating a proper client which makes HTTP
+ * requests to OrientDB.
  *
  * @package    Orient
  * @subpackage Foundation
@@ -35,7 +35,7 @@ class Binding implements Protocol\Http
   protected $authentication;
 
   /**
-   * Instantiates a new instance of a Orient binding.
+   * Instantiates a new binding.
    *
    * @api
    * @param Http\Client $client
@@ -59,8 +59,8 @@ class Binding implements Protocol\Http
    * Deletes a class.
    *
    * @api
-   * @param   String $class
-   * @param   String $database
+   * @param   string $class
+   * @param   string $database
    * @return  Orient\Http\Response
    */
   public function deleteClass($class, $database = false)
@@ -75,8 +75,8 @@ class Binding implements Protocol\Http
    * Gets a class and its records.
    *
    * @api
-   * @param   String $class
-   * @param   String $database
+   * @param   string $class
+   * @param   string $database
    * @return  Orient\Http\Response
    */
   public function getClass($class, $database = false)
@@ -91,9 +91,9 @@ class Binding implements Protocol\Http
    * Creates a new class.
    *
    * @api
-   * @param   String $class
-   * @param   String $database
-   * @param   String $body
+   * @param   string $class
+   * @param   string $database
+   * @param   string $body
    * @return  Orient\Http\Response
    */
   public function postClass($class, $database = false, $body = null)
@@ -108,7 +108,7 @@ class Binding implements Protocol\Http
    * Gets informations about a cluster.
    *
    * @api
-   * @param   String $cluster
+   * @param   string $cluster
    * @param   boolean $database
    * @return  Orient\Http\Response
    */
@@ -124,7 +124,7 @@ class Binding implements Protocol\Http
    * Connects the instance to a DB.
    *
    * @api
-   * @param   String $database
+   * @param   string $database
    * @return  Orient\Http\Response
    */
   public function connect($database)
@@ -160,8 +160,8 @@ class Binding implements Protocol\Http
    * Executes a raw SQL query on the given DB.
    *
    * @api
-   * @param   String $sql
-   * @param   String $database
+   * @param   string $sql
+   * @param   string $database
    * @return  Orient\Http\Response
    */
   public function command($sql, $database = null)
@@ -176,7 +176,7 @@ class Binding implements Protocol\Http
    * Gets informations about a DB.
    *
    * @api
-   * @param   String $database
+   * @param   string $database
    * @return  Orient\Http\Response
    */
   public function getDatabase($database = null)
@@ -189,13 +189,13 @@ class Binding implements Protocol\Http
 
   /**
    * Executes a raw query. It differs from the command because Orient defines
-   * a query a a SELECT only.
+   * a query as a SELECT only.
    *
    * @api
-   * @param   String $sql           The query
-   * @param   String $database
+   * @param   string $sql           The query
+   * @param   string $database
    * @param   Int $limit            Results limit, default 20
-   * @param   String $fetchPlan
+   * @param   string $fetchPlan
    * @return  Orient\Http\Response
    */
   public function query($sql, $database = null, $limit = null, $fetchPlan = null)
@@ -217,9 +217,9 @@ class Binding implements Protocol\Http
    * Retrieves a record
    *
    * @api
-   * @param   String $rid
-   * @param   String $database
-   * @param   String $fetchPlan
+   * @param   string $rid
+   * @param   string $database
+   * @param   string $fetchPlan
    * @return  Orient\Http\Response
    */
   public function getDocument($rid, $database = null, $fetchPlan = null)
@@ -235,8 +235,8 @@ class Binding implements Protocol\Http
    * Creates a new record.
    *
    * @api
-   * @param   String $document
-   * @param   String $database
+   * @param   string $document
+   * @param   string $database
    * @return  Orient\Http\Response
    */
   public function postDocument($document, $database = null)
@@ -251,9 +251,9 @@ class Binding implements Protocol\Http
    * Updates an existing record.
    *
    * @api
-   * @param   String $rid
-   * @param   String $document
-   * @param   String $database
+   * @param   string $rid
+   * @param   string $document
+   * @param   string $database
    * @return  Orient\Http\Response
    */
   public function putDocument($rid, $document, $database = null)
@@ -268,8 +268,8 @@ class Binding implements Protocol\Http
    * Deletes a document
    *
    * @api
-   * @param   String $rid
-   * @param   String $database
+   * @param   string $rid
+   * @param   string $database
    * @return  Orient\Http\Response
    */
   public function deleteDocument($rid, $database = null)
@@ -306,8 +306,8 @@ class Binding implements Protocol\Http
    * password are valid.
    * The authentication attribute is in HTTP header style.
    *
-   * @param   String $username
-   * @param   String $password
+   * @param   string $username
+   * @param   string $password
    * @return  bool
    */
   public function setAuthentication($username = null, $password = null)
@@ -373,8 +373,8 @@ class Binding implements Protocol\Http
   /**
    * Appends the fetchPlan to the location.
    *
-   * @param   String $fetchPlan
-   * @param   String $location
+   * @param   string $fetchPlan
+   * @param   string $location
    * @return  String
    */
   protected function addFetchPlan($fetchPlan, $location)
@@ -390,7 +390,7 @@ class Binding implements Protocol\Http
   /**
    * Returns the location of a Class.
    *
-   * @param   String $class
+   * @param   string $class
    * @return  String
    */
   final protected function getClassLocation($class)
@@ -401,7 +401,7 @@ class Binding implements Protocol\Http
   /**
    * Returns the location of a Cluster.
    *
-   * @param   String  $cluster
+   * @param   string  $cluster
    * @param   Integer $limit
    * @return  String
    */
@@ -413,7 +413,7 @@ class Binding implements Protocol\Http
   /**
    * Returns the location of a Database.
    *
-   * @param   String $database
+   * @param   string $database
    * @return  String
    */
   final protected function getDatabaseLocation($database)

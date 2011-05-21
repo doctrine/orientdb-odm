@@ -10,7 +10,7 @@
  */
 
 /**
- * Property class
+ * This is a central point to manage SQL statements dealing with properties.
  *
  * @package    Orient
  * @subpackage Query
@@ -24,6 +24,11 @@ use Orient\Query\Command;
 
 class Property extends Command implements PropertyInterface
 {
+  /**
+   * Builds a new statement setting the $property to manipulate.
+   *
+   * @param <type> $property
+   */
   public function __construct($property)
   {
     parent::__construct();
@@ -31,13 +36,24 @@ class Property extends Command implements PropertyInterface
     $this->setProperty($property);
   }
 
+  /**
+   * Sets the class of the property.
+   *
+   * @param   string    $class
+   * @return  Property
+   */
   public function on($class)
   {
     $this->setToken('Class', $class);
 
     return $this;
   }
-  
+
+  /**
+   * Sets the $property in the query.
+   *
+   * @param string $property
+   */
   protected function setProperty($property)
   {
     $this->setToken('Property', $property);

@@ -10,7 +10,8 @@
  */
 
 /**
- * Link class
+ * This class lets you create SQL statements in order to create links between
+ * records.
  *
  * @package    Orient
  * @subpackage Query
@@ -27,6 +28,14 @@ class Link extends Command
     "CREATE LINK :Name FROM :SourceClass.:SourceProperty TO :DestinationClass.:DestinationProperty :Inverse"
   ;
 
+  /**
+   * Sets the source of the link, its $alias and if the link must be $reverse.
+   *
+   * @param string  $class
+   * @param string  $property
+   * @param string  $alias
+   * @param boolean $inverse
+   */
   public function  __construct($class, $property, $alias, $inverse = false)
   {
     parent::__construct();
@@ -41,6 +50,13 @@ class Link extends Command
     }
   }
 
+  /**
+   * Sets the destination of the link.
+   *
+   * @param   string $class
+   * @param   string $property
+   * @return  Link
+   */
   public function to($class, $property)
   {
     $this->setToken('DestinationClass', $class);

@@ -10,7 +10,7 @@
  */
 
 /**
- * Drop class
+ * This class handles the SQL statements that drops an index from the DB.
  *
  * @package    Orient
  * @subpackage Query

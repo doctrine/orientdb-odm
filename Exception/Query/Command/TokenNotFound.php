@@ -32,6 +32,12 @@ class TokenNotFound extends Exception
   The command schema is: %s
 EOF;
 
+  /**
+   * Compares the class SCHEMA and the submitted token.
+   *
+   * @param string $token
+   * @param string $commandClass
+   */
   public function __construct($token, $commandClass)
   {
     $ref    = new \ReflectionClass($commandClass);

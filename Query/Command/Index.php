@@ -10,7 +10,7 @@
  */
 
 /**
- * Index class
+ * This class manages indexes on OrientDB.
  *
  * @package     Orient
  * @subpackage  Query
@@ -23,7 +23,14 @@ use Orient\Contract\Query\Command\Index as IndexInterface;
 use Orient\Query\Command;
 
 class Index extends Command implements IndexInterface
-{  
+{
+  /**
+   * Creates a new statements to manage indexes on the $property of the given
+   * $class.
+   *
+   * @param string $class
+   * @param string $property
+   */
   public function __construct($class, $property)
   {
     parent::__construct();
