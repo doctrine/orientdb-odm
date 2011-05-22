@@ -135,9 +135,8 @@ class Command implements CommandContract
    */
   public function where($condition, $value = NULL, $append = false, $clause = "WHERE")
   {
-    $condition = str_replace("?", '"' .$value . '"', $condition);
-
-    $this->setTokenValues('Where', array("{$clause} " . $condition), $append);
+    $condition  = str_replace("?", '"' . addslashes($value) . '"', $condition);
+    $this->setTokenValues('Where', array("{$clause} " . $condition), $append, false, false);
 
     return $this;
   }
@@ -305,6 +304,7 @@ class Command implements CommandContract
    * @param   array    $tokenValues
    * @param   boolean  $append
    * @param   boolean  $first
+   * @param   boolean  $filter
    * @return  true
    */
   protected function setTokenValues($token, array $tokenValues, $append = true, $first = false)

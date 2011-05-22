@@ -49,110 +49,212 @@ class Formatter implements FormatterInterface
   /**
    * Formats the projections.
    *
-   * @param   array $projections
+   * @param   array $values
    * @return  string
    */
-  public function formatProjections(array $projections)
+  public function formatProjections(array $values)
   {
-    return $this->implode($projections);
+    return $this->implodeRegular($values);
   }
 
-  public function formatProperty(array $property)
-  {
-    return $this->implode($property);
+  /**
+   * Formats the properties.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatProperty(array $values)
+  { 
+    return $this->implodeRegular($values);
   }
 
-  public function formatClass(array $class)
+  /**
+   * Formats the classes.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatClass(array $values)
   {
-    return $this->implode($class);
+    return $this->implodeRegular($values);
   }
 
-  public function formatPermission(array $permission)
+  /**
+   * Formats the permissions.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatPermission(array $values)
   {
-    return $this->implode($permission);
+    return $this->implodeRegular($values);
   }
 
-  public function formatResource(array $resource)
+  /**
+   * Formats the resources.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatResource(array $values)
   {
-    return $this->implode($resource);
+    return $this->implodeRegular($values);
   }
 
-  public function formatRid(array $rid)
+  /**
+   * Formats the rids, iterating through them returning the first valid one.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatRid(array $values)
   {
-    return $this->implode($rid);
+    $values = array_filter($values, function ($arr) {
+      $parts = explode(':', $arr);
+
+      if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1]))
+      {
+        return true;
+      }
+    });
+
+    return (count($values)) ? array_shift($values) : NULL;
   }
 
-  public function formatClassList(array $classList)
+  /**
+   * If there are classes, it returns them in squared braces.
+   *
+   * @param array $values
+   * @return string
+   */
+  public function formatClassList(array $values)
   {
-    if (count($classList))
+    if (count($values))
     {
-      return "[" . $this->implode($classList) . "]";
+      return "[" . $this->implodeRegular($values) . "]";
     }
+
+    return NULL;
   }
 
-  public function formatRole(array $role)
+  /**
+   * Formats the roles.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatRole(array $values)
   {
-    return $this->implode($role);
+    return $this->implodeRegular($values);
   }
 
-  public function formatType(array $type)
+  /**
+   * Formats the type.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatType(array $values)
   {
-    return $this->implode($type);
+    return $this->implodeRegular($values);
   }
 
-  public function formatLinked(array $linked)
+  /**
+   * Formats the linked.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatLinked(array $values)
   {
-    return $this->implode($linked);
+    return $this->implodeRegular($values);
   }
 
-  public function formatInverse(array $inverse)
+  /**
+   * Formats the inverse.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatInverse(array $values)
   {
-    return $this->implode($inverse);
+    return $this->implodeRegular($values);
   }
 
-  public function formatSourceClass(array $class)
+  /**
+   * Formats the source class.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatSourceClass(array $values)
   {
-    return $this->implode($class);
+    return $this->implodeRegular($values);
   }
 
-  public function formatSourceProperty(array $property)
+  /**
+   * Formats the source property.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatSourceProperty(array $values)
   {
-    return $this->implode($property);
+    return $this->implodeRegular($values);
   }
 
-  public function formatDestinationClass(array $class)
+  /**
+   * Formats the destination class.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatDestinationClass(array $values)
   {
-    return $this->implode($class);
+    return $this->implodeRegular($values);
   }
 
-  public function formatDestinationProperty(array $property)
+  /**
+   * Formats the destination property.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatDestinationProperty(array $values)
   {
-    return $this->implode($property);
+    return $this->implodeRegular($values);
   }
 
-  public function formatName(array $name)
+  /**
+   * Formats the name.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatName(array $values)
   {
-    return $this->implode($name);
+    return $this->implodeRegular($values);
   }
 
   /**
    * Formats the target.
    *
-   * @param   array $target
+   * @param   array $values
    * @return  string
    */
-  public function formatTarget(array $target)
+  public function formatTarget(array $values)
   {
-    $count = count($target);
+    $values = $this->filterRegularChars($values);
+    $count = count($values);
 
     if ($count)
     {
       if ($count > 1)
-      {
-        return "[" .$this->implode($target) . "]";
+      { 
+        return "[" .$this->implode($values) . "]";
       }
 
-      return array_shift($target);
+      return array_shift($values);
     }
 
     return NULL;
@@ -319,6 +421,22 @@ class Formatter implements FormatterInterface
   }
 
   /**
+   * Filters the array values leaving intact regular characters a-z and
+   * integers.
+   *
+   * @param   array $values
+   * @return  array
+   */
+  protected function filterRegularChars(array $values, $nonFilter = NULL)
+  {
+    return array_map(function ($arr) use ($nonFilter) {
+      $pattern = "/[^a-z|A-Z|0-9|:|$nonFilter]/";
+      
+      return preg_replace($pattern, "", $arr);
+    }, $values);
+  }
+
+  /**
    * Implodes and array using a comma.
    *
    * @param   array $array
@@ -327,6 +445,17 @@ class Formatter implements FormatterInterface
   protected function implode(array $array)
   {
     return implode(', ', $array);
+  }
+
+  /**
+   * Implodes the $values in a string regularly formatted.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  protected function implodeRegular(array $values, $nonFilter = NULL)
+  {
+    return $this->implode($this->filterRegularChars($values, $nonFilter));
   }
 }
 

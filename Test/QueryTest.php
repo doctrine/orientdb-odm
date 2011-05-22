@@ -21,6 +21,80 @@ class QueryTest extends TestCase
     $this->query = new Query();
   }
 
+  public function testDataFiltering()
+  {
+    $this->query->where('username = ?', "\"admin\"", false);
+    $sql    =
+      'SELECT FROM WHERE username = "\"admin\""'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query->where('username = ?', "'admin'", false);
+    $sql    =
+      "SELECT FROM WHERE username = \"\'admin\'\"";
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query->insert(array('field'))->values(array('value'))->into('class');
+    $sql    =
+      'INSERT INTO class () VALUES ("value")'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query = new Query();
+    $this->query->where('any() traverse ( any() like "%danger%" )', null, false);
+    $sql    =
+      'SELECT FROM WHERE any() traverse ( any() like "%danger%" )'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query->where('1 = ?', '1; DELETE FROM class', false);
+    $sql    =
+      'SELECT FROM WHERE 1 = "1; DELETE FROM class"'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query->where('1 = ?', '1"; DELETE FROM class', false);
+    $sql    =
+      'SELECT FROM WHERE 1 = "1\"; DELETE FROM class"'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query->from(array('users; DELETE FROM class'), false)->resetWhere();
+    $sql    =
+      'SELECT FROM usersDELETEFROMclass'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query->from(array('users-- DELETE FROM class'), false)->resetWhere();
+    $sql    =
+      'SELECT FROM usersDELETEFROMclass'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query->from(array('class'), false)->where('class = ?', ";");
+    $sql    =
+      'SELECT FROM class WHERE class = ";"'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+
+    $this->query->from(array('class'), false)->where('class = ?', "--");
+    $sql    =
+      'SELECT FROM class WHERE class = "--"'
+    ;
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+  }
+
   public function testSelect()
   {
     $this->assertInstanceOf('\Orient\Contract\Query\Command\Select', $this->query->select(array()));
