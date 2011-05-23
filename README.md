@@ -23,9 +23,13 @@ Some things will change (implementation of better interfaces, naming conventions
 
 ## Current status of the query builder
 
-We've correctly implemented an API to do SELECTs and INSERTs, which are the most difficult expressions to manage.
+All the SQL command are implemented but:
 
-Shortly a "final" version of the query builder will be published in order to start the heavy work for the mapper.
+* Alter Table
+* Alter Property
+* Update of the maps
+
+and, in order to use it in production, integration tests need to be written.
 
 ## Current status of the mapper
 
