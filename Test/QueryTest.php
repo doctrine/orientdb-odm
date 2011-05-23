@@ -13,6 +13,15 @@ namespace Orient\Test;
 
 use Orient\Test\PHPUnit\TestCase;
 use Orient\Query;
+use Orient\Query\Command\Select;
+
+class StubQuery extends Query
+{
+  public function aMethodCallingABadCommand()
+  {
+    return $this->getCommandClass('OMN NO NO ON ON ');
+  }
+}
 
 class QueryTest extends TestCase
 { 
@@ -283,5 +292,46 @@ class QueryTest extends TestCase
     ;
 
     $this->assertCommandGives($sql, $this->query->getRaw());
+  }
+
+  public function testWheres()
+  {
+    $this->query->from(array('class'));
+    $this->query->where('1 = ?', 1);
+    $this->query->andWhere('1 = ?', 1);
+    $this->query->orWhere("1 = ?", 1);
+    $sql = 'SELECT FROM class WHERE 1 = "1" AND 1 = "1" OR 1 = "1"';
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+  }
+
+  public function testLimit()
+  {
+    $this->query->from(array('class'))->limit(10);
+    $sql = 'SELECT FROM class LIMIT 10';
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+  }
+
+  public function testOrderBy()
+  {
+    $this->query->from(array('class'))->orderBy('A B');
+    $sql = 'SELECT FROM class ORDER BY A B';
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+  }
+
+  /**
+   * @expectedException Orient\Exception
+   */
+  public function testAnExceptionIsRaisedWhenTryingToAccessANonExistingMethod()
+  {
+    $query = new StubQuery();
+    $query->aMethodCallingABadCommand();
+  }
+
+  public function testTokens()
+  {
+    $this->assertCommandGives(Select::getTokens(), $this->query->getTokens());
   }
 }
