@@ -25,7 +25,7 @@ use Orient\Query\Command\Update;
 class Put extends Update
 {
   const SCHEMA =
-    "UPDATE :Class PUT :MapUpdates :Where"
+    "UPDATE :Class PUT :Updates :Where"
   ;
 
   /**
@@ -41,7 +41,7 @@ class Put extends Update
   {
     parent::__construct($class);
 
-    $this->setTokenValues('MapUpdates', $values, $append);
+    $this->setTokenValues('Updates', $values, $append);
   }
 }
 

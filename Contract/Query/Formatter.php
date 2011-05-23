@@ -65,8 +65,6 @@ interface Formatter
 
   public function formatUpdates(array $updates);
 
-  public function formatMapUpdates(array $updates);
-
   public function formatRidUpdates(array $updates);
 
   public function formatDestinationClass(array $class);

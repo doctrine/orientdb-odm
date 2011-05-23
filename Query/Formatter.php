@@ -21,6 +21,7 @@
 namespace Orient\Query;
 
 use Orient\Contract\Query\Formatter as FormatterInterface;
+use Orient\Formatter\String;
 
 class Formatter implements FormatterInterface
 {
@@ -110,12 +111,7 @@ class Formatter implements FormatterInterface
   public function formatRid(array $values)
   {
     $values = array_filter($values, function ($arr) {
-      $parts = explode(':', $arr);
-
-      if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1]))
-      {
-        return true;
-      }
+      return String::filterRid($arr);
     });
 
     return (count($values)) ? array_shift($values) : NULL;
@@ -263,48 +259,74 @@ class Formatter implements FormatterInterface
   /**
    * Formats the where conditions.
    *
-   * @param   array $where
+   * @param   array $values
    * @return  string
    */
-  public function formatWhere(array $where)
+  public function formatWhere(array $values)
   {
-    $where = $this->implode($where);
-    $where = str_replace(", AND", " AND", $where);
-    $where = str_replace(", OR", " OR", $where);
+    $values = $this->implode($values);
+    $values = str_replace(", AND", " AND", $values);
+    $values = str_replace(", OR", " OR", $values);
 
-    return $where;
+    return $values;
   }
 
   /**
    * Formats the ORDER BY clause.
    *
-   * @param   array $orderBy
+   * @param   array $values
    * @return  string
    */
-  public function formatOrderBy(array $orderBy)
+  public function formatOrderBy(array $values)
   {
-    return count($orderBy) ? "ORDER BY " . $this->implode($orderBy) : NULL;
+    return count($values) ? "ORDER BY " . $this->implodeRegular($values, " ") : NULL;
   }
 
   /**
    * Formats the LIMIT clause.
    *
-   * @param   array $limit
+   * @param   array $values
    * @return  string
    */
-  public function formatLimit(array $limit)
+  public function formatLimit(array $values)
   {
-    return count($limit) ? "LIMIT {$limit[0]}" : NULL;
+    $values = function () use ($values) {
+      foreach ($values as $limit)
+      {
+        if (is_numeric($limit))
+        {
+          return $limit;
+        }
+      }
+
+      return false;
+    };
+
+    return $values() ? "LIMIT " . $values() : NULL;
   }
 
   /**
    * Formats the RANGE clause.
    *
-   * @param   array $range
+   * @param   array $values
    * @return  string
    */
-  public function formatRange(array $range)
+  public function formatRange(array $values)
   {
+    $range = array();
+
+    foreach ($values as $rid)
+    {
+      $value = $this->formatRid(array($rid));
+
+      if ($value)
+      {
+        $range[] = $value;
+      }
+    }
+
+    $range = array_slice($range, 0, 2);
+
     return count($range) ? "RANGE " . $this->implode($range) : NULL;
   }
 
@@ -316,7 +338,7 @@ class Formatter implements FormatterInterface
    */
   public function formatFields(array $fields)
   {
-    return count($fields) ? $this->implode($fields) : NULL;
+    return count($fields) ? $this->implodeRegular($fields) : NULL;
   }
 
   /**
@@ -333,80 +355,67 @@ class Formatter implements FormatterInterface
       {
         if (count($value) > 1)
         {
-          $values[$key] = "[" . $this->implode($value) . "]";
+          $values[$key] = "[" . addslashes($this->implode($value)) . "]";
         }
         else
         {
-          $values[$key] = array_shift($value);
+          $values[$key] = addslashes(array_shift($value));
         }
       }
       else
       {
-        $values[$key] = '"' . $value . '"';
+        $values[$key] = '"' . addslashes($value) . '"';
       }
     }
 
     return count($values) ? $this->implode($values) : NULL;
   }
 
-  public function formatUpdates(array $updates)
+  /**
+   * Formats the updates.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatUpdates(array $values)
   {
     $string = "";
 
-    foreach ($updates as $key => $update)
+    foreach ($values as $key => $update)
     {
-      $string .= ' ' . $key . ' = "' . $update . '",';
+      $key = String::filterRegularChars($key);
+
+      if ($key)
+      {
+        $string .= ' ' . $key . ' = "' . addslashes($update) . '",';
+      }
     }
 
     return substr($string, 0, strlen($string) - 1);
   }
 
-  public function formatMapUpdates(array $updates)
+  /**
+   * Format the rid updates.
+   *
+   * @param   array   $values
+   * @return  string
+   */
+  public function formatRidUpdates(array $values)
   {
-    $string = "";
+    $rids = array();
 
-    foreach ($updates as $key => $update)
+    foreach ($values as $key => $value)
     {
-      $finalChar = '"';
+      $key = String::filterRegularChars($key);
+      $rid = String::filterRid($value);
 
-      if (is_array($update) && count($update))
+      if ($key && $rid)
       {
-        foreach ($update as $k => $value)
-        {
-          $update = $k . '", ' . $value;
-        }
-
-        $finalChar = NULL;
-      }
-
-      $string .= ' ' . $key . ' = "' . $update . $finalChar . ',';
-    }
-
-    return substr($string, 0, strlen($string) - 1);
-  }
-
-  public function formatRidUpdates(array $updates)
-  {
-    foreach ($updates as $key => $value)
-    {
-      if (is_array($value))
-      {
-        if (count($value) > 1)
-        {
-          $updates[$key] = "$key = [" . $this->implode($value) . "]";
-        }
-        else
-        {
-          $updates[$key] = array_shift($value);
-        }
-      }
-      else
-      {
-        $updates[$key] = "$key = " . $value;
+        $rids[$key] = "$key = " . $rid;
       }
     }
 
-    return count($updates) ? $this->implode($updates) : NULL;
+    return count($rids) ? $this->implode($rids) : NULL;
   }
 
   /**
@@ -430,9 +439,7 @@ class Formatter implements FormatterInterface
   protected function filterRegularChars(array $values, $nonFilter = NULL)
   {
     return array_map(function ($arr) use ($nonFilter) {
-      $pattern = "/[^a-z|A-Z|0-9|:|$nonFilter]/";
-      
-      return preg_replace($pattern, "", $arr);
+      return String::filterRegularChars($arr, $nonFilter);
     }, $values);
   }
 
@@ -455,7 +462,18 @@ class Formatter implements FormatterInterface
    */
   protected function implodeRegular(array $values, $nonFilter = NULL)
   {
-    return $this->implode($this->filterRegularChars($values, $nonFilter));
+    $values         = $this->filterRegularChars($values, $nonFilter);
+    $nonEmptyValues = array();
+
+    foreach ($values as $value)
+    {
+      if ($value !== '')
+      {
+        $nonEmptyValues[] = $value;
+      }
+    }
+
+    return $this->implode($nonEmptyValues);
   }
 }
 
