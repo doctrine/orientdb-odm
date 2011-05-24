@@ -246,8 +246,9 @@ class Command implements CommandContract
 
     foreach ($this->tokens as $token => $value)
     {
-      $method           = "format" . $this->getFormatter()->untokenize($token);
-      $replaces[$token] = $this->getFormatter()->$method(array_filter($value));
+      $filter           = $this->getFormatter()->untokenize($token);
+      $values           = array_filter($value);
+      $replaces[$token] = $this->getFormatter()->format($filter, $values);
     }
 
     return $replaces;

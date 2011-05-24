@@ -21,6 +21,7 @@
 namespace Orient\Query;
 
 use Orient\Contract\Query\Formatter as FormatterInterface;
+use Orient\Exception;
 use Orient\Formatter\String;
 
 class Formatter implements FormatterInterface
@@ -47,59 +48,62 @@ class Formatter implements FormatterInterface
     return substr($token, 1);
   }
 
-  /**
-   * Formats the projections.
-   *
-   * @param   array $values
-   * @return  string
-   */
-  public function formatProjections(array $values)
+  public function format($filter, array $values)
   {
-    return $this->implodeRegular($values);
+    switch ($filter)
+    {
+      case 'Projections':
+      case 'Property':
+      case 'Class':
+      case 'Permission':
+      case 'Resource':
+      case 'Role':
+      case 'Type':
+      case 'Linked':
+      case 'Inverse':
+      case 'SourceClass':
+      case 'SourceProperty':
+      case 'DestinationClass':
+      case 'DestinationProperty':
+      case 'Name':
+        return $this->implodeRegular($values);
+      case 'Rid':
+        return $this->formatRid($values);
+      case 'ClassList':
+        return $this->formatClassList($values);
+      case 'Target':
+        return $this->formatTarget($values);
+      case 'Where':
+        return $this->formatWhere($values);
+      case 'OrderBy':
+        return $this->formatOrderBy($values);
+      case 'Limit':
+        return $this->formatLimit($values);
+      case 'Range':
+        return $this->formatRange($values);
+      case 'Fields':
+        return $this->formatFields($values);
+      case 'Values':
+        return $this->formatValues($values);
+      case 'Updates':
+        return $this->formatUpdates($values);
+      case 'RidUpdates':
+        return $this->formatRidUpdates($values);
+    }
+
+    throw new Exception("The $filter filter is not handled by " . get_called_class());
   }
 
   /**
-   * Formats the properties.
+   * Removes whitespaces from the beginning and the end of the $text.
    *
-   * @param   array   $values
+   * @param   string $text
    * @return  string
+   * @todo    Move to the String formatter
    */
-  public function formatProperty(array $values)
-  { 
-    return $this->implodeRegular($values);
-  }
-
-  /**
-   * Formats the classes.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatClass(array $values)
+  public function btrim($text)
   {
-    return $this->implodeRegular($values);
-  }
-
-  /**
-   * Formats the permissions.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatPermission(array $values)
-  {
-    return $this->implodeRegular($values);
-  }
-
-  /**
-   * Formats the resources.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatResource(array $values)
-  {
-    return $this->implodeRegular($values);
+    return rtrim(ltrim($text));
   }
 
   /**
@@ -108,7 +112,7 @@ class Formatter implements FormatterInterface
    * @param   array   $values
    * @return  string
    */
-  public function formatRid(array $values)
+  protected function formatRid(array $values)
   {
     $values = array_filter($values, function ($arr) {
       return String::filterRid($arr);
@@ -123,7 +127,7 @@ class Formatter implements FormatterInterface
    * @param array $values
    * @return string
    */
-  public function formatClassList(array $values)
+  protected function formatClassList(array $values)
   {
     if (count($values))
     {
@@ -134,111 +138,12 @@ class Formatter implements FormatterInterface
   }
 
   /**
-   * Formats the roles.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatRole(array $values)
-  {
-    return $this->implodeRegular($values);
-  }
-
-  /**
-   * Formats the type.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatType(array $values)
-  {
-    return $this->implodeRegular($values);
-  }
-
-  /**
-   * Formats the linked.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatLinked(array $values)
-  {
-    return $this->implodeRegular($values);
-  }
-
-  /**
-   * Formats the inverse.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatInverse(array $values)
-  {
-    return $this->implodeRegular($values);
-  }
-
-  /**
-   * Formats the source class.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatSourceClass(array $values)
-  {
-    return $this->implodeRegular($values);
-  }
-
-  /**
-   * Formats the source property.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatSourceProperty(array $values)
-  {
-    return $this->implodeRegular($values);
-  }
-
-  /**
-   * Formats the destination class.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatDestinationClass(array $values)
-  {
-    return $this->implodeRegular($values);
-  }
-
-  /**
-   * Formats the destination property.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatDestinationProperty(array $values)
-  {
-    return $this->implodeRegular($values);
-  }
-
-  /**
-   * Formats the name.
-   *
-   * @param   array   $values
-   * @return  string
-   */
-  public function formatName(array $values)
-  {
-    return $this->implodeRegular($values);
-  }
-
-  /**
    * Formats the target.
    *
    * @param   array $values
    * @return  string
    */
-  public function formatTarget(array $values)
+  protected function formatTarget(array $values)
   {
     $values = $this->filterRegularChars($values);
     $count = count($values);
@@ -262,7 +167,7 @@ class Formatter implements FormatterInterface
    * @param   array $values
    * @return  string
    */
-  public function formatWhere(array $values)
+  protected function formatWhere(array $values)
   {
     $values = $this->implode($values);
     $values = str_replace(", AND", " AND", $values);
@@ -277,7 +182,7 @@ class Formatter implements FormatterInterface
    * @param   array $values
    * @return  string
    */
-  public function formatOrderBy(array $values)
+  protected function formatOrderBy(array $values)
   {
     return count($values) ? "ORDER BY " . $this->implodeRegular($values, " ") : NULL;
   }
@@ -288,7 +193,7 @@ class Formatter implements FormatterInterface
    * @param   array $values
    * @return  string
    */
-  public function formatLimit(array $values)
+  protected function formatLimit(array $values)
   {
     $values = function () use ($values) {
       foreach ($values as $limit)
@@ -311,7 +216,7 @@ class Formatter implements FormatterInterface
    * @param   array $values
    * @return  string
    */
-  public function formatRange(array $values)
+  protected function formatRange(array $values)
   {
     $range = array();
 
@@ -336,7 +241,7 @@ class Formatter implements FormatterInterface
    * @param   array   $fields
    * @return  string
    */
-  public function formatFields(array $fields)
+  protected function formatFields(array $fields)
   {
     return count($fields) ? $this->implodeRegular($fields) : NULL;
   }
@@ -347,7 +252,7 @@ class Formatter implements FormatterInterface
    * @param   array   $values
    * @return  string
    */
-  public function formatValues(array $values)
+  protected function formatValues(array $values)
   {
     foreach ($values as $key => $value)
     {
@@ -377,7 +282,7 @@ class Formatter implements FormatterInterface
    * @param   array   $values
    * @return  string
    */
-  public function formatUpdates(array $values)
+  protected function formatUpdates(array $values)
   {
     $string = "";
 
@@ -400,7 +305,7 @@ class Formatter implements FormatterInterface
    * @param   array   $values
    * @return  string
    */
-  public function formatRidUpdates(array $values)
+  protected function formatRidUpdates(array $values)
   {
     $rids = array();
 
@@ -416,17 +321,6 @@ class Formatter implements FormatterInterface
     }
 
     return count($rids) ? $this->implode($rids) : NULL;
-  }
-
-  /**
-   * Removes whitespaces from the beginning and the end of the $text.
-   *
-   * @param   string $text
-   * @return  string
-   */
-  public function btrim($text)
-  {
-    return rtrim(ltrim($text));
   }
 
   /**
