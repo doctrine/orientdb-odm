@@ -28,6 +28,7 @@ All the SQL command are implemented but:
 * Alter Table
 * Alter Property
 * Update of the maps
+* index management ( http://code.google.com/p/orient/wiki/Indexes )
 
 and, in order to use it in production, integration tests need to be written.
 
