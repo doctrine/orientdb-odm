@@ -91,4 +91,4 @@ PHP >= 5.3.5
 
 PHPUnit >= 3.5
 
-OrientDB 0.9.25
+OrientDB 1.0.0RC1
