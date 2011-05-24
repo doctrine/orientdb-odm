@@ -26,7 +26,5 @@ interface Formatter
   public function untokenize($token);
 
   public function format($filter, array $values);
-
-  public function btrim($text);
 }
 

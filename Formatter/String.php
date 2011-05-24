@@ -21,13 +21,19 @@ namespace Orient\Formatter;
 
 class String
 {
-  public function filterRegularChars($string, $nonFilter = NULL)
+  public function filterNonSQLChars($string, $nonFilter = NULL)
   {
     $pattern = "/[^a-z|A-Z|0-9|:|@|#|$nonFilter]/";
 
     return preg_replace($pattern, "", $string);
   }
 
+  /**
+   * Checks wheter the given $rid is wellformed.
+   *
+   * @param   string $rid
+   * @return  the rid is wellformed, false otherwise
+   */
   public function filterRid($rid)
   {
     $parts = explode(':', $rid);
@@ -38,6 +44,17 @@ class String
     }
 
     return false;
+  }
+
+  /**
+   * Removes whitespaces from the beginning and the end of the $text.
+   *
+   * @param   string $text
+   * @return  string
+   */
+  public function btrim($text)
+  {
+    return rtrim(ltrim($text));
   }
 }
 

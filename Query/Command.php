@@ -267,7 +267,7 @@ class Command implements CommandContract
     $statement = str_replace("  ", " ", $statement);
     $statement = str_replace("  ", " ", $statement);
     
-    return $this->getFormatter()->btrim($statement);
+    return \Orient\Formatter\String::btrim($statement);
   }
 
   /**

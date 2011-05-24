@@ -150,13 +150,13 @@ class FormatterTest extends TestCase
     $this->assertEquals('a2', $this->formatter->format('Inverse', array('a2')));
   }
 
-  public function testEliminatingInitialAndEndingSpaces()
-  {
-    $this->assertEquals('', $this->formatter->btrim(' '));
-    $this->assertEquals('a', $this->formatter->btrim(' a'));
-    $this->assertEquals('a', $this->formatter->btrim('a '));
-    $this->assertEquals('a', $this->formatter->btrim(' a '));
-  }
+//  public function testEliminatingInitialAndEndingSpaces()
+//  {
+//    $this->assertEquals('', $this->formatter->btrim(' '));
+//    $this->assertEquals('a', $this->formatter->btrim(' a'));
+//    $this->assertEquals('a', $this->formatter->btrim('a '));
+//    $this->assertEquals('a', $this->formatter->btrim(' a '));
+//  }
 
   public function testFormattingSourceClass()
   {

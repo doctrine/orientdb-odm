@@ -95,18 +95,6 @@ class Formatter implements FormatterInterface
   }
 
   /**
-   * Removes whitespaces from the beginning and the end of the $text.
-   *
-   * @param   string $text
-   * @return  string
-   * @todo    Move to the String formatter
-   */
-  public function btrim($text)
-  {
-    return rtrim(ltrim($text));
-  }
-
-  /**
    * Formats the rids, iterating through them returning the first valid one.
    *
    * @param   array   $values
@@ -288,7 +276,7 @@ class Formatter implements FormatterInterface
 
     foreach ($values as $key => $update)
     {
-      $key = String::filterRegularChars($key);
+      $key = String::filterNonSQLChars($key);
 
       if ($key)
       {
@@ -311,7 +299,7 @@ class Formatter implements FormatterInterface
 
     foreach ($values as $key => $value)
     {
-      $key = String::filterRegularChars($key);
+      $key = String::filterNonSQLChars($key);
       $rid = String::filterRid($value);
 
       if ($key && $rid)
@@ -333,7 +321,7 @@ class Formatter implements FormatterInterface
   protected function filterRegularChars(array $values, $nonFilter = NULL)
   {
     return array_map(function ($arr) use ($nonFilter) {
-      return String::filterRegularChars($arr, $nonFilter);
+      return String::filterNonSQLChars($arr, $nonFilter);
     }, $values);
   }
 
