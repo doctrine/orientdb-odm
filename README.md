@@ -36,12 +36,31 @@ and, in order to use it in production, integration tests need to be written.
 
 Not started yet.
 
-## Tests
+## Tests & reports
 
 In order to run the tests you only need to:
 
     cd /path/to/repo
     phpunit --configuration=Test/PHPUnit/phpunit.xml
+
+You can take a look at the library coding health by using PHP_CodeBrowser.
+
+You need to install:
+
+* phpcpd
+* phpdcd
+* phploc
+* phpmd
+* phpdepend
+* phpunit ( of course )
+* phpcb
+
+and the run:
+
+    chmod +x report.sh
+    ./report.sh
+
+You'll be able to see the HTML reports in log/report/index.html.
 
 ## License
 
