@@ -257,7 +257,7 @@ class QueryTest extends TestCase
   public function testCreatingAnIndex()
   {
     $this->assertInstanceOf('\Orient\Query\Command\Index\Create', $this->query->index("class", "property"));
-    $this->assertInstanceOf('\Orient\Contract\Query\Command\Index', $this->query->index("class", "property"));
+    //$this->assertInstanceOf('\Orient\Contract\Query\Command\Index', $this->query->index("class", "property"));
     
     $this->query->index("property", "class");
     $sql    =
