@@ -18,24 +18,32 @@ class DropTest extends TestCase
 {
   public function setup()
   {
-    $this->create  = new Drop('c', 'p');
+    $this->drop  = new Drop('p', 'c');
   }
 
   public function testTheSchemaIsValid()
   {
     $tokens       = array(
-        ':Class'   => array(),
+        ':IndexClass'   => array(),
         ':Property'   => array(),
     );
 
-    $this->assertTokens($tokens, $this->create->getTokens());
+    $this->assertTokens($tokens, $this->drop->getTokens());
   }
 
   public function testConstructionOfAnObject()
   {
     $query = 'DROP INDEX c.p';
 
-    $this->assertCommandGives($query, $this->create->getRaw());
+    $this->assertCommandGives($query, $this->drop->getRaw());
+  }
+  
+  public function testConstructionOfAnIndexWithoutClass()
+  {
+    $query = 'DROP INDEX p';
+    $this->drop  = new Drop('p');
+
+    $this->assertCommandGives($query, $this->drop->getRaw());
   }
 }
 

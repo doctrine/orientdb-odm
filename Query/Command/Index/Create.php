@@ -25,6 +25,23 @@ use Orient\Query\Command;
 
 class Create extends Index
 {
-  const SCHEMA = "CREATE INDEX :Class.:Property";
+  const SCHEMA = "CREATE INDEX :IndexClass:Property :Type";
+  
+  public function __construct($property, $class = NULL, $type = NULL)
+  {
+    parent::__construct($property, $class);
+    
+    if ($type)
+    {
+      $this->type($type);
+    }
+  }
+  
+  public function type($type)
+  {
+    $this->setToken('Type', $type);
+    
+    return $this;
+  }
 }
 

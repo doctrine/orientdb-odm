@@ -23,6 +23,6 @@ use Orient\Query\Command\Index;
 
 class Drop extends Index
 {
-  const SCHEMA = "DROP INDEX :Class.:Property";
+  const SCHEMA = "DROP INDEX :IndexClass:Property";
 }
 

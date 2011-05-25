@@ -39,7 +39,7 @@ class Query
     'update'          =>  'Orient\Query\Command\Update',
     'update.add'      =>  'Orient\Query\Command\Update\Add',
     'update.remove'   =>  'Orient\Query\Command\Update\Remove',
-    'update.put'   =>  'Orient\Query\Command\Update\Put',
+    'update.put'      =>  'Orient\Query\Command\Update\Put',
     'grant'           =>  'Orient\Query\Command\Credential\Grant',
     'revoke'          =>  'Orient\Query\Command\Credential\Revoke',
     'class.create'    =>  'Orient\Query\Command\OClass\Create',
@@ -176,14 +176,15 @@ class Query
   /**
    * Creates a index
    *
-   * @param   string $class
    * @param   string $property
+   * @param   string $class
+   * @param   string $type
    * @return  Query
    */
-  public function index($class, $property)
+  public function index($property, $class = NULL, $type = NULL)
   {
     $commandClass = $this->getCommandClass('index.create');
-    $this->command  = new $commandClass($class, $property);
+    $this->command  = new $commandClass($property, $class, $type);
 
     return $this->command;
   }
@@ -313,6 +314,17 @@ class Query
   {
     return $this->command->select($projections, $append);
   }
+  
+  /**
+   * Sets the type clause of a query.
+   *
+   * @param   string $type
+   * @return  Query
+   */
+  public function type($type)
+  {
+    return $this->command->type($type);
+  }
 
   /**
    * Adds a subject to the query.
@@ -333,14 +345,14 @@ class Query
   /**
    * Removes a index
    *
-   * @param   string $class
    * @param   string $property
+   * @param   string $class
    * @return  Query
    */
-  public function unindex($class, $property)
+  public function unindex($property, $class = NULL)
   {
     $commandClass   = $this->getCommandClass('index.drop');
-    $this->command  = new $commandClass($class, $property);
+    $this->command  = new $commandClass($property, $class);
 
     return $this->command;
   }

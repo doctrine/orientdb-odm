@@ -89,6 +89,8 @@ class Formatter implements FormatterInterface
         return $this->formatUpdates($values);
       case 'RidUpdates':
         return $this->formatRidUpdates($values);
+      case 'IndexClass':
+        return $this->formatIndexClass($values);
     }
 
     throw new Exception("The $filter filter is not handled by " . get_called_class());
@@ -120,6 +122,22 @@ class Formatter implements FormatterInterface
     if (count($values))
     {
       return "[" . $this->implodeRegular($values) . "]";
+    }
+
+    return NULL;
+  }
+
+  /**
+   * If there is a class, it returns them with a dot.
+   *
+   * @param array $values
+   * @return string
+   */
+  protected function formatIndexClass(array $values)
+  {
+    if (count($values))
+    {
+      return String::filterNonSQLChars(array_shift($values)) . ".";
     }
 
     return NULL;
