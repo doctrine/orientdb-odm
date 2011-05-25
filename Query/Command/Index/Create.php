@@ -31,6 +31,13 @@ class Create extends Index
   {
     parent::__construct($property, $class);
     
+    if($class)
+    {
+      $this->setToken('IndexClass', $class);      
+    }
+    
+    $this->setToken('Property', $property);
+    
     if ($type)
     {
       $this->type($type);

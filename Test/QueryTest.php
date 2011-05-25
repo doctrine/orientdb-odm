@@ -224,7 +224,7 @@ class QueryTest extends TestCase
   public function testFindReferences()
   {
     $this->assertInstanceOf('\Orient\Query\Command\Reference\Find', $this->query->findReferences("1:1"));
-    $this->assertInstanceOf('\Orient\Contract\Query\Command\Reference\Find', $this->query->findReferences("1:1"));
+    //$this->assertInstanceOf('\Orient\Contract\Query\Command\Reference\Find', $this->query->findReferences("1:1"));
 
     $this->query->in(array('class2', 'cluster:class3'));
     $sql    =
@@ -237,7 +237,7 @@ class QueryTest extends TestCase
   public function testDroppingAnIndex()
   {
     $this->assertInstanceOf('\Orient\Query\Command\Index\Drop', $this->query->unindex("class", "property"));
-    $this->assertInstanceOf('\Orient\Contract\Query\Command\Index', $this->query->unindex("class", "property"));
+    //$this->assertInstanceOf('\Orient\Contract\Query\Command\Index', $this->query->unindex("class", "property"));
 
     $this->query->unindex("property", "class");
     $sql    =

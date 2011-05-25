@@ -19,23 +19,9 @@
 
 namespace Orient\Query\Command;
 
-use Orient\Contract\Query\Command\Index as IndexInterface;
 use Orient\Query\Command;
 
-class Index extends Command implements IndexInterface
+class Index extends Command
 {
-  /**
-   * Creates a new statements to manage indexes on the $property of the given
-   * $class.
-   *
-   * @param string $property
-   * @param string $class
-   */
-  public function __construct($property, $class = NULL)
-  {
-    parent::__construct();
-    
-    $this->setToken('IndexClass', $class);
-    $this->setToken('Property', $property);
-  }
+
 }

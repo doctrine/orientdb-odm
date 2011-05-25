@@ -65,6 +65,7 @@ class Formatter implements FormatterInterface
       case 'SourceProperty':
       case 'DestinationClass':
       case 'DestinationProperty':
+      case 'Index':
       case 'Name':
         return $this->implodeRegular($values);
       case 'Rid':
