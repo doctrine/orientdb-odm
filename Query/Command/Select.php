@@ -107,6 +107,8 @@ class Select extends Command implements SelectInterface
     }
 
     $this->setTokenValues('Range', $range);
+
+    return $this;
   }
 }
 

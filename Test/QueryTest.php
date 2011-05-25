@@ -126,6 +126,35 @@ class QueryTest extends TestCase
     $this->assertInstanceOf('\Orient\Contract\Query\Command\Insert', $this->query->insert());
   }
 
+  public function testFields()
+  {
+    $this->query->insert();
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Insert', $this->query->fields(array()));
+  }
+
+  public function testInto()
+  {
+    $this->query->insert();
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Insert', $this->query->into('class'));
+  }
+
+  public function testRange()
+  {
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Select', $this->query->range('12', '14'));
+  }
+
+  public function testValues()
+  {
+    $this->query->insert();
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Insert', $this->query->values(array()));
+  }
+
+  public function testTo()
+  {
+    $this->query->grant('a');
+    $this->assertInstanceOf('\Orient\Query\Command\Credential\Grant', $this->query->to('c'));
+  }
+
   public function testGrant()
   {
     $this->assertInstanceOf('\Orient\Contract\Query\Command\Credential', $this->query->grant('p'));
@@ -336,19 +365,36 @@ class QueryTest extends TestCase
 
   public function testLimit()
   {
+    $this->assertInstanceOf('\Orient\Contract\Query\Command\Select', $this->query->limit(20));
+
     $this->query->from(array('class'))->limit(10);
     $sql = 'SELECT FROM class LIMIT 10';
 
     $this->assertCommandGives($sql, $this->query->getRaw());
   }
 
+  public function testOn()
+  {
+    $this->assertInstanceOf('\Orient\Query\Command\Property\Create', $this->query->create('p', 'c'));
+    $this->assertInstanceOf('\Orient\Query\Command\Property\Create', $this->query->on('p', 'f'));
+
+    $this->assertInstanceOf('\Orient\Query\Command\Property\Drop', $this->query->drop('p', 'c'));
+    $this->assertInstanceOf('\Orient\Query\Command\Property\Drop', $this->query->on('c', 'c'));
+    
+    $sql = 'DROP PROPERTY c.c';
+
+    $this->assertCommandGives($sql, $this->query->getRaw());
+  }
+
   public function testOrderBy()
   {
-    $this->query->from(array('class'))->orderBy('A B');
+    $this->query->from(array('class'));
+    $this->query->orderBy('A B');
     $sql = 'SELECT FROM class ORDER BY A B';
 
     $this->assertCommandGives($sql, $this->query->getRaw());
   }
+
 
   /**
    * @expectedException Orient\Exception

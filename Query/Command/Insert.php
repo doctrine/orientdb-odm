@@ -19,7 +19,6 @@
 
 namespace Orient\Query\Command;
 
-use Orient\Contract\Query\Formatter;
 use Orient\Contract\Query\Command\Insert as InsertInterface;
 use Orient\Query\Command;
 

@@ -26,6 +26,14 @@ class FormatterTest extends TestCase
     $this->assertEquals('::Clue', $this->formatter->tokenize(':Clue'));
   }
 
+  /**
+   * @expectedException Orient\Exception
+   */
+  public function testAnExceptionIsRaisedWhenTheFormatterDoesntKnowHowToFormatAToken()
+  {
+   $this->formatter->format(':NonExistingToken', array());
+  }
+
   public function testUntokenizingAString()
   {
     $this->assertEquals('Clue', $this->formatter->untokenize(':Clue'));
