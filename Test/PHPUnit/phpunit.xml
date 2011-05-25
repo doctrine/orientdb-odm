@@ -31,4 +31,10 @@
           <directory >../../Test/Foundation</directory>
       </testsuite>-->
     </testsuites>
+
+    <filter>
+      <blacklist>
+        <directory suffix=".php">../../Test</directory>
+      </blacklist>
+    </filter>
 </phpunit>
