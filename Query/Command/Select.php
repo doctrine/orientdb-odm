@@ -105,4 +105,14 @@ class Select extends Command implements SelectInterface
 
         return $this;
     }
+    
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'Projections' => "Orient\Formatter\Query\Regular",
+            'OrderBy'     => "Orient\Formatter\Query\OrderBy",
+            'Limit'       => "Orient\Formatter\Query\Limit",
+            'Range'       => "Orient\Formatter\Query\Range",
+        ));
+    }
 }

@@ -68,4 +68,13 @@ class Insert extends Command implements InsertInterface
 
         return $this;
     }
+    
+    
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'Fields' => "Orient\Formatter\Query\Regular",
+            'Values' => "Orient\Formatter\Query\Values",
+        ));
+    }
 }

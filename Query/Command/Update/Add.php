@@ -42,4 +42,11 @@ class Add extends Update
 
         $this->setTokenValues('RidUpdates', $values, $append);
     }
+    
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'RidUpdates'  => "Orient\Formatter\Query\RidUpdates",
+        ));
+    }
 }

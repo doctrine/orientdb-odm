@@ -62,4 +62,11 @@ class Find extends Command implements FindInterface
     {
         $this->setToken('Rid', $rid);
     }
+    
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'ClassList'    => "Orient\Formatter\Query\ClassList",
+        ));
+    }
 }

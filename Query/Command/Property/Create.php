@@ -40,4 +40,11 @@ class Create extends Property
         $this->setToken('Type', $type);
         $this->setToken('Linked', $linked);
     }
+    
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'Linked'    => "Orient\Formatter\Query\Regular",
+        ));
+    }
 }

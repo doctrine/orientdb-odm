@@ -37,4 +37,11 @@ class Lookup extends Index
 
         $this->setToken('Index', $index);
     }
+    
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'Index' => "Orient\Formatter\Query\Regular",
+        ));
+    }
 }

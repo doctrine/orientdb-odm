@@ -10,23 +10,26 @@
  */
 
 /**
- * This class manages indexes on OrientDB.
+ * Class Where
  *
  * @package     Orient
- * @subpackage  Query
+ * @subpackage  Formatter
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Orient\Query\Command;
+namespace Orient\Formatter\Query;
 
-use Orient\Query\Command;
+use Orient\Formatter\Query;
+use Orient\Formatter\String;
 
-class Index extends Command
+class IndexClass extends Query
 {
-    protected function getTokenFormatters()
+    public static function format(array $values)
     {
-        return array_merge(parent::getTokenFormatters(), array(
-            'IndexClass'    => "Orient\Formatter\Query\IndexClass",
-        ));
+        if (count($values)) {
+            return String::filterNonSQLChars(array_shift($values)) . ".";
+        }
+
+        return NULL;
     }
 }

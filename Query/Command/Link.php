@@ -63,4 +63,16 @@ class Link extends Command
 
         return $this;
     }
+    
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'Inverse'               => "Orient\Formatter\Query\Regular",
+            'SourceClass'           => "Orient\Formatter\Query\Regular",
+            'SourceProperty'        => "Orient\Formatter\Query\Regular",
+            'DestinationClass'      => "Orient\Formatter\Query\Regular",
+            'DestinationProperty'   => "Orient\Formatter\Query\Regular",
+            'Name'                  => "Orient\Formatter\Query\Regular",
+        ));
+    }
 }

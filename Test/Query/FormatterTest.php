@@ -10,34 +10,25 @@
 
 namespace Orient\Test\Query;
 
-use Orient\Query\Formatter;
+use Orient\Formatter;
 use Orient\Test\PHPUnit\TestCase;
 
 class FormatterTest extends TestCase
 {
-    public function setUp()
-    {
-        $this->formatter = new Formatter();
-    }
-
     public function testTokenizingAString()
     {
-        $this->assertEquals(':Clue', $this->formatter->tokenize('Clue'));
-        $this->assertEquals('::Clue', $this->formatter->tokenize(':Clue'));
-    }
-
-    /**
-     * @expectedException Orient\Exception
-     */
-    public function testAnExceptionIsRaisedWhenTheFormatterDoesntKnowHowToFormatAToken()
-    {
-        $this->formatter->format(':NonExistingToken', array());
+        $formatter = new Formatter\Query();
+        
+        $this->assertEquals(':Clue', $formatter::tokenize('Clue'));
+        $this->assertEquals('::Clue', $formatter::tokenize(':Clue'));
     }
 
     public function testUntokenizingAString()
     {
-        $this->assertEquals('Clue', $this->formatter->untokenize(':Clue'));
-        $this->assertEquals(':Clue', $this->formatter->untokenize('::Clue'));
+        $formatter = new Formatter\Query();
+        
+        $this->assertEquals('Clue', $formatter::untokenize(':Clue'));
+        $this->assertEquals(':Clue', $formatter::untokenize('::Clue'));
     }
 
     public function testFormattingProjections()
@@ -45,11 +36,12 @@ class FormatterTest extends TestCase
         $projections = array(
             'a;', 'b--', 'c"'
         );
-
-        $this->assertEquals('a, b, c', $this->formatter->format('Projections', $projections));
-        $this->assertEquals('a', $this->formatter->format('Projections', array('a')));
-        $this->assertEquals('', $this->formatter->format('Projections', array()));
-        $this->assertEquals('a2', $this->formatter->format('Projections', array('a2')));
+        $formatter = new Formatter\Query\Regular();
+        
+        $this->assertEquals('a, b, c', $formatter::format($projections));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingProperty()
@@ -57,11 +49,12 @@ class FormatterTest extends TestCase
         $property = array(
             'a;', 'b--', 'c"'
         );
-
-        $this->assertEquals('a, b, c', $this->formatter->format('Property', $property));
-        $this->assertEquals('a', $this->formatter->format('Property', array('a')));
-        $this->assertEquals('', $this->formatter->format('Property', array()));
-        $this->assertEquals('a2', $this->formatter->format('Property', array('a2')));
+        $formatter = new Formatter\Query\Regular();
+        
+        $this->assertEquals('a, b, c', $formatter::format($property));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingClass()
@@ -69,11 +62,12 @@ class FormatterTest extends TestCase
         $class = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\Regular();
 
-        $this->assertEquals('a, b, c', $this->formatter->format('Class', $class));
-        $this->assertEquals('a', $this->formatter->format('Class', array('a')));
-        $this->assertEquals('', $this->formatter->format('Class', array()));
-        $this->assertEquals('a2', $this->formatter->format('Class', array('a2')));
+        $this->assertEquals('a, b, c', $formatter::format($class));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingPermission()
@@ -81,11 +75,12 @@ class FormatterTest extends TestCase
         $permission = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\Regular();
 
-        $this->assertEquals('a, b, c', $this->formatter->format('Permission', $permission));
-        $this->assertEquals('a', $this->formatter->format('Permission', array('a')));
-        $this->assertEquals('', $this->formatter->format('Permission', array()));
-        $this->assertEquals('a2', $this->formatter->format('Permission', array('a2')));
+        $this->assertEquals('a, b, c', $formatter::format($permission));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingRid()
@@ -93,8 +88,9 @@ class FormatterTest extends TestCase
         $rids = array(
             'a;', 'b--', 'c"', "12:0", "12", "12:2:2", ":2"
         );
+        $formatter = new Formatter\Query\Rid();
 
-        $this->assertEquals('12:0', $this->formatter->format('Rid', $rids));
+        $this->assertEquals('12:0', $formatter::format($rids));
     }
 
     public function testFormattingClassList()
@@ -102,11 +98,12 @@ class FormatterTest extends TestCase
         $classes = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\ClassList();
 
-        $this->assertEquals('[a, b, c]', $this->formatter->format('ClassList', $classes));
-        $this->assertEquals('[a]', $this->formatter->format('ClassList', array('a')));
-        $this->assertEquals(NULL, $this->formatter->format('ClassList', array()));
-        $this->assertEquals('[a2]', $this->formatter->format('ClassList', array('a2')));
+        $this->assertEquals('[a, b, c]', $formatter::format($classes));
+        $this->assertEquals('[a]', $formatter::format(array('a')));
+        $this->assertEquals(NULL, $formatter::format(array()));
+        $this->assertEquals('[a2]', $formatter::format(array('a2')));
     }
 
     public function testFormattingRole()
@@ -114,11 +111,12 @@ class FormatterTest extends TestCase
         $roles = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\Regular();
 
-        $this->assertEquals('a, b, c', $this->formatter->format('Role', $roles));
-        $this->assertEquals('a', $this->formatter->format('Role', array('a')));
-        $this->assertEquals('', $this->formatter->format('Role', array()));
-        $this->assertEquals('a2', $this->formatter->format('Role', array('a2')));
+        $this->assertEquals('a, b, c', $formatter::format($roles));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingType()
@@ -126,11 +124,12 @@ class FormatterTest extends TestCase
         $types = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\Regular();
 
-        $this->assertEquals('a, b, c', $this->formatter->format('Type', $types));
-        $this->assertEquals('a', $this->formatter->format('Type', array('a')));
-        $this->assertEquals('', $this->formatter->format('Type', array()));
-        $this->assertEquals('a2', $this->formatter->format('Type', array('a2')));
+        $this->assertEquals('a, b, c', $formatter::format($types));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingLinked()
@@ -138,11 +137,12 @@ class FormatterTest extends TestCase
         $linked = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\Regular();
 
-        $this->assertEquals('a, b, c', $this->formatter->format('Linked', $linked));
-        $this->assertEquals('a', $this->formatter->format('Linked', array('a')));
-        $this->assertEquals('', $this->formatter->format('Linked', array()));
-        $this->assertEquals('a2', $this->formatter->format('Linked', array('a2')));
+        $this->assertEquals('a, b, c', $formatter::format($linked));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingInverse()
@@ -150,31 +150,25 @@ class FormatterTest extends TestCase
         $inverse = array(
             'a;', 'b--', 'c"'
         );
-
-        $this->assertEquals('a, b, c', $this->formatter->format('Inverse', $inverse));
-        $this->assertEquals('a', $this->formatter->format('Inverse', array('a')));
-        $this->assertEquals('', $this->formatter->format('Inverse', array()));
-        $this->assertEquals('a2', $this->formatter->format('Inverse', array('a2')));
+        $formatter = new Formatter\Query\Regular();
+        
+        $this->assertEquals('a, b, c', $formatter::format($inverse));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
-
-//  public function testEliminatingInitialAndEndingSpaces()
-//  {
-//    $this->assertEquals('', $this->formatter->btrim(' '));
-//    $this->assertEquals('a', $this->formatter->btrim(' a'));
-//    $this->assertEquals('a', $this->formatter->btrim('a '));
-//    $this->assertEquals('a', $this->formatter->btrim(' a '));
-//  }
 
     public function testFormattingSourceClass()
     {
         $classes = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\Regular();
 
-        $this->assertEquals('a, b, c', $this->formatter->format('SourceClass', $classes));
-        $this->assertEquals('a', $this->formatter->format('SourceClass', array('a')));
-        $this->assertEquals('', $this->formatter->format('SourceClass', array()));
-        $this->assertEquals('a2', $this->formatter->format('SourceClass', array('a2')));
+        $this->assertEquals('a, b, c', $formatter::format($classes));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingSourceProperty()
@@ -182,11 +176,12 @@ class FormatterTest extends TestCase
         $properties = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\Regular();
 
-        $this->assertEquals('a, b, c', $this->formatter->format('SourceProperty', $properties));
-        $this->assertEquals('a', $this->formatter->format('SourceProperty', array('a')));
-        $this->assertEquals('', $this->formatter->format('SourceProperty', array()));
-        $this->assertEquals('a2', $this->formatter->format('SourceProperty', array('a2')));
+        $this->assertEquals('a, b, c', $formatter::format($properties));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingDestinationClass()
@@ -194,11 +189,12 @@ class FormatterTest extends TestCase
         $class = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\Regular();
 
-        $this->assertEquals('a, b, c', $this->formatter->format('DestinationClass', $class));
-        $this->assertEquals('a', $this->formatter->format('DestinationClass', array('a')));
-        $this->assertEquals('', $this->formatter->format('DestinationClass', array()));
-        $this->assertEquals('a2', $this->formatter->format('DestinationClass', array('a2')));
+        $this->assertEquals('a, b, c', $formatter::format($class));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingDestinationProperty()
@@ -206,11 +202,12 @@ class FormatterTest extends TestCase
         $property = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\Regular();
 
-        $this->assertEquals('a, b, c', $this->formatter->format('DestinationClass', $property));
-        $this->assertEquals('a', $this->formatter->format('DestinationClass', array('a')));
-        $this->assertEquals('', $this->formatter->format('DestinationClass', array()));
-        $this->assertEquals('a2', $this->formatter->format('DestinationProperty', array('a2')));
+        $this->assertEquals('a, b, c', $formatter::format($property));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingName()
@@ -218,11 +215,12 @@ class FormatterTest extends TestCase
         $names = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\Regular();
 
-        $this->assertEquals('a, b, c', $this->formatter->format('Name', $names));
-        $this->assertEquals('a', $this->formatter->format('Name', array('a')));
-        $this->assertEquals('', $this->formatter->format('Name', array()));
-        $this->assertEquals('a2', $this->formatter->format('Name', array('a2')));
+        $this->assertEquals('a, b, c', $formatter::format($names));
+        $this->assertEquals('a', $formatter::format(array('a')));
+        $this->assertEquals('', $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
     }
 
     public function testFormattingTarget()
@@ -230,12 +228,13 @@ class FormatterTest extends TestCase
         $target = array(
             'a;', 'b--', 'c"'
         );
+        $formatter = new Formatter\Query\Target();
 
-        $this->assertEquals('[a, b, c]', $this->formatter->format('Target', $target));
-        $this->assertEquals('[a, 12:0]', $this->formatter->format('Target', array('a', '12:0')));
-        $this->assertEquals(NULL, $this->formatter->format('Target', array()));
-        $this->assertEquals('a2', $this->formatter->format('Target', array('a2')));
-        $this->assertEquals('a', $this->formatter->format('Target', array('a;')));
+        $this->assertEquals('[a, b, c]', $formatter::format($target));
+        $this->assertEquals('[a, 12:0]', $formatter::format(array('a', '12:0')));
+        $this->assertEquals(NULL, $formatter::format(array()));
+        $this->assertEquals('a2', $formatter::format(array('a2')));
+        $this->assertEquals('a', $formatter::format(array('a;')));
     }
 
     public function testFormattingWhereConditions()
@@ -243,8 +242,9 @@ class FormatterTest extends TestCase
         $where = array(
             '@class = "1"', '_b-- = ";;2"', 'c = "\"ko\""', ', AND 7 = "8"'
         );
+        $formatter = new Formatter\Query\Where();
 
-        $this->assertEquals('@class = "1", _b-- = ";;2", c = "\"ko\"",  AND 7 = "8"', $this->formatter->format('Where', $where));
+        $this->assertEquals('@class = "1", _b-- = ";;2", c = "\"ko\"",  AND 7 = "8"', $formatter::format($where));
     }
 
     public function testFormattingOrderBy()
@@ -252,12 +252,13 @@ class FormatterTest extends TestCase
         $orderBy = array(
             'a ASC', 'b DESC', 'c PRESF"'
         );
+        $formatter = new Formatter\Query\OrderBy();
 
-        $this->assertEquals('ORDER BY a ASC, b DESC, c PRESF', $this->formatter->format('OrderBy', $orderBy));
-        $this->assertEquals('ORDER BY a, 12:0', $this->formatter->format('OrderBy', array('a', '12:0')));
-        $this->assertEquals(NULL, $this->formatter->format('OrderBy', array()));
-        $this->assertEquals('ORDER BY a2, @rid', $this->formatter->format('OrderBy', array('a2', '@rid')));
-        $this->assertEquals('ORDER BY a#', $this->formatter->format('OrderBy', array('a#;')));
+        $this->assertEquals('ORDER BY a ASC, b DESC, c PRESF', $formatter::format($orderBy));
+        $this->assertEquals('ORDER BY a, 12:0', $formatter::format(array('a', '12:0')));
+        $this->assertEquals(NULL, $formatter::format(array()));
+        $this->assertEquals('ORDER BY a2, @rid', $formatter::format(array('a2', '@rid')));
+        $this->assertEquals('ORDER BY a#', $formatter::format(array('a#;')));
     }
 
     public function testFormattingLimit()
@@ -265,12 +266,13 @@ class FormatterTest extends TestCase
         $limits = array(
             '@d', '0"', 'a', 2
         );
+        $formatter = new Formatter\Query\Limit();
 
-        $this->assertEquals('LIMIT 2', $this->formatter->format('Limit', $limits));
-        $this->assertEquals(NULL, $this->formatter->format('Limit', array('a', '12:0')));
-        $this->assertEquals(NULL, $this->formatter->format('Limit', array()));
-        $this->assertEquals(NULL, $this->formatter->format('Limit', array('a2', '@rid')));
-        $this->assertEquals(NULL, $this->formatter->format('Limit', array('a#;')));
+        $this->assertEquals('LIMIT 2', $formatter::format($limits));
+        $this->assertEquals(NULL, $formatter::format(array('a', '12:0')));
+        $this->assertEquals(NULL, $formatter::format(array()));
+        $this->assertEquals(NULL, $formatter::format(array('a2', '@rid')));
+        $this->assertEquals(NULL, $formatter::format(array('a#;')));
     }
 
     public function testFormattingRange()
@@ -278,12 +280,13 @@ class FormatterTest extends TestCase
         $ranges = array(
             '@d', '0"', '11', '12:1', '12:2', '12:3', '12:2:2', '12::2'
         );
+        $formatter = new Formatter\Query\Range();
 
-        $this->assertEquals('RANGE 12:1, 12:2', $this->formatter->format('Range', $ranges));
-        $this->assertEquals('RANGE 12:0', $this->formatter->format('Range', array('a', '12:0')));
-        $this->assertEquals(NULL, $this->formatter->format('Range', array()));
-        $this->assertEquals(NULL, $this->formatter->format('Range', array('a2', '@rid')));
-        $this->assertEquals(NULL, $this->formatter->format('Range', array('a#;')));
+        $this->assertEquals('RANGE 12:1, 12:2', $formatter::format($ranges));
+        $this->assertEquals('RANGE 12:0', $formatter::format(array('a', '12:0')));
+        $this->assertEquals(NULL, $formatter::format(array()));
+        $this->assertEquals(NULL, $formatter::format(array('a2', '@rid')));
+        $this->assertEquals(NULL, $formatter::format(array('a#;')));
     }
 
     public function testFormattingFields()
@@ -291,12 +294,13 @@ class FormatterTest extends TestCase
         $fields = array(
             12, '0', '"\\', '@class\"', '@@rid', 'prop'
         );
+        $formatter = new Formatter\Query\Regular();
 
-        $this->assertEquals('12, 0, @class, @@rid, prop', $this->formatter->format('Fields', $fields));
-        $this->assertEquals('a, 12:0', $this->formatter->format('Fields', array('a', '12:0')));
-        $this->assertEquals(NULL, $this->formatter->format('Fields', array()));
-        $this->assertEquals('a2, @rid', $this->formatter->format('Fields', array('a2;', '@rid\'')));
-        $this->assertEquals('a#', $this->formatter->format('Fields', array('a#;')));
+        $this->assertEquals('12, 0, @class, @@rid, prop', $formatter::format($fields));
+        $this->assertEquals('a, 12:0', $formatter::format(array('a', '12:0')));
+        $this->assertEquals(NULL, $formatter::format(array()));
+        $this->assertEquals('a2, @rid', $formatter::format(array('a2;', '@rid\'')));
+        $this->assertEquals('a#', $formatter::format(array('a#;')));
     }
 
     public function testFormattingValues()
@@ -315,8 +319,9 @@ class FormatterTest extends TestCase
             "!@#$%^&*()",
         );
         $expected = '"12", "0", "\"", "@class", "@@rid", "prop", [1, 2], "\\\'", "\\\", "<a href=\"http://ciao.com\">ciao</a>", "!@#$%^&*()"';
+        $formatter = new Formatter\Query\values();
 
-        $this->assertEquals($expected, $this->formatter->format('Values', $values));
+        $this->assertEquals($expected, $formatter::format($values));
     }
 
     public function testFormattingUpdates()
@@ -332,8 +337,9 @@ class FormatterTest extends TestCase
             'html' => '<a href="http://ciao.com">ciao</a>\\',
         );
         $updates = ' 1 = "1", @rid = "12:0", carl = "\"\"", #1 = "#13", 44 = "#13", html = "<a href=\"http://ciao.com\">ciao</a>\\\"';
+        $formatter = new Formatter\Query\Updates();
 
-        $this->assertEquals($updates, $this->formatter->format('Updates', $fields));
+        $this->assertEquals($updates, $formatter::format($fields));
     }
 
     public function testFormattingRidUpdates()
@@ -349,7 +355,8 @@ class FormatterTest extends TestCase
             'html' => '<a href="http://ciao.com">ciao</a>\\',
         );
         $updates = '@rid = 12:0';
+        $formatter = new Formatter\Query\RidUpdates();
 
-        $this->assertEquals($updates, $this->formatter->format('RidUpdates', $fields));
+        $this->assertEquals($updates, $formatter::format($fields));
     }
 }

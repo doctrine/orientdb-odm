@@ -76,4 +76,13 @@ abstract class Credential extends Command implements CredentialInterface
 
         return $this;
     }
+    
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'Role'          => "Orient\Formatter\Query\Regular",
+            'Resource'      => "Orient\Formatter\Query\Regular",
+            'Permission'    => "Orient\Formatter\Query\Regular",
+        ));
+    }
 }

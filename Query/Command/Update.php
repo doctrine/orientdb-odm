@@ -53,4 +53,11 @@ class Update extends Command
 
         return $this;
     }
+    
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'Updates'  => "Orient\Formatter\Query\Updates",
+        ));
+    }
 }

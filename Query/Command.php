@@ -22,12 +22,14 @@ namespace Orient\Query;
 
 use Orient\Exception\Query\Command as CommandException;
 use Orient\Contract\Query\Formatter as FormatterContract;
-use Orient\Query\Formatter;
+use Orient\Formatter\Query as Formatter;
+use Orient\Exception;
 use Orient\Contract\Query\Command as CommandContract;
 
-class Command implements CommandContract
+abstract class Command implements CommandContract
 {
     protected $tokens       = array();
+    protected $formatters   = array();
     protected $statement    = NULL;
 
     /**
@@ -227,20 +229,50 @@ class Command implements CommandContract
     {
         return new Formatter();
     }
+    
+    protected function getTokenFormatters()
+    {
+        return array(
+            'Target'    => "Orient\Formatter\Query\Target",      
+            'Where'     => "Orient\Formatter\Query\Where",  
+            'Class'     => "Orient\Formatter\Query\Regular",
+            'Property'  => "Orient\Formatter\Query\Regular",
+            'Type'      => "Orient\Formatter\Query\Regular",
+            'Rid'       => "Orient\Formatter\Query\Rid",
+        );
+    }
+    
+    protected function getTokenFormatter($token)
+    {
+        $formatters = $this->getTokenFormatters();
+        
+        if (!array_key_exists($token, $formatters))
+        {
+            $message = "The class %s does not know how to format the %s token\n";
+            $message .= "Have you added it in the getTokenFormatters() method?";
+
+            throw new Exception(sprintf($message, get_called_class(), $token));
+        }
+        
+        return $formatters[$token];
+    }
 
     /**
      * Returns the values to replace command's schema tokens.
      *
      * @return  array
+     * @todo    hardcoded dependency to Formatter
      */
     protected function getTokenReplaces()
     {
         $replaces = array();
 
         foreach ($this->tokens as $token => $value) {
-            $filter = $this->getFormatter()->untokenize($token);
-            $values = array_filter($value);
-            $replaces[$token] = $this->getFormatter()->format($filter, $values);
+            $token              = Formatter::untokenize($token);          
+            $formatter          = $this->getTokenFormatter($token);
+            $values             = array_filter($value);
+            $token              = Formatter::tokenize($token);
+            $replaces[$token]   = $formatter::format($values);
         }
 
         return $replaces;
