@@ -16,61 +16,61 @@ use Orient\Test\PHPUnit\TestCase;
 
 class StubCommand extends Query\Command
 {
-  const SCHEMA = ":Target :Where";
+    const SCHEMA = ":Target :Where";
 }
 
 class Command extends TestCase
 {
-  public function setup()
-  {
-    $this->command = new StubCommand();
-  }
+    public function setup()
+    {
+        $this->command = new StubCommand();
+    }
 
-  public function testAddingFromToken()
-  {
-    $from     = array('Cities');
-    $this->command->from($from);
+    public function testAddingFromToken()
+    {
+        $from = array('Cities');
+        $this->command->from($from);
 
-    $this->assertCommandGives($from, $this->command->getTokenValue('Target'));
-  }
+        $this->assertCommandGives($from, $this->command->getTokenValue('Target'));
+    }
 
-  public function testRetrieveTheRawCommand()
-  {
-    $from     = array('Cities');
-    $this->command->from($from);
+    public function testRetrieveTheRawCommand()
+    {
+        $from = array('Cities');
+        $this->command->from($from);
 
-    $this->assertCommandGives("Cities", $this->command->getRaw());
-  }
+        $this->assertCommandGives("Cities", $this->command->getRaw());
+    }
 
-  public function testTheCommandTokensAreValid()
-  {
-    $this->assertTokens(array(':Target' => array(), ':Where' => array()), StubCommand::getTokens());
-  }
+    public function testTheCommandTokensAreValid()
+    {
+        $this->assertTokens(array(':Target' => array(), ':Where' => array()), StubCommand::getTokens());
+    }
 
-  public function testYouCanResetAllTheWheresOfACommand()
-  {
-    $from     = array('Cities');
-    $this->command->where("i loves ?", "U");
-    $this->command->resetWhere();
+    public function testYouCanResetAllTheWheresOfACommand()
+    {
+        $from = array('Cities');
+        $this->command->where("i loves ?", "U");
+        $this->command->resetWhere();
 
-    $this->assertCommandGives(array(), $this->command->getTokenValue('Where'));
-  }
+        $this->assertCommandGives(array(), $this->command->getTokenValue('Where'));
+    }
 
-  public function testAddAWhere()
-  {
-    $from     = array('Cities');
-    $this->command->where("i loves ?", "U");
-    $this->command->where("mark loves ?", "me", true, "OR");
+    public function testAddAWhere()
+    {
+        $from = array('Cities');
+        $this->command->where("i loves ?", "U");
+        $this->command->where("mark loves ?", "me", true, "OR");
 
-    $this->assertCommandGives("WHERE i loves \"U\" OR mark loves \"me\"", $this->command->getRaw());
-  }
+        $this->assertCommandGives("WHERE i loves \"U\" OR mark loves \"me\"", $this->command->getRaw());
+    }
 
-  /**
-   * @expectedException Orient\Exception\Query\Command\TokenNotFound
-   */
-  public function testCheckAnExceptionRaisedWhenRequestingInvalidToken()
-  {
-    $command  = new StubCommand();
-    $command->getTokenValue('buffalo');
-  }
+    /**
+     * @expectedException Orient\Exception\Query\Command\TokenNotFound
+     */
+    public function testCheckAnExceptionRaisedWhenRequestingInvalidToken()
+    {
+        $command = new StubCommand();
+        $command->getTokenValue('buffalo');
+    }
 }

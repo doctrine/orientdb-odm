@@ -10,7 +10,7 @@
  */
 
 /**
- * This class handles the SQL statement to generate an index into the DB.
+ * This class handles the SQL statement to lookup an index into the DB.
  *
  * @package    Orient
  * @subpackage Query
@@ -20,23 +20,21 @@
 namespace Orient\Query\Command\Index;
 
 use Orient\Query\Command\Index;
-
 use Orient\Query\Command;
 
 class Lookup extends Index
 {
-  const SCHEMA = "SELECT FROM index::Index :Where";
-  
-  /**
-   * Builds a new statement, setting the $class.
-   *
-   * @param string $index
-   * @param string $where
-   */
-  public function __construct($index)
-  {
-    parent::__construct($index);
-    $this->setToken('Index',$index);
-  } 
-}
+    const SCHEMA = "SELECT FROM index::Index :Where";
 
+    /**
+     * Builds a new statement, setting the $index to lookup.
+     *
+     * @param string $index
+     */
+    public function __construct($index)
+    {
+        parent::__construct($index);
+
+        $this->setToken('Index', $index);
+    }
+}

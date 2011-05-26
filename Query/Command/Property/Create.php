@@ -23,22 +23,21 @@ use Orient\Query\Command\Property;
 
 class Create extends Property
 {
-  const SCHEMA = "CREATE PROPERTY :Class.:Property :Type :Linked";
+    const SCHEMA = "CREATE PROPERTY :Class.:Property :Type :Linked";
 
-  /**
-   * Generates a valid SQL statements to add $property of type $type
-   * linked to $linked.
-   *
-   * @param string $property
-   * @param string $type
-   * @param string $linked
-   */
-  public function __construct($property, $type = NULL, $linked = NULL)
-  {
-    parent::__construct($property);
-    
-    $this->setToken('Type', $type);
-    $this->setToken('Linked', $linked);
-  }
+    /**
+     * Generates a valid SQL statements to add $property of type $type
+     * linked to $linked.
+     *
+     * @param string $property
+     * @param string $type
+     * @param string $linked
+     */
+    public function __construct($property, $type = NULL, $linked = NULL)
+    {
+        parent::__construct($property);
+
+        $this->setToken('Type', $type);
+        $this->setToken('Linked', $linked);
+    }
 }
-

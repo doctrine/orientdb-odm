@@ -21,10 +21,9 @@ namespace Orient\Contract\Query;
 
 interface Formatter
 {
-  public function tokenize($token);
+    public function tokenize($token);
 
-  public function untokenize($token);
+    public function untokenize($token);
 
-  public function format($filter, array $values);
+    public function format($filter, array $values);
 }
-

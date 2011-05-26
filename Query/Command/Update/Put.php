@@ -24,24 +24,23 @@ use Orient\Query\Command\Update;
 
 class Put extends Update
 {
-  const SCHEMA =
-    "UPDATE :Class PUT :Updates :Where"
-  ;
+    const SCHEMA =
+        "UPDATE :Class PUT :Updates :Where"
+    ;
 
-  /**
-   * Creates a new statement assigning the $values to update in the given
-   * $class.
-   * The values can be appended through $append.
-   *
-   * @param array   $values
-   * @param string  $class
-   * @param boolean $append
-   */
-  public function __construct(array $values, $class, $append = true)
-  {
-    parent::__construct($class);
+    /**
+     * Creates a new statement assigning the $values to update in the given
+     * $class.
+     * The values can be appended through $append.
+     *
+     * @param array   $values
+     * @param string  $class
+     * @param boolean $append
+     */
+    public function __construct(array $values, $class, $append = true)
+    {
+        parent::__construct($class);
 
-    $this->setTokenValues('Updates', $values, $append);
-  }
+        $this->setTokenValues('Updates', $values, $append);
+    }
 }
-

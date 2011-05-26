@@ -12,7 +12,7 @@ namespace Orient\Contract\Query\Command;
 
 interface Property
 {
-  public function __construct($property);
+    public function __construct($property);
 
-  public function on($class);
+    public function on($class);
 }

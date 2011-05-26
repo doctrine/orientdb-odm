@@ -23,5 +23,5 @@ use Orient\Query\Command;
 
 class Index extends Command
 {
-
+    
 }

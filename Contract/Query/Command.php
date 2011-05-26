@@ -25,16 +25,15 @@ use \Orient\Contract\Query\Formatter;
 
 interface Command
 {
-  const SCHEMA = NULL;
+    const SCHEMA = NULL;
 
-  public function getRaw();
+    public function getRaw();
 
-  public static function getTokens();
+    public static function getTokens();
 
-  public function from(array $target, $append = true);
+    public function from(array $target, $append = true);
 
-  public function getTokenValue($token);
+    public function getTokenValue($token);
 
-  public function where($condition, $value = NULL, $append = false, $clause = "WHERE");
+    public function where($condition, $value = NULL, $append = false, $clause = "WHERE");
 }
-

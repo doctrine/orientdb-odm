@@ -24,20 +24,16 @@ use Orient\Exception;
 
 class Undefined extends Exception
 {
-  const MESSAGE =
-<<<EOF
-  The class %s does not have the %s method.
-EOF;
+    const MESSAGE = "The class %s does not have the %s method.";
 
-  /**
-   * Constructs the error message.
-   *
-   * @param string $class
-   * @param string $method
-   */
-  public function __construct($class, $method)
-  {
-    $this->message = sprintf(self::MESSAGE, $class, $method);
-  }
+    /**
+     * Constructs the error message.
+     *
+     * @param string $class
+     * @param string $method
+     */
+    public function __construct($class, $method)
+    {
+        $this->message = sprintf(self::MESSAGE, $class, $method);
+    }
 }
-

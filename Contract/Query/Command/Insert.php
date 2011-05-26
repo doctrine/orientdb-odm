@@ -21,10 +21,9 @@ namespace Orient\Contract\Query\Command;
 
 interface Insert
 {
-  public function fields(array $fields, $append = true);
+    public function fields(array $fields, $append = true);
 
-  public function into($target);
+    public function into($target);
 
-  public function values(array $values, $append = true);
+    public function values(array $values, $append = true);
 }
-

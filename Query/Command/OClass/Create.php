@@ -24,6 +24,5 @@ use Orient\Query\Command\OClass;
 
 class Create extends OClass implements OClassInterface
 {
-  const SCHEMA = "CREATE CLASS :Class";
+    const SCHEMA = "CREATE CLASS :Class";
 }
-

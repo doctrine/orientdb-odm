@@ -16,34 +16,33 @@ use Orient\Query\Command\Index\Drop;
 
 class DropTest extends TestCase
 {
-  public function setup()
-  {
-    $this->drop  = new Drop('p', 'c');
-  }
+    public function setup()
+    {
+        $this->drop = new Drop('p', 'c');
+    }
 
-  public function testTheSchemaIsValid()
-  {
-    $tokens       = array(
-        ':IndexClass'   => array(),
-        ':Property'   => array(),
-    );
+    public function testTheSchemaIsValid()
+    {
+        $tokens = array(
+            ':IndexClass' => array(),
+            ':Property' => array(),
+        );
 
-    $this->assertTokens($tokens, $this->drop->getTokens());
-  }
+        $this->assertTokens($tokens, $this->drop->getTokens());
+    }
 
-  public function testConstructionOfAnObject()
-  {
-    $query = 'DROP INDEX c.p';
+    public function testConstructionOfAnObject()
+    {
+        $query = 'DROP INDEX c.p';
 
-    $this->assertCommandGives($query, $this->drop->getRaw());
-  }
-  
-  public function testConstructionOfAnIndexWithoutClass()
-  {
-    $query = 'DROP INDEX p';
-    $this->drop  = new Drop('p');
+        $this->assertCommandGives($query, $this->drop->getRaw());
+    }
 
-    $this->assertCommandGives($query, $this->drop->getRaw());
-  }
+    public function testConstructionOfAnIndexWithoutClass()
+    {
+        $query = 'DROP INDEX p';
+        $this->drop = new Drop('p');
+
+        $this->assertCommandGives($query, $this->drop->getRaw());
+    }
 }
-

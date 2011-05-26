@@ -24,39 +24,38 @@ use Orient\Query\Command;
 
 class Property extends Command implements PropertyInterface
 {
-  /**
-   * Builds a new statement setting the $property to manipulate.
-   *
-   * @param <type> $property
-   */
-  public function __construct($property)
-  {
-    parent::__construct();
-    
-    $this->setProperty($property);
-  }
+    /**
+     * Builds a new statement setting the $property to manipulate.
+     *
+     * @param <type> $property
+     */
+    public function __construct($property)
+    {
+        parent::__construct();
 
-  /**
-   * Sets the class of the property.
-   *
-   * @param   string    $class
-   * @return  Property
-   */
-  public function on($class)
-  {
-    $this->setToken('Class', $class);
+        $this->setProperty($property);
+    }
 
-    return $this;
-  }
+    /**
+     * Sets the class of the property.
+     *
+     * @param   string    $class
+     * @return  Property
+     */
+    public function on($class)
+    {
+        $this->setToken('Class', $class);
 
-  /**
-   * Sets the $property in the query.
-   *
-   * @param string $property
-   */
-  protected function setProperty($property)
-  {
-    $this->setToken('Property', $property);
-  }
+        return $this;
+    }
+
+    /**
+     * Sets the $property in the query.
+     *
+     * @param string $property
+     */
+    protected function setProperty($property)
+    {
+        $this->setToken('Property', $property);
+    }
 }
-

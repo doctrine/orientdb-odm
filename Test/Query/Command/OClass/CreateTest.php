@@ -16,25 +16,24 @@ use Orient\Query\Command\OClass\Create;
 
 class CreateTest extends TestCase
 {
-  public function setup()
-  {
-    $this->create  = new Create('p');
-  }
+    public function setup()
+    {
+        $this->create = new Create('p');
+    }
 
-  public function testTheSchemaIsValid()
-  {
-    $tokens       = array(
-        ':Class'   => array(),
-    );
+    public function testTheSchemaIsValid()
+    {
+        $tokens = array(
+            ':Class' => array(),
+        );
 
-    $this->assertTokens($tokens, $this->create->getTokens());
-  }
+        $this->assertTokens($tokens, $this->create->getTokens());
+    }
 
-  public function testConstructionOfAnObject()
-  {
-    $query = 'CREATE CLASS p';
+    public function testConstructionOfAnObject()
+    {
+        $query = 'CREATE CLASS p';
 
-    $this->assertCommandGives($query, $this->create->getRaw());
-  }
+        $this->assertCommandGives($query, $this->create->getRaw());
+    }
 }
-

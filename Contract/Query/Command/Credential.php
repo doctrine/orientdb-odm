@@ -21,12 +21,11 @@ namespace Orient\Contract\Query\Command;
 
 interface Credential
 {
-  public function __construct($permission);
+    public function __construct($permission);
 
-  public function permission($permission);
+    public function permission($permission);
 
-  public function on($resource);
+    public function on($resource);
 
-  public function to($role);
+    public function to($role);
 }
-

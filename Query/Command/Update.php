@@ -23,35 +23,34 @@ use Orient\Query\Command;
 
 class Update extends Command
 {
-  const SCHEMA =
-    "UPDATE :Class SET :Updates :Where"
-  ;
+    const SCHEMA =
+        "UPDATE :Class SET :Updates :Where"
+    ;
 
-  /**
-   * Builds a new statement, setting the $class.
-   *
-   * @param string $class
-   */
-  public function __construct($class)
-  {
-    parent::__construct();
+    /**
+     * Builds a new statement, setting the $class.
+     *
+     * @param string $class
+     */
+    public function __construct($class)
+    {
+        parent::__construct();
 
-    $this->setToken('Class', $class);
-  }
+        $this->setToken('Class', $class);
+    }
 
-  /**
-   * Set the $values of the updates to be done.
-   * You can $appnd the values.
-   *
-   * @param   array   $values
-   * @param   boolean $append
-   * @return  Update
-   */
-  public function set(array $values, $append = true)
-  {
-    $this->setTokenValues('Updates', $values, $append);
+    /**
+     * Set the $values of the updates to be done.
+     * You can $appnd the values.
+     *
+     * @param   array   $values
+     * @param   boolean $append
+     * @return  Update
+     */
+    public function set(array $values, $append = true)
+    {
+        $this->setTokenValues('Updates', $values, $append);
 
-    return $this;
-  }
+        return $this;
+    }
 }
-

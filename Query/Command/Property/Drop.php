@@ -24,6 +24,5 @@ use Orient\Query\Command\Property;
 
 class Drop extends Property
 {
-  const SCHEMA = "DROP PROPERTY :Class.:Property";
+    const SCHEMA = "DROP PROPERTY :Class.:Property";
 }
-

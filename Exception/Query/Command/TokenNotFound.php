@@ -26,24 +26,21 @@ use \Orient\Exception;
 
 class TokenNotFound extends Exception
 {
-  const MESSAGE = 
-<<<EOF
-  The token %s is not contained in the %s command schema
-  The command schema is: %s
-EOF;
+    const MESSAGE =
+        "The token %s is not contained in the %s command schema\n
+        The command schema is: %s";
 
-  /**
-   * Compares the class SCHEMA and the submitted token.
-   *
-   * @param string $token
-   * @param string $commandClass
-   */
-  public function __construct($token, $commandClass)
-  {
-    $ref    = new \ReflectionClass($commandClass);
-    $schema = $ref->getConstant('SCHEMA') ?: "undefined";
+    /**
+     * Compares the class SCHEMA and the submitted token.
+     *
+     * @param string $token
+     * @param string $commandClass
+     */
+    public function __construct($token, $commandClass)
+    {
+        $ref = new \ReflectionClass($commandClass);
+        $schema = $ref->getConstant('SCHEMA') ? : "undefined";
 
-    $this->message = sprintf(self::MESSAGE, $token, $commandClass, $schema);
-  }
+        $this->message = sprintf(self::MESSAGE, $token, $commandClass, $schema);
+    }
 }
-

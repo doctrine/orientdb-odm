@@ -24,45 +24,43 @@ use Orient\Query\Command;
 
 class Link extends Command
 {
-  const SCHEMA =
-    "CREATE LINK :Name FROM :SourceClass.:SourceProperty TO :DestinationClass.:DestinationProperty :Inverse"
-  ;
+    const SCHEMA =
+        "CREATE LINK :Name FROM :SourceClass.:SourceProperty TO :DestinationClass.:DestinationProperty :Inverse"
+    ;
 
-  /**
-   * Sets the source of the link, its $alias and if the link must be $reverse.
-   *
-   * @param string  $class
-   * @param string  $property
-   * @param string  $alias
-   * @param boolean $inverse
-   */
-  public function  __construct($class, $property, $alias, $inverse = false)
-  {
-    parent::__construct();
-
-    $this->setToken('SourceClass', $class);
-    $this->setToken('SourceProperty', $property);
-    $this->setToken('Name', $alias);
-
-    if ($inverse)
+    /**
+     * Sets the source of the link, its $alias and if the link must be $reverse.
+     *
+     * @param string  $class
+     * @param string  $property
+     * @param string  $alias
+     * @param boolean $inverse
+     */
+    public function __construct($class, $property, $alias, $inverse = false)
     {
-      $this->setToken('Inverse', 'INVERSE');
+        parent::__construct();
+
+        $this->setToken('SourceClass', $class);
+        $this->setToken('SourceProperty', $property);
+        $this->setToken('Name', $alias);
+
+        if ($inverse) {
+            $this->setToken('Inverse', 'INVERSE');
+        }
     }
-  }
 
-  /**
-   * Sets the destination of the link.
-   *
-   * @param   string $class
-   * @param   string $property
-   * @return  Link
-   */
-  public function to($class, $property)
-  {
-    $this->setToken('DestinationClass', $class);
-    $this->setToken('DestinationProperty', $property);
+    /**
+     * Sets the destination of the link.
+     *
+     * @param   string $class
+     * @param   string $property
+     * @return  Link
+     */
+    public function to($class, $property)
+    {
+        $this->setToken('DestinationClass', $class);
+        $this->setToken('DestinationProperty', $property);
 
-    return $this;
-  }
+        return $this;
+    }
 }
-

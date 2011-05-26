@@ -21,6 +21,5 @@ namespace Orient\Contract\Query\Command;
 
 interface OClass
 {
-  public function __construct($class);
+    public function __construct($class);
 }
-

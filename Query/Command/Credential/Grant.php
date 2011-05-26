@@ -24,7 +24,7 @@ use Orient\Query\Command\Credential;
 
 class Grant extends Credential implements CredentialInterface
 {
-  const SCHEMA          =
-    "GRANT :Permission ON :Resource TO :Role"
-  ;
+    const SCHEMA =
+        "GRANT :Permission ON :Resource TO :Role"
+    ;
 }

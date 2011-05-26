@@ -120,7 +120,7 @@ class SplClassLoader
      */
     public function loadClass($className)
     {
-        if (null === $this->_namespace || $this->_namespace.$this->_namespaceSeparator === substr($className, 0, strlen($this->_namespace.$this->_namespaceSeparator))) {
+        if (null === $this->_namespace || $this->_namespace . $this->_namespaceSeparator === substr($className, 0, strlen($this->_namespace . $this->_namespaceSeparator))) {
             $fileName = '';
             $namespace = '';
             if (false !== ($lastNsPos = strripos($className, $this->_namespaceSeparator))) {
@@ -134,6 +134,5 @@ class SplClassLoader
         }
     }
 }
-
 $classLoader = new SplClassLoader('Orient', '..');
 $classLoader->register();

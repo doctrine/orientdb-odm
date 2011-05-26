@@ -16,50 +16,49 @@ use Orient\Query\Command\Index\Create;
 
 class CreateTest extends TestCase
 {
-  public function setup()
-  {
-    $this->create  = new Create('p', 'c');
-  }
+    public function setup()
+    {
+        $this->create = new Create('p', 'c');
+    }
 
-  public function testTheSchemaIsValid()
-  {
-    $tokens       = array(
-        ':IndexClass' => array(),
-        ':Property'   => array(),
-        ':Type'       => array(),
-    );
+    public function testTheSchemaIsValid()
+    {
+        $tokens = array(
+            ':IndexClass' => array(),
+            ':Property' => array(),
+            ':Type' => array(),
+        );
 
-    $this->assertTokens($tokens, $this->create->getTokens());
-  }
+        $this->assertTokens($tokens, $this->create->getTokens());
+    }
 
-  public function testConstructionOfAnObject()
-  {
-    $query = 'CREATE INDEX c.p';
+    public function testConstructionOfAnObject()
+    {
+        $query = 'CREATE INDEX c.p';
 
-    $this->assertCommandGives($query, $this->create->getRaw());
-  }
+        $this->assertCommandGives($query, $this->create->getRaw());
+    }
 
-  public function testConstructionOfAnIndexWithoutClass()
-  {
-    $query = 'CREATE INDEX p';
-    $this->create  = new Create('p');
+    public function testConstructionOfAnIndexWithoutClass()
+    {
+        $query = 'CREATE INDEX p';
+        $this->create = new Create('p');
 
-    $this->assertCommandGives($query, $this->create->getRaw());
-  }
+        $this->assertCommandGives($query, $this->create->getRaw());
+    }
 
-  public function testSettingTheIndexType()
-  {
-    $query = 'CREATE INDEX p string';
-    $this->create  = new Create('p', NULL, 'string');
+    public function testSettingTheIndexType()
+    {
+        $query = 'CREATE INDEX p string';
+        $this->create = new Create('p', NULL, 'string');
 
-    $this->assertCommandGives($query, $this->create->getRaw());
-  }
+        $this->assertCommandGives($query, $this->create->getRaw());
+    }
 
-  public function testSettingTheIndexTypeWithTheFluentInterface()
-  {
-    $query = 'CREATE INDEX c.p string';
+    public function testSettingTheIndexTypeWithTheFluentInterface()
+    {
+        $query = 'CREATE INDEX c.p string';
 
-    $this->assertCommandGives($query, $this->create->type('string')->getRaw());
-  }
+        $this->assertCommandGives($query, $this->create->type('string')->getRaw());
+    }
 }
-

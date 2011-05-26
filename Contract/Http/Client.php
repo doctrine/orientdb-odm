@@ -19,19 +19,20 @@
  * @subpackage Contract
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
+
 namespace Orient\Contract\Http;
 
 interface Client
 {
-  public function setAuthentication($credential);
+    public function setAuthentication($credential);
 
-  public function execute($method, $location);
+    public function execute($method, $location);
 
-  public function get($location);
+    public function get($location);
 
-  public function post($location, $body);
+    public function post($location, $body);
 
-  public function delete($location);
+    public function delete($location);
 
-  public function put($location, $body);
+    public function put($location, $body);
 }

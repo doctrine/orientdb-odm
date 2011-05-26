@@ -26,54 +26,54 @@ use Orient\Query\Command;
 
 abstract class Credential extends Command implements CredentialInterface
 {
-  /**
-   * Creates a new statement, setting the $permission.
-   *
-   * @param string $permission
-   */
-  public function __construct($permission)
-  {
-    parent::__construct();
+    /**
+     * Creates a new statement, setting the $permission.
+     *
+     * @param string $permission
+     */
+    public function __construct($permission)
+    {
+        parent::__construct();
 
-    $this->permission($permission);
-  }
+        $this->permission($permission);
+    }
 
-  /**
-   * Sets a permission for the query.
-   *
-   * @param   string $permission
-   * @return  Credential
-   */
-  public function permission($permission)
-  {
-    $this->setToken('Permission', $permission);
+    /**
+     * Sets a permission for the query.
+     *
+     * @param   string $permission
+     * @return  Credential
+     */
+    public function permission($permission)
+    {
+        $this->setToken('Permission', $permission);
 
-    return $this;
-  }
+        return $this;
+    }
 
-  /**
-   * Sets the $resource on which the credential is given.
-   *
-   * @param   string $resource
-   * @return  Credential
-   */
-  public function on($resource)
-  {
-    $this->setToken('Resource', $resource);
+    /**
+     * Sets the $resource on which the credential is given.
+     *
+     * @param   string $resource
+     * @return  Credential
+     */
+    public function on($resource)
+    {
+        $this->setToken('Resource', $resource);
 
-    return $this;
-  }
+        return $this;
+    }
 
-  /**
-   * Sets the $role having the credential on a resource.
-   *
-   * @param   string $role
-   * @return  Credential
-   */
-  public function to($role)
-  {
-    $this->setToken('Role', $role);
+    /**
+     * Sets the $role having the credential on a resource.
+     *
+     * @param   string $role
+     * @return  Credential
+     */
+    public function to($role)
+    {
+        $this->setToken('Role', $role);
 
-    return $this;
-  }
+        return $this;
+    }
 }

@@ -23,25 +23,23 @@ use Orient\Query\Command\Index;
 
 class Drop extends Index
 {
-  const SCHEMA = "DROP INDEX :IndexClass:Property";
-  
-  /**
-   * Creates a new statements to manage indexes on the $property of the given
-   * $class.
-   *
-   * @param string $property
-   * @param string $class
-   */
-  public function __construct($property, $class = NULL)
-  {
-    parent::__construct();
-    
-    if($class)
+    const SCHEMA = "DROP INDEX :IndexClass:Property";
+
+    /**
+     * Creates a new statements to manage indexes on the $property of the given
+     * $class.
+     *
+     * @param string $property
+     * @param string $class
+     */
+    public function __construct($property, $class = NULL)
     {
-      $this->setToken('IndexClass', $class);      
+        parent::__construct();
+
+        if ($class) {
+            $this->setToken('IndexClass', $class);
+        }
+
+        $this->setToken('Property', $property);
     }
-
-    $this->setToken('Property', $property);
-  }
 }
-

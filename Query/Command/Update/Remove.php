@@ -23,23 +23,22 @@ use Orient\Query\Command\Update;
 
 class Remove extends Update
 {
-  const SCHEMA =
-    "UPDATE :Class REMOVE :Updates :Where"
-  ;
+    const SCHEMA =
+        "UPDATE :Class REMOVE :Updates :Where"
+    ;
 
-  /**
-   * Builds a new statement setting the $values to remove in the given $class.
-   * The values to remove can be appended with the $append parameter.
-   *
-   * @param array   $values
-   * @param string  $class
-   * @param boolean $append
-   */
-  public function __construct(array $values, $class, $append = true)
-  {
-    parent::__construct($class);
+    /**
+     * Builds a new statement setting the $values to remove in the given $class.
+     * The values to remove can be appended with the $append parameter.
+     *
+     * @param array   $values
+     * @param string  $class
+     * @param boolean $append
+     */
+    public function __construct(array $values, $class, $append = true)
+    {
+        parent::__construct($class);
 
-    $this->setTokenValues('Updates', $values, $append);
-  }
+        $this->setTokenValues('Updates', $values, $append);
+    }
 }
-

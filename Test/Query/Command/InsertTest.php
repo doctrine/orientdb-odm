@@ -16,90 +16,89 @@ use Orient\Query\Command\Insert;
 
 class InsertTest extends TestCase
 {
-  public function setup()
-  {
-    $this->insert  = new Insert();
-  }
+    public function setup()
+    {
+        $this->insert = new Insert();
+    }
 
-  public function testTheSchemaIsValid()
-  {
-    $tokens       = array(
-        ':Target'   => array(),
-        ':Fields'   => array(),
-        ':Values'   => array(),
-    );
+    public function testTheSchemaIsValid()
+    {
+        $tokens = array(
+            ':Target' => array(),
+            ':Fields' => array(),
+            ':Values' => array(),
+        );
 
-    $this->assertTokens($tokens, $this->insert->getTokens());
-  }
+        $this->assertTokens($tokens, $this->insert->getTokens());
+    }
 
-  public function testConstructionOfAnObject()
-  {
-    $query = 'INSERT INTO () VALUES ()';
+    public function testConstructionOfAnObject()
+    {
+        $query = 'INSERT INTO () VALUES ()';
 
-    $this->assertCommandGives($query, $this->insert->getRaw());
-  }
+        $this->assertCommandGives($query, $this->insert->getRaw());
+    }
 
-  public function testInsertingFields()
-  {
-    $this->insert->fields(array('name'));
-    $query = 'INSERT INTO (name) VALUES ()';
+    public function testInsertingFields()
+    {
+        $this->insert->fields(array('name'));
+        $query = 'INSERT INTO (name) VALUES ()';
 
-    $this->assertCommandGives($query, $this->insert->getRaw());
+        $this->assertCommandGives($query, $this->insert->getRaw());
 
-    $this->insert->fields(array('name', 'username'), true);
-    $query = 'INSERT INTO (name, username) VALUES ()';
+        $this->insert->fields(array('name', 'username'), true);
+        $query = 'INSERT INTO (name, username) VALUES ()';
 
-    $this->assertCommandGives($query, $this->insert->getRaw());
+        $this->assertCommandGives($query, $this->insert->getRaw());
 
-    $this->insert->fields(array('name'), false);
-    $query = 'INSERT INTO (name) VALUES ()';
+        $this->insert->fields(array('name'), false);
+        $query = 'INSERT INTO (name) VALUES ()';
 
-    $this->assertCommandGives($query, $this->insert->getRaw());
-  }
+        $this->assertCommandGives($query, $this->insert->getRaw());
+    }
 
-  public function testSettingTheToToken()
-  {
-    $this->insert->into("city");
-    $query = 'INSERT INTO city () VALUES ()';
+    public function testSettingTheToToken()
+    {
+        $this->insert->into("city");
+        $query = 'INSERT INTO city () VALUES ()';
 
-    $this->assertCommandGives($query, $this->insert->getRaw());
+        $this->assertCommandGives($query, $this->insert->getRaw());
 
-    $this->insert->into('town', false);
-    $query = 'INSERT INTO town () VALUES ()';
+        $this->insert->into('town', false);
+        $query = 'INSERT INTO town () VALUES ()';
 
-    $this->assertCommandGives($query, $this->insert->getRaw());
-  }
+        $this->assertCommandGives($query, $this->insert->getRaw());
+    }
 
-  public function testInsertValues()
-  {
-    $this->insert->values(array());
-    $query = 'INSERT INTO () VALUES ()';
+    public function testInsertValues()
+    {
+        $this->insert->values(array());
+        $query = 'INSERT INTO () VALUES ()';
 
-    $this->assertCommandGives($query, $this->insert->getRaw());
+        $this->assertCommandGives($query, $this->insert->getRaw());
 
-    $this->insert->values(array('ciapa', 'ciapa2'), true);
-    $query = 'INSERT INTO () VALUES ("ciapa", "ciapa2")';
+        $this->insert->values(array('ciapa', 'ciapa2'), true);
+        $query = 'INSERT INTO () VALUES ("ciapa", "ciapa2")';
 
-    $this->assertCommandGives($query, $this->insert->getRaw());
+        $this->assertCommandGives($query, $this->insert->getRaw());
 
-    $this->insert->values(array('town'), false);
-    $query = 'INSERT INTO () VALUES ("town")';
+        $this->insert->values(array('town'), false);
+        $query = 'INSERT INTO () VALUES ("town")';
 
-    $this->assertCommandGives($query, $this->insert->getRaw());
-  }
+        $this->assertCommandGives($query, $this->insert->getRaw());
+    }
 
-  public function testUsingTheFluentInterface()
-  {
-    $this->insert->into("myClass")
-                 ->fields(array('name', 'relation', 'links'))
-                 ->values(array(
-                   'hello', array('10:1'), array('10:1', '11:1')
-                 ));
-    $sql    =
-      'INSERT INTO myClass (name, relation, links) VALUES ("hello", 10:1, [10:1, 11:1])'
-    ;
+    public function testUsingTheFluentInterface()
+    {
+        $this->insert->into("myClass")
+                ->fields(array('name', 'relation', 'links'))
+                ->values(array(
+                    'hello', array('10:1'), array('10:1', '11:1')
+                ));
+        $sql =
+                'INSERT INTO myClass (name, relation, links) VALUES ("hello", 10:1, [10:1, 11:1])'
+        ;
 
-    $this->assertCommandGives($sql, $this->insert->getRaw());
-  }
+        $this->assertCommandGives($sql, $this->insert->getRaw());
+    }
 }
-

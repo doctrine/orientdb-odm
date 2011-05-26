@@ -24,5 +24,5 @@ use Orient\Query\Command\OClass;
 
 class Drop extends OClass implements OClassInterface
 {
-  const SCHEMA = "DROP CLASS :Class";
+    const SCHEMA = "DROP CLASS :Class";
 }

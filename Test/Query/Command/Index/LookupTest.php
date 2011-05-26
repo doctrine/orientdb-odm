@@ -16,33 +16,32 @@ use Orient\Query\Command\Index\Lookup;
 
 class LookupTest extends TestCase
 {
-  public function setup()
-  {
-    $this->lookup  = new Lookup('dictionary');
-  }
+    public function setup()
+    {
+        $this->lookup = new Lookup('dictionary');
+    }
 
-  public function testTheSchemaIsValid()
-  {
-    $tokens = array(
-      ':Index' => array(),
-      ':Where'   => array(),
-    );
-    
-    $this->assertTokens($tokens, $this->lookup->getTokens());
-  }
+    public function testTheSchemaIsValid()
+    {
+        $tokens = array(
+            ':Index' => array(),
+            ':Where' => array(),
+        );
 
-  public function testConstructionOfAnObject()
-  {
-    $query = 'SELECT FROM index:dictionary';
+        $this->assertTokens($tokens, $this->lookup->getTokens());
+    }
 
-    $this->assertCommandGives($query, $this->lookup->getRaw());
-  }
-  
-  public function testSettingWhereCondition()
-  {
-    $query = 'SELECT FROM index:dictionary WHERE key = "luke"';
-    $this->lookup->where('key = ?','luke');
-    $this->assertCommandGives($query, $this->lookup->getRaw());
-  }
+    public function testConstructionOfAnObject()
+    {
+        $query = 'SELECT FROM index:dictionary';
+
+        $this->assertCommandGives($query, $this->lookup->getRaw());
+    }
+
+    public function testSettingWhereCondition()
+    {
+        $query = 'SELECT FROM index:dictionary WHERE key = "luke"';
+        $this->lookup->where('key = ?', 'luke');
+        $this->assertCommandGives($query, $this->lookup->getRaw());
+    }
 }
-

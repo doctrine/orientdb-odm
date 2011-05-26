@@ -16,25 +16,24 @@ use Orient\Query\Command\OClass\Drop;
 
 class DropTest extends TestCase
 {
-  public function setup()
-  {
-    $this->drop  = new Drop('p');
-  }
+    public function setup()
+    {
+        $this->drop = new Drop('p');
+    }
 
-  public function testTheSchemaIsValid()
-  {
-    $tokens       = array(
-        ':Class'   => array(),
-    );
+    public function testTheSchemaIsValid()
+    {
+        $tokens = array(
+            ':Class' => array(),
+        );
 
-    $this->assertTokens($tokens, $this->drop->getTokens());
-  }
+        $this->assertTokens($tokens, $this->drop->getTokens());
+    }
 
-  public function testConstructionOfAnObject()
-  {
-    $query = 'DROP CLASS p';
+    public function testConstructionOfAnObject()
+    {
+        $query = 'DROP CLASS p';
 
-    $this->assertCommandGives($query, $this->drop->getRaw());
-  }
+        $this->assertCommandGives($query, $this->drop->getRaw());
+    }
 }
-

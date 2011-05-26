@@ -25,42 +25,41 @@ use Orient\Query\Command;
 
 class Find extends Command implements FindInterface
 {
-  const SCHEMA = "FIND REFERENCES :Rid :ClassList";
+    const SCHEMA = "FIND REFERENCES :Rid :ClassList";
 
-  /**
-   * Creates a new object, setting the $rid to lookup.
-   *
-   * @param string $rid
-   */
-  public function __construct($rid)
-  {
-    parent::__construct();
-    
-    $this->setRid($rid);
-  }
+    /**
+     * Creates a new object, setting the $rid to lookup.
+     *
+     * @param string $rid
+     */
+    public function __construct($rid)
+    {
+        parent::__construct();
 
-  /**
-   * Restricts the classes to look into to find the record.
-   *
-   * @param   array $classes
-   * @param   boolean $append
-   * @return  Find
-   */
-  public function in(array $classes, $append = true)
-  {
-    $this->setTokenValues('ClassList', $classes, $append);
+        $this->setRid($rid);
+    }
 
-    return $this;
-  }
+    /**
+     * Restricts the classes to look into to find the record.
+     *
+     * @param   array $classes
+     * @param   boolean $append
+     * @return  Find
+     */
+    public function in(array $classes, $append = true)
+    {
+        $this->setTokenValues('ClassList', $classes, $append);
 
-  /**
-   * Sets the $rid to look for.
-   *
-   * @param string $rid
-   */
-  protected function setRid($rid)
-  {
-    $this->setToken('Rid', $rid);
-  }
+        return $this;
+    }
+
+    /**
+     * Sets the $rid to look for.
+     *
+     * @param string $rid
+     */
+    protected function setRid($rid)
+    {
+        $this->setToken('Rid', $rid);
+    }
 }
-
