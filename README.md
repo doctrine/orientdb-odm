@@ -26,8 +26,10 @@ Its usage is straightforward:
     $orient = new Orient\Foundation\Binding($driver, '127.0.0.1', '2480', 'admin', 'admin', 'demo');
 
     $query = new Orient\Query();
+    $query->from(array('address'))->where('street = ?', 'Piazza Navona, 1');
+    $sql   = $query->getRaw();
 
-    $response = $orient->query($query->from(array('address'))->where('street = ?', 'Piazza Navona, 1')->getRaw());
+    $response = $orient->query($sql);
 
     $output = json_decode($response->getBody());
 
