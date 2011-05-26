@@ -18,8 +18,26 @@ Documentation: http://code.google.com/p/orient | http://www.odino.org/tags?tag=o
 
 ## Current status of the binding
 
-BETA: the binding is almost finished, we will develop a custom mapper which will sit on top of this low-level binding.
-Some things will change (implementation of better interfaces, naming conventions), but nothing should stop you from using it (yes, also in production: further changes in the binding will be small and well-documented).
+The binding is complete: it is an HTTP client wrapper with some methods bound to OrientDB's HTTP interface.
+
+Its usage is straightforward:
+
+    $driver = new Orient\Http\Client\Curl();
+    $orient = new Orient\Foundation\Binding($driver, '127.0.0.1', '2480', 'admin', 'admin', 'demo');
+
+    $query = new Orient\Query();
+
+    $response = $orient->query($query->from(array('address'))->where('street = ?', 'Piazza Navona, 1')->getRaw());
+
+    $output = json_decode($response->getBody());
+
+    foreach ($output->result as $address)
+    {
+      var_dump($address->street);
+    }
+
+Use the PHP5.3 standard autoloader (https://gist.github.com/221634).
+
 
 ## Current status of the query builder
 
