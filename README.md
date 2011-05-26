@@ -87,8 +87,9 @@ THE SOFTWARE
 
 ## Requirements
 
-PHP >= 5.3.5
+These are the requirements in order to use the library:
 
-PHPUnit >= 3.5
+* PHP >= 5.3.5
+* OrientDB 1.0.0RC1
 
-OrientDB 1.0.0RC1
+In order to launch the test suite PHPUnit 3.5 is required.
