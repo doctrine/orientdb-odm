@@ -10,20 +10,16 @@
  */
 
 /**
- * Formatter class
+ * Query interface
  *
- * @package
- * @subpackage
+ * @package    Orient
+ * @subpackage Contract
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Orient\Contract\Query;
+namespace Orient\Contract\Formatter\Query;
 
-interface Formatter
+interface Token
 {
-    public function tokenize($token);
-
-    public function untokenize($token);
-
-    public function format($filter, array $values);
+    public static function format(array $values);
 }

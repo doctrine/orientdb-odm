@@ -20,8 +20,9 @@
 namespace Orient\Formatter\Query;
 
 use Orient\Formatter\Query;
+use Orient\Contract\Formatter\Query\Token as TokenFormatter;
 
-class Regular extends Query
+class Regular extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {

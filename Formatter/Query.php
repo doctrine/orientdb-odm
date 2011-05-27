@@ -22,8 +22,9 @@ namespace Orient\Formatter;
 
 use Orient\Exception;
 use Orient\Formatter\String;
+use Orient\Contract\Formatter;
 
-class Query
+class Query implements Formatter\Query
 {
     /**
      * Tokenizes a string.
