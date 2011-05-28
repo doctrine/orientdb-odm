@@ -10,7 +10,7 @@
  */
 
 /**
- * Utility class
+ * This class is responsible of general-purpose manipulating strings.
  *
  * @package    
  * @subpackage 
@@ -21,6 +21,29 @@ namespace Orient\Formatter;
 
 class String
 {
+    /**
+     * Converts a filesystem path into a class name.
+     *
+     * @param   string $file
+     * @param   string $namespace
+     * @return  string
+     */
+    public static function convertPathToClassName($file, $namespace = '')
+    {
+        $tokens     = array('.php','/', '.\\');
+        $replaces   = array('','\\',$namespace);
+        
+        return str_replace($tokens, $replaces, $file);
+    }
+
+    /**
+     * Cleans the input $string removing all the characters not allowed in
+     * OrientDB SQL statements.
+     *
+     * @param   string $string
+     * @param   string $nonFilter
+     * @return  string
+     */
     public function filterNonSQLChars($string, $nonFilter = NULL)
     {
         $pattern = "/[^a-z|A-Z|0-9|:|@|#|$nonFilter]/";

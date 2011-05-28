@@ -20,12 +20,15 @@
          verbose="false">
 
     <testsuites>
-      <testsuite name="Test">
+      <testsuite name="Query builder">
           <directory >../../Test/Query</directory>
           <file >./Test/QueryTest.php</file>
       </testsuite>
-      <testsuite name="Test">
+      <testsuite name="HTTP">
           <directory >../../Test/Http</directory>
+      </testsuite>
+      <testsuite name="ODM">
+          <directory >../../Test/Document</directory>
       </testsuite>
 <!--      <testsuite name="Test">
           <directory >../../Test/Foundation</directory>
