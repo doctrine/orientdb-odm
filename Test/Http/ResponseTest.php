@@ -30,4 +30,11 @@ class ResponseTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals("AB", $response->getResponse());
     }
+
+    public function testExtractBodyCorrectlyFromResponse()
+    {
+        $response = new Http\Response("A\r\n\r\nB\r\n\r\nC");
+
+        $this->assertEquals("B\r\n\r\nC", $response->getBody());
+    }
 }

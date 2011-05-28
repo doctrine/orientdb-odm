@@ -35,7 +35,7 @@ class Response
      */
     public function __construct($response)
     {
-        $parts = explode("\r\n\r\n", $response);
+        $parts = explode("\r\n\r\n", $response, 2);
 
         $headers = array_key_exists(0, $parts) ? $parts[0] : null;
         $this->body = array_key_exists(1, $parts) ? $parts[1] : null;
