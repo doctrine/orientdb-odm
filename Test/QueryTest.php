@@ -392,6 +392,24 @@ class QueryTest extends TestCase
         $this->assertCommandGives($sql, $this->query->getRaw());
     }
 
+    public function testAlter()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\OClass\Alter', $this->query->alter('c', 'p', 'v'));
+
+        $sql = 'ALTER CLASS c p v';
+
+        $this->assertCommandGives($sql, $this->query->alter('c', 'p', 'v')->getRaw());
+    }
+
+    public function testAlterProperty()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Property\Alter', $this->query->alterProperty('p', 'c', 'a', 'v'));
+
+        $sql = 'ALTER PROPERTY c.p a v';
+
+        $this->assertCommandGives($sql, $this->query->alterProperty('c', 'p', 'a', 'v')->getRaw());
+    }
+
     public function testOrderBy()
     {
         $this->query->from(array('class'));

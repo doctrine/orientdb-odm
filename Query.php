@@ -33,23 +33,25 @@ class Query
 {
     protected $command = NULL;
     protected $commands = array(
-        'select' => 'Orient\Query\Command\Select',
-        'insert' => 'Orient\Query\Command\Insert',
-        'delete' => 'Orient\Query\Command\Delete',
-        'update' => 'Orient\Query\Command\Update',
-        'update.add' => 'Orient\Query\Command\Update\Add',
-        'update.remove' => 'Orient\Query\Command\Update\Remove',
-        'update.put' => 'Orient\Query\Command\Update\Put',
-        'grant' => 'Orient\Query\Command\Credential\Grant',
-        'revoke' => 'Orient\Query\Command\Credential\Revoke',
-        'class.create' => 'Orient\Query\Command\OClass\Create',
-        'class.drop' => 'Orient\Query\Command\OClass\Drop',
-        'references.find' => 'Orient\Query\Command\Reference\Find',
-        'property.create' => 'Orient\Query\Command\Property\Create',
-        'property.drop' => 'Orient\Query\Command\Property\Drop',
-        'index.drop' => 'Orient\Query\Command\Index\Drop',
-        'index.create' => 'Orient\Query\Command\Index\Create',
-        'link' => 'Orient\Query\Command\Link',
+        'select'            => 'Orient\Query\Command\Select',
+        'insert'            => 'Orient\Query\Command\Insert',
+        'delete'            => 'Orient\Query\Command\Delete',
+        'update'            => 'Orient\Query\Command\Update',
+        'update.add'        => 'Orient\Query\Command\Update\Add',
+        'update.remove'     => 'Orient\Query\Command\Update\Remove',
+        'update.put'        => 'Orient\Query\Command\Update\Put',
+        'grant'             => 'Orient\Query\Command\Credential\Grant',
+        'revoke'            => 'Orient\Query\Command\Credential\Revoke',
+        'class.create'      => 'Orient\Query\Command\OClass\Create',
+        'class.drop'        => 'Orient\Query\Command\OClass\Drop',
+        'class.alter'       => 'Orient\Query\Command\OClass\Alter',
+        'references.find'   => 'Orient\Query\Command\Reference\Find',
+        'property.create'   => 'Orient\Query\Command\Property\Create',
+        'property.drop'     => 'Orient\Query\Command\Property\Drop',
+        'property.alter'    => 'Orient\Query\Command\Property\Alter',
+        'index.drop'        => 'Orient\Query\Command\Index\Drop',
+        'index.create'      => 'Orient\Query\Command\Index\Create',
+        'link'              => 'Orient\Query\Command\Link',
     );
 
     /**
@@ -72,6 +74,30 @@ class Query
         $this->command = new $commandClass($updates, $class, $append);
 
         return $this->command;
+    }
+
+    /**
+     * Alters an attribute of a class.
+     *
+     * @param   string $class
+     * @param   string $attribute
+     * @param   string $value
+     * @return  Alter
+     */
+    public function alter($class, $attribute, $value)
+    {
+        $commandClass = $this->getCommandClass('class.alter');
+        $this->command = new $commandClass($class, $attribute, $value);
+
+        return $this->command;
+    }
+
+    public function alterProperty($class, $property, $attribute, $value)
+    {
+        $commandClass = $this->getCommandClass('property.alter');
+        $this->command = new $commandClass($property);
+
+        return $this->command->on($class)->changing($attribute, $value);
     }
 
     /**
