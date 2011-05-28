@@ -84,12 +84,11 @@ class Response
     {
         $parts = explode("\r\n", $headers);
 
-        $this->status_code = $parts[0];
-        unset($parts[0]);
+        $this->status_code = array_shift($parts);
 
         foreach ($parts as $header) {
-            $header = explode(':', $header);
-            $this->headers[$header[0]] = $header[1];
+            list($field, $value) = explode(':', $header, 2);
+            $this->headers[trim($field, ' ')] = trim($value, ' ');
         }
     }
 
