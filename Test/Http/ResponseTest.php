@@ -16,12 +16,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
     {
         $response = new Http\Response("A\r\n\r\nB");
 
-        $buffer = ob_start();
-        echo $response;
-        $toString = ob_get_contents();
-        ob_end_flush();
-
-        $this->assertEquals("AB", $toString);
+        $this->assertEquals("AB", (string) $response);
     }
 
     public function testRetrieveTheWholeResponse()
