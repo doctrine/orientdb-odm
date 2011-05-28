@@ -45,9 +45,6 @@ Use the PHP5.3 standard autoloader (https://gist.github.com/221634).
 
 All the SQL command are implemented but:
 
-* Alter Table
-* Alter Property
-* Update of the maps
 * index management ( http://code.google.com/p/orient/wiki/Indexes )
 
 and, in order to use it in production, integration tests need to be written.
@@ -113,3 +110,7 @@ These are the requirements in order to use the library:
 * OrientDB 1.0.0RC1
 
 In order to launch the test suite PHPUnit 3.5 is required.
+
+## Known issues
+
+Updating of the Maps is currently bugged within the SQL statement constructors.
