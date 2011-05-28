@@ -16,14 +16,14 @@ class ResponseTest extends PHPUnit_Framework_TestCase
     {
         $response = new Http\Response("A\r\n\r\nB");
 
-        $this->assertEquals("AB", (string) $response);
+        $this->assertEquals("A\r\n\r\nB", (string) $response);
     }
 
     public function testRetrieveTheWholeResponse()
     {
         $response = new Http\Response("A\r\n\r\nB");
 
-        $this->assertEquals("AB", $response->getResponse());
+        $this->assertEquals("A\r\n\r\nB", $response->getResponse());
     }
 
     public function testExtractBodyCorrectlyFromResponse()

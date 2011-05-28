@@ -62,7 +62,7 @@ class Response
      */
     public function getResponse()
     {
-        return $this->getRawHeaders() . $this->getBody();
+        return $this->getRawHeaders() . "\r\n\r\n" . $this->getBody();
     }
 
     /**
