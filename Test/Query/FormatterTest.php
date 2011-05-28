@@ -319,7 +319,7 @@ class FormatterTest extends TestCase
             "!@#$%^&*()",
         );
         $expected = '"12", "0", "\"", "@class", "@@rid", "prop", [1, 2], "\\\'", "\\\", "<a href=\"http://ciao.com\">ciao</a>", "!@#$%^&*()"';
-        $formatter = new Formatter\Query\values();
+        $formatter = new Formatter\Query\Values();
 
         $this->assertEquals($expected, $formatter::format($values));
     }

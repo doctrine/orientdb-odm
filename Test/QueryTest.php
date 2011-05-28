@@ -331,6 +331,12 @@ class QueryTest extends TestCase
                 'UPDATE class SET first = "uno", nano = "due" WHERE prop = "val"'
         ;
 
+        $this->query->put(array('first' => '1', 'second' => '2'), 'puttedClass');
+
+        $sql =
+                'UPDATE puttedClass PUT first = "1", second = "2"'
+        ;
+
         $this->assertCommandGives($sql, $this->query->getRaw());
 
         $this->query->add(array('first' => '10:22', 'nano' => '10:1'), 'class')

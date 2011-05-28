@@ -19,11 +19,25 @@ class StubCommand extends Query\Command
     const SCHEMA = ":Target :Where";
 }
 
+class StubExceptionedCommand extends Query\Command
+{
+    const SCHEMA = ":NotFoundToken";
+}
+
 class Command extends TestCase
 {
     public function setup()
     {
         $this->command = new StubCommand();
+    }
+
+    /**
+     * @expectedException Orient\Exception
+     */
+    public function testAnExceptionIsRaisedIfYouDontExplicitHowToFormatAToken()
+    {
+        $this->command = new StubExceptionedCommand();
+        $this->command->getRaw();
     }
 
     public function testAddingFromToken()
