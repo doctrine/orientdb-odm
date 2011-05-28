@@ -37,7 +37,7 @@ class Response
     {
         list($this->raw_headers, $this->body) = explode("\r\n\r\n", $response, 2);
 
-        $this->headers = $this->buildHeaders($this->raw_headers);
+        $this->buildHeaders($this->raw_headers);
     }
 
     public function __toString()
