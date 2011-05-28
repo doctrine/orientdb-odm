@@ -34,7 +34,7 @@ class Response
      */
     public function __construct($response)
     {
-        list($this->raw_headers, $this->body) = explode("\r\n\r\n", $response, 2);
+        @list($this->raw_headers, $this->body) = explode("\r\n\r\n", $response, 2);
 
         $this->buildHeaders($this->raw_headers);
     }
