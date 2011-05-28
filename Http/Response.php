@@ -26,7 +26,6 @@ class Response
     protected $raw_headers;
     protected $status_code;
     protected $body;
-    protected $response;
 
     /**
      * Constructs a new object from an existing HTTP response.
