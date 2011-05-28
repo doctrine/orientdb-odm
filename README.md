@@ -22,16 +22,10 @@ The binding is complete: it is an HTTP client wrapper with some methods bound to
 
 Its usage is straightforward:
 
-    $driver = new Orient\Http\Client\Curl();
-    $orient = new Orient\Foundation\Binding($driver, '127.0.0.1', '2480', 'admin', 'admin', 'demo');
-
-    $query = new Orient\Query();
-    $query->from(array('address'))->where('street = ?', 'Piazza Navona, 1');
-    $sql   = $query->getRaw();
-
-    $response = $orient->query($sql);
-
-    $output = json_decode($response->getBody());
+    $driver   = new Orient\Http\Client\Curl();
+    $orient   = new Orient\Foundation\Binding($driver, '127.0.0.1', '2480', 'admin', 'admin', 'demo');
+    $response = $orient->query("SELECT FROM Address");
+    $output   = json_decode($response->getBody());
 
     foreach ($output->result as $address)
     {
