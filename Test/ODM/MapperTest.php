@@ -20,10 +20,10 @@ class ManagerTest extends TestCase
 {
     public function setup()
     {
-        $this->manager = new Manager(new Mapper());
-        $this->manager->setDocumentDirectories(array('./Test/ODM/Document/Stub' => 'Orient\\'));
+        $this->mapper = new Mapper();
+        $this->mapper->setDocumentDirectories(array('./Test/ODM/Document/Stub' => 'Orient\\'));
         
-        $this->jsonRecord = '{
+        $this->jsonRecord = json_decode('{
             "@type":    "d",
             "@rid":     "#12:0",
             "@version":  0,
@@ -34,10 +34,11 @@ class ManagerTest extends TestCase
             "datetime":     "2011-01-01 21:00:00",
             "street":   "Piazza Navona, 1",
             "type":     "Residence",
-            "city":     "#13:0"
-         }';
+            "city":     "#13:0",
+            "sample":   "ok"
+         }');
 
-        $this->jsonRecordWrongClass = '{
+        $this->jsonRecordWrongClass = json_decode('{
             "@type":    "d",
             "@rid":     "#12:0",
             "@version":  0,
@@ -45,18 +46,18 @@ class ManagerTest extends TestCase
             "street":   "Piazza Navona, 1",
             "type":     "Residence",
             "city":     "#13:0"
-         }';
+         }');
 
-        $this->jsonRecordNoClass = '{
+        $this->jsonRecordNoClass = json_decode('{
             "@type":    "d",
             "@rid":     "#12:0",
             "@version":  0,
             "street":   "Piazza Navona, 1",
             "type":     "Residence",
             "city":     "#13:0"
-         }';
+         }');
          
-         $this->jsonCollection = '{ 
+         $this->jsonCollection = json_decode('{ 
              "schema": {
                  "id":   6,
                  "name": "Address"
@@ -69,14 +70,20 @@ class ManagerTest extends TestCase
                 "street":   "Piazza Navona, 1",
                 "type":     "Residence",
                 "city":     "#13:0"
+              }, {
+                "@type":    "d", 
+                "@rid":     "#13:0", 
+                "@version":  0, 
+                "@class":   "OCity",
+                "name":     "roma"
               }]
-          }';
+          }');
          
     }
     
     public function testAJsonGetsConvertedToAnObject()
     {   
-        $object = $this->manager->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonRecord);
         
         $this->assertInstanceOf('Orient\Test\ODM\Document\Stub\Contact\Address', $object);
     }
@@ -86,7 +93,7 @@ class ManagerTest extends TestCase
      */
     public function testAnExceptionIsRaisedWhenAnObjectGetsPersistedWithoutAClass()
     {
-        $object = $this->manager->hydrate($this->jsonRecordNoClass);
+        $object = $this->mapper->hydrate($this->jsonRecordNoClass);
     }
 
     /**
@@ -94,19 +101,26 @@ class ManagerTest extends TestCase
      */
     public function testAnExceptionIsRaisedWhenAnObjectGetsPersistedWithAWrongClass()
     {
-        $object = $this->manager->hydrate($this->jsonRecordWrongClass);
+        $object = $this->mapper->hydrate($this->jsonRecordWrongClass);
     }
 
     public function testStringPropertiesGetsMappedInTheObject()
     {
-        $object = $this->manager->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonRecord);
 
         $this->assertEquals('Residence', $object->getType());
     }
+    
+    public function testPropertiesCanHaveDifferentNamesInOrientAndPopo()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
 
+        $this->assertEquals('ok', $object->getExampleProperty());
+    }
+    
     public function testBooleanPropertiesGetsMappedInTheObject()
     {
-        $object = $this->manager->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonRecord);
 
         $this->assertEquals(true, $object->getIsTrue());
         $this->assertEquals(false, $object->getIsFalse());
@@ -114,7 +128,7 @@ class ManagerTest extends TestCase
 
     public function testDatePropertiesGetsMappedInTheObject()
     {
-        $object = $this->manager->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonRecord);
 
         $this->assertInstanceOf('\DateTime', $object->getDate());
         $this->assertEquals('2011-01-01', $object->getDate()->format('Y-d-m'));
@@ -122,7 +136,7 @@ class ManagerTest extends TestCase
 
     public function testDatetimePropertiesGetsMappedInTheObject()
     {
-        $object = $this->manager->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonRecord);
 
         $this->assertInstanceOf('\DateTime', $object->getDateTime());
         $this->assertEquals('2011-01-01 21:00:00', $object->getDateTime()->format('Y-d-m H:i:s'));
@@ -130,27 +144,40 @@ class ManagerTest extends TestCase
 
     public function testAnAnnotatedPropertyNotPassedWithTheJSONIsNullByDefault()
     {
-        $object = $this->manager->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonRecord);
 
         $this->assertEquals(NULL, $object->getAnnotatedButNotInJson());
     }
 
     public function testPropertiesGetsMappedInTheObjectOnlyIfAnnotated()
     {
-        $object = $this->manager->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonRecord);
 
         $this->assertEquals(NULL, $object->getStreet());
     }
 
     public function testGettingTheDirectoriesInWhichTheMapperLooksForPOPOs()
     {
-        $this->manager = new Manager(new Mapper());
+        $this->mapper = new Mapper();
         $dirs = array(
             'dir'   => 'namespace',
             'dir2'  => 'namespace2',
         );
-        $object = $this->manager->setDocumentDirectories($dirs);
+        $object = $this->mapper->setDocumentDirectories($dirs);
 
-        $this->assertEquals($dirs, $this->manager->getDocumentDirectories());
+        $this->assertEquals($dirs, $this->mapper->getDocumentDirectories());
+    }
+    
+    public function testNoRecordsIsLostWhenHydratingACollection()
+    {
+        $collection = $this->mapper->hydrateCollection($this->jsonCollection);
+        $this->assertEquals(2, count($collection)); 
+    }
+    
+    public function testHidratedCollectionsContainPopo()
+    {
+        $collection = $this->mapper->hydrateCollection($this->jsonCollection);
+        $this->assertInstanceOf('Orient\Test\ODM\Document\Stub\Contact\Address', $collection[0] );
+        $this->assertInstanceOf('Orient\Test\ODM\Document\Stub\City', $collection[1] );
     }
 }

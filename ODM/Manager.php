@@ -26,25 +26,39 @@ use Orient\ODM\Mapper;
 class Manager
 {
     protected $mapper;
-
+    
+    /**
+     * @param Mapper $mapper
+     */
     public function __construct(Mapper $mapper)
     {
         $this->mapper = $mapper;
     }
-
+    
+    /**
+     * delegate the hydration of orientDB record to the mapper
+     * @param JSON $json
+     * @return mixed the hydrated object
+     */
     public function hydrate($json)
     {
         return $this->mapper->hydrate($json);
     }
-
+    
     /**
-     * @todo Directories to look for document classes are hardcoded
+     * get the document directories paths
+     * @return Array 
      */
     public function getDocumentDirectories()
     {
         return $this->mapper->getDocumentDirectories();
     }
-
+    
+    /**
+     * Set the document directories paths
+     * @param Array $directories
+     * @return void
+     */
     public function setDocumentDirectories(array $directories)
     {
         $this->mapper->setDocumentDirectories($directories);

@@ -31,6 +31,12 @@ class Address
      * @Orient\ODM\Mapper\Annotations\Property(name="is_false", type="boolean")
      */
     protected $is__false;
+    
+    /**
+     * @Orient\ODM\Mapper\Annotations\Property(name="sample")
+     */
+    protected $example_property;
+    
     protected $street;
 
     public function setType($type)
@@ -96,5 +102,15 @@ class Address
     public function setisFalse($val)
     {
         $this->is__false = $val;
+    }
+    
+    public function getExampleProperty()
+    {
+        return $this->example_property;
+    }
+    
+    public function setExampleProperty($value)
+    {
+        $this->example_property = $value;
     }
 }

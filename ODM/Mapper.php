@@ -41,6 +41,9 @@ class Mapper
 
     const ANNOTATION_PROPERTY_CLASS = 'Orient\ODM\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Orient\ODM\Mapper\Annotations\Document';
+    
+    const ORIENT_PROPERTY_RESULT = 'result';
+    const ORIENT_PROPERTY_CLASS  = '@class';
 
     /**
      * @todo hardcoded dependency to doctrine annotation reader
@@ -82,14 +85,13 @@ class Mapper
      * If it finds it, he istantiates a new POPO, filling it with the properties
      * inside the JSON object.
      *
-     * @param   json    $json
+     * @param   StdClass    $orientObject
      * @return  mixed
      * @throws  Orient\Exception\Document\NotFound
      */
-    public function hydrate($json)
+    public function hydrate(\StdClass $orientObject)
     {
-        $orientObject = json_decode($json);
-        $classProperty = '@class';
+        $classProperty = self::ORIENT_PROPERTY_CLASS;
 
         if (property_exists($orientObject, $classProperty))
         {
@@ -106,6 +108,25 @@ class Mapper
 
         throw new Exception\NotFound();
     }
+    
+    /**
+     * @param StdClass $json
+     * @return Array of Documents
+     */
+    public function hydrateCollection(\StdClass $collection)
+    {
+        $records = array();
+        
+        $resultProperty = self::ORIENT_PROPERTY_RESULT;
+        
+        if(property_exists($collection, $resultProperty )){
+            foreach ($collection->$resultProperty as $record) {
+                $records[] = $this->hydrate($record);
+            }
+        }
+        
+        return $records; 
+    }
 
     /**
      * Creates a new $class object, filling it with the properties of
@@ -119,7 +140,7 @@ class Mapper
     {
         $document = new $class();
         $this->fill($document, $orientObject);
-
+        
         return $document;
     }
 
@@ -144,6 +165,8 @@ class Mapper
 
         foreach ($propertyAnnotations as $property => $annotation)
         {
+            $documentProperty = $property;
+            
             if ($annotation->name) {
                 $property = $annotation->name;
             }
@@ -151,7 +174,7 @@ class Mapper
             if (property_exists($object, $property)) {
                 $this->mapProperty(
                         $document,
-                        $property,
+                        $documentProperty,
                         $object->$property,
                         $annotation
                 );
