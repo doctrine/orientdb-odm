@@ -28,7 +28,7 @@
           <directory >../../Test/Http</directory>
       </testsuite>
       <testsuite name="ODM">
-          <directory >../../Test/Document</directory>
+          <directory >../../Test/ODM</directory>
       </testsuite>
 <!--      <testsuite name="Test">
           <directory >../../Test/Foundation</directory>

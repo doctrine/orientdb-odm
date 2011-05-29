@@ -45,7 +45,13 @@ and, in order to use it in production, integration tests need to be written.
 
 ## Current status of the mapper
 
-Not started yet.
+We started working on the mapper and, right now, it is able to map OrientDB JSON responses to annotation-mapped POPOs.
+
+However, it's under heavy work, so don't expect to be able to use it in a few weeks. Next steps are:
+
+* retrieve hydrated records from a OrientDB collection
+* provide a base repository class 
+* implementation of the persistence from the ODM to OrientDB
 
 ## Tests & reports
 
