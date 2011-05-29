@@ -26,7 +26,6 @@ class Response
     protected $raw_headers;
     protected $status_code;
     protected $body;
-    protected $response;
 
     /**
      * Constructs a new object from an existing HTTP response.
@@ -35,12 +34,9 @@ class Response
      */
     public function __construct($response)
     {
-        $parts = explode("\r\n\r\n", $response);
+        @list($this->raw_headers, $this->body) = explode("\r\n\r\n", $response, 2);
 
-        $headers = array_key_exists(0, $parts) ? $parts[0] : null;
-        $this->body = array_key_exists(1, $parts) ? $parts[1] : null;
-        $this->raw_headers = $headers;
-        $this->headers = $this->buildHeaders($this->raw_headers);
+        $this->buildHeaders($this->raw_headers);
     }
 
     public function __toString()
@@ -65,7 +61,7 @@ class Response
      */
     public function getResponse()
     {
-        return $this->getRawHeaders() . $this->getBody();
+        return $this->getRawHeaders() . "\r\n\r\n" . $this->getBody();
     }
 
     /**
@@ -87,12 +83,11 @@ class Response
     {
         $parts = explode("\r\n", $headers);
 
-        $this->status_code = $parts[0];
-        unset($parts[0]);
+        $this->status_code = array_shift($parts);
 
         foreach ($parts as $header) {
-            $header = explode(':', $header);
-            $this->headers[$header[0]] = $header[1];
+            list($field, $value) = explode(':', $header, 2);
+            $this->headers[trim($field, ' ')] = trim($value, ' ');
         }
     }
 
