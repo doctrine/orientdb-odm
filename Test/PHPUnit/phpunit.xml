@@ -30,6 +30,9 @@
       <testsuite name="ODM">
           <directory >../../Test/ODM</directory>
       </testsuite>
+      <testsuite name="Formatter">
+          <directory >../../Test/Formatter</directory>
+      </testsuite>
 <!--      <testsuite name="Test">
           <directory >../../Test/Foundation</directory>
       </testsuite>-->

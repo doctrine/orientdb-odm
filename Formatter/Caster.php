@@ -38,6 +38,13 @@ class Caster
 
     public static function castString($value)
     {
-        return $value;
+        
+        if($value instanceOf \StdClass){
+            if (!method_exists($value, '__toString')){
+                $value = '';
+            }
+        }
+        
+        return (string) $value;
     }
 }
