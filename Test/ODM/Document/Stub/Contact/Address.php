@@ -3,7 +3,7 @@
 namespace Orient\Test\ODM\Document\Stub\Contact;
 
 /**
-* @Orient\ODM\Mapper\Annotations\Document(class="Address")
+* @Orient\ODM\Mapper\Annotations\Document(class="Address,ForeignAddress")
 */
 class Address
 {

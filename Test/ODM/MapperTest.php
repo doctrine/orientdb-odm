@@ -76,6 +76,14 @@ class ManagerTest extends TestCase
                 "@version":  0, 
                 "@class":   "OCity",
                 "name":     "roma"
+              }, {
+                  "@type":    "d", 
+                  "@rid":     "#12:0", 
+                  "@version":  0, 
+                  "@class":   "ForeignAddress",
+                  "street":   "Piazza Navona, 1",
+                  "type":     "Residence",
+                  "city":     "#13:0"
               }]
           }');
          
@@ -171,7 +179,7 @@ class ManagerTest extends TestCase
     public function testNoRecordsIsLostWhenHydratingACollection()
     {
         $collection = $this->mapper->hydrateCollection($this->jsonCollection);
-        $this->assertEquals(2, count($collection)); 
+        $this->assertEquals(3, count($collection)); 
     }
     
     public function testHidratedCollectionsContainPopo()
@@ -179,5 +187,11 @@ class ManagerTest extends TestCase
         $collection = $this->mapper->hydrateCollection($this->jsonCollection);
         $this->assertInstanceOf('Orient\Test\ODM\Document\Stub\Contact\Address', $collection[0] );
         $this->assertInstanceOf('Orient\Test\ODM\Document\Stub\City', $collection[1] );
+    }
+    
+    public function testOrientObjectsOfDifferentClassesCanBeMappedByASinglePopo()
+    {
+        $collection = $this->mapper->hydrateCollection($this->jsonCollection);
+        $this->assertInstanceOf('Orient\Test\ODM\Document\Stub\Contact\Address', $collection[2] );
     }
 }

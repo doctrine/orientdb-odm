@@ -22,4 +22,24 @@ namespace Orient\ODM\Mapper\Annotations;
 class Document extends \Doctrine\Common\Annotations\Annotation
 {
     public $class;
+    
+    
+    /**
+    *  given a $OrientClass, checks wheter this annotation matches it
+     * @param  string   $OrientClass
+     * @return boolean
+     */
+    public function hasMatchingClass($OrientClass)
+    {   
+        $classes = explode(',', $this->class);
+        
+        foreach ($classes as $class) {
+            
+            if ($class === $OrientClass ) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }

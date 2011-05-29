@@ -96,10 +96,10 @@ class Mapper
         if (property_exists($orientObject, $classProperty))
         {
             $orientClass  = $orientObject->$classProperty;
-
+            
             if ($orientClass) {
                 $class = $this->findClassMapping($orientClass);
-
+                
                 if($class) {
                     return $this->createDocument($class, $orientObject);
                 }
@@ -200,9 +200,9 @@ class Mapper
                 $class = StringFormatter::convertPathToClassName($file, $namespace);
 
                 if (class_exists($class)) {
-                    $annotations = $this->getClassAnnotation($class);
-
-                    if($annotations && $annotations->class === $OClass){
+                    $annotation = $this->getClassAnnotation($class);
+                    
+                    if($annotation && $annotation->hasMatchingClass($OClass)){
                         return $class;
                     }
                 }
