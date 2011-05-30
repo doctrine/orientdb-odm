@@ -32,4 +32,18 @@ class ResponseTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals("B\r\n\r\nC", $response->getBody());
     }
+
+    public function testSameHeaderInDifferentLinesAreMergedTogether()
+    {
+        $response = new Http\Response("HTTP/1.1 200 OK\r\nCache-Control: max-age=30\r\nCache-Control: s-maxage=50\r\n\r\n");
+
+        $this->assertEquals("max-age=30, s-maxage=50", $response->getHeader('Cache-Control'));
+    }
+
+    public function testNULLIsReturnedWhenRequestingANonExistingHeader()
+    {
+        $response = new Http\Response("HTTP/1.1 200 OK\r\nCache-Control: max-age=30\r\nCache-Control: s-maxage=50\r\n\r\n");
+
+        $this->assertEquals(NULL, $response->getHeader('Host'));
+    }
 }
