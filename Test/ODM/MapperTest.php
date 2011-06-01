@@ -14,13 +14,16 @@ namespace Orient\Test;
 use Orient\Test\PHPUnit\TestCase;
 use Orient\ODM\Manager;
 use Orient\ODM\Mapper;
+use Orient\ODM\Mapper\Annotations\Reader as AnnotationReader;
 
 
 class ManagerTest extends TestCase
 {
     public function setup()
     {
-        $this->mapper = new Mapper();
+        $annotationReader = new AnnotationReader;
+        $annotationReader->setAutoloadAnnotations(true);
+        $this->mapper = new Mapper($annotationReader);
         $this->mapper->setDocumentDirectories(array('./Test/ODM/Document/Stub' => 'Orient\\'));
         
         $this->jsonRecord = json_decode('{
@@ -87,6 +90,19 @@ class ManagerTest extends TestCase
               }]
           }');
          
+    }
+    
+    public function testYouCanDecideWheterInjectACustomAnnotationReaderOrNotToTheMapper()
+    {
+        $annotationReader = new AnnotationReader;
+        $annotationReader->setAutoloadAnnotations(true);
+        $this->mapper = new Mapper($annotationReader);
+        
+        $this->assertInstanceOf('Orient\ODM\Mapper\Annotations\Reader', $this->mapper->getAnnotationReader());
+        
+        $this->mapper = new Mapper();
+        
+        $this->assertInstanceOf('Doctrine\Common\Annotations\AnnotationReader', $this->mapper->getAnnotationReader());
     }
     
     public function testAJsonGetsConvertedToAnObject()
@@ -166,7 +182,9 @@ class ManagerTest extends TestCase
 
     public function testGettingTheDirectoriesInWhichTheMapperLooksForPOPOs()
     {
-        $this->mapper = new Mapper();
+        $annotationReader = new AnnotationReader;
+        $annotationReader->setAutoloadAnnotations(true);
+        $this->mapper = new Mapper($annotationReader);
         $dirs = array(
             'dir'   => 'namespace',
             'dir2'  => 'namespace2',

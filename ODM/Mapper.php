@@ -24,11 +24,12 @@ namespace Orient\ODM;
 
 use Orient\Exception\Document as Exception;
 use Orient\Formatter\Caster;
-use Doctrine\Common\Util\Inflector;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Orient\Filesystem\Iterator;
 use Orient\ODM\Mapper\Annotations\Property as PropertyAnnotation;
 use Orient\Formatter\String as StringFormatter;
+use Orient\Contract\ODM\Mapper\Annotations\Reader as AnnotationreaderInterface;
+use Doctrine\Common\Util\Inflector;
+use Doctrine\Common\Annotations\AnnotationReader;
 
 /**
  * @todo hardcoded dependency to doctriine inflector
@@ -37,21 +38,26 @@ use Orient\Formatter\String as StringFormatter;
 class Mapper
 {
     protected $documentDirectories  = array();
-    protected $annotationReader;
-
+    protected $annotationReader     = NULL;
+    
     const ANNOTATION_PROPERTY_CLASS = 'Orient\ODM\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Orient\ODM\Mapper\Annotations\Document';
-    
-    const ORIENT_PROPERTY_RESULT = 'result';
-    const ORIENT_PROPERTY_CLASS  = '@class';
+    const ORIENT_PROPERTY_RESULT    = 'result';
+    const ORIENT_PROPERTY_CLASS     = '@class';
 
-    /**
-     * @todo hardcoded dependency to doctrine annotation reader
-     */
-    public function __construct()
+    public function __construct(AnnotationReaderInterface $annotationReader = NULL)
     {
-        $this->annotationReader = new AnnotationReader();
-        $this->annotationReader->setAutoloadAnnotations(true);
+        $this->annotationReader = $annotationReader ?: new AnnotationReader;
+    }
+    
+    /**
+     * Returns the internal object used to parse annotations.
+     *
+     * @return AnnotationReader
+     */
+    public function getAnnotationReader()
+    {
+        return $this->annotationReader;
     }
 
     /**
@@ -66,20 +72,6 @@ class Mapper
     }
 
     /**
-     * Sets the directories in which the mapper is going to look for
-     * classes mapped for the Orient ODM.
-     *
-     * @param array $directories
-     */
-    public function setDocumentDirectories(array $directories)
-    {
-        $this->documentDirectories = array_merge(
-                $this->documentDirectories,
-                $directories
-        );
-    }
-
-    /**
      * Takes an Orient JSON object and finds the class responsible to map that
      * object.
      * If it finds it, he istantiates a new POPO, filling it with the properties
@@ -88,6 +80,7 @@ class Mapper
      * @param   StdClass    $orientObject
      * @return  mixed
      * @throws  Orient\Exception\Document\NotFound
+     * @todo    3 IFs
      */
     public function hydrate(\StdClass $orientObject)
     {
@@ -110,8 +103,8 @@ class Mapper
     }
     
     /**
-     * @param StdClass $json
-     * @return Array of Documents
+     * @param   StdClass $json
+     * @return  array of Documents
      */
     public function hydrateCollection(\StdClass $collection)
     {
@@ -126,6 +119,20 @@ class Mapper
         }
         
         return $records; 
+    }
+    
+    /**
+     * Sets the directories in which the mapper is going to look for
+     * classes mapped for the Orient ODM.
+     *
+     * @param array $directories
+     */
+    public function setDocumentDirectories(array $directories)
+    {
+        $this->documentDirectories = array_merge(
+                $this->documentDirectories,
+                $directories
+        );
     }
 
     /**
@@ -190,6 +197,7 @@ class Mapper
      * @param   string $OClass
      * @return  a class name, null if not found
      * @todo    hardcoded dependency to Iterator
+     * @todo    2 FOREACHs, 2 IFs
      */
     protected function findClassMapping($OClass)
     {
@@ -213,20 +221,10 @@ class Mapper
     }
 
     /**
-     * Returns the internal object used to parse annotations.
-     *
-     * @return AnnotationReader
-     */
-    protected function getAnnotationReader()
-    {
-        return $this->annotationReader;
-    }
-
-    /**
      * Returns the annotation of a class.
      *
-     * @param string                    $class
-     * @return Orient\ODM\Mapper\Class
+     * @param   string                    $class
+     * @return  Orient\ODM\Mapper\Class
      */
     protected function getClassAnnotation($class)
     {
@@ -285,6 +283,7 @@ class Mapper
      * @param string                $value
      * @param PropertyAnnotation    $annotation
      * @todo  better error handling: if there's no setter explicative message "you have to add a setter in order to..."
+     * @todo  hardcoded dependency to the Inflector
      */
     protected function mapProperty($document, $property, $value, PropertyAnnotation $annotation)
     {
