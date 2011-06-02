@@ -41,6 +41,7 @@
     <filter>
       <blacklist>
         <directory suffix=".php">../../Test</directory>
+        <directory suffix=".php">../../lib</directory>
       </blacklist>
     </filter>
 </phpunit>
