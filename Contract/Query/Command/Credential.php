@@ -10,7 +10,8 @@
  */
 
 /**
- * Credential interface
+ * The Credential interface manages the SQL statements dealing with th CRUD
+ * of credentials in OrientDB.
  *
  * @package    Orient
  * @subpackage Contract
@@ -21,11 +22,27 @@ namespace Orient\Contract\Query\Command;
 
 interface Credential
 {
-    public function __construct($permission);
-
+    /**
+     * Sets the $permission to grant/revoke.
+     *
+     * @param   string  $permission
+     * @return  Credential
+     */
     public function permission($permission);
 
+    /**
+     * Sets the $resource on which a credential is granted/revoked.
+     *
+     * @param  string  $resource
+     * @return Credential
+     */
     public function on($resource);
 
+    /**
+     * Sets the user/group subject of the credential addition/removal.
+     *
+     * @param   string  $role
+     * @return  Credential
+     */
     public function to($role);
 }

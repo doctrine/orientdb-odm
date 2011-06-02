@@ -25,7 +25,16 @@ use Orient\Query\Command;
 class Create extends Index
 {
     const SCHEMA = "CREATE INDEX :IndexClass:Property :Type";
-    
+
+    /**
+     * Sets the $property to index.
+     * Optionally, you can specify the property $class and the $type of the
+     * index.
+     *
+     * @param string $property
+     * @param string $class
+     * @param string $type
+     */
     public function __construct($property, $class = NULL, $type = NULL)
     {
         parent::__construct($property, $class);
@@ -41,6 +50,12 @@ class Create extends Index
         $this->setToken('Property', $property);
     }
 
+    /**
+     * Sets the type of the index to create.
+     *
+     * @param   string $type
+     * @return  Create
+     */
     public function type($type)
     {
         $this->setToken('Type', $type);

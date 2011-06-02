@@ -25,6 +25,13 @@ class Alter extends OClass
 {
     const SCHEMA = "ALTER CLASS :Class :Attribute :Value";
 
+    /**
+     * Sets the $class to alter, setting the $attribute to its new $value.
+     *
+     * @param string $class
+     * @param string $attribute
+     * @param string $value
+     */
     public function __construct($class, $attribute, $value)
     {
         parent::__construct($class);
@@ -33,6 +40,11 @@ class Alter extends OClass
         $this->setToken('Value', $value);
     }
 
+    /**
+     * Returns the formatters for this query tokens
+     *
+     * @return array
+     */
     protected function getTokenFormatters()
     {
         return array(

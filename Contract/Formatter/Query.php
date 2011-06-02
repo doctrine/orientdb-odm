@@ -10,7 +10,8 @@
  */
 
 /**
- * Query interface
+ * This interface defines the mothods a Query formatter should implement
+ * in order to manipulate Query strings.
  *
  * @package    Orient
  * @subpackage Contract
@@ -21,7 +22,25 @@ namespace Orient\Contract\Formatter;
 
 interface Query
 {
-    public static function tokenize($token);
+    /**
+     * Tokenizes the given string: since the SQL statements are managed
+     * with some tokens you need to decide how to distinguish a common word from
+     * a token.
+     * In <code>SELECT ALL FROM ~table</code> the ~-prefixed string is a token,
+     * for example, and the tokenizer should generate an ~-prefixed token from
+     * the given $key.
+     * Orient uses double-colon by default.
+     *
+     * @param   string $key
+     * @return  string
+     */
+    public static function tokenize($key);
 
+    /**
+     * Untokenizes a token: converts a token to a plain string.
+     *
+     * @param   string $token
+     * @return  string
+     */
     public static function untokenize($token);
 }

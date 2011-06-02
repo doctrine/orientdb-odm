@@ -10,7 +10,7 @@
  */
 
 /**
- * Select interface
+ * OClass interface manages the construction of class-related SQL commands.
  *
  * @package    Orient
  * @subpackage Contract
@@ -21,5 +21,10 @@ namespace Orient\Contract\Query\Command;
 
 interface OClass
 {
+    /**
+     * Sets the class to manipulate within this command.
+     *
+     * @param   string  $class
+     */
     public function __construct($class);
 }

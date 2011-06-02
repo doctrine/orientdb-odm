@@ -10,7 +10,8 @@
  */
 
 /**
- * Query interface
+ * The token interface exposes a single method in order to format any type
+ * of OrientDB token type.
  *
  * @package    Orient
  * @subpackage Contract
@@ -21,5 +22,11 @@ namespace Orient\Contract\Formatter\Query;
 
 interface Token
 {
+    /**
+     * Formats the token according to the implementer class' internal rules.
+     *
+     * @param   array   $values
+     * @return  string
+     */
     public static function format(array $values);
 }

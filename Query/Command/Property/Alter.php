@@ -25,6 +25,13 @@ class Alter extends Property
 {
     const SCHEMA = "ALTER PROPERTY :Class.:Property :Attribute :Value";
 
+    /**
+     * Sets the $attribute to change and its new $value.
+     *
+     * @param   string $attribute
+     * @param   string $value
+     * @return  Alter
+     */
     public function changing($attribute, $value)
     {
         $this->setToken('Attribute', $attribute);
@@ -33,6 +40,11 @@ class Alter extends Property
         return $this;
     }
 
+    /**
+     * Returns the formatters for this query tokens
+     *
+     * @return array
+     */
     protected function getTokenFormatters()
     {
         return array(

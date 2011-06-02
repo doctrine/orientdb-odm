@@ -53,6 +53,11 @@ class Response
     {
         return $this->body;
     }
+    
+    public function getHeader($header)
+    {
+        return isset($this->headers[$header]) ? $this->headers[$header] : NULL;
+    }
 
     /**
      * Returns the whole response.
@@ -81,13 +86,21 @@ class Response
      */
     protected function buildHeaders($headers)
     {
-        $parts = explode("\r\n", $headers);
-
-        $this->status_code = array_shift($parts);
+        $parts              = explode("\r\n", $headers);
+        $this->status_code  = array_shift($parts);
 
         foreach ($parts as $header) {
-            list($field, $value) = explode(':', $header, 2);
-            $this->headers[trim($field, ' ')] = trim($value, ' ');
+            list($header, $value)   = explode(':', $header, 2);
+            $header                 = trim($header, ' ');
+            
+            if (isset($this->headers[$header]))
+            {
+                $this->headers[$header] .= "," . $value;
+            }
+            else
+            {
+                $this->headers[$header] = trim($value, ' ');
+            }
         }
     }
 
