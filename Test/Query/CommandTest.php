@@ -13,6 +13,7 @@ namespace Orient\Test\Query;
 
 use Orient\Query;
 use Orient\Test\PHPUnit\TestCase;
+use Orient\Formatter\Query as Formatter;
 
 class StubCommand extends Query\Command
 {
@@ -38,6 +39,13 @@ class Command extends TestCase
     {
         $this->command = new StubExceptionedCommand();
         $this->command->getRaw();
+    }
+
+    public function testYouCanInjectACustomQueryFormatter()
+    {
+        $this->command  = new StubExceptionedCommand();
+        $formatter      = new Formatter();
+        $this->command->setFormatter($formatter);
     }
 
     public function testAddingFromToken()
