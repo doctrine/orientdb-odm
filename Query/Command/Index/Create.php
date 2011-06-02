@@ -37,7 +37,7 @@ class Create extends Index
      */
     public function __construct($property, $class = NULL, $type = NULL)
     {
-        parent::__construct($property, $class);
+        parent::__construct();
 
         if ($class) {
             $this->setToken('IndexClass', $class);

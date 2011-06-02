@@ -44,15 +44,4 @@ class String
 
         return false;
     }
-
-    /**
-     * Removes whitespaces from the beginning and the end of the $text.
-     *
-     * @param   string $text
-     * @return  string
-     */
-    public function btrim($text)
-    {
-        return rtrim(ltrim($text));
-    }
 }

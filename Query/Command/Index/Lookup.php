@@ -33,7 +33,7 @@ class Lookup extends Index
      */
     public function __construct($index)
     {
-        parent::__construct($index);
+        parent::__construct();
 
         $this->setToken('Index', $index);
     }
