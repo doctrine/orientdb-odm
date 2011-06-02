@@ -63,7 +63,12 @@ class Link extends Command
 
         return $this;
     }
-    
+
+    /**
+     * Returns the formatters for this query tokens
+     *
+     * @return array
+     */
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(

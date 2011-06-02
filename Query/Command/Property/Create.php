@@ -40,7 +40,12 @@ class Create extends Property
         $this->setToken('Type', $type);
         $this->setToken('Linked', $linked);
     }
-    
+
+    /**
+     * Returns the formatters for this query tokens
+     *
+     * @return array
+     */
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(

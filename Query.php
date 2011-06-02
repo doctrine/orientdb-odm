@@ -64,14 +64,22 @@ class Query
     {
         $this->setCommands($commands);
 
-        $commandClass = $this->getCommandClass('select');
-        $this->command = new $commandClass($target);
+        $commandClass   = $this->getCommandClass('select');
+        $this->command  = new $commandClass($target);
     }
 
+    /**
+     * Adds a relation in a link-list|set.
+     *
+     * @param   array   $updates
+     * @param   string  $class
+     * @param   boolean $append
+     * @return  Add
+     */
     public function add(array $updates, $class, $append = true)
     {
-        $commandClass = $this->getCommandClass('update.add');
-        $this->command = new $commandClass($updates, $class, $append);
+        $commandClass   = $this->getCommandClass('update.add');
+        $this->command  = new $commandClass($updates, $class, $append);
 
         return $this->command;
     }
@@ -86,16 +94,25 @@ class Query
      */
     public function alter($class, $attribute, $value)
     {
-        $commandClass = $this->getCommandClass('class.alter');
-        $this->command = new $commandClass($class, $attribute, $value);
+        $commandClass   = $this->getCommandClass('class.alter');
+        $this->command  = new $commandClass($class, $attribute, $value);
 
         return $this->command;
     }
 
+    /**
+     * Alters the $property of $class setting $sttribute to $value.
+     *
+     * @param   string $class
+     * @param   string $property
+     * @param   string $attribute
+     * @param   string $value
+     * @return  Alter
+     */
     public function alterProperty($class, $property, $attribute, $value)
     {
-        $commandClass = $this->getCommandClass('property.alter');
-        $this->command = new $commandClass($property);
+        $commandClass   = $this->getCommandClass('property.alter');
+        $this->command  = new $commandClass($property);
 
         return $this->command->on($class)->changing($attribute, $value);
     }
@@ -111,19 +128,45 @@ class Query
         return $this->command->andwhere($condition, $value);
     }
 
+    /**
+     * Executes a CREATE of a $class, or of the $property in the given $class if
+     * $property is specified.
+     *
+     * @param   string $class
+     * @param   string $property
+     * @param   string $type
+     * @param   string $linked
+     * @return  mixed
+     */
     public function create($class, $property = NULL, $type = NULL, $linked = NULL)
     {
-        return $this->executeClassOrPropertyCommand('create', $class, $property, $type, $linked);
+        return $this->executeClassOrPropertyCommand(
+            'create', $class, $property, $type, $linked
+        );
     }
 
+    /**
+     * Executes a DELETE SQL query on the given class (= $from).
+     *
+     * @param   string $from
+     * @return  Delete
+     */
     public function delete($from)
     {
-        $commandClass = $this->getCommandClass('delete');
-        $this->command = new $commandClass($from);
+        $commandClass   = $this->getCommandClass('delete');
+        $this->command  = new $commandClass($from);
 
-        return $this;
+        return $this->command;
     }
 
+    /**
+     * Drops a $class, or the $property in the given $class if
+     * $property is specified.
+     *
+     * @param   string $class
+     * @param   string $property
+     * @return  mixed
+     */
     public function drop($class, $property = NULL)
     {
         return $this->executeClassOrPropertyCommand('drop', $class, $property);
@@ -153,7 +196,7 @@ class Query
     }
 
     /**
-     * Returns the raw SQL query.
+     * Returns the raw SQL query statement.
      *
      * @return String
      */
@@ -173,27 +216,48 @@ class Query
     }
 
     /**
-     * Converts the query into an GRANT with $permission.
+     * Converts the query into an GRANT with the given $permission.
      *
-     * @return Query
+     * @param   string  $permission
+     * @return  Grant
      */
     public function grant($permission)
     {
-        $commandClass = $this->getCommandClass('grant');
-        $this->command = new $commandClass($permission);
+        $commandClass   = $this->getCommandClass('grant');
+        $this->command  = new $commandClass($permission);
 
         return $this->command;
     }
 
+    /**
+     * Finds documents referencing the document with the given $rid.
+     * You can specify to look for only certain $classes, that can be
+     * appended.
+     *
+     * @param   string  $rid
+     * @param   array   $classes
+     * @param   boolean $append
+     * @return  Find
+     */
     public function findReferences($rid, array $classes = array(), $append = true)
     {
-        $commandClass = $this->getCommandClass('references.find');
-        $this->command = new $commandClass($rid);
+        $commandClass   = $this->getCommandClass('references.find');
+        $this->command  = new $commandClass($rid);
         $this->command->in($classes, $append);
 
         return $this->command;
     }
 
+
+    /**
+     * Sets the classes in which the query performs is operation.
+     * For example a FIND REFERENCES uses the IN in order to find documents
+     * referencing to a given document <code>in</code> N classes.
+     *
+     * @param   array   $in
+     * @param   boolean $append
+     * @return  mixed
+     */
     public function in(array $in, $append = true)
     {
         return $this->command->in($in, $append);
@@ -209,8 +273,8 @@ class Query
      */
     public function index($property, $class = NULL, $type = NULL)
     {
-        $commandClass = $this->getCommandClass('index.create');
-        $this->command = new $commandClass($property, $class, $type);
+        $commandClass   = $this->getCommandClass('index.create');
+        $this->command  = new $commandClass($property, $class, $type);
 
         return $this->command;
     }
@@ -222,8 +286,8 @@ class Query
      */
     public function insert()
     {
-        $commandClass = $this->getCommandClass('insert');
-        $this->command = new $commandClass;
+        $commandClass   = $this->getCommandClass('insert');
+        $this->command  = new $commandClass;
 
         return $this->command;
     }
@@ -249,6 +313,18 @@ class Query
         return $this->command->limit($limit);
     }
 
+    /**
+     * Sets the internal command to a LINK, which is capable to create a
+     * reference from the $property of $class, with a given $alias.
+     * You can specify if the link is one-* or two-way with the $inverse
+     * parameter.
+     *
+     * @param   string  $class
+     * @param   string  $property
+     * @param   string  $alias
+     * @param   boolean $inverse
+     * @return  Link
+     */
     public function link($class, $property, $alias, $inverse = false)
     {
         $commandClass = $this->getCommandClass('link');
@@ -292,40 +368,55 @@ class Query
     }
 
     /**
-     * Resets the RANGE condition.
+     * Sets the RID range in which the query is performed.
+     *
+     * @param   string  $left
+     * @param   string  $right
+     * @return  mixed
      */
     public function range($left = NULL, $right = NULL)
     {
         return $this->command->range($left, $right);
     }
 
+    /**
+     * Removes a link from a link-set|list.
+     *
+     * @param   array   $updates
+     * @param   string  $class
+     * @param   boolean $append
+     * @return  Remove
+     */
     public function remove(array $updates, $class, $append = true)
     {
-        $commandClass = $this->getCommandClass('update.remove');
-        $this->command = new $commandClass($updates, $class, $append);
+        $commandClass   = $this->getCommandClass('update.remove');
+        $this->command  = new $commandClass($updates, $class, $append);
 
         return $this->command;
     }
 
     /**
      * Resets the WHERE conditions.
+     *
+     * @rerurn  mixed
      */
     public function resetWhere()
     {
         $this->command->resetWhere();
 
-        return $this;
+        return $this->command;
     }
 
     /**
-     * Converts the query into an REVOKE with $permission.
+     * Converts the query into an REVOKE with the given $permission.
      *
-     * @return Query
+     * @param   string  $permission
+     * @return  Revoke
      */
     public function revoke($permission)
     {
-        $commandClass = $this->getCommandClass('revoke');
-        $this->command = new $commandClass($permission);
+        $commandClass   = $this->getCommandClass('revoke');
+        $this->command  = new $commandClass($permission);
 
         return $this->command;
     }
@@ -363,6 +454,13 @@ class Query
         return $this->command->to($to);
     }
 
+    /**
+     * Sets the values to be inserted into the current query.
+     *
+     * @param   array   $values
+     * @param   boolean $append
+     * @return  Insert
+     */
     public function values(array $values, $append = true)
     {
         return $this->command->values($values, $append);
@@ -455,6 +553,18 @@ class Query
         return $this->command;
     }
 
+    /**
+     * Executes a class or property command checking if the $property parameter
+     * is specified.
+     * If none,  class command is executed.
+     *
+     * @param   string $action
+     * @param   string $class
+     * @param   string $property
+     * @param   string $type
+     * @param   string $linked
+     * @return  mixed
+     */
     protected function executeClassOrPropertyCommand($action, $class, $property = NULL, $type = NULL, $linked = NULL)
     {
         if ($property) {

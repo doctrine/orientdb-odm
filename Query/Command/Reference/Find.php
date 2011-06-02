@@ -62,7 +62,12 @@ class Find extends Command implements FindInterface
     {
         $this->setToken('Rid', $rid);
     }
-    
+
+    /**
+     * Returns the formatters for this query tokens
+     *
+     * @return array
+     */
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(

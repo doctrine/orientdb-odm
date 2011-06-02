@@ -109,6 +109,14 @@ abstract class Command implements CommandContract
         return $this->checkToken($this->tokenize($token));
     }
 
+    /**
+     * Sets a where token using the OR operator.
+     * If the $condition contains a "?", it will be replaced by the $value.
+     *
+     * @param   string $condition
+     * @param   string $value
+     * @return  Command
+     */
     public function orWhere($condition, $value = NULL)
     {
         return $this->where($condition, $value, true, "OR");
@@ -229,7 +237,12 @@ abstract class Command implements CommandContract
     {
         return new Formatter();
     }
-    
+
+    /**
+     * Returns the formatters for this query tokens
+     *
+     * @return array
+     */
     protected function getTokenFormatters()
     {
         return array(
