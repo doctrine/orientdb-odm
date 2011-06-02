@@ -11,7 +11,7 @@
 
 /**
  * Command interface, a common interface for all the SQL commands executable
- * by OrientDB.
+ * in Orient.
  *
  * @package    Orient
  * @subpackage Contract
@@ -27,13 +27,60 @@ interface Command
 {
     const SCHEMA = NULL;
 
+    /**
+     * Returns the SQL generated within this command, replacing the tokens in
+     * the schema with their actual values.
+     *
+     * @return  string
+     */
     public function getRaw();
 
+    /**
+     * Analizying the class SCHEMA, it returns an array containing all the
+     * tokens found there.
+     *
+     * @return   array
+     */
     public static function getTokens();
 
+    /**
+     * Sets the FROM clause of a SQL statement, injecting an array of $target
+     * and deciding to remove previously set targets or not with the $append
+     * parameter.
+     *
+     * @param   array   $target
+     * @param   boolean $append
+     * @return  Command
+     */
     public function from(array $target, $append = true);
 
+    /**
+     * Returns the value of the given $token.
+     * Token values are always expressed as a series of values in an array, also
+     * if the token does not support multiple values.
+     * For example, the WHERE condition supports multiple values:
+     * <code>WHERE val1 = x AND val2 = y OR val3 = z</code>
+     * while the LIMIT clause not:
+     * <code>LIMIT 20</code>
+     * However, both those tokens values are an array: this is done to
+     * internally simplify things.
+     *
+     * @param   string  $token
+     * @return  array
+     */
     public function getTokenValue($token);
 
+    /**
+     * Sets a WHERE condition for the current query.
+     * You can set the $condition using a trailing question mark, that will be
+     * replaced and safely quoted with the $value.
+     * Where conditions can be nested using the $append parameter and pre-fixed
+     * with the right $clause preposition (WHERE, AND, OR).
+     *
+     * @param   string  $condition
+     * @param   mixed   $value
+     * @param   boolean $append
+     * @param   string  $clause
+     */
     public function where($condition, $value = NULL, $append = false, $clause = "WHERE");
 }
