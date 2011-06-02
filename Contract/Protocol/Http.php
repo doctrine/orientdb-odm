@@ -10,10 +10,8 @@
  */
 
 /**
- * OrientDB_REST interface
- *
- * This interfaces is implemented in order to be compliant with the interface
- * Orient exposes through quite RESTful "services".
+ * This interface is implemented in order to be compliant with the interface
+ * Orient exposes through its HTTP interface.
  * See: http://code.google.com/p/orient/wiki/OrientDB_REST
  *
  * @package    Orient
