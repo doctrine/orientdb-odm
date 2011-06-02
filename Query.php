@@ -24,12 +24,13 @@ use Orient\Query\Command\Credential\Revoke;
 use Orient\Query\Command\Insert;
 use Orient\Query\Command\Select;
 use Orient\Exception;
+use Orient\Contract\Query as QueryInterface;
 use Orient\Contract\Query\Command\Select as SelectInterface;
 use Orient\Contract\Query\Command\Insert as InsertInterface;
 use Orient\Contract\Query\Command\Grant as GrantInterface;
 use Orient\Contract\Query\Command\Revoke as RevokeInterface;
 
-class Query
+class Query implements QueryInterface
 {
     protected $command = NULL;
     protected $commands = array(

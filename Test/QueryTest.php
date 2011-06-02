@@ -30,6 +30,11 @@ class QueryTest extends TestCase
         $this->query = new Query();
     }
 
+    public function testQueryImplementsAGenericInterface()
+    {
+        $this->assertInstanceOf("\Orient\Contract\Query", $this->query);
+    }
+
     public function testDataFiltering()
     {
         $this->query->where('username = ?', "\"admin\"", false);
