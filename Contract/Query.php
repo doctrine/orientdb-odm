@@ -155,6 +155,15 @@ interface Query
     public function index($property, $class, $type);
 
     /**
+     * Puts a new entry in the index $indexName with the given $key and $rid.
+     *
+     * @param string $indexName
+     * @param string $key
+     * @param string $rid
+     */
+    public function indexPut($indexName, $key, $rid);
+
+    /**
      * Converts the query into an INSERT.
      *
      * @return Query

@@ -424,6 +424,11 @@ class QueryTest extends TestCase
         $this->assertCommandGives($sql, $this->query->getRaw());
     }
 
+    public function testPuttingANewIndex()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Index\Put', $this->query->indexPut('i', 'k', 'v'));
+    }
+
     /**
      * @expectedException Orient\Exception
      */

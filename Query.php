@@ -52,6 +52,7 @@ class Query implements QueryInterface
         'property.alter'    => 'Orient\Query\Command\Property\Alter',
         'index.drop'        => 'Orient\Query\Command\Index\Drop',
         'index.create'      => 'Orient\Query\Command\Index\Create',
+        'index.put'         => 'Orient\Query\Command\Index\Put',
         'link'              => 'Orient\Query\Command\Link',
     );
 
@@ -276,6 +277,21 @@ class Query implements QueryInterface
     {
         $commandClass   = $this->getCommandClass('index.create');
         $this->command  = new $commandClass($property, $class, $type);
+
+        return $this->command;
+    }
+
+    /**
+     * Puts a new entry in the index $indexName with the given $key and $rid.
+     *
+     * @param string $indexName
+     * @param string $key
+     * @param string $rid
+     */
+    public function indexPut($indexName, $key, $rid)
+    {
+        $commandClass   = $this->getCommandClass('index.put');
+        $this->command  = new $commandClass($indexName, $key, $rid);
 
         return $this->command;
     }
