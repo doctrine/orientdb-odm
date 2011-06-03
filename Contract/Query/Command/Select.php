@@ -31,6 +31,19 @@ interface Select
     public function __construct(array $target);
 
     /**
+     * Converts the "normal" select into an index one.
+     * Index selects can query with the BETWEEN operator:
+     * <code>select from index:name where x between 10.3 and 10.7</code>
+     *
+     * @param   string $key
+     * @param   string $left
+     * @param   string $right
+     * @return  Select
+     * @todo    data filtering here, need to delegate to a formatter
+     */
+    public function between($key, $left, $right);
+
+    /**
      * Sets the fields to select within the query ($projections).
      * Values can be appended through the $append parameter.
      *

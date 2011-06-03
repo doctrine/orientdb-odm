@@ -16,7 +16,6 @@
  * @package    Orient
  * @subpackage Contract
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
- * @todo       Add all the query methods
  */
 
 namespace Orient\Contract\Query;
@@ -26,6 +25,27 @@ use \Orient\Contract\Query\Formatter;
 interface Command
 {
     const SCHEMA = NULL;
+
+    /**
+     * Sets a where token using the AND operator.
+     * If the $condition contains a "?", it will be replaced by the $value.
+     *
+     * @param   string $condition
+     * @param   string $value
+     * @return  Command
+     */
+    public function andWhere($condition, $value = NULL);
+
+    /**
+     * Sets the FROM clause of a SQL statement, injecting an array of $target
+     * and deciding to remove previously set targets or not with the $append
+     * parameter.
+     *
+     * @param   array   $target
+     * @param   boolean $append
+     * @return  Command
+     */
+    public function from(array $target, $append = true);
 
     /**
      * Returns the SQL generated within this command, replacing the tokens in
@@ -44,17 +64,6 @@ interface Command
     public static function getTokens();
 
     /**
-     * Sets the FROM clause of a SQL statement, injecting an array of $target
-     * and deciding to remove previously set targets or not with the $append
-     * parameter.
-     *
-     * @param   array   $target
-     * @param   boolean $append
-     * @return  Command
-     */
-    public function from(array $target, $append = true);
-
-    /**
      * Returns the value of the given $token.
      * Token values are always expressed as a series of values in an array, also
      * if the token does not support multiple values.
@@ -69,6 +78,23 @@ interface Command
      * @return  array
      */
     public function getTokenValue($token);
+
+    /**
+     * Sets a where token using the OR operator.
+     * If the $condition contains a "?", it will be replaced by the $value.
+     *
+     * @param   string $condition
+     * @param   string $value
+     * @return  Command
+     */
+    public function orWhere($condition, $value = NULL);
+
+    /**
+     * Deletes all the WHERE conditions in the current command.
+     *
+     * @return true
+     */
+    public function resetWhere();
 
     /**
      * Sets a WHERE condition for the current query.

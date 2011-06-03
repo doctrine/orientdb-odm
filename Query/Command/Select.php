@@ -45,6 +45,26 @@ class Select extends Command implements SelectInterface
     }
 
     /**
+     * Converts the "normal" select into an index one.
+     * Index selects can query with the BETWEEN operator:
+     * <code>select from index:name where x between 10.3 and 10.7</code>
+     *
+     * @param   string $key
+     * @param   string $left
+     * @param   string $right
+     * @return  Select
+     * @todo    data filtering here, need to delegate to a formatter
+     */
+    public function between($key, $left, $right)
+    {
+        $this->resetWhere();
+        $this->where(addslashes($key). " BETWEEN " . addslashes($left));
+        $this->andWhere(addslashes($right));
+
+        return $this;
+    }
+
+    /**
      * Sets the fields to select.
      *
      * @param array   $projections

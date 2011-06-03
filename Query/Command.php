@@ -21,7 +21,7 @@
 namespace Orient\Query;
 
 use Orient\Exception\Query\Command as CommandException;
-use Orient\Contract\Query\Formatter as FormatterContract;
+use Orient\Contract\Formatter\Query as QueryFormatter;
 use Orient\Formatter\Query as Formatter;
 use Orient\Exception;
 use Orient\Contract\Query\Command as CommandContract;
@@ -31,6 +31,7 @@ abstract class Command implements CommandContract
     protected $tokens       = array();
     protected $formatters   = array();
     protected $statement    = NULL;
+    protected $formatter    = NULL;
 
     /**
      * Builds a new object, creating the SQL statement from the class SCHEMA
@@ -38,9 +39,9 @@ abstract class Command implements CommandContract
      */
     public function __construct()
     {
-        $class = get_called_class();
-        $this->statement = $class::SCHEMA;
-        $this->tokens = $this->getTokens();
+        $class              = get_called_class();
+        $this->statement    = $class::SCHEMA;
+        $this->tokens       = $this->getTokens();
     }
 
     /**
@@ -135,12 +136,23 @@ abstract class Command implements CommandContract
     }
 
     /**
+     * Sets the internal query formatter object.
+     *
+     * @param QueryFormatter $formatter
+     */
+    public function setFormatter(QueryFormatter $formatter)
+    {
+        $this->formatter = $formatter;
+    }
+
+    /**
      * Adds a WHERE conditions into the current query.
      *
      * @param string  $condition
      * @param mixed   $value
      * @param boolean $append
      * @param string  $clause
+     * @todo  data filtering here, need to delegate to a formatter
      */
     public function where($condition, $value = NULL, $append = false, $clause = "WHERE")
     {
@@ -230,12 +242,11 @@ abstract class Command implements CommandContract
      * Returns a brand new instance of a Formatter in order to format query
      * tokens.
      *
-     * @return  Formatter
-     * @todo    The dependency is hardcoded
+     * @return  QueryFormatter
      */
     protected function getFormatter()
     {
-        return new Formatter();
+        return $this->formatter ?: new Formatter();
     }
 
     /**
@@ -274,14 +285,13 @@ abstract class Command implements CommandContract
      * Returns the values to replace command's schema tokens.
      *
      * @return  array
-     * @todo    hardcoded dependency to Formatter
      */
     protected function getTokenReplaces()
     {
         $replaces = array();
 
         foreach ($this->tokens as $token => $value) {
-            $token              = Formatter::untokenize($token);          
+            $token              = $this->getFormatter()->untokenize($token);
             $formatter          = $this->getTokenFormatter($token);
             $values             = array_filter($value);
             $token              = Formatter::tokenize($token);
@@ -296,15 +306,13 @@ abstract class Command implements CommandContract
      * the command synthax.
      *
      * @return  string
-     * @todo    better way to format the string
      */
     protected function getValidStatement()
     {
         $statement = $this->replaceTokens($this->statement);
-        $statement = str_replace("  ", " ", $statement);
-        $statement = str_replace("  ", " ", $statement);
+        $statement = preg_replace('/( ){2,}/', ' ', $statement);
 
-        return \Orient\Formatter\String::btrim($statement);
+        return trim($statement);
     }
 
     /**
@@ -377,7 +385,6 @@ abstract class Command implements CommandContract
      *
      * @param   string $token
      * @return  string
-     * @todo    hardcoded dependecy
      */
     protected function tokenize($token)
     {

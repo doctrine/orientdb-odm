@@ -10,11 +10,11 @@
  */
 
 /**
- * This class handles the SQL statement to lookup an index into the DB.
+ * This class handles the counting of elements in an index.
  *
  * @package    Orient
  * @subpackage Query
- * @author     David Funaro <ing.davidino@gmail.com>
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Orient\Query\Command\Index;
@@ -22,31 +22,30 @@ namespace Orient\Query\Command\Index;
 use Orient\Query\Command\Index;
 use Orient\Query\Command;
 
-class Lookup extends Index
+class Count extends Index
 {
-    const SCHEMA = "SELECT FROM index::Index :Where";
+    const SCHEMA = "SELECT count(*) AS size from index::Name";
 
     /**
-     * Builds a new statement, setting the $index to lookup.
+     * Sets the $property to index.
+     * Optionally, you can specify the property $class and the $type of the
+     * index.
      *
-     * @param string $index
+     * @param string $property
+     * @param string $class
+     * @param string $type
      */
-    public function __construct($index)
+    public function __construct($indexName)
     {
         parent::__construct();
 
-        $this->setToken('Index', $index);
+        $this->setToken('Name', $indexName);
     }
 
-    /**
-     * Returns the formatters for this query tokens
-     *
-     * @return array
-     */
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Index' => "Orient\Formatter\Query\Regular",
+            'Name'  => 'Orient\Formatter\Query\Regular',
         ));
     }
 }
