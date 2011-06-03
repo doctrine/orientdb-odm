@@ -30,6 +30,11 @@ class QueryTest extends TestCase
         $this->query = new Query();
     }
 
+    public function testQueryImplementsAGenericInterface()
+    {
+        $this->assertInstanceOf("\Orient\Contract\Query", $this->query);
+    }
+
     public function testDataFiltering()
     {
         $this->query->where('username = ?', "\"admin\"", false);
@@ -302,6 +307,17 @@ class QueryTest extends TestCase
         $this->assertCommandGives($sql, $this->query->getRaw());
     }
 
+    public function testDeletingEntriesFromAnIndex()
+    {
+        $this->query->delete("index:indexName");
+
+        $sql =
+                'DELETE FROM index:indexName'
+        ;
+
+        $this->assertCommandGives($sql, $this->query->getRaw());
+    }
+
     public function testCreatingALink()
     {
         $this->query->link('class', "property", "Profile")->to("class2", "property2");
@@ -417,6 +433,31 @@ class QueryTest extends TestCase
         $sql = 'SELECT FROM class ORDER BY A B';
 
         $this->assertCommandGives($sql, $this->query->getRaw());
+    }
+
+    public function testPuttingANewIndex()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Index\Put', $this->query->indexPut('i', 'k', 'v'));
+    }
+
+    public function testANormalSelectCanBeConvertedIntoAnIndexSelect()
+    {
+        $this->query->from(array('index:name'));
+        $this->query->between("k", "10.1", "10.2");
+        $sql = 'SELECT FROM index:name WHERE k BETWEEN 10.1 AND 10.2';
+
+        $this->assertCommandGives($sql, $this->query->getRaw());
+    }
+
+    public function testAnIndexCanBeRemoved()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Index\Remove', $this->query->indexRemove('i', 'k', 'v'));
+        $this->assertInstanceOf('\Orient\Query\Command\Index\Remove', $this->query->indexRemove('i', 'k'));
+    }
+
+    public function testYouCanCountInAnIndex()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Index\Count', $this->query->indexCount('i'));
     }
 
     /**

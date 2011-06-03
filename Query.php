@@ -24,12 +24,13 @@ use Orient\Query\Command\Credential\Revoke;
 use Orient\Query\Command\Insert;
 use Orient\Query\Command\Select;
 use Orient\Exception;
+use Orient\Contract\Query as QueryInterface;
 use Orient\Contract\Query\Command\Select as SelectInterface;
 use Orient\Contract\Query\Command\Insert as InsertInterface;
 use Orient\Contract\Query\Command\Grant as GrantInterface;
 use Orient\Contract\Query\Command\Revoke as RevokeInterface;
 
-class Query
+class Query implements QueryInterface
 {
     protected $command = NULL;
     protected $commands = array(
@@ -51,6 +52,9 @@ class Query
         'property.alter'    => 'Orient\Query\Command\Property\Alter',
         'index.drop'        => 'Orient\Query\Command\Index\Drop',
         'index.create'      => 'Orient\Query\Command\Index\Create',
+        'index.count'       => 'Orient\Query\Command\Index\Count',
+        'index.put'         => 'Orient\Query\Command\Index\Put',
+        'index.remove'      => 'Orient\Query\Command\Index\Remove',
         'link'              => 'Orient\Query\Command\Link',
     );
 
@@ -126,6 +130,19 @@ class Query
     public function andWhere($condition, $value = NULL)
     {
         return $this->command->andwhere($condition, $value);
+    }
+
+    /**
+     * Converts a "normal" select into an index one.
+     * You use do a select on an index you can use the between operator.
+     *
+     * @param   string  $key
+     * @param   string  $left
+     * @param   string  $right
+     */
+    public function between($key, $left, $right)
+    {
+        return $this->command->between($key, $left, $right);
     }
 
     /**
@@ -275,6 +292,49 @@ class Query
     {
         $commandClass   = $this->getCommandClass('index.create');
         $this->command  = new $commandClass($property, $class, $type);
+
+        return $this->command;
+    }
+
+    /**
+     * Count the elements of the index $indexName.
+     *
+     * @param string $indexName
+     */
+    public function indexCount($indexName)
+    {
+        $commandClass   = $this->getCommandClass('index.count');
+        $this->command  = new $commandClass($indexName);
+
+        return $this->command;
+    }
+
+    /**
+     * Puts a new entry in the index $indexName with the given $key and $rid.
+     *
+     * @param string $indexName
+     * @param string $key
+     * @param string $rid
+     */
+    public function indexPut($indexName, $key, $rid)
+    {
+        $commandClass   = $this->getCommandClass('index.put');
+        $this->command  = new $commandClass($indexName, $key, $rid);
+
+        return $this->command;
+    }
+
+    /**
+     * Removes the index $indexName with the given $key/$rid.
+     *
+     * @param string $indexName
+     * @param string $key
+     * @param string $rid
+     */
+    public function indexRemove($indexName, $key, $rid = NULL)
+    {
+        $commandClass   = $this->getCommandClass('index.remove');
+        $this->command  = new $commandClass($indexName, $key, $rid);
 
         return $this->command;
     }

@@ -10,7 +10,7 @@
  */
 
 /**
- * Class Rid
+ * Class EmbeddedRid
  *
  * @package     Orient
  * @subpackage  Formatter
@@ -23,17 +23,15 @@ use Orient\Formatter\Query;
 use Orient\Formatter\String;
 use Orient\Contract\Formatter\Query\Token as TokenFormatter;
 
-class Rid extends Query implements TokenFormatter
+class EmbeddedRid extends Query\Rid implements TokenFormatter
 {
     /**
      * @todo hardcoded dependency to String
      */
     public static function format(array $values)
     {
-        $values = array_filter($values, function ($arr) {
-                    return String::filterRid($arr);
-                });
+        $rid = parent::format($values);
 
-        return (count($values)) ? array_shift($values) : NULL;
+        return $rid ? "#" . $rid : NULL;
     }
 }
