@@ -34,11 +34,15 @@ class Remove extends Index
         parent::__construct();
 
         $this->setToken('Name', $indexName);
-        $this->where("key = ?", $key);
+
+        if (!is_null($key)) {
+          $this->where("key = ?", $key);
+        }
 
         if ($rid) {
-            $rid = EmbeddedRidFormatter::format(array($rid));
-            $this->andWhere("rid = $rid");
+            $method = $key ? 'andWhere' : 'where';
+            $rid    = EmbeddedRidFormatter::format(array($rid));
+            $this->$method("rid = $rid");
         }
     }
 

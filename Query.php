@@ -53,6 +53,7 @@ class Query implements QueryInterface
         'index.drop'        => 'Orient\Query\Command\Index\Drop',
         'index.create'      => 'Orient\Query\Command\Index\Create',
         'index.put'         => 'Orient\Query\Command\Index\Put',
+        'index.remove'      => 'Orient\Query\Command\Index\Remove',
         'link'              => 'Orient\Query\Command\Link',
     );
 
@@ -304,6 +305,21 @@ class Query implements QueryInterface
     public function indexPut($indexName, $key, $rid)
     {
         $commandClass   = $this->getCommandClass('index.put');
+        $this->command  = new $commandClass($indexName, $key, $rid);
+
+        return $this->command;
+    }
+
+    /**
+     * Removes the index $indexName with the given $key/$rid.
+     *
+     * @param string $indexName
+     * @param string $key
+     * @param string $rid
+     */
+    public function indexRemove($indexName, $key, $rid = NULL)
+    {
+        $commandClass   = $this->getCommandClass('index.remove');
         $this->command  = new $commandClass($indexName, $key, $rid);
 
         return $this->command;

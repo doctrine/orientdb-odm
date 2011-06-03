@@ -438,6 +438,12 @@ class QueryTest extends TestCase
         $this->assertCommandGives($sql, $this->query->getRaw());
     }
 
+    public function testAnIndexCanBeRemoved()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Index\Remove', $this->query->indexRemove('i', 'k', 'v'));
+        $this->assertInstanceOf('\Orient\Query\Command\Index\Remove', $this->query->indexRemove('i', 'k'));
+    }
+
     /**
      * @expectedException Orient\Exception
      */

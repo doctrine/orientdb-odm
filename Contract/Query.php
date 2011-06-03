@@ -174,6 +174,15 @@ interface Query
     public function indexPut($indexName, $key, $rid);
 
     /**
+     * Removes the index $indexName with the given $key/$rid.
+     *
+     * @param string $indexName
+     * @param string $key
+     * @param string $rid
+     */
+    public function indexRemove($indexName, $key, $rid);
+
+    /**
      * Converts the query into an INSERT.
      *
      * @return Query
