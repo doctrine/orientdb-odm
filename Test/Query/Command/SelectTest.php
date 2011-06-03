@@ -161,5 +161,23 @@ class SelectTest extends TestCase
         ;
 
         $this->assertCommandGives($sql, $this->select->getRaw());
+
+        $this->select->resetWhere();
+        $this->select->select(array('key'))
+                ->from(array('index:coordinates'), false);
+        $sql =
+                'SELECT key FROM index:coordinates'
+        ;
+
+        $this->assertCommandGives($sql, $this->select->getRaw());
+
+        $this->select->resetWhere();
+        $this->select->select(array('key', 'value'))
+                ->from(array('index:coordinates'), false);
+        $sql =
+                'SELECT key, value FROM index:coordinates'
+        ;
+
+        $this->assertCommandGives($sql, $this->select->getRaw());
     }
 }

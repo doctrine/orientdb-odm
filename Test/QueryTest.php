@@ -307,6 +307,17 @@ class QueryTest extends TestCase
         $this->assertCommandGives($sql, $this->query->getRaw());
     }
 
+    public function testDeletingEntriesFromAnIndex()
+    {
+        $this->query->delete("index:indexName");
+
+        $sql =
+                'DELETE FROM index:indexName'
+        ;
+
+        $this->assertCommandGives($sql, $this->query->getRaw());
+    }
+
     public function testCreatingALink()
     {
         $this->query->link('class', "property", "Profile")->to("class2", "property2");
