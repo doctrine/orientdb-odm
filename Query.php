@@ -52,6 +52,7 @@ class Query implements QueryInterface
         'property.alter'    => 'Orient\Query\Command\Property\Alter',
         'index.drop'        => 'Orient\Query\Command\Index\Drop',
         'index.create'      => 'Orient\Query\Command\Index\Create',
+        'index.count'       => 'Orient\Query\Command\Index\Count',
         'index.put'         => 'Orient\Query\Command\Index\Put',
         'index.remove'      => 'Orient\Query\Command\Index\Remove',
         'link'              => 'Orient\Query\Command\Link',
@@ -291,6 +292,19 @@ class Query implements QueryInterface
     {
         $commandClass   = $this->getCommandClass('index.create');
         $this->command  = new $commandClass($property, $class, $type);
+
+        return $this->command;
+    }
+
+    /**
+     * Count the elements of the index $indexName.
+     *
+     * @param string $indexName
+     */
+    public function indexCount($indexName)
+    {
+        $commandClass   = $this->getCommandClass('index.count');
+        $this->command  = new $commandClass($indexName);
 
         return $this->command;
     }

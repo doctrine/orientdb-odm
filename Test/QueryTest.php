@@ -444,6 +444,11 @@ class QueryTest extends TestCase
         $this->assertInstanceOf('\Orient\Query\Command\Index\Remove', $this->query->indexRemove('i', 'k'));
     }
 
+    public function testYouCanCountInAnIndex()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Index\Count', $this->query->indexCount('i'));
+    }
+
     /**
      * @expectedException Orient\Exception
      */

@@ -165,6 +165,13 @@ interface Query
     public function index($property, $class, $type);
 
     /**
+     * Count the elements of the index $indexName.
+     *
+     * @param string $indexName
+     */
+    public function indexCount($indexName);
+
+    /**
      * Puts a new entry in the index $indexName with the given $key and $rid.
      *
      * @param string $indexName
