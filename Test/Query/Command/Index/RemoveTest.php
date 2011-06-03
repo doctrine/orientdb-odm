@@ -24,8 +24,8 @@ class RemoveTest extends TestCase
     public function testTheSchemaIsValid()
     {
         $tokens = array(
-            ':Name' => array(),
-            ':Key' => array(),
+            ':Name'     => array(),
+            ':Where'    => array(),
         );
 
         $this->assertTokens($tokens, $this->remove->getTokens());
@@ -34,6 +34,14 @@ class RemoveTest extends TestCase
     public function testConstructionOfAnObject()
     {
         $query = 'DELETE FROM index:indexName WHERE key = "k"';
+
+        $this->assertCommandGives($query, $this->remove->getRaw());
+    }
+
+    public function testYouCanAlsoRemoveAnEntryByKey()
+    {
+        $this->remove = new Remove('indexName', 'k', '20:0');
+        $query = 'DELETE FROM index:indexName WHERE key = "k" AND rid = #20:0';
 
         $this->assertCommandGives($query, $this->remove->getRaw());
     }

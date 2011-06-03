@@ -20,24 +20,32 @@
 namespace Orient\Query\Command\Index;
 
 use Orient\Query\Command\Index;
+use Orient\Formatter\Query\EmbeddedRid as EmbeddedRidFormatter;
 
 class Remove extends Index
 {
-    const SCHEMA = "DELETE FROM index::Name WHERE key = :Key";
+    const SCHEMA = "DELETE FROM index::Name :Where";
 
-    public function __construct($indexName, $key)
+    /**
+     * @todo hardcoded dependency to embeddedrid formatter
+     */
+    public function __construct($indexName, $key, $rid = NULL)
     {
         parent::__construct();
 
         $this->setToken('Name', $indexName);
-        $this->setToken('Key', $key);
+        $this->where("key = ?", $key);
+
+        if ($rid) {
+            $rid = EmbeddedRidFormatter::format(array($rid));
+            $this->andWhere("rid = $rid");
+        }
     }
 
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
             'Name'  => "Orient\Formatter\Query\Regular",
-            'Key'   => "Orient\Formatter\Query\EmbeddedRegular",
         ));
     }
 }
