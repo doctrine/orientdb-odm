@@ -18,7 +18,7 @@ class CreateTest extends TestCase
 {
     public function setup()
     {
-        $this->create = new Create('p', 'c');
+        $this->create = new Create('p', 'unique', 'c');
     }
 
     public function testTheSchemaIsValid()
@@ -34,15 +34,15 @@ class CreateTest extends TestCase
 
     public function testConstructionOfAnObject()
     {
-        $query = 'CREATE INDEX c.p';
+        $query = 'CREATE INDEX c.p unique';
 
         $this->assertCommandGives($query, $this->create->getRaw());
     }
 
     public function testConstructionOfAnIndexWithoutClass()
     {
-        $query = 'CREATE INDEX p';
-        $this->create = new Create('p');
+        $query = 'CREATE INDEX p unique';
+        $this->create = new Create('p','unique');
 
         $this->assertCommandGives($query, $this->create->getRaw());
     }
@@ -50,7 +50,7 @@ class CreateTest extends TestCase
     public function testSettingTheIndexType()
     {
         $query = 'CREATE INDEX p string';
-        $this->create = new Create('p', NULL, 'string');
+        $this->create = new Create('p', 'string');
 
         $this->assertCommandGives($query, $this->create->getRaw());
     }
