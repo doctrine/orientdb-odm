@@ -60,12 +60,8 @@ class ManagerTest extends TestCase
             "city":     "#13:0"
          }');
          
-         $this->jsonCollection = json_decode('{ 
-             "schema": {
-                 "id":   6,
-                 "name": "Address"
-               },
-             "result": [{
+         $this->jsonCollection = array(
+            json_decode('{
                 "@type":    "d", 
                 "@rid":     "#12:0", 
                 "@version":  0, 
@@ -73,13 +69,15 @@ class ManagerTest extends TestCase
                 "street":   "Piazza Navona, 1",
                 "type":     "Residence",
                 "city":     "#13:0"
-              }, {
-                "@type":    "d", 
-                "@rid":     "#13:0", 
-                "@version":  0, 
-                "@class":   "OCity",
-                "name":     "roma"
-              }, {
+              }'),
+            json_decode(  '{
+                  "@type":    "d", 
+                  "@rid":     "#13:0", 
+                  "@version":  0, 
+                  "@class":   "OCity",
+                  "name":     "roma"
+                }'),
+            json_decode('{
                   "@type":    "d", 
                   "@rid":     "#12:0", 
                   "@version":  0, 
@@ -87,8 +85,8 @@ class ManagerTest extends TestCase
                   "street":   "Piazza Navona, 1",
                   "type":     "Residence",
                   "city":     "#13:0"
-              }]
-          }');
+              }'),
+         );
          
     }
     

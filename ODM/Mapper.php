@@ -42,7 +42,6 @@ class Mapper
     
     const ANNOTATION_PROPERTY_CLASS = 'Orient\ODM\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Orient\ODM\Mapper\Annotations\Document';
-    const ORIENT_PROPERTY_RESULT    = 'result';
     const ORIENT_PROPERTY_CLASS     = '@class';
 
     public function __construct(AnnotationReaderInterface $annotationReader = NULL)
@@ -103,19 +102,15 @@ class Mapper
     }
     
     /**
-     * @param   StdClass $json
+     * @param   array $json
      * @return  array of Documents
      */
-    public function hydrateCollection(\StdClass $collection)
+    public function hydrateCollection(array $collection)
     {
         $records = array();
         
-        $resultProperty = self::ORIENT_PROPERTY_RESULT;
-        
-        if(property_exists($collection, $resultProperty )){
-            foreach ($collection->$resultProperty as $record) {
-                $records[] = $this->hydrate($record);
-            }
+        foreach ($collection as $record) {
+            $records[] = $this->hydrate($record);
         }
         
         return $records; 
