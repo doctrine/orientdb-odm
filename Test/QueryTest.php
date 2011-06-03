@@ -429,6 +429,15 @@ class QueryTest extends TestCase
         $this->assertInstanceOf('\Orient\Query\Command\Index\Put', $this->query->indexPut('i', 'k', 'v'));
     }
 
+    public function testANormalSelectCanBeConvertedIntoAnIndexSelect()
+    {
+        $this->query->from(array('index:name'));
+        $this->query->between("k", "10.1", "10.2");
+        $sql = 'SELECT FROM index:name WHERE k BETWEEN 10.1 AND 10.2';
+
+        $this->assertCommandGives($sql, $this->query->getRaw());
+    }
+
     /**
      * @expectedException Orient\Exception
      */

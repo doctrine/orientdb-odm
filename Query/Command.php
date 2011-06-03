@@ -152,6 +152,7 @@ abstract class Command implements CommandContract
      * @param mixed   $value
      * @param boolean $append
      * @param string  $clause
+     * @todo  data filtering here, need to delegate to a formatter
      */
     public function where($condition, $value = NULL, $append = false, $clause = "WHERE")
     {

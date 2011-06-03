@@ -151,4 +151,15 @@ class SelectTest extends TestCase
 
         $this->assertCommandGives($sql, $this->select->getRaw());
     }
+
+    public function testYouCanSelectFromTheIndexes()
+    {
+        $this->select->from(array('index:coordinates'), false)
+                ->between('k', "10.3", "10.7");
+        $sql =
+                'SELECT FROM index:coordinates WHERE k BETWEEN 10.3 AND 10.7'
+        ;
+
+        $this->assertCommandGives($sql, $this->select->getRaw());
+    }
 }

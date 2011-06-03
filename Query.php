@@ -131,6 +131,19 @@ class Query implements QueryInterface
     }
 
     /**
+     * Converts a "normal" select into an index one.
+     * You use do a select on an index you can use the between operator.
+     *
+     * @param   string  $key
+     * @param   string  $left
+     * @param   string  $right
+     */
+    public function between($key, $left, $right)
+    {
+        return $this->command->between($key, $left, $right);
+    }
+
+    /**
      * Executes a CREATE of a $class, or of the $property in the given $class if
      * $property is specified.
      *
