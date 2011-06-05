@@ -25,6 +25,6 @@ use Orient\Query\Command\Credential;
 class Revoke extends Credential
 {
     const SCHEMA =
-        "REVOKE :Permission ON :Resource TO :Role"
+        "REVOKE :Permission ON :Resource FROM :Role"
     ;
 }

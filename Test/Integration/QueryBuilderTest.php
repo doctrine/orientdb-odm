@@ -136,4 +136,22 @@ class QueryBuilderTest extends TestCase
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
+
+  public function testGrantingACredential()
+  {
+    $this->query->grant('READ')
+                ->to('reader')
+                ->on('Address');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testRevokingACredential()
+  {
+    $this->query->revoke('READ')
+                ->to('reader')
+                ->on('Address');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
 }

@@ -34,19 +34,19 @@ class RevokeTest extends TestCase
 
     public function testSynthaxIsRightAfterObjectCreation()
     {
-        $query = 'REVOKE myPermission ON TO';
+        $query = 'REVOKE myPermission ON FROM';
 
         $this->assertCommandGives($query, $this->revoke->getRaw());
     }
 
     public function testRevokeCommandWorksAndCanBeOverwritten()
     {
-        $query = 'REVOKE myPermission ON TO';
+        $query = 'REVOKE myPermission ON FROM';
 
         $this->assertCommandGives($query, $this->revoke->getRaw());
 
         $this->revoke->permission('READ');
-        $query = 'REVOKE READ ON TO';
+        $query = 'REVOKE READ ON FROM';
 
         $this->assertCommandGives($query, $this->revoke->getRaw());
     }
@@ -58,7 +58,7 @@ class RevokeTest extends TestCase
                 ->to("myOtherUser")
                 ->on("server");
         $sql =
-                'REVOKE read ON server TO myOtherUser'
+                'REVOKE read ON server FROM myOtherUser'
         ;
 
         $this->assertEquals($sql, $this->revoke->getRaw());
