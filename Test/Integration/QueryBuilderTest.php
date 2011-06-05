@@ -201,4 +201,11 @@ class QueryBuilderTest extends TestCase
 
     $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
   }
+
+  public function testFindingAReference()
+  {
+    $this->query->findReferences('12:0');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
 }
