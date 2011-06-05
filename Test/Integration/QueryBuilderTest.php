@@ -44,22 +44,6 @@ class QueryBuilderTest extends TestCase
       
       $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
-  
-  public function testASelectThoughAnIndex()
-  {
-    $query = new Query();
-    $query->index('index_name','unique');
-    
-    $this->assertStatusCode(self::_204, $this->orient->command($query->getRaw()));
-    
-    $this->query->from(array('index:index_name'))->between('key','10.0','10.1');
-    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
-    
-    $query = new Query();
-    $query->unindex('index_name');
-    
-    $this->assertStatusCode(self::_204, $this->orient->command($query->getRaw()));    
-  }
 
   public function testTheRangeOfASelect()
   {
@@ -153,5 +137,68 @@ class QueryBuilderTest extends TestCase
                 ->on('Address');
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testCreateAnIndex()
+  {
+    $this->query->index('index_name_2','unique');
+
+    $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+
+    $this->query = new Query();
+    $this->query->index('in','unique', 'OGraphEdge');
+
+    $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testCountingAnIndexSize()
+  {
+    $this->query->indexCount('index_name_2');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testExecutingAIndexLookup()
+  {
+    $this->query->lookup('index_name_2');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+    $this->query->where('key = ?', 2);
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+    $this->query->where('fakekey = ?', 2);
+
+    $this->assertStatusCode(self::_500, $this->orient->command($this->query->getRaw()));
+
+    $this->query = new Query();
+    $this->query->from(array('index:index_name_2'))->between('key','10.0','10.1');
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testAddingAnEntryToAnIndex()
+  {
+    $this->query->indexPut('index_name_2', 'k', '12:0');
+
+    $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testRemovingAnEntryToAnIndex()
+  {
+    $this->query->indexRemove('index_name_2', 'k');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testDroppingAnIndex()
+  {
+    $this->query->unindex('index_name_2');
+
+    $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+
+    $this->query->unindex('in','OGraphEdge');
+
+    $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
   }
 }

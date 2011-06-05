@@ -11,7 +11,7 @@
          mapTestClassNameToCoveredClassName="false"
          processIsolation="false"
          stopOnError="false"
-         stopOnFailure="true"
+         stopOnFailure="false"
          stopOnIncomplete="false"
          stopOnSkipped="false"
          syntaxCheck="false"
