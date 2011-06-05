@@ -168,10 +168,12 @@ class BindingTest extends TestCase
         $createDocument = $this->orient->postDocument($document);
         $rid = str_replace('#', '', $createDocument->getBody());
         $this->assertStatusCode(self::_201, $createDocument, 'creates a valid document');
-        $document = json_encode(array('@rid' => $rid, '@class' => 'Address', '@version' => 0,'name' => 'Test'));
-//        $this->assertStatusCode(self::_200, $this->orient->putDocument($rid, $document), 'updates a valid document');
+        $document = json_encode(array('@rid' => $rid, '@class' => 'Address','name' => 'Test'));
+        //$this->assertStatusCode(self::_200, $this->orient->putDocument($rid, $document), 'updates a valid document');
+        $document = json_encode(array('@class' => 'Address', 'name' => 'Test', '@version' => 1));
+        //$this->assertStatusCode(self::_200, $this->orient->putDocument($rid, $document), 'updates a valid document');
         $this->assertStatusCode(self::_500, $this->orient->putDocument('9991', $document), 'updates a non valid document');
-        $this->assertStatusCode(self::_204, $this->orient->deleteDocument($rid), 'deletes a valid document');
+        $this->assertStatusCode(self::_204, $this->orient->deleteDocument($rid, $document), 'deletes a valid document');
         $this->assertStatusCode(self::_500, $this->orient->deleteDocument('999:1'), 'deletes a non existing document');
         $this->assertStatusCode(self::_500, $this->orient->deleteDocument('9991'), 'deletes a non valid document');
     }

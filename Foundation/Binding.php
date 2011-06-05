@@ -272,12 +272,12 @@ class Binding implements Protocol\Http
      * @param   string $database
      * @return  Orient\Http\Response
      */
-    public function deleteDocument($rid, $database = null)
+    public function deleteDocument($rid, $document = NULL, $database = null)
     {
         $this->resolveDatabase($database);
         $location = $this->server . '/document/' . $this->database . '/' . $rid;
 
-        return $this->getHttpClient()->delete($location);
+        return $this->getHttpClient()->delete($location, $document);
     }
 
     /**

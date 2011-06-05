@@ -126,4 +126,14 @@ class QueryBuilderTest extends TestCase
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
+
+  public function testInsertARecord()
+  {
+    $this->query->insert()
+                ->fields(array('street', 'type', 'city'))
+                ->values(array('5th avenue', 'villa', '#13:0'))
+                ->into('Address');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
 }
