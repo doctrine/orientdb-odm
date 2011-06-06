@@ -37,19 +37,28 @@ Use the PHP5.3 standard autoloader (https://gist.github.com/221634).
 
 ## Current status of the query builder
 
-All the SQL command are implemented but:
+All the known SQL command are implemented for the latest version of OrientDB, that means also ALTER CLASS/ALTER PROPERTY are included.
 
-* index management ( http://code.google.com/p/orient/wiki/Indexes )
+Integration tests (the ones directly connecting to OrientDB) are almost finished, we only need to test:
 
-and, in order to use it in production, integration tests need to be written.
+* class creation
+* altering a class
+* class deletion
+* property creation
+* altering a property
+* property removal
+* UPDATE command
+
+The release of the query-builder is scheduled for middle June 2011.
 
 ## Current status of the mapper
 
-We started working on the mapper and, right now, it is able to map OrientDB JSON responses to annotation-mapped POPOs.
+We started working on the mapper and, right now, it is able to map OrientDB responses (converted in StdObject) to annotation-mapped POPOs.
+Also collections are hydrated properly.
 
 However, it's under heavy work, so don't expect to be able to use it in a few weeks. Next steps are:
 
-* retrieve hydrated records from a OrientDB collection
+* hydrate OrientDB native data-type (it includes floats, embedded-set|link|list, embedded-map|link|list and many others...)
 * provide a base repository class 
 * implementation of the persistence from the ODM to OrientDB
 
@@ -59,6 +68,22 @@ In order to run the tests you only need to:
 
     cd /path/to/repo
     phpunit --configuration=Test/PHPUnit/phpunit.xml
+
+This should be enough.
+For the braves, if you want to run the full test suite, which includes the integration tests, you should:
+
+* download the supported version of OrientDB
+* make sure it has the demo database bundled with every OrientDB release (if you use a snapshot, please create the database directory and copy there the database bundled with the latest OrientDB official release)
+* add the server administration credential admin/admin in config/orientdb-server-config.xml
+* launch the server on :2424, reacheable via web at the :2480
+
+and the you can run the full test-suite:
+
+    cd /path/to/repo
+    phpunit --configuration=Test/PHPUnit/phpunit.xml Test/
+
+As you'll notice, tests are obviously slower (they need a direct connection through the HTTP protocol to OrientDB), so we highly discourage you from testing this way.
+Integration tests are run by the development team before any tag in the repository, so you are sure that any tag is fully tested against a real OrientDB instance.
 
 You can take a look at the library coding health by using PHP_CodeBrowser.
 
