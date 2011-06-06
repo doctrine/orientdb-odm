@@ -11,7 +11,7 @@
          mapTestClassNameToCoveredClassName="false"
          processIsolation="false"
          stopOnError="false"
-         stopOnFailure="true"
+         stopOnFailure="false"
          stopOnIncomplete="false"
          stopOnSkipped="false"
          syntaxCheck="false"
@@ -20,12 +20,18 @@
          verbose="false">
 
     <testsuites>
-      <testsuite name="Test">
+      <testsuite name="Query builder">
           <directory >../../Test/Query</directory>
           <file >./Test/QueryTest.php</file>
       </testsuite>
-      <testsuite name="Test">
+      <testsuite name="HTTP">
           <directory >../../Test/Http</directory>
+      </testsuite>
+      <testsuite name="ODM">
+          <directory >../../Test/ODM</directory>
+      </testsuite>
+      <testsuite name="Formatter">
+          <directory >../../Test/Formatter</directory>
       </testsuite>
 <!--      <testsuite name="Test">
           <directory >../../Test/Foundation</directory>
@@ -35,6 +41,7 @@
     <filter>
       <blacklist>
         <directory suffix=".php">../../Test</directory>
+        <directory suffix=".php">../../lib</directory>
       </blacklist>
     </filter>
 </phpunit>

@@ -282,7 +282,7 @@ class FormatterTest extends TestCase
         );
         $formatter = new Formatter\Query\Range();
 
-        $this->assertEquals('RANGE 12:1, 12:2', $formatter::format($ranges));
+        $this->assertEquals('RANGE 12:1 12:2', $formatter::format($ranges));
         $this->assertEquals('RANGE 12:0', $formatter::format(array('a', '12:0')));
         $this->assertEquals(NULL, $formatter::format(array()));
         $this->assertEquals(NULL, $formatter::format(array('a2', '@rid')));

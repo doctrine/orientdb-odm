@@ -10,21 +10,17 @@
  */
 
 /**
- * The Revoke class is used to build REVOKE sql statements.
+ * Property class
  *
  * @package    Orient
- * @subpackage Query
+ * @subpackage ODM
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Orient\Query\Command\Credential;
+namespace Orient\ODM\Mapper\Annotations;
 
-use Orient\Contract\Query\Formatter;
-use Orient\Query\Command\Credential;
-
-class Revoke extends Credential
+class Property extends \Doctrine\Common\Annotations\Annotation
 {
-    const SCHEMA =
-        "REVOKE :Permission ON :Resource FROM :Role"
-    ;
+    public $name;
+    public $type;
 }

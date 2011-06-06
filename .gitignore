@@ -3,4 +3,4 @@ log
 try.php
 Docs/html
 Docs/latex
-lib
+lib/*

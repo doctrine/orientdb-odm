@@ -55,6 +55,7 @@ class Query implements QueryInterface
         'index.count'       => 'Orient\Query\Command\Index\Count',
         'index.put'         => 'Orient\Query\Command\Index\Put',
         'index.remove'      => 'Orient\Query\Command\Index\Remove',
+        'index.lookup'      => 'Orient\Query\Command\Index\Lookup',
         'link'              => 'Orient\Query\Command\Link',
     );
 
@@ -288,10 +289,10 @@ class Query implements QueryInterface
      * @param   string $type
      * @return  Query
      */
-    public function index($property, $class = NULL, $type = NULL)
+    public function index($property, $type, $class = NULL)
     {
         $commandClass   = $this->getCommandClass('index.create');
-        $this->command  = new $commandClass($property, $class, $type);
+        $this->command  = new $commandClass($property, $type, $class);
 
         return $this->command;
     }
@@ -389,6 +390,14 @@ class Query implements QueryInterface
     {
         $commandClass = $this->getCommandClass('link');
         $this->command = new $commandClass($class, $property, $alias, $inverse);
+
+        return $this->command;
+    }
+
+    public function lookup($indexName)
+    {
+        $commandClass = $this->getCommandClass('index.lookup');
+        $this->command = new $commandClass($indexName);
 
         return $this->command;
     }

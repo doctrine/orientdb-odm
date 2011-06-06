@@ -259,26 +259,31 @@ class QueryTest extends TestCase
         $this->assertEquals($sql, $this->query->getRaw());
     }
 
+    public function testLookingUpAnIndex()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Index\Lookup', $this->query->lookup('index'));
+    }
+
     public function testCreatingAnIndex()
     {
         $this->assertInstanceOf('\Orient\Query\Command\Index\Create', $this->query->index("class", "property"));
         //$this->assertInstanceOf('\Orient\Contract\Query\Command\Index', $this->query->index("class", "property"));
 
-        $this->query->index("property", "class");
+        $this->query->index("property", 'unique',"class");
         $sql =
-                'CREATE INDEX class.property'
+                'CREATE INDEX class.property unique'
         ;
 
         $this->assertEquals($sql, $this->query->getRaw());
 
-        $this->query->index("property")->type('string');
+        $this->query->index("property", 'unique')->type('string');
         $sql =
                 'CREATE INDEX property string'
         ;
 
         $this->assertEquals($sql, $this->query->getRaw());
 
-        $this->query->index("property");
+        $this->query->index("property", 'unique');
         $this->query->type('string');
         $sql =
                 'CREATE INDEX property string'
@@ -286,7 +291,7 @@ class QueryTest extends TestCase
 
         $this->assertEquals($sql, $this->query->getRaw());
 
-        $this->query->index("property", NULL, 'string');
+        $this->query->index("property", 'string');
         $sql =
                 'CREATE INDEX property string'
         ;
