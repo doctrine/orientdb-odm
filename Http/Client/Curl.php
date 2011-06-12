@@ -26,17 +26,46 @@ use Orient\Contract\Http\Client as HttpClient;
 class Curl implements HttpClient
 {
     protected $client;
-    protected $credential;
+    protected $reuseHandle;
     protected $authentication;
 
     /**
      * Creates a new Curl instance.
-     *
-     * @param String $location
      */
-    public function __construct($location = null)
+    public function __construct()
     {
-        $this->client = curl_init($location);
+        $this->reuseHandle = true;
+        $this->client = $this->createCurlHandle();
+    }
+
+    /**
+     * Closes the underlying cURL handle.
+     */
+    public function __destruct()
+    {
+        curl_close($this->client);
+    }
+
+    /**
+     * Create and initialize the underlying cURL handle.
+     *
+     * @return resource
+     */
+    protected function createCurlHandle()
+    {
+        $client = curl_init();
+
+        $options = array(
+            CURLOPT_HEADER => true,
+            CURLOPT_RETURNTRANSFER => true,
+        );
+        if ($this->authentication) {
+            $options[CURLOPT_USERPWD] = $this->authentication;
+        }
+
+        curl_setopt_array($client, $options);
+
+        return $client;
     }
 
     /**
@@ -51,15 +80,11 @@ class Curl implements HttpClient
     {
         curl_setopt($this->client, CURLOPT_URL, $location);
 
-        if ($this->authentication) {
-            curl_setopt($this->client, CURLOPT_USERPWD, $this->authentication);
-        }
-
-        curl_setopt($this->client, CURLOPT_HEADER, 1);
-        curl_setopt($this->client, CURLOPT_RETURNTRANSFER, true);
-
         $response = curl_exec($this->client);
-        $this->restart();
+
+        if (!$this->reuseHandle) {
+            $this->restart();
+        }
 
         if (!$response) {
             throw new VoidResponse(__CLASS__, $location);
@@ -131,6 +156,7 @@ class Curl implements HttpClient
     public function setAuthentication($credential)
     {
         $this->authentication = $credential;
+        curl_setopt($this->client, CURLOPT_USERPWD, $this->authentication);
 
         return $this->authentication;
     }
@@ -141,6 +167,17 @@ class Curl implements HttpClient
     protected function restart()
     {
         curl_close($this->client);
-        $this->client = curl_init();
+        $this->client = $this->createCurlHandle();
+    }
+
+    /**
+     * Sets whether to reuse the underlying cURL handle or use
+     * a new one for each HTTP request.
+     *
+     * @param bool $value
+     */
+    public function reuseHandle($value)
+    {
+        $this->reuseHandle = $value;
     }
 }
