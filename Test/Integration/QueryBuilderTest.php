@@ -208,4 +208,105 @@ class QueryBuilderTest extends TestCase
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
+
+  public function testCreatingAClass()
+  {
+      $this->time   = microtime();
+      $class        = 'MyCustomTestClass' . $this->time;
+      $this->query->create($class);
+
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  /**
+   * @depends testCreatingAClass
+   */
+  public function testAlteringAClass($class)
+  {
+      $this->query->alter($class, 'SUPERCLASS', 'OUser');
+
+      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  /**
+   * @depends testAlteringAClass
+   */
+  public function testCreatingAProperty($class)
+  {
+      $this->query->create($class, 'customTestProperty', 'string');
+
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  /**
+   * @depends testCreatingAProperty
+   */
+  public function testAlteringAProperty($class)
+  {
+      $this->query->alterProperty($class, 'customTestProperty', 'name', 'CTP');
+
+      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  /**
+   * @depends testAlteringAProperty
+   */
+  public function testDroppingAProperty($class)
+  {
+      $this->query->drop($class, 'customTestProperty');
+
+      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  /**
+   * @depends testAlteringAClass
+   */
+  public function testDroppingClass($class)
+  {
+      $this->query->drop($class);
+
+      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  public function testADelete()
+  {
+      $this->markTestIncomplete();
+  }
+
+  public function testLinkingTwoObjects()
+  {
+      $this->markTestIncomplete();
+  }
+
+  public function testUpdating()
+  {
+      $this->markTestIncomplete();
+  }
+
+  public function testAddingALink()
+  {
+      $this->markTestIncomplete();
+  }
+
+  public function testRemovingALink()
+  {
+      $this->markTestIncomplete();
+  }
+
+  public function testPuttingALink()
+  {
+      $this->markTestIncomplete();
+  }
 }
