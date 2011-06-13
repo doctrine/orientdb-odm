@@ -244,7 +244,7 @@ class FormatterTest extends TestCase
         );
         $formatter = new Formatter\Query\Where();
 
-        $this->assertEquals('@class = "1", _b-- = ";;2", c = "\"ko\"",  AND 7 = "8"', $formatter::format($where));
+        $this->assertEquals('@class = "1" _b-- = ";;2" c = "\"ko\"" , AND 7 = "8"', $formatter::format($where));
     }
 
     public function testFormattingOrderBy()
