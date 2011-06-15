@@ -22,6 +22,7 @@ class BindingTest extends TestCase
     const _204 = 'HTTP/1.1 204 OK';
     const _401 = 'HTTP/1.1 401 Unauthorized';
     const _404 = 'HTTP/1.1 404 Not Found';
+    const _409 = 'HTTP/1.1 409 Internal Server Error';
     const _500 = 'HTTP/1.1 500 Internal Server Error';
 
     public function setup()
@@ -169,11 +170,12 @@ class BindingTest extends TestCase
         $rid = str_replace('#', '', $createDocument->getBody());
         $this->assertStatusCode(self::_201, $createDocument, 'creates a valid document');
         $document = json_encode(array('@rid' => $rid, '@class' => 'Address','name' => 'Test'));
-        //$this->assertStatusCode(self::_200, $this->orient->putDocument($rid, $document), 'updates a valid document');
+        $this->assertStatusCode(self::_200, $this->orient->putDocument($rid, $document), 'updates a valid document');
         $document = json_encode(array('@class' => 'Address', 'name' => 'Test', '@version' => 1));
-        //$this->assertStatusCode(self::_200, $this->orient->putDocument($rid, $document), 'updates a valid document');
+        $this->assertStatusCode(self::_200, $this->orient->putDocument($rid, $document), 'updates a valid document');
         $this->assertStatusCode(self::_500, $this->orient->putDocument('9991', $document), 'updates a non valid document');
-        $this->assertStatusCode(self::_204, $this->orient->deleteDocument($rid, $document), 'deletes a valid document');
+        $this->assertStatusCode(self::_409, $this->orient->deleteDocument($rid, 3), 'deletes a valid document');
+        $this->assertStatusCode(self::_204, $this->orient->deleteDocument($rid, 2), 'deletes a valid document');
         $this->assertStatusCode(self::_500, $this->orient->deleteDocument('999:1'), 'deletes a non existing document');
         $this->assertStatusCode(self::_500, $this->orient->deleteDocument('9991'), 'deletes a non valid document');
     }

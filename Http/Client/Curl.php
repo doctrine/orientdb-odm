@@ -138,6 +138,17 @@ class Curl implements HttpClient
 
         return $this->authentication;
     }
+    
+    /**
+     * Sets an HTTP header to send within the request.
+     *
+     * @param type $header
+     * @param type $value 
+     */
+    public function setHeader($header, $value)
+    {
+        curl_setopt($this->client, CURLOPT_HTTPHEADER, array("$header: $value"));
+    }
 
     /**
      * Restarts the current cURL client

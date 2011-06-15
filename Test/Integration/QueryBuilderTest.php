@@ -143,12 +143,12 @@ class QueryBuilderTest extends TestCase
   {
     $this->query->index('index_name_2','unique');
 
-    $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
 
     $this->query = new Query();
     $this->query->index('in','unique', 'OGraphEdge');
 
-    $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
 
   public function testCountingAnIndexSize()
