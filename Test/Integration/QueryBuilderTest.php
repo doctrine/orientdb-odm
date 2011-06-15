@@ -28,10 +28,9 @@ class QueryBuilderTest extends TestCase
   public function setup()
   {
       $this->driver = new Curl();
-      $dbName = 'demo';
-      $this->orient = new Binding($this->driver, '127.0.0.1', '2480', 'admin', 'admin',$dbName);
-      
-      $this->query = new Query();
+      $dbName       = 'demo';
+      $this->orient = new Binding($this->driver, '127.0.0.1', '2480', 'admin', 'admin', $dbName);
+      $this->query  = new Query();
   }
   
   public function testASimpleSelect()
@@ -117,6 +116,19 @@ class QueryBuilderTest extends TestCase
                 ->fields(array('street', 'type', 'city'))
                 ->values(array('5th avenue', 'villa', '#13:0'))
                 ->into('Address');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+  
+  /**
+   * @depends testInsertARecord
+   */
+  public function testADelete()
+  {
+    $this->query->delete('Address')
+                ->where('street = ?', '5th avenue')
+                ->andWhere('city.rid = ?', "13:0")
+                ->orWhere('type <> "villa"');
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
@@ -280,19 +292,22 @@ class QueryBuilderTest extends TestCase
       return $class;
   }
 
-  public function testADelete()
-  {
-      $this->markTestIncomplete();
-  }
-
   public function testLinkingTwoObjects()
   {
       $this->markTestIncomplete();
+//      
+//      $this->query->link('Company', 'id', 'in', true)->to('Whiz', 'id');
+//
+//      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
   }
 
   public function testUpdating()
   {
-      $this->markTestIncomplete();
+      $this->query->update('Profile')->set(array('nick' => 'Luca'));
+      $this->query->where('@version = ?', 45);
+      $this->query->orWhere('@rid = ?', 12);
+
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
 
   public function testAddingALink()
@@ -308,5 +323,15 @@ class QueryBuilderTest extends TestCase
   public function testPuttingALink()
   {
       $this->markTestIncomplete();
+  }
+
+  public function testTruncatingAClass()
+  {
+      $this->markTestSkipped();
+  }
+
+  public function testTruncatingACluster()
+  {
+      $this->markTestSkipped();
   }
 }
