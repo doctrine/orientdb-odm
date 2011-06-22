@@ -28,22 +28,32 @@ class Curl implements HttpClient
     protected $client;
     protected $reuseHandle;
     protected $authentication;
+    protected $timeout;
 
     /**
      * Creates a new Curl instance.
      */
-    public function __construct()
+    public function __construct($reuseHandle = false, $timeout = 2 )
     {
-        $this->reuseHandle = true;
+        $this->reuseHandle = $reuseHandle;
         $this->client = $this->createCurlHandle();
+        $this->setTimeout($timeout);
     }
-
+    
     /**
      * Closes the underlying cURL handle.
      */
     public function __destruct()
     {
         curl_close($this->client);
+    }
+    
+    /**
+     * @todo insert phpdoc
+     */
+    public function setTimeout($timeout)
+    {
+      curl_setopt($this->client,CURLOPT_TIMEOUT,$timeout);
     }
 
     /**
@@ -62,7 +72,7 @@ class Curl implements HttpClient
         if ($this->authentication) {
             $options[CURLOPT_USERPWD] = $this->authentication;
         }
-
+        
         curl_setopt_array($client, $options);
 
         return $client;
@@ -173,9 +183,9 @@ class Curl implements HttpClient
      */
     public function setHeader($header, $value)
     {
-        curl_setopt($this->client, CURLOPT_HTTPHEADER, array("$header: $value"));
+      curl_setopt($this->client, CURLOPT_HTTPHEADER, array("$header: $value")); 
     }
-
+    
     /**
      * Restarts the current cURL client
      */

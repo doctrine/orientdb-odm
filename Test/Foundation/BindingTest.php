@@ -22,7 +22,7 @@ class BindingTest extends TestCase
     const _204 = 'HTTP/1.1 204 OK';
     const _401 = 'HTTP/1.1 401 Unauthorized';
     const _404 = 'HTTP/1.1 404 Not Found';
-    const _409 = 'HTTP/1.1 409 Internal Server Error';
+    const _409 = 'HTTP/1.1 409 Conflict';
     const _500 = 'HTTP/1.1 500 Internal Server Error';
 
     public function setup()
