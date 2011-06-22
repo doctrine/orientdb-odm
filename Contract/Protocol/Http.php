@@ -172,7 +172,7 @@ interface Http
      * @param   string  $database
      * @return  mixed
      */
-    public function deleteDocument($rid, $database = null);
+    public function deleteDocument($rid, $document, $database = null);
 
     /**
      * Sets the $username and $password used in the digest HTTP authentication.

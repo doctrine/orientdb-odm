@@ -18,7 +18,7 @@ class CountTest extends TestCase
 {
     public function setup()
     {
-        $this->create = new Count('indexName');
+        $this->count = new Count('indexName');
     }
 
     public function testTheSchemaIsValid()
@@ -27,13 +27,13 @@ class CountTest extends TestCase
             ':Name' => array(),
         );
 
-        $this->assertTokens($tokens, $this->create->getTokens());
+        $this->assertTokens($tokens, $this->count->getTokens());
     }
 
     public function testConstructionOfAnObject()
     {
         $query = 'SELECT count(*) AS size from index:indexName';
 
-        $this->assertCommandGives($query, $this->create->getRaw());
+        $this->assertCommandGives($query, $this->count->getRaw());
     }
 }

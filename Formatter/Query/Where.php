@@ -26,9 +26,7 @@ class Where extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {
-        $values = self::implode($values);
-        $values = str_replace(", AND", " AND", $values);
-        $values = str_replace(", OR", " OR", $values);
+        $values = implode(' ', $values);
 
         return $values;
     }

@@ -32,6 +32,8 @@ class Create extends Property
      * @param string $property
      * @param string $type
      * @param string $linked
+     * @todo  implement setType and setLinked, avoid using constructors
+     * @todo  type is mandatory in SQL
      */
     public function __construct($property, $type = NULL, $linked = NULL)
     {

@@ -80,11 +80,23 @@ class Command extends TestCase
 
     public function testAddAWhere()
     {
-        $from = array('Cities');
         $this->command->where("i loves ?", "U");
         $this->command->where("mark loves ?", "me", true, "OR");
 
         $this->assertCommandGives("WHERE i loves \"U\" OR mark loves \"me\"", $this->command->getRaw());
+    }
+
+    public function testTheWhereWorksCorrectlyWithReUsedPrivateNamesLikeANDOrORWHERE()
+    {
+        $this->command->where("i loves ?", "ME, AND YOU");
+        $statement = 'WHERE i loves "ME, AND YOU"';
+
+        $this->assertCommandGives($statement, $this->command->getRaw());
+        
+        $this->command->where("i loves ?", "ME, OR YOU");
+        $statement = 'WHERE i loves "ME, OR YOU"';
+
+        $this->assertCommandGives($statement, $this->command->getRaw());
     }
 
     /**

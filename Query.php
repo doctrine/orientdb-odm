@@ -55,6 +55,7 @@ class Query implements QueryInterface
         'index.count'       => 'Orient\Query\Command\Index\Count',
         'index.put'         => 'Orient\Query\Command\Index\Put',
         'index.remove'      => 'Orient\Query\Command\Index\Remove',
+        'index.lookup'      => 'Orient\Query\Command\Index\Lookup',
         'link'              => 'Orient\Query\Command\Link',
     );
 
@@ -393,6 +394,14 @@ class Query implements QueryInterface
         return $this->command;
     }
 
+    public function lookup($indexName)
+    {
+        $commandClass = $this->getCommandClass('index.lookup');
+        $this->command = new $commandClass($indexName);
+
+        return $this->command;
+    }
+
     /**
      * Sets the ON clause of a query.
      *
@@ -508,6 +517,7 @@ class Query implements QueryInterface
      *
      * @param   string   $to
      * @return  Query
+     * @todo    ->TO() is used also in Link class, but with different arguments ($class, $property)
      */
     public function to($to)
     {

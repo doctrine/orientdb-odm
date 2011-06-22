@@ -94,17 +94,17 @@ class SelectTest extends TestCase
         $this->assertCommandGives($query, $this->select->getRaw());
 
         $this->select->range(null, '10:4');
-        $query = 'SELECT FROM myClass LIMIT 10 RANGE 10:3, 10:4';
+        $query = 'SELECT FROM myClass LIMIT 10 RANGE 10:3 10:4';
 
         $this->assertCommandGives($query, $this->select->getRaw());
 
         $this->select->range('10:5', '10:6');
-        $query = 'SELECT FROM myClass LIMIT 10 RANGE 10:5, 10:6';
+        $query = 'SELECT FROM myClass LIMIT 10 RANGE 10:5 10:6';
 
         $this->assertCommandGives($query, $this->select->getRaw());
 
         $this->select->range('10:1');
-        $query = 'SELECT FROM myClass LIMIT 10 RANGE 10:1, 10:6';
+        $query = 'SELECT FROM myClass LIMIT 10 RANGE 10:1 10:6';
 
         $this->assertCommandGives($query, $this->select->getRaw());
 
@@ -129,7 +129,7 @@ class SelectTest extends TestCase
         $this->select->range('10:3');
         $this->select->range(null, '12:0');
 
-        $query = 'SELECT id, name FROM [23:2, 12:4] LIMIT 20 RANGE 10:3, 12:0';
+        $query = 'SELECT id, name FROM [23:2, 12:4] LIMIT 20 RANGE 10:3 12:0';
 
         $this->assertCommandGives($query, $this->select->getRaw());
     }
@@ -146,7 +146,7 @@ class SelectTest extends TestCase
                 ->orderBy('name', true, true)
                 ->range("12:0", "12:1");
         $sql =
-                'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = "1" AND links = "1" ORDER BY name, username LIMIT 20 RANGE 12:0, 12:1'
+                'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = "1" AND links = "1" ORDER BY name, username LIMIT 20 RANGE 12:0 12:1'
         ;
 
         $this->assertCommandGives($sql, $this->select->getRaw());

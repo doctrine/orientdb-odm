@@ -99,9 +99,13 @@ class Curl implements HttpClient
      * @param  String $location
      * @return Response
      */
-    public function delete($location)
+    public function delete($location, $body = NULL)
     {
-        curl_setopt($this->client, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($this->client, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        if ($body) {
+            curl_setopt($this->client, CURLOPT_POSTFIELDS, $body);
+        }
 
         return $this->execute('DELETE', $location);
     }
@@ -159,6 +163,17 @@ class Curl implements HttpClient
         curl_setopt($this->client, CURLOPT_USERPWD, $this->authentication);
 
         return $this->authentication;
+    }
+    
+    /**
+     * Sets an HTTP header to send within the request.
+     *
+     * @param type $header
+     * @param type $value 
+     */
+    public function setHeader($header, $value)
+    {
+        curl_setopt($this->client, CURLOPT_HTTPHEADER, array("$header: $value"));
     }
 
     /**

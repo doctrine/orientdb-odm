@@ -28,37 +28,310 @@ class QueryBuilderTest extends TestCase
   public function setup()
   {
       $this->driver = new Curl();
-      $dbName = 'demo';
-      $this->orient = new Binding($this->driver, '127.0.0.1', '2480', 'admin', 'admin',$dbName);
-      
-      $this->query = new Query();
+      $dbName       = 'demo';
+      $this->orient = new Binding($this->driver, '127.0.0.1', '2480', 'admin', 'admin', $dbName);
+      $this->query  = new Query();
   }
   
   public function testASimpleSelect()
   {
       $this->query->from(array('address'));
       
-      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw())->getStatusCode());
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
       
       $this->query->select(array('@version','street'));
       
-      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw())->getStatusCode());
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testTheRangeOfASelect()
+  {
+    $this->query->from(array('Address'))->range('12:1');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+    $this->query->range(null, '12');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+    $this->query->range('10.0');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+    $this->query->range('10.1', false);
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+    $this->query->range('10.1', '10.2');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testLimitingASelect()
+  {
+    $this->query->from(array('Address'))->limit(20);
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+    $this->query->from(array('Address'))->limit('20');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+    $this->query->from(array('Address'))->limit('a');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testSelectingByRIDs()
+  {
+    $this->query->from(array('12:0', '12:1'));
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testOrderingTheQuery()
+  {
+    $this->query->from(array('12:0', '12:1'))->orderBy('rid ASC')->orderBy('street DESC');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testDoingAComplexSelect()
+  {
+    $this->query->limit(10);
+    $this->query->limit(20);
+    $this->query->from(array('12:2', '12:4'), false);
+    $this->query->select(array('rid', 'street'));
+    $this->query->select(array('type'));
+    $this->query->range('12:2');
+    $this->query->range(null, '12:4');
+    $this->query->orderBy('street ASC');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testInsertARecord()
+  {
+    $this->query->insert()
+                ->fields(array('street', 'type', 'city'))
+                ->values(array('5th avenue', 'villa', '#13:0'))
+                ->into('Address');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
   
-  public function testAComplexSelect()
+  /**
+   * @depends testInsertARecord
+   */
+  public function testADelete()
   {
-    $query = new Query();
-    $query->index('index_name','unique');
-    
-    $this->assertStatusCode(self::_204, $this->orient->command($query->getRaw())->getStatusCode());
-    
-    $this->query->from(array('index:index_name'))->between('key','10.0','10.1');
-    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw())->getStatusCode());
-    
-    $query = new Query();
-    $query->unindex('index_name');
-    
-    $this->assertStatusCode(self::_204, $this->orient->command($query->getRaw())->getStatusCode());    
-    
+    $this->query->delete('Address')
+                ->where('street = ?', '5th avenue')
+                ->andWhere('city.rid = ?', "13:0")
+                ->orWhere('type <> "villa"');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testGrantingACredential()
+  {
+    $this->query->grant('READ')
+                ->to('reader')
+                ->on('Address');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testRevokingACredential()
+  {
+    $this->query->revoke('READ')
+                ->to('reader')
+                ->on('Address');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testCreateAnIndex()
+  {
+    $this->query->index('index_name_2','unique');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+    $this->query = new Query();
+    $this->query->index('in','unique', 'OGraphEdge');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testCountingAnIndexSize()
+  {
+    $this->query->indexCount('index_name_2');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testExecutingAIndexLookup()
+  {
+    $this->query->lookup('index_name_2');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+    $this->query->where('key = ?', 2);
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+    $this->query->where('fakekey = ?', 2);
+
+    $this->assertStatusCode(self::_500, $this->orient->command($this->query->getRaw()));
+
+    $this->query = new Query();
+    $this->query->from(array('index:index_name_2'))->between('key','10.0','10.1');
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testAddingAnEntryToAnIndex()
+  {
+    $this->query->indexPut('index_name_2', 'k', '12:0');
+
+    $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testRemovingAnEntryToAnIndex()
+  {
+    $this->query->indexRemove('index_name_2', 'k');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testDroppingAnIndex()
+  {
+    $this->query->unindex('index_name_2');
+
+    $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+
+    $this->query->unindex('in','OGraphEdge');
+
+    $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testFindingAReference()
+  {
+    $this->query->findReferences('12:0');
+
+    $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testCreatingAClass()
+  {
+      $this->time   = microtime();
+      $class        = 'MyCustomTestClass' . $this->time;
+      $this->query->create($class);
+
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  /**
+   * @depends testCreatingAClass
+   */
+  public function testAlteringAClass($class)
+  {
+      $this->query->alter($class, 'SUPERCLASS', 'OUser');
+
+      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  /**
+   * @depends testAlteringAClass
+   */
+  public function testCreatingAProperty($class)
+  {
+      $this->query->create($class, 'customTestProperty', 'string');
+
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  /**
+   * @depends testCreatingAProperty
+   */
+  public function testAlteringAProperty($class)
+  {
+      $this->query->alterProperty($class, 'customTestProperty', 'name', 'CTP');
+
+      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  /**
+   * @depends testAlteringAProperty
+   */
+  public function testDroppingAProperty($class)
+  {
+      $this->query->drop($class, 'customTestProperty');
+
+      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  /**
+   * @depends testAlteringAClass
+   */
+  public function testDroppingClass($class)
+  {
+      $this->query->drop($class);
+
+      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+
+      return $class;
+  }
+
+  public function testLinkingTwoObjects()
+  {
+      $this->markTestIncomplete();
+//      
+//      $this->query->link('Company', 'id', 'in', true)->to('Whiz', 'id');
+//
+//      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testUpdating()
+  {
+      $this->query->update('Profile')->set(array('nick' => 'Luca'));
+      $this->query->where('@version = ?', 45);
+      $this->query->orWhere('@rid = ?', 12);
+
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+  }
+
+  public function testAddingALink()
+  {
+      $this->markTestIncomplete();
+  }
+
+  public function testRemovingALink()
+  {
+      $this->markTestIncomplete();
+  }
+
+  public function testPuttingALink()
+  {
+      $this->markTestIncomplete();
+  }
+
+  public function testTruncatingAClass()
+  {
+      $this->markTestSkipped();
+  }
+
+  public function testTruncatingACluster()
+  {
+      $this->markTestSkipped();
   }
 }

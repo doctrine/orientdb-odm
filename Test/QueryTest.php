@@ -259,6 +259,11 @@ class QueryTest extends TestCase
         $this->assertEquals($sql, $this->query->getRaw());
     }
 
+    public function testLookingUpAnIndex()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Index\Lookup', $this->query->lookup('index'));
+    }
+
     public function testCreatingAnIndex()
     {
         $this->assertInstanceOf('\Orient\Query\Command\Index\Create', $this->query->index("class", "property"));

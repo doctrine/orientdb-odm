@@ -17,11 +17,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $this->assertEquals($expected, $got, $message);
     }
 
-    public function assertStatusCode($expected, $got)
+    public function assertStatusCode($expected, \Orient\Http\Response $got)
     {
         $message = "The status code of the response is wrong";
 
-        return $this->assertEquals($expected, $got, $message);
+        return $this->assertEquals($expected, $got->getStatusCode(), $got->getBody());
     }
 
     public function assertTokens($expected, $got)
