@@ -44,7 +44,7 @@ class String
      * @param   string $nonFilter
      * @return  string
      */
-    public function filterNonSQLChars($string, $nonFilter = NULL)
+    public static function filterNonSQLChars($string, $nonFilter = NULL)
     {
         $pattern = "/[^a-z|A-Z|0-9|:|@|#|$nonFilter]/";
 
@@ -57,14 +57,14 @@ class String
      * @param   string $rid
      * @return  the rid is wellformed, false otherwise
      */
-    public function filterRid($rid)
+    public static function filterRid($rid)
     {
         $parts = explode(':', $rid);
-
+        
         if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1])) {
             return $rid;
         }
-
+        
         return false;
     }
 }

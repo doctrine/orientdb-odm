@@ -1,3 +1,11 @@
+# After Clone
+
+execute this two commands:
+
+* git submodule init
+* git submodule update
+
+
 # OrientDB PHP Library
 
 ## What's Orient?
