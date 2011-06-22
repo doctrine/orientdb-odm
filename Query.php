@@ -288,10 +288,10 @@ class Query implements QueryInterface
      * @param   string $type
      * @return  Query
      */
-    public function index($property, $class = NULL, $type = NULL)
+    public function index($property, $type, $class = NULL)
     {
         $commandClass   = $this->getCommandClass('index.create');
-        $this->command  = new $commandClass($property, $class, $type);
+        $this->command  = new $commandClass($property, $type, $class);
 
         return $this->command;
     }

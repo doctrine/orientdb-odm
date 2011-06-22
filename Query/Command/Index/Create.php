@@ -35,7 +35,7 @@ class Create extends Index
      * @param string $class
      * @param string $type
      */
-    public function __construct($property, $class = NULL, $type = NULL)
+    public function __construct($property, $type, $class = NULL)
     {
         parent::__construct();
 
@@ -43,10 +43,7 @@ class Create extends Index
             $this->setToken('IndexClass', $class);
         }
 
-        if ($type) {
-            $this->type($type);
-        }
-        
+        $this->type($type);        
         $this->setToken('Property', $property);
     }
 

@@ -136,3 +136,6 @@ class SplClassLoader
 }
 $classLoader = new SplClassLoader('Orient', '..');
 $classLoader->register();
+
+$classLoader = new SplClassLoader('Doctrine\Common', 'lib/vendor/Doctrine/Common/lib/');
+$classLoader->register();
