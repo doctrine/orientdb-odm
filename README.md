@@ -146,4 +146,4 @@ In order to launch the test suite PHPUnit 3.5 is required.
 
 ## Known issues
 
-Updating of the Maps is currently bugged within the SQL statement constructors.
+See: https://github.com/congow/Orient/issues

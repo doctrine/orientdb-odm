@@ -261,7 +261,11 @@ class QueryBuilderTest extends TestCase
    */
   public function testAlteringAProperty($class)
   {
-      $this->query->alterProperty($class, 'customTestProperty', 'name', 'CTP');
+      $this->query->alterProperty($class, 'customTestProperty', 'notnull', 'false');
+
+      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+      
+      $this->query->alterProperty($class, 'customTestProperty', 'notnull', 'true');
 
       $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
 
@@ -305,7 +309,7 @@ class QueryBuilderTest extends TestCase
   {
       $this->query->update('Profile')->set(array('nick' => 'Luca'));
       $this->query->where('@version = ?', 45);
-      $this->query->orWhere('@rid = ?', 12);
+      $this->query->orWhere('@rid = ?', '12:0');
 
       $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
