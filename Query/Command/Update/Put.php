@@ -43,4 +43,16 @@ class Put extends Update
 
         $this->setTokenValues('Updates', $values, $append);
     }
+    
+    /**
+     * Returns the formatters for this query tokens
+     *
+     * @return array
+     */
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'Updates'  => "Orient\Formatter\Query\MapUpdates",
+        ));
+    }
 }

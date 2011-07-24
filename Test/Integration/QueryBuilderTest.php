@@ -298,11 +298,9 @@ class QueryBuilderTest extends TestCase
 
   public function testLinkingTwoObjects()
   {
-      $this->markTestIncomplete();
-//      
-//      $this->query->link('Company', 'id', 'in', true)->to('Whiz', 'id');
-//
-//      $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+      $this->query->link('Company', 'id', 'in', true)->to('ORole', 'id');
+
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
 
   public function testUpdating()
@@ -316,26 +314,28 @@ class QueryBuilderTest extends TestCase
 
   public function testAddingALink()
   {
-      $this->markTestIncomplete();
+      $this->query->add(array('comments' => '26:0'), 'post');
+      $this->query->where('@rid = ?', '25:1');
+      
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
 
+  /**
+   * @depends testAddingALink
+   */
   public function testRemovingALink()
   {
-      $this->markTestIncomplete();
+      $this->query->remove(array('comments' => '26:0'), 'post');
+      $this->query->where('@rid = ?', '25:1');
+      
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
 
   public function testPuttingALink()
   {
-      $this->markTestIncomplete();
-  }
-
-  public function testTruncatingAClass()
-  {
-      $this->markTestSkipped();
-  }
-
-  public function testTruncatingACluster()
-  {
-      $this->markTestSkipped();
+      $this->query->put(array('knows' => array('Johnny' => '8:1')), 'account');
+      $this->query->where('@rid = ?', '8:0');
+      
+      $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
 }
