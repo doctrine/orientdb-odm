@@ -10,7 +10,7 @@
  */
 
 /**
- * Remove class
+ * Command used in order to remove values from a class.
  *
  * @package    Orient
  * @subpackage Query

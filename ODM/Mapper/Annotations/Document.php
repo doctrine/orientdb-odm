@@ -10,7 +10,7 @@
  */
 
 /**
- * Document class
+ * Class used to identify a document's annotations.
  *
  * @package    Orient
  * @subpackage ODM
@@ -25,7 +25,8 @@ class Document extends \Doctrine\Common\Annotations\Annotation
     
     
     /**
-    *  given a $OrientClass, checks wheter this annotation matches it
+     * Given a $OrientClass, checks wheter this annotation matches it.
+     * 
      * @param  string   $OrientClass
      * @return boolean
      */

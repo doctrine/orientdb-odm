@@ -10,7 +10,9 @@
  */
 
 /**
- * Class Reader
+ * Class used in order to decouple Orient from the Doctrine dependency.
+ * If you want to use a custom annotation reader library you should make your
+ * reader extend this class.
  *
  * @package     Orient
  * @subpackage  ODM

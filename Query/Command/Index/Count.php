@@ -10,7 +10,7 @@
  */
 
 /**
- * This class handles the counting of elements in an index.
+ * This class handles counting elements in an index.
  *
  * @package    Orient
  * @subpackage Query
@@ -42,6 +42,11 @@ class Count extends Index
         $this->setToken('Name', $indexName);
     }
 
+    /**
+     * Returns the formatters for this query's tokens.
+     *
+     * @return Array
+     */
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(

@@ -10,7 +10,7 @@
  */
 
 /**
- * Property class
+ * Class used to manipulate and identity properties in an annotation.
  *
  * @package    Orient
  * @subpackage ODM

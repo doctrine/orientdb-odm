@@ -44,7 +44,7 @@ class Add extends Update
     }
 
     /**
-     * Returns the formatters for this query tokens
+     * Returns the formatters for this query's tokens.
      *
      * @return array
      */

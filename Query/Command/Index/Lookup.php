@@ -39,9 +39,9 @@ class Lookup extends Index
     }
 
     /**
-     * Returns the formatters for this query tokens
+     * Returns the formatters for this query's tokens.
      *
-     * @return array
+     * @return Array
      */
     protected function getTokenFormatters()
     {

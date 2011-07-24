@@ -251,9 +251,9 @@ abstract class Command implements CommandContract
     }
 
     /**
-     * Returns the formatters for this query tokens
+     * Returns the formatters for this query's tokens.
      *
-     * @return array
+     * @return Array
      */
     protected function getTokenFormatters()
     {
@@ -267,6 +267,13 @@ abstract class Command implements CommandContract
         );
     }
     
+    /**
+     * Returns the formatter for a particular token.
+     *
+     * @param  string $token
+     * @return Array
+     * @throws string
+     */
     protected function getTokenFormatter($token)
     {
         $formatters = $this->getTokenFormatters();

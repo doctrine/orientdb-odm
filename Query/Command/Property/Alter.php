@@ -10,7 +10,7 @@
  */
 
 /**
- * Alter class
+ * Command used to alter properties in a class.
  *
  * @package
  * @subpackage
@@ -41,7 +41,7 @@ class Alter extends Property
     }
 
     /**
-     * Returns the formatters for this query tokens
+     * Returns the formatters for this query's tokens.
      *
      * @return array
      */

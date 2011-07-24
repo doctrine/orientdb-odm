@@ -46,6 +46,11 @@ class Remove extends Index
         }
     }
 
+    /**
+     * Returns the formatters for this query's tokens.
+     *
+     * @return Array
+     */
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(

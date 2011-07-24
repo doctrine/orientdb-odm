@@ -10,7 +10,7 @@
  */
 
 /**
- * Alter class
+ * Command used to alter a class's native properties (eg. name, superclass).
  *
  * @package    
  * @subpackage 

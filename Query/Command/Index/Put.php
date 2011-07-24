@@ -26,6 +26,14 @@ class Put extends Index
 {
     const SCHEMA = "INSERT INTO index::Name (key,rid) values (\":Key\", :Value)";
 
+    /**
+     * Creates a new instance of this command setting the index to insert into,
+     * the key of the new entry and its value, which is a RID.
+     *
+     * @param string $indexName
+     * @param string $key
+     * @param string $rid 
+     */
     public function __construct($indexName, $key, $rid)
     {
         parent::__construct();
@@ -35,6 +43,11 @@ class Put extends Index
         $this->setToken('Value', $rid);
     }
 
+    /**
+     * Returns the formatters for this query's tokens.
+     * 
+     * @return Array
+     */
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
