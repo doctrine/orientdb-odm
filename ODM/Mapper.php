@@ -24,29 +24,31 @@ namespace Orient\ODM;
 
 use Orient\Exception\Document as Exception;
 use Orient\Formatter\Caster;
+use Orient\Contract\Formatter\Inflector;
 use Orient\Filesystem\Iterator;
 use Orient\ODM\Mapper\Annotations\Property as PropertyAnnotation;
 use Orient\Formatter\String as StringFormatter;
 use Orient\Contract\ODM\Mapper\Annotations\Reader as AnnotationreaderInterface;
-use Doctrine\Common\Util\Inflector;
+use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
 
 /**
- * @todo hardcoded dependency to doctriine inflector
  * @todo hardcoded dependency to String formatter
  */
 class Mapper
 {
     protected $documentDirectories  = array();
     protected $annotationReader     = NULL;
+    protected $inflector            = NULL;
     
     const ANNOTATION_PROPERTY_CLASS = 'Orient\ODM\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Orient\ODM\Mapper\Annotations\Document';
     const ORIENT_PROPERTY_CLASS     = '@class';
 
-    public function __construct(AnnotationReaderInterface $annotationReader = NULL)
+    public function __construct(AnnotationReaderInterface $annotationReader = NULL, Inflector $inflector = null)
     {
         $this->annotationReader = $annotationReader ?: new AnnotationReader;
+        $this->inflector        = $inflector ?: new DoctrineInflector;
     }
     
     /**
@@ -156,7 +158,8 @@ class Mapper
      */
     protected function castProperty($annotation, $propertyValue)
     {
-        $method = 'cast' . Inflector::camelize($annotation->type);
+        $inflector  = $this->inflector;
+        $method     = 'cast' . $inflector::camelize($annotation->type);
         
         return Caster::$method($propertyValue);
     }
@@ -278,7 +281,6 @@ class Mapper
      * @param string                $value
      * @param PropertyAnnotation    $annotation
      * @todo  better error handling: if there's no setter explicative message "you have to add a setter in order to..."
-     * @todo  hardcoded dependency to the Inflector
      */
     protected function mapProperty($document, $property, $value, PropertyAnnotation $annotation)
     {
@@ -286,7 +288,8 @@ class Mapper
             $value = $this->castProperty($annotation, $value);
         }
 
-        $setter = 'set' . Inflector::camelize($property);
+        $inflector  = $this->inflector;
+        $setter     = 'set' . $inflector::camelize($property);
         $document->$setter($value);
     }
 }

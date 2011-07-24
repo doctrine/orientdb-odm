@@ -25,9 +25,6 @@ use Orient\Contract\Formatter\Query\Token as TokenFormatter;
 
 class Rid extends Query implements TokenFormatter
 {
-    /**
-     * @todo hardcoded dependency to String
-     */
     public static function format(array $values)
     {
         $values = array_filter($values, function ($arr) {
