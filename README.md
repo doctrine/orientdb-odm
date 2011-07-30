@@ -46,17 +46,9 @@ Use the PHP5.3 standard autoloader (https://gist.github.com/221634).
 
 All the known SQL command are implemented for the latest version of OrientDB, that means also ALTER CLASS/ALTER PROPERTY are included.
 
-Integration tests (the ones directly connecting to OrientDB) are almost finished, we only need to test:
+Integration tests (the ones directly connecting to OrientDB) are almost finished, we only need to refine them.
 
-* class creation
-* altering a class
-* class deletion
-* property creation
-* altering a property
-* property removal
-* UPDATE command
-
-The release of the query-builder is scheduled for middle June 2011.
+The release of the query-builder is scheduled for July/August 2011.
 
 ## Current status of the mapper
 
