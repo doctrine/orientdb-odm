@@ -107,6 +107,14 @@ class QueryTest extends TestCase
         ;
 
         $this->assertCommandGives($sql, $this->query->getRaw());
+
+        $this->query->select(array('count(*)'))->from(array('class'), false);
+        $this->query->resetWhere();
+        $sql =
+                'SELECT count(*) FROM class'
+        ;
+
+        $this->assertCommandGives($sql, $this->query->getRaw());
     }
 
     public function testSelect()

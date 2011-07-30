@@ -45,7 +45,7 @@ class QueryBuilderTest extends TestCase
   }
 
   public function testTheRangeOfASelect()
-  {
+  {    
     $this->query->from(array('Address'))->range('12:1');
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
@@ -65,6 +65,8 @@ class QueryBuilderTest extends TestCase
     $this->query->range('10.1', '10.2');
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+    
+    $this->markTestIncomplete('Test the real range count');
   }
 
   public function testLimitingASelect()
@@ -80,6 +82,8 @@ class QueryBuilderTest extends TestCase
     $this->query->from(array('Address'))->limit('a');
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+    
+    $this->markTestIncomplete('count the results with/without limit');
   }
 
   public function testSelectingByRIDs()
@@ -87,6 +91,8 @@ class QueryBuilderTest extends TestCase
     $this->query->from(array('12:0', '12:1'));
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+    
+    $this->markTestIncomplete('look at the resultins RID');
   }
 
   public function testOrderingTheQuery()
@@ -94,6 +100,8 @@ class QueryBuilderTest extends TestCase
     $this->query->from(array('12:0', '12:1'))->orderBy('rid ASC')->orderBy('street DESC');
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+    
+    $this->markTestIncomplete('Test first result has higher rid');
   }
 
   public function testDoingAComplexSelect()
@@ -118,6 +126,8 @@ class QueryBuilderTest extends TestCase
                 ->into('Address');
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+    
+    $this->markTestIncomplete('count before and after');
   }
   
   /**
@@ -131,6 +141,8 @@ class QueryBuilderTest extends TestCase
                 ->orWhere('type <> "villa"');
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+    
+    $this->markTestIncomplete('count before and after');
   }
 
   public function testGrantingACredential()
@@ -161,6 +173,8 @@ class QueryBuilderTest extends TestCase
     $this->query->index('in','unique', 'OGraphEdge');
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+    
+    $this->markTestIncomplete('count index size');
   }
 
   public function testCountingAnIndexSize()
@@ -194,6 +208,8 @@ class QueryBuilderTest extends TestCase
     $this->query->indexPut('index_name_2', 'k', '12:0');
 
     $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+    
+    $this->markTestIncomplete('count before and after');
   }
 
   public function testRemovingAnEntryToAnIndex()
@@ -201,6 +217,8 @@ class QueryBuilderTest extends TestCase
     $this->query->indexRemove('index_name_2', 'k');
 
     $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+    
+    $this->markTestIncomplete('count before and after');
   }
 
   public function testDroppingAnIndex()
@@ -212,6 +230,8 @@ class QueryBuilderTest extends TestCase
     $this->query->unindex('in','OGraphEdge');
 
     $this->assertStatusCode(self::_204, $this->orient->command($this->query->getRaw()));
+    
+    $this->markTestIncomplete('count before and after');
   }
 
   public function testFindingAReference()
@@ -310,6 +330,8 @@ class QueryBuilderTest extends TestCase
       $this->query->orWhere('@rid = ?', '12:0');
 
       $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+      
+      $this->markTestIncomplete('select the updated record and verify updates');
   }
 
   public function testAddingALink()
@@ -318,6 +340,8 @@ class QueryBuilderTest extends TestCase
       $this->query->where('@rid = ?', '25:1');
       
       $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+      
+      $this->markTestIncomplete('verify link presence');
   }
 
   /**
@@ -329,6 +353,8 @@ class QueryBuilderTest extends TestCase
       $this->query->where('@rid = ?', '25:1');
       
       $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+      
+      $this->markTestIncomplete('verifying link presence');
   }
 
   public function testPuttingALink()
@@ -337,5 +363,20 @@ class QueryBuilderTest extends TestCase
       $this->query->where('@rid = ?', '8:0');
       
       $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
+      
+      $this->markTestIncomplete('verifying link presence');
+  }
+  
+  protected function countResults(\Orient\Http\Response $response)
+  {
+    $response = json_decode($response->getBody());
+    $property = 'count(*)';
+    
+    if (property_exists($response->result[0], $property))
+    {
+      return $response->result[0]->$property;
+    }
+    
+    throw new \Exception('Unable to retrieve a count from the given response.');
   }
 }

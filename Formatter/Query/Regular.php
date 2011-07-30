@@ -26,6 +26,6 @@ class Regular extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {
-        return self::implodeRegular($values);
+        return self::implodeRegular($values, 'count(*)');
     }
 }
