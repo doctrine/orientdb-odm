@@ -31,6 +31,7 @@ use Orient\ODM\Mapper\Annotations\Property as PropertyAnnotation;
 use Orient\Contract\Formatter\String as StringFormatterInterface;
 use Orient\Formatter\String as StringFormatter;
 use Orient\Contract\ODM\Mapper\Annotations\Reader as AnnotationreaderInterface;
+use Orient\Exception\ODM\OClass\NotFound as ClassNotFoundException;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
 
@@ -80,7 +81,6 @@ class Mapper
      * @param   StdClass    $orientObject
      * @return  mixed
      * @throws  Orient\Exception\Document\NotFound
-     * @todo    3 IFs
      */
     public function hydrate(\StdClass $orientObject)
     {
@@ -92,10 +92,8 @@ class Mapper
             
             if ($orientClass) {
                 $class = $this->findClassMapping($orientClass);
-                
-                if($class) {
-                    return $this->createDocument($class, $orientObject);
-                }
+
+                return $this->createDocument($class, $orientObject);
             }
         }
 
@@ -193,8 +191,8 @@ class Mapper
      *
      * @param   string $OClass
      * @return  a class name, null if not found
+     * @throws  Orient\Exception\ODM\OClass\NotFound
      * @todo    hardcoded dependency to Iterator
-     * @todo    2 FOREACHs, 2 IFs
      */
     protected function findClassMapping($OClass, StringFormatterInterface $stringFormatter = null)
     {
@@ -205,18 +203,15 @@ class Mapper
 
             foreach ($regexIterator as $file) {
                 $class = $stringFormatter::convertPathToClassName($file, $namespace);
+                $annotation = $this->getClassAnnotation($class);
 
-                if (class_exists($class)) {
-                    $annotation = $this->getClassAnnotation($class);
-                    
-                    if($annotation && $annotation->hasMatchingClass($OClass)){
-                        return $class;
-                    }
+                if($annotation && $annotation->hasMatchingClass($OClass)){
+                    return $class;
                 }
             }
         }
 
-        return null;
+        throw new ClassNotFoundException($OClass);
     }
 
     /**
@@ -281,7 +276,6 @@ class Mapper
      * @param string                $property
      * @param string                $value
      * @param PropertyAnnotation    $annotation
-     * @todo  better error handling: if there's no setter explicative message "you have to add a setter in order to..."
      */
     protected function mapProperty($document, $property, $value, PropertyAnnotation $annotation)
     {
@@ -291,6 +285,20 @@ class Mapper
 
         $inflector  = $this->inflector;
         $setter     = 'set' . $inflector::camelize($property);
-        $document->$setter($value);
+        
+        if (method_exists($document, $setter))
+        {
+            $document->$setter($value);            
+        }
+        else
+        {
+            $message = "%s has not method %s: you have to add the setter in order to correctly let Orient hydrate your object";
+            
+            throw new Orient\Exception(
+                    sprintf($message),
+                    get_class($document),
+                    $setter
+            );
+        }
     }
 }

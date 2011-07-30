@@ -17,16 +17,16 @@
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Orient\Exception\Document;
+namespace Orient\Exception\ODM\OClass;
 
 use Orient\Exception;
 
 class NotFound extends Exception
 {
-    const MESSAGE = 'The object can not be converted to a POPO mapped by the ODM.';
+    const MESSAGE = 'Unable to find a PHP class mapped for "%s".';
 
-    public function __construct()
+    public function __construct($class)
     {
-        $this->message = self::MESSAGE;
+        $this->message = sprintf(self::MESSAGE, $class);
     }
 }

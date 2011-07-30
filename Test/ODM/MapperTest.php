@@ -119,7 +119,7 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * @expectedException Orient\Exception\Document\NotFound
+     * @expectedException Orient\Exception\ODM\OClass\NotFound
      */
     public function testAnExceptionIsRaisedWhenAnObjectGetsPersistedWithAWrongClass()
     {
