@@ -1,11 +1,3 @@
-# After Clone
-
-execute this two commands:
-
-* git submodule init
-* git submodule update
-
-
 # OrientDB PHP Library
 
 ## What's Orient?
@@ -23,6 +15,13 @@ If you don't know OrientDB here are few resources:
 
 Homepage: http://www.orientechnologies.com/
 Documentation: http://code.google.com/p/orient | http://www.odino.org/tags?tag=orient
+
+## After cloning
+
+Set up the submodules after you cloned the repo:
+
+    git submodule init
+    git submodule update
 
 ## Current status of the binding
 
