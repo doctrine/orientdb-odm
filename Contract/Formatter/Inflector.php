@@ -10,22 +10,17 @@
  */
 
 /**
- * Class Where
+ * Class Inflector
  *
  * @package     Orient
- * @subpackage  Formatter
+ * @subpackage  Contract
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Orient\Formatter\Query;
+namespace Orient\Contract\Formatter;
 
-use Orient\Formatter\Query;
-use Orient\Contract\Formatter\Query\Token as TokenFormatter;
-
-class Regular extends Query implements TokenFormatter
+class Inflector
 {
-    public static function format(array $values)
-    {
-        return self::implodeRegular($values, 'count(*)');
-    }
+  public static function camelize($string);
 }
+

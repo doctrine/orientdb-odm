@@ -24,7 +24,7 @@ use Orient\Query\Command\Update;
 class Remove extends Update
 {
     const SCHEMA =
-        "UPDATE :Class REMOVE :Updates :Where"
+        "UPDATE :Class REMOVE :RidUpdates :Where"
     ;
 
     /**
@@ -39,6 +39,18 @@ class Remove extends Update
     {
         parent::__construct($class);
 
-        $this->setTokenValues('Updates', $values, $append);
+        $this->setTokenValues('RidUpdates', $values, $append);
+    }
+    
+    /**
+     * Returns the formatters for this query tokens
+     *
+     * @return array
+     */
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'RidUpdates'  => "Orient\Formatter\Query\RidUpdates",
+        ));
     }
 }

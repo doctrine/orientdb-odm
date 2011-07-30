@@ -49,11 +49,13 @@ class Curl implements HttpClient
     }
     
     /**
-     * @todo insert phpdoc
+     * Sets a timeout for the current cURL handler's requests.
+     * 
+     * @param integer $timeout
      */
     public function setTimeout($timeout)
     {
-      curl_setopt($this->client,CURLOPT_TIMEOUT,$timeout);
+      curl_setopt($this->client, CURLOPT_TIMEOUT,$timeout);
     }
 
     /**

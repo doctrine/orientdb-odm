@@ -25,9 +25,6 @@ use Orient\Contract\Formatter\Query\Token as TokenFormatter;
 
 class EmbeddedRid extends Query\Rid implements TokenFormatter
 {
-    /**
-     * @todo hardcoded dependency to String
-     */
     public static function format(array $values)
     {
         $rid = parent::format($values);

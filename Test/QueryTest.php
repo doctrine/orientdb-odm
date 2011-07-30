@@ -107,6 +107,14 @@ class QueryTest extends TestCase
         ;
 
         $this->assertCommandGives($sql, $this->query->getRaw());
+
+        $this->query->select(array('count(*)'))->from(array('class'), false);
+        $this->query->resetWhere();
+        $sql =
+                'SELECT count(*) FROM class'
+        ;
+
+        $this->assertCommandGives($sql, $this->query->getRaw());
     }
 
     public function testSelect()
@@ -352,10 +360,10 @@ class QueryTest extends TestCase
                 'UPDATE class SET first = "uno", nano = "due" WHERE prop = "val"'
         ;
 
-        $this->query->put(array('first' => '1', 'second' => '2'), 'puttedClass');
+        $this->query->put(array('first' => array('1' => '12:0'), 'second' => array('2' => '13:0')), 'puttedClass');
 
         $sql =
-                'UPDATE puttedClass PUT first = "1", second = "2"'
+                'UPDATE puttedClass PUT first = \'1\', 12:0, second = \'2\', 13:0'
         ;
 
         $this->assertCommandGives($sql, $this->query->getRaw());
@@ -369,11 +377,11 @@ class QueryTest extends TestCase
 
         $this->assertCommandGives($sql, $this->query->getRaw());
 
-        $this->query->remove(array('first' => 'uno', 'nano' => 'due'), 'class')
+        $this->query->remove(array('first' => '12:0', 'nano' => '12:2'), 'class')
                 ->where('prop = ?', 'val');
 
         $sql =
-                'UPDATE class REMOVE first = "uno", nano = "due" WHERE prop = "val"'
+                'UPDATE class REMOVE first = 12:0, nano = 12:2 WHERE prop = "val"'
         ;
 
         $this->assertCommandGives($sql, $this->query->getRaw());

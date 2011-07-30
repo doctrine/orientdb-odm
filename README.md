@@ -16,9 +16,9 @@ If you don't know OrientDB here are few resources:
 Homepage: http://www.orientechnologies.com/
 Documentation: http://code.google.com/p/orient | http://www.odino.org/tags?tag=orient
 
-## After Clone
+## After cloning
 
-execute this two commands:
+Set up the submodules after you cloned the repo:
 
     git submodule init
     git submodule update
@@ -145,4 +145,4 @@ In order to launch the test suite PHPUnit 3.5 is required.
 
 ## Known issues
 
-Updating of the Maps is currently bugged within the SQL statement constructors.
+See: https://github.com/congow/Orient/issues

@@ -39,7 +39,6 @@ interface Select
      * @param   string $left
      * @param   string $right
      * @return  Select
-     * @todo    data filtering here, need to delegate to a formatter
      */
     public function between($key, $left, $right);
 
