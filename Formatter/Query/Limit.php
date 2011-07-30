@@ -37,6 +37,6 @@ class Limit extends Query implements TokenFormatter
                     return false;
                 };
 
-        return $values() ? "LIMIT " . $values() : NULL;
+        return $values() ? "LIMIT " . $values() : null;
     }
 }

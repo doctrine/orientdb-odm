@@ -29,7 +29,7 @@ class Remove extends Index
     /**
      * @todo hardcoded dependency to embeddedrid formatter
      */
-    public function __construct($indexName, $key, $rid = NULL)
+    public function __construct($indexName, $key, $rid = null)
     {
         parent::__construct();
 

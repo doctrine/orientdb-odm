@@ -10,18 +10,16 @@
  */
 
 /**
- * This class is responsible of general-purpose manipulating strings.
+ * This interface is responsible of general-purpose manipulation of strings.
  *
  * @package    
  * @subpackage 
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Orient\Formatter;
+namespace Orient\Contract\Formatter;
 
-use Orient\Contract\Formatter\String as StringInterface;
-
-class String  implements StringInterface
+interface String
 {
     /**
      * Converts a filesystem path into a class name.
@@ -30,13 +28,7 @@ class String  implements StringInterface
      * @param   string $namespace
      * @return  string
      */
-    public static function convertPathToClassName($file, $namespace = '')
-    {
-        $tokens     = array('.php','/', '.\\');
-        $replaces   = array('','\\',$namespace);
-        
-        return str_replace($tokens, $replaces, $file);
-    }
+    public static function convertPathToClassName($file, $namespace = '');
 
     /**
      * Cleans the input $string removing all the characters not allowed in
@@ -46,12 +38,7 @@ class String  implements StringInterface
      * @param   string $nonFilter
      * @return  string
      */
-    public static function filterNonSQLChars($string, $nonFilter = null)
-    {
-        $pattern = "/[^a-z|A-Z|0-9|:|@|#|$nonFilter]/";
-
-        return preg_replace($pattern, "", $string);
-    }
+    public static function filterNonSQLChars($string, $nonFilter = null);
 
     /**
      * Checks wheter the given $rid is wellformed.
@@ -59,14 +46,5 @@ class String  implements StringInterface
      * @param   string $rid
      * @return  the rid is wellformed, false otherwise
      */
-    public static function filterRid($rid)
-    {
-        $parts = explode(':', $rid);
-        
-        if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1])) {
-            return $rid;
-        }
-        
-        return false;
-    }
+    public static function filterRid($rid);
 }

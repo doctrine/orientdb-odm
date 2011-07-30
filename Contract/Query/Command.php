@@ -24,7 +24,7 @@ use \Orient\Contract\Query\Formatter;
 
 interface Command
 {
-    const SCHEMA = NULL;
+    const SCHEMA = null;
 
     /**
      * Sets a where token using the AND operator.
@@ -34,7 +34,7 @@ interface Command
      * @param   string $value
      * @return  Command
      */
-    public function andWhere($condition, $value = NULL);
+    public function andWhere($condition, $value = null);
 
     /**
      * Sets the FROM clause of a SQL statement, injecting an array of $target
@@ -87,7 +87,7 @@ interface Command
      * @param   string $value
      * @return  Command
      */
-    public function orWhere($condition, $value = NULL);
+    public function orWhere($condition, $value = null);
 
     /**
      * Deletes all the WHERE conditions in the current command.
@@ -108,5 +108,5 @@ interface Command
      * @param   boolean $append
      * @param   string  $clause
      */
-    public function where($condition, $value = NULL, $append = false, $clause = "WHERE");
+    public function where($condition, $value = null, $append = false, $clause = "WHERE");
 }

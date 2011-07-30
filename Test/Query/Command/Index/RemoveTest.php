@@ -48,7 +48,7 @@ class RemoveTest extends TestCase
 
     public function testYouCanAlsoRemoveAnEntryByRid()
     {
-        $this->remove = new Remove('indexName', NULL, '20:0');
+        $this->remove = new Remove('indexName', null, '20:0');
         $query = 'DELETE FROM index:indexName WHERE rid = #20:0';
 
         $this->assertCommandGives($query, $this->remove->getRaw());

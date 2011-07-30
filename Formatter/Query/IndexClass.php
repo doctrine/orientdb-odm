@@ -31,6 +31,6 @@ class IndexClass extends Query implements TokenFormatter
             return String::filterNonSQLChars(array_shift($values)) . ".";
         }
 
-        return NULL;
+        return null;
     }
 }

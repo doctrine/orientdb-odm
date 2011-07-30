@@ -55,7 +55,7 @@ class Query implements Formatter\Query
      * @param   array $values
      * @return  array
      */
-    protected static function filterRegularChars(array $values, $nonFilter = NULL)
+    protected static function filterRegularChars(array $values, $nonFilter = null)
     {
         return array_map(function ($arr) use ($nonFilter) {
                     return String::filterNonSQLChars($arr, $nonFilter);
@@ -79,7 +79,7 @@ class Query implements Formatter\Query
      * @param   array   $values
      * @return  string
      */
-    protected static function implodeRegular(array $values, $nonFilter = NULL)
+    protected static function implodeRegular(array $values, $nonFilter = null)
     {
         $values = self::filterRegularChars($values, $nonFilter);
         $nonEmptyValues = array();

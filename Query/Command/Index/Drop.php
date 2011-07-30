@@ -32,7 +32,7 @@ class Drop extends Index
      * @param string $property
      * @param string $class
      */
-    public function __construct($property, $class = NULL)
+    public function __construct($property, $class = null)
     {
         parent::__construct();
 

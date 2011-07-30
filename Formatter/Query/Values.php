@@ -39,6 +39,6 @@ class Values extends Query implements TokenFormatter
             }
         }
 
-        return count($values) ? self::implode($values) : NULL;
+        return count($values) ? self::implode($values) : null;
     }
 }

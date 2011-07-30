@@ -35,7 +35,7 @@ class Create extends Index
      * @param string $class
      * @param string $type
      */
-    public function __construct($property, $type, $class = NULL)
+    public function __construct($property, $type, $class = null)
     {
         parent::__construct();
 

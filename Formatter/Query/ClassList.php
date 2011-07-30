@@ -31,6 +31,6 @@ class ClassList extends Query implements TokenFormatter
             return "[" . self::implodeRegular($values) . "]";
         }
 
-        return NULL;
+        return null;
     }
 }

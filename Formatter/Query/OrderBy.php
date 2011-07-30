@@ -27,6 +27,6 @@ class OrderBy extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {
-        return count($values) ? "ORDER BY " . self::implodeRegular($values, " ") : NULL;
+        return count($values) ? "ORDER BY " . self::implodeRegular($values, " ") : null;
     }
 }

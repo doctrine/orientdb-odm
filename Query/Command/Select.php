@@ -35,7 +35,7 @@ class Select extends Command implements SelectInterface
      *
      * @param array $target
      */
-    public function __construct(array $target = NULL)
+    public function __construct(array $target = null)
     {
         parent::__construct();
 
@@ -108,7 +108,7 @@ class Select extends Command implements SelectInterface
      *
      * @param integer $limit
      */
-    public function range($left = NULL, $right = NULL)
+    public function range($left = null, $right = null)
     {
         $range = array();
         $params = array('left', 'right');
@@ -117,7 +117,7 @@ class Select extends Command implements SelectInterface
             if ($$param) {
                 $range[$param] = $$param;
             } elseif ($$param === false) {
-                $range[$param] = NULL;
+                $range[$param] = null;
             }
         }
 

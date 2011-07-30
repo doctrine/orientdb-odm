@@ -23,29 +23,28 @@
 namespace Orient\ODM;
 
 use Orient\Exception\Document as Exception;
+use Orient\Formatter\CasterInterface as CasterInterface;
 use Orient\Formatter\Caster;
 use Orient\Contract\Formatter\Inflector;
 use Orient\Filesystem\Iterator;
 use Orient\ODM\Mapper\Annotations\Property as PropertyAnnotation;
+use Orient\Contract\Formatter\String as StringFormatterInterface;
 use Orient\Formatter\String as StringFormatter;
 use Orient\Contract\ODM\Mapper\Annotations\Reader as AnnotationreaderInterface;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
 
-/**
- * @todo hardcoded dependency to String formatter
- */
 class Mapper
 {
     protected $documentDirectories  = array();
-    protected $annotationReader     = NULL;
-    protected $inflector            = NULL;
+    protected $annotationReader     = null;
+    protected $inflector            = null;
     
     const ANNOTATION_PROPERTY_CLASS = 'Orient\ODM\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Orient\ODM\Mapper\Annotations\Document';
     const ORIENT_PROPERTY_CLASS     = '@class';
 
-    public function __construct(AnnotationReaderInterface $annotationReader = NULL, Inflector $inflector = null)
+    public function __construct(AnnotationReaderInterface $annotationReader = null, Inflector $inflector = null)
     {
         $this->annotationReader = $annotationReader ?: new AnnotationReader;
         $this->inflector        = $inflector ?: new DoctrineInflector;
@@ -154,14 +153,14 @@ class Mapper
      * @param   Orient\ODM\Mapper\Annotations\Property    $annotation
      * @param   mixed                                     $propertyValue
      * @return  mixed
-     * @todo    hardcoded dependency to the Caster
      */
-    protected function castProperty($annotation, $propertyValue)
+    protected function castProperty($annotation, $propertyValue, CasterInterface $caster = null)
     {
+        $caster     = $caster ?: new Caster;
         $inflector  = $this->inflector;
         $method     = 'cast' . $inflector::camelize($annotation->type);
         
-        return Caster::$method($propertyValue);
+        return $caster::$method($propertyValue);
     }
 
     protected function fill($document, \stdClass $object)
@@ -197,13 +196,15 @@ class Mapper
      * @todo    hardcoded dependency to Iterator
      * @todo    2 FOREACHs, 2 IFs
      */
-    protected function findClassMapping($OClass)
+    protected function findClassMapping($OClass, StringFormatterInterface $stringFormatter = null)
     {
+        $stringFormatter = $stringFormatter ?: new StringFormatter;
+      
         foreach ($this->getDocumentDirectories() as $dir => $namespace) {
             $regexIterator  = Iterator::getRegexIterator($dir, '/^.*\.php$/i');
 
             foreach ($regexIterator as $file) {
-                $class = StringFormatter::convertPathToClassName($file, $namespace);
+                $class = $stringFormatter::convertPathToClassName($file, $namespace);
 
                 if (class_exists($class)) {
                     $annotation = $this->getClassAnnotation($class);
@@ -234,7 +235,7 @@ class Mapper
             return $annotations[self::ANNOTATION_CLASS_CLASS];
         }
 
-        return NULL;
+        return null;
     }
 
     /**

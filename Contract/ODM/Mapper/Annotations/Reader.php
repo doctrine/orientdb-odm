@@ -35,8 +35,8 @@ interface Reader
      *
      * The function is supplied two arguments. The first argument is the name
      * of the annotation and the second argument an array of values for this
-     * annotation. The function is assumed to return an object or NULL.
-     * Whenever the function returns NULL for an annotation, the implementation falls
+     * annotation. The function is assumed to return an object or null.
+     * Whenever the function returns null for an annotation, the implementation falls
      * back to the default annotation creation process of the underlying parser.
      *
      * @param Closure $func
@@ -84,7 +84,7 @@ interface Reader
      * @param ReflectionClass $class The ReflectionClass of the class from which
      * the class annotations should be read.
      * @param string $annotation The name of the annotation.
-     * @return The Annotation or NULL, if the requested annotation does not exist.
+     * @return The Annotation or null, if the requested annotation does not exist.
      */
     public function getClassAnnotation(\ReflectionClass $class, $annotation);
     
@@ -102,7 +102,7 @@ interface Reader
      * 
      * @param ReflectionProperty $property
      * @param string $annotation The name of the annotation.
-     * @return The Annotation or NULL, if the requested annotation does not exist.
+     * @return The Annotation or null, if the requested annotation does not exist.
      */
     public function getPropertyAnnotation(\ReflectionProperty $property, $annotation);
     
@@ -120,7 +120,7 @@ interface Reader
      * 
      * @param ReflectionMethod $method
      * @param string $annotation The name of the annotation.
-     * @return The Annotation or NULL, if the requested annotation does not exist.
+     * @return The Annotation or null, if the requested annotation does not exist.
      */
     public function getMethodAnnotation(\ReflectionMethod $method, $annotation);
 }

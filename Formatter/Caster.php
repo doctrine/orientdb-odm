@@ -19,29 +19,55 @@
 
 namespace Orient\Formatter;
 
-class Caster
+use Orient\Contract\Formatter\Caster as CasterInterface;
+
+class Caster implements CasterInterface
 {
+    /**
+     * Casts the given $value to boolean.
+     *
+     * @param  mixed $value
+     * @return boolean
+     */
     public static function castBoolean($value)
     {
         return (bool) $value;
     }
     
+    /**
+     * Casts the given $value to a DateTime object.
+     *
+     * @param  mixed $value
+     * @return boolean
+     */
     public static function castDate($value)
     {
         return new \DateTime($value);
     }
 
+    /**
+     * Casts the given $value to a DateTime object.
+     *
+     * @param  mixed $value
+     * @return boolean
+     */
     public static function castDateTime($value)
     {
         return self::castDate($value);
     }
 
+    /**
+     * Casts the given $value to string.
+     *
+     * @param  mixed $value
+     * @return boolean
+     */    
     public static function castString($value)
     {
         
         if($value instanceOf \StdClass){
             if (!method_exists($value, '__toString')){
-                $value = '';
+                $value = null;
             }
         }
         

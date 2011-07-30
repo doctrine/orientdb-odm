@@ -37,6 +37,6 @@ class Target extends Query implements TokenFormatter
             return array_shift($values);
         }
 
-        return NULL;
+        return null;
     }
 }

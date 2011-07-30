@@ -32,7 +32,7 @@ use Orient\Contract\Query\Command\Revoke as RevokeInterface;
 
 class Query implements QueryInterface
 {
-    protected $command = NULL;
+    protected $command = null;
     protected $commands = array(
         'select'            => 'Orient\Query\Command\Select',
         'insert'            => 'Orient\Query\Command\Insert',
@@ -65,7 +65,7 @@ class Query implements QueryInterface
      * @param array   $target
      * @param string  $command
      */
-    public function __construct(array $target = NULL, array $commands = array())
+    public function __construct(array $target = null, array $commands = array())
     {
         $this->setCommands($commands);
 
@@ -128,7 +128,7 @@ class Query implements QueryInterface
      * @param string  $condition
      * @param mixed   $value
      */
-    public function andWhere($condition, $value = NULL)
+    public function andWhere($condition, $value = null)
     {
         return $this->command->andwhere($condition, $value);
     }
@@ -156,7 +156,7 @@ class Query implements QueryInterface
      * @param   string $linked
      * @return  mixed
      */
-    public function create($class, $property = NULL, $type = NULL, $linked = NULL)
+    public function create($class, $property = null, $type = null, $linked = null)
     {
         return $this->executeClassOrPropertyCommand(
             'create', $class, $property, $type, $linked
@@ -185,7 +185,7 @@ class Query implements QueryInterface
      * @param   string $property
      * @return  mixed
      */
-    public function drop($class, $property = NULL)
+    public function drop($class, $property = null)
     {
         return $this->executeClassOrPropertyCommand('drop', $class, $property);
     }
@@ -289,7 +289,7 @@ class Query implements QueryInterface
      * @param   string $type
      * @return  Query
      */
-    public function index($property, $type, $class = NULL)
+    public function index($property, $type, $class = null)
     {
         $commandClass   = $this->getCommandClass('index.create');
         $this->command  = new $commandClass($property, $type, $class);
@@ -332,7 +332,7 @@ class Query implements QueryInterface
      * @param string $key
      * @param string $rid
      */
-    public function indexRemove($indexName, $key, $rid = NULL)
+    public function indexRemove($indexName, $key, $rid = null)
     {
         $commandClass   = $this->getCommandClass('index.remove');
         $this->command  = new $commandClass($indexName, $key, $rid);
@@ -431,7 +431,7 @@ class Query implements QueryInterface
      * @param string  $condition
      * @param mixed   $value
      */
-    public function orWhere($condition, $value = NULL)
+    public function orWhere($condition, $value = null)
     {
         return $this->command->orWhere($condition, $value);
     }
@@ -443,7 +443,7 @@ class Query implements QueryInterface
      * @param   string  $right
      * @return  mixed
      */
-    public function range($left = NULL, $right = NULL)
+    public function range($left = null, $right = null)
     {
         return $this->command->range($left, $right);
     }
@@ -543,7 +543,7 @@ class Query implements QueryInterface
      * @param   string $class
      * @return  Query
      */
-    public function unindex($property, $class = NULL)
+    public function unindex($property, $class = null)
     {
         $commandClass = $this->getCommandClass('index.drop');
         $this->command = new $commandClass($property, $class);
@@ -573,7 +573,7 @@ class Query implements QueryInterface
      * @param string  $condition
      * @param mixed   $value
      */
-    public function where($condition, $value = NULL)
+    public function where($condition, $value = null)
     {
         return $this->command->where($condition, $value);
     }
@@ -614,7 +614,7 @@ class Query implements QueryInterface
      * @param string $class
      * @param string $property
      */
-    protected function manageProperty($action, $class, $property, $type = NULL, $linked = NULL)
+    protected function manageProperty($action, $class, $property, $type = null, $linked = null)
     {
         $commandClass = $this->getCommandClass("property." . $action);
         $this->command = new $commandClass($property, $type, $linked);
@@ -635,7 +635,7 @@ class Query implements QueryInterface
      * @param   string $linked
      * @return  mixed
      */
-    protected function executeClassOrPropertyCommand($action, $class, $property = NULL, $type = NULL, $linked = NULL)
+    protected function executeClassOrPropertyCommand($action, $class, $property = null, $type = null, $linked = null)
     {
         if ($property) {
             return $this->manageProperty($action, $class, $property, $type, $linked);

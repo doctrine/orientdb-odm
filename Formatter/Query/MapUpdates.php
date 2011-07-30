@@ -42,6 +42,6 @@ class MapUpdates extends Query implements TokenFormatter
             }
         }
 
-        return count($updates) ? self::implode($updates) : NULL;
+        return count($updates) ? self::implode($updates) : null;
     }
 }

@@ -30,8 +30,8 @@ abstract class Command implements CommandContract
 {
     protected $tokens       = array();
     protected $formatters   = array();
-    protected $statement    = NULL;
-    protected $formatter    = NULL;
+    protected $statement    = null;
+    protected $formatter    = null;
 
     /**
      * Builds a new object, creating the SQL statement from the class SCHEMA
@@ -52,7 +52,7 @@ abstract class Command implements CommandContract
      * @param   string $value
      * @return  Command
      */
-    public function andWhere($condition, $value = NULL)
+    public function andWhere($condition, $value = null)
     {
         return $this->where($condition, $value, true, "AND");
     }
@@ -118,7 +118,7 @@ abstract class Command implements CommandContract
      * @param   string $value
      * @return  Command
      */
-    public function orWhere($condition, $value = NULL)
+    public function orWhere($condition, $value = null)
     {
         return $this->where($condition, $value, true, "OR");
     }
@@ -155,7 +155,7 @@ abstract class Command implements CommandContract
      * @todo  find a way to specify multiple ?
      * @todo  data cleaning here through addslashes: this is a job for a formatter
      */
-    public function where($condition, $value = NULL, $append = false, $clause = "WHERE")
+    public function where($condition, $value = null, $append = false, $clause = "WHERE")
     {
         $condition = str_replace("?", '"' . addslashes($value) . '"', $condition);
         $this->setTokenValues('Where', array("{$clause} " . $condition), $append, false, false);

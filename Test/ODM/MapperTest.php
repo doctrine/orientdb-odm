@@ -168,14 +168,14 @@ class ManagerTest extends TestCase
     {
         $object = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(NULL, $object->getAnnotatedButNotInJson());
+        $this->assertEquals(null, $object->getAnnotatedButNotInJson());
     }
 
     public function testPropertiesGetsMappedInTheObjectOnlyIfAnnotated()
     {
         $object = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(NULL, $object->getStreet());
+        $this->assertEquals(null, $object->getStreet());
     }
 
     public function testGettingTheDirectoriesInWhichTheMapperLooksForPOPOs()

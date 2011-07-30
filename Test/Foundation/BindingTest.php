@@ -111,7 +111,7 @@ class BindingTest extends TestCase
 
         $this->orient->setDatabase('demo');
         $this->assertStatusCode(self::_200, $this->orient->query('select from Address'), 'executes a SELECT');
-        $this->assertStatusCode(self::_200, $this->orient->query('select from Address', NULL, 10), 'executes a SELECT with LIMIT');
+        $this->assertStatusCode(self::_200, $this->orient->query('select from Address', null, 10), 'executes a SELECT with LIMIT');
         $this->assertStatusCode(self::_500, $this->orient->query("update Profile set online = false"), 'tries to xecute an UPDATE with the quesry command');
     }
 

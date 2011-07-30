@@ -336,6 +336,6 @@ interface Query
      * @param string  $condition
      * @param mixed   $value
      */
-    public function where($condition, $value = NULL);
+    public function where($condition, $value = null);
 }
 

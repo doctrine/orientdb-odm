@@ -102,7 +102,7 @@ class FormatterTest extends TestCase
 
         $this->assertEquals('[a, b, c]', $formatter::format($classes));
         $this->assertEquals('[a]', $formatter::format(array('a')));
-        $this->assertEquals(NULL, $formatter::format(array()));
+        $this->assertEquals(null, $formatter::format(array()));
         $this->assertEquals('[a2]', $formatter::format(array('a2')));
     }
 
@@ -232,7 +232,7 @@ class FormatterTest extends TestCase
 
         $this->assertEquals('[a, b, c]', $formatter::format($target));
         $this->assertEquals('[a, 12:0]', $formatter::format(array('a', '12:0')));
-        $this->assertEquals(NULL, $formatter::format(array()));
+        $this->assertEquals(null, $formatter::format(array()));
         $this->assertEquals('a2', $formatter::format(array('a2')));
         $this->assertEquals('a', $formatter::format(array('a;')));
     }
@@ -256,7 +256,7 @@ class FormatterTest extends TestCase
 
         $this->assertEquals('ORDER BY a ASC, b DESC, c PRESF', $formatter::format($orderBy));
         $this->assertEquals('ORDER BY a, 12:0', $formatter::format(array('a', '12:0')));
-        $this->assertEquals(NULL, $formatter::format(array()));
+        $this->assertEquals(null, $formatter::format(array()));
         $this->assertEquals('ORDER BY a2, @rid', $formatter::format(array('a2', '@rid')));
         $this->assertEquals('ORDER BY a#', $formatter::format(array('a#;')));
     }
@@ -269,10 +269,10 @@ class FormatterTest extends TestCase
         $formatter = new Formatter\Query\Limit();
 
         $this->assertEquals('LIMIT 2', $formatter::format($limits));
-        $this->assertEquals(NULL, $formatter::format(array('a', '12:0')));
-        $this->assertEquals(NULL, $formatter::format(array()));
-        $this->assertEquals(NULL, $formatter::format(array('a2', '@rid')));
-        $this->assertEquals(NULL, $formatter::format(array('a#;')));
+        $this->assertEquals(null, $formatter::format(array('a', '12:0')));
+        $this->assertEquals(null, $formatter::format(array()));
+        $this->assertEquals(null, $formatter::format(array('a2', '@rid')));
+        $this->assertEquals(null, $formatter::format(array('a#;')));
     }
 
     public function testFormattingRange()
@@ -284,9 +284,9 @@ class FormatterTest extends TestCase
 
         $this->assertEquals('RANGE 12:1 12:2', $formatter::format($ranges));
         $this->assertEquals('RANGE 12:0', $formatter::format(array('a', '12:0')));
-        $this->assertEquals(NULL, $formatter::format(array()));
-        $this->assertEquals(NULL, $formatter::format(array('a2', '@rid')));
-        $this->assertEquals(NULL, $formatter::format(array('a#;')));
+        $this->assertEquals(null, $formatter::format(array()));
+        $this->assertEquals(null, $formatter::format(array('a2', '@rid')));
+        $this->assertEquals(null, $formatter::format(array('a#;')));
     }
 
     public function testFormattingFields()
@@ -298,7 +298,7 @@ class FormatterTest extends TestCase
 
         $this->assertEquals('12, 0, @class, @@rid, prop', $formatter::format($fields));
         $this->assertEquals('a, 12:0', $formatter::format(array('a', '12:0')));
-        $this->assertEquals(NULL, $formatter::format(array()));
+        $this->assertEquals(null, $formatter::format(array()));
         $this->assertEquals('a2, @rid', $formatter::format(array('a2;', '@rid\'')));
         $this->assertEquals('a#', $formatter::format(array('a#;')));
     }

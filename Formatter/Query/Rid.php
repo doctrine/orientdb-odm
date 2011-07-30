@@ -31,6 +31,6 @@ class Rid extends Query implements TokenFormatter
                     return String::filterRid($arr);
                 });
 
-        return (count($values)) ? array_shift($values) : NULL;
+        return (count($values)) ? array_shift($values) : null;
     }
 }

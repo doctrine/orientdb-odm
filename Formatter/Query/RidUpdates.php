@@ -38,6 +38,6 @@ class RidUpdates extends Query implements TokenFormatter
             }
         }
 
-        return count($rids) ? self::implode($rids) : NULL;
+        return count($rids) ? self::implode($rids) : null;
     }
 }
