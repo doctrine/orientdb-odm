@@ -44,11 +44,35 @@ Use the PHP5.3 standard autoloader (https://gist.github.com/221634).
 
 ## Current status of the query builder
 
-All the known SQL command are implemented for the latest version of OrientDB, that means also ALTER CLASS/ALTER PROPERTY are included.
+The query-builder is finished, in the future we will consider the integration of OrientDB
+Graph Edition: http://code.google.com/p/orient/wiki/GraphEdTutorial.
 
-Integration tests (the ones directly connecting to OrientDB) are almost finished, we only need to refine them.
+To take advantage of the QB you only have to instantiate a Query object:
 
-The release of the query-builder is scheduled for July/August 2011.
+    use Orient\Query;
+    
+    $query = new Query();
+    $query->from(array('users'))->where('username = ?', "admin");
+    
+    echo $query->getRaw(); // SELECT FROM users WHERE username = "admin"
+
+The Query object incapsulates lots of sub-commands, like SELECT, DROP, GRANT, INSERT
+and so on...
+
+You can use also those commands:
+
+    use Orient\Query\Command\Select;
+    
+    $select = new Select('users');
+    echo $select->getRaw(); // SELECT FROM users
+
+
+However, we strongly discourage this approach.
+
+You'd better take a look at the tests of the Query class and its subcommands to get
+a full overview of the available commands: in order to match OrientDB's native
+SQL-like synthax we tried to preserve names and stuff like that, but a few things
+have changed so far.
 
 ## Current status of the mapper
 
