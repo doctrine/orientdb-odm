@@ -27,7 +27,7 @@ use Orient\Contract\Query\Command\Select as SelectInterface;
 class Select extends Command implements SelectInterface
 {
     const SCHEMA =
-        "SELECT :Projections FROM :Target :Where :OrderBy :Limit :Range"
+        "SELECT :Projections FROM :Target :Where :Between :OrderBy :Limit :Range"
     ;
 
     /**
@@ -53,15 +53,28 @@ class Select extends Command implements SelectInterface
      * @param   string $left
      * @param   string $right
      * @return  Select
-     * @todo    data filtering here, need to delegate to a formatter
      */
     public function between($key, $left, $right)
     {
         $this->resetWhere();
-        $this->where(addslashes($key). " BETWEEN " . addslashes($left));
-        $this->andWhere(addslashes($right));
+        $this->where($key);
+        $this->setTokenValues('Between', array($left, $right));
 
         return $this;
+    }
+    
+    /**
+     * Deletes all the WHERE and BETWEEN conditions in the current SELECT.
+     *
+     * @return true
+     */
+    public function resetWhere()
+    {
+        parent::resetWhere();
+        
+        $this->clearToken('Between');
+
+        return true;
     }
 
     /**
@@ -138,6 +151,7 @@ class Select extends Command implements SelectInterface
             'OrderBy'     => "Orient\Formatter\Query\OrderBy",
             'Limit'       => "Orient\Formatter\Query\Limit",
             'Range'       => "Orient\Formatter\Query\Range",
+            'Between'     => "Orient\Formatter\Query\Between",
         ));
     }
 }

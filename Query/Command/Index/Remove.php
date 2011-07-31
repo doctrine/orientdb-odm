@@ -20,19 +20,18 @@
 namespace Orient\Query\Command\Index;
 
 use Orient\Query\Command\Index;
+use Orient\Contract\Formatter\Query\Token as TokenFormatter;
 use Orient\Formatter\Query\EmbeddedRid as EmbeddedRidFormatter;
 
 class Remove extends Index
 {
     const SCHEMA = "DELETE FROM index::Name :Where";
 
-    /**
-     * @todo hardcoded dependency to embeddedrid formatter
-     */
-    public function __construct($indexName, $key, $rid = null)
+    public function __construct($indexName, $key, $rid = null, TokenFormatter $ridFormatter = null)
     {
         parent::__construct();
 
+        $ridFormatter = $ridFormatter ?: new EmbeddedRidFormatter;
         $this->setToken('Name', $indexName);
 
         if (!is_null($key)) {
@@ -41,7 +40,7 @@ class Remove extends Index
 
         if ($rid) {
             $method = $key ? 'andWhere' : 'where';
-            $rid    = EmbeddedRidFormatter::format(array($rid));
+            $rid    = $ridFormatter::format(array($rid));
             $this->$method("rid = $rid");
         }
     }

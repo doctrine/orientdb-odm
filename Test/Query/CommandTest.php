@@ -86,6 +86,13 @@ class Command extends TestCase
         $this->assertCommandGives("WHERE i loves \"U\" OR mark loves \"me\"", $this->command->getRaw());
     }
 
+    public function testYouCanSpecifyMultipleValuesInAWhere()
+    {
+        $this->command->where("i loves ? AND you love ?", array("U", 'me'));
+
+        $this->assertCommandGives("WHERE i loves \"U\" AND you love \"me\"", $this->command->getRaw());
+    }
+
     public function testTheWhereWorksCorrectlyWithReUsedPrivateNamesLikeANDOrORWHERE()
     {
         $this->command->where("i loves ?", "ME, AND YOU");

@@ -8,9 +8,9 @@
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Orient\Filesystem;
+namespace Orient\Filesystem\Iterator;
 
-class Iterator
+class Regex extends \RegexIterator
 {
     /**
      * Returns a regex iterator instance, starting from $dir applying the given
@@ -20,13 +20,13 @@ class Iterator
      * @param regex             $pattern
      * @return \RegexIterator
      */
-    public static function getRegexIterator($directory, $pattern)
+    public function __construct($directory, $pattern)
     {
         $iterator       = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($directory)
         );
         
-        return new \RegexIterator($iterator, $pattern);
+        parent::__construct($iterator, $pattern);
     }
 }
 

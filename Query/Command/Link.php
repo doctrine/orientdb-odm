@@ -56,7 +56,7 @@ class Link extends Command
      * @param   string $property
      * @return  Link
      */
-    public function to($class, $property)
+    public function with($class, $property)
     {
         $this->setToken('DestinationClass', $class);
         $this->setToken('DestinationProperty', $property);

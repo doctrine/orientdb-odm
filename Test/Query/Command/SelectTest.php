@@ -27,6 +27,7 @@ class SelectTest extends TestCase
             ':Projections' => array(),
             ':Target' => array(),
             ':Where' => array(),
+            ':Between' => array(),
             ':OrderBy' => array(),
             ':Limit' => array(),
             ':Range' => array(),

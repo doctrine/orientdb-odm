@@ -26,7 +26,7 @@ use Orient\Exception\Document as Exception;
 use Orient\Formatter\CasterInterface as CasterInterface;
 use Orient\Formatter\Caster;
 use Orient\Contract\Formatter\Inflector;
-use Orient\Filesystem\Iterator;
+use Orient\Filesystem\Iterator\Regex as RegexIterator;
 use Orient\ODM\Mapper\Annotations\Property as PropertyAnnotation;
 use Orient\Contract\Formatter\String as StringFormatterInterface;
 use Orient\Formatter\String as StringFormatter;
@@ -91,7 +91,7 @@ class Mapper
             $orientClass  = $orientObject->$classProperty;
             
             if ($orientClass) {
-                $class = $this->findClassMapping($orientClass);
+                $class = $this->findClassMappingInDirectories($orientClass);
 
                 return $this->createDocument($class, $orientObject);
             }
@@ -187,31 +187,56 @@ class Mapper
     }
 
     /**
-     * Searches a class mapping the corrispective OrientDB $class.
-     *
+     * Tries to find the PHP class mapping OrientDB's $OClass in each of the
+     * directories where the documents are stored.
+     * 
      * @param   string $OClass
-     * @return  a class name, null if not found
+     * @param   \Iterator $iterator
+     * @return  string
      * @throws  Orient\Exception\ODM\OClass\NotFound
-     * @todo    hardcoded dependency to Iterator
      */
-    protected function findClassMapping($OClass, StringFormatterInterface $stringFormatter = null)
-    {
-        $stringFormatter = $stringFormatter ?: new StringFormatter;
-      
-        foreach ($this->getDocumentDirectories() as $dir => $namespace) {
-            $regexIterator  = Iterator::getRegexIterator($dir, '/^.*\.php$/i');
-
-            foreach ($regexIterator as $file) {
-                $class = $stringFormatter::convertPathToClassName($file, $namespace);
-                $annotation = $this->getClassAnnotation($class);
-
-                if($annotation && $annotation->hasMatchingClass($OClass)){
-                    return $class;
-                }
+    protected function findClassMappingInDirectories($OClass)
+    {      
+        foreach ($this->getDocumentDirectories() as $dir => $namespace) {            
+            if ($class = $this->findClassMappingInDirectory($OClass, $dir, $namespace)) {
+                return $class;
             }
         }
 
         throw new ClassNotFoundException($OClass);
+    }
+    
+    /**
+     * Seraches a PHP class mapping OrientDB's $OClass in $directory, which uses
+     * the given $namespace.
+     *
+     * @param   string $OClass
+     * @param   string $directory
+     * @param   string $namespace
+     * @param   StringFormatterInterface $stringFormatter
+     * @return  string|null
+     */
+    protected function findClassMappingInDirectory(
+            $OClass, 
+            $directory, 
+            $namespace, 
+            StringFormatterInterface $stringFormatter = null, 
+            \Iterator $iterator = null
+    )
+    {        
+        $stringFormatter    = $stringFormatter ?: new StringFormatter;
+        $iterator           = $iterator ?: new RegexIterator($directory, '/^.*\.php$/i');
+        
+        foreach ($iterator as $file) {
+            $class      = $stringFormatter::convertPathToClassName($file, $namespace);
+            $annotation = $this->getClassAnnotation($class);
+
+            if($annotation && $annotation->hasMatchingClass($OClass)){
+                return $class;
+            }
+        }
+        
+        return null;
     }
 
     /**

@@ -517,7 +517,6 @@ class Query implements QueryInterface
      *
      * @param   string   $to
      * @return  Query
-     * @todo    ->TO() is used also in Link class, but with different arguments ($class, $property)
      */
     public function to($to)
     {

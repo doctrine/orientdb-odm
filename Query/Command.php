@@ -25,6 +25,7 @@ use Orient\Contract\Formatter\Query as QueryFormatter;
 use Orient\Formatter\Query as Formatter;
 use Orient\Exception;
 use Orient\Contract\Query\Command as CommandContract;
+use Orient\Validator\Escaper as EscapeValidator;
 
 abstract class Command implements CommandContract
 {
@@ -152,12 +153,20 @@ abstract class Command implements CommandContract
      * @param mixed   $value
      * @param boolean $append
      * @param string  $clause
-     * @todo  find a way to specify multiple ?
-     * @todo  data cleaning here through addslashes: this is a job for a formatter
      */
     public function where($condition, $value = null, $append = false, $clause = "WHERE")
-    {
-        $condition = str_replace("?", '"' . addslashes($value) . '"', $condition);
+    {       
+        $validator = new EscapeValidator;
+        
+        if (is_array($value))
+        {
+            $condition = $this->formatWhereConditionWithMultipleTokens($condition, $value, $validator);
+        }
+        else
+        {
+            $condition = $this->formatWhereConditionWithSingleToken($condition, $value, $validator);
+        } 
+        
         $this->setTokenValues('Where', array("{$clause} " . $condition), $append, false, false);
 
         return $this;
@@ -321,6 +330,35 @@ abstract class Command implements CommandContract
         $statement = preg_replace('/( ){2,}/', ' ', $statement);
 
         return trim($statement);
+    }
+    
+    /**
+     * Substitutes multiple tokens ($values) in the WHERE $condition.
+     *
+     * @param   string $condition
+     * @param   array $values
+     * @return  string
+     * @throws  \LogicException
+     */
+    protected function formatWhereConditionWithMultipleTokens($condition, Array $values, EscapeValidator $validator)
+    {            
+        if (count($values) == substr_count($condition, '?')) {
+              foreach ($values as $replacement) {
+                  $condition =  preg_replace("/\?/", '"' . $validator->clean($replacement, 1) . '"', $condition, 1);
+              }
+              
+              return $condition;
+        }
+        else {
+            $message = "Number of given parameters does not match number of tokens";
+
+            throw new \LogicException($message);
+        }
+    }
+    
+    protected function formatWhereConditionWithSingleToken($condition, $value, EscapeValidator $validator)
+    {
+        return str_replace("?", '"' . $validator->clean($value, 1) . '"', $condition);
     }
 
     /**

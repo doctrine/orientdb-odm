@@ -333,7 +333,7 @@ class QueryTest extends TestCase
 
     public function testCreatingALink()
     {
-        $this->query->link('class', "property", "Profile")->to("class2", "property2");
+        $this->query->link('class', "property", "Profile")->with("class2", "property2");
 
         $sql =
                 'CREATE LINK Profile FROM class.property TO class2.property2'
@@ -341,7 +341,7 @@ class QueryTest extends TestCase
 
         $this->assertCommandGives($sql, $this->query->getRaw());
 
-        $this->query->link('class', "property", "Profile", true)->to("class2", "property2");
+        $this->query->link('class', "property", "Profile", true)->with("class2", "property2");
 
         $sql =
                 'CREATE LINK Profile FROM class.property TO class2.property2 INVERSE'

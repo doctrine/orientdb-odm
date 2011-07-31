@@ -318,7 +318,7 @@ class QueryBuilderTest extends TestCase
 
   public function testLinkingTwoObjects()
   {
-      $this->query->link('Company', 'id', 'in', true)->to('ORole', 'id');
+      $this->query->link('Company', 'id', 'in', true)->with('ORole', 'id');
 
       $this->assertStatusCode(self::_200, $this->orient->command($this->query->getRaw()));
   }
