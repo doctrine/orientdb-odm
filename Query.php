@@ -46,6 +46,8 @@ class Query implements QueryInterface
         'class.create'      => 'Orient\Query\Command\OClass\Create',
         'class.drop'        => 'Orient\Query\Command\OClass\Drop',
         'class.alter'       => 'Orient\Query\Command\OClass\Alter',
+        'truncate.class'    => 'Orient\Query\Command\Truncate\OClass',
+        'truncate.cluster'  => 'Orient\Query\Command\Truncate\Cluster',
         'references.find'   => 'Orient\Query\Command\Reference\Find',
         'property.create'   => 'Orient\Query\Command\Property\Create',
         'property.drop'     => 'Orient\Query\Command\Property\Drop',
@@ -521,6 +523,19 @@ class Query implements QueryInterface
     public function to($to)
     {
         return $this->command->to($to);
+    }
+    
+    public function truncate($class, $andCluster = false)
+    {
+        $commandClass   = $this->getCommandClass('truncate.class');
+
+        if ($andCluster) {
+            $commandClass   = $this->getCommandClass('truncate.cluster');
+        }
+        
+        $this->command  = new $commandClass($class);
+        
+        return $this->command;
     }
 
     /**

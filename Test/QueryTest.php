@@ -486,4 +486,14 @@ class QueryTest extends TestCase
     {
         $this->assertCommandGives(Select::getTokens(), $this->query->getTokens());
     }
+    
+    public function testTruncatingAClass()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Truncate\OClass', $this->query->truncate('myFictionaryClass'));
+    }
+    
+    public function testTruncatingACluster()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Truncate\Cluster', $this->query->truncate('myFictionaryCluster', true));
+    }
 }
