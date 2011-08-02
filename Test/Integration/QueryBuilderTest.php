@@ -284,6 +284,26 @@ class QueryBuilderTest extends TestCase
 
         return $class;
     }
+    
+    /**
+     * @depends testCreatingAClass
+     */
+    public function testTruncatingAClass($class)
+    {
+        $this->query->truncate($class);
+
+        $this->assertStatusCode(self::_200, $this->query());
+    }
+    
+    /**
+     * @depends testCreatingAClass
+     */
+    public function testTruncatingACluster($class)
+    {
+        $this->query->truncate($class, true);
+
+        $this->assertStatusCode(self::_200, $this->query());
+    }
 
     /**
      * @depends testCreatingAClass
@@ -432,6 +452,20 @@ class QueryBuilderTest extends TestCase
         $document = $res->result[0];
         $this->assertInstanceOf('stdClass', $document->knows);
         $this->assertEquals('#8:1', $document->knows->Johnny);
+    }
+    
+    public function testTruncatingNonExistingClass()
+    {
+        $this->query->truncate('OMNOMNOMOMNOMNOMNO');
+
+        $this->assertStatusCode(self::_500, $this->query());
+    }
+    
+    public function testTruncatingNonExistingCluster()
+    {
+        $this->query->truncate('OMNOMOMNOMNOMNOM', true);
+
+        $this->assertStatusCode(self::_500, $this->query());
     }
 
     protected function countResults(\Orient\Http\Response $response)
