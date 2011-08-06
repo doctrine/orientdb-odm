@@ -67,7 +67,7 @@ You can use also those commands:
     echo $select->getRaw(); // SELECT FROM users
 
 
-However, we strongly discourage this approach.
+However, we strongly discourage this approach: commands will change, Query, thought as a facade, - hopely - not.
 
 You'd better take a look at the tests of the Query class and its subcommands to get
 a full overview of the available commands: in order to match OrientDB's native
