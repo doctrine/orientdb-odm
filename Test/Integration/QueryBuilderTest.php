@@ -54,7 +54,7 @@ class QueryBuilderTest extends TestCase
 
     public function testTheRangeOfASelect()
     {
-        $this->query->from(array('Address'))->range('12:1');
+        $this->query->from(array('Address'))->range('13:1');
 
         $this->assertStatusCode(self::_200, $this->query());
 
@@ -70,13 +70,13 @@ class QueryBuilderTest extends TestCase
 
         $this->assertStatusCode(self::_200, $this->query());
 
-        $this->query->range('12:100', '12:109');
+        $this->query->range('13:100', '13:109');
 
         $this->assertStatusCode(self::_200, $this->query());
 
         $this->assertEquals(10, $this->countResults($this->query()));
 
-        $this->query->range('12:100', '12:101');
+        $this->query->range('13:100', '13:101');
 
         $this->assertEquals(2, $this->countResults($this->query()));
     }
@@ -102,34 +102,34 @@ class QueryBuilderTest extends TestCase
 
     public function testSelectingByRIDs()
     {
-        $this->query->from(array('12:100'));
+        $this->query->from(array('13:100'));
 
         $this->assertStatusCode(self::_200, $this->query());
-        $this->assertFirstRid('12:100', $this->query());
+        $this->assertFirstRid('13:100', $this->query());
     }
 
     public function testOrderingTheQuery()
     {
-        $this->query->from(array('12:100', '12:101'))->orderBy('rid ASC')->orderBy('street DESC');
+        $this->query->from(array('13:100', '13:101'))->orderBy('rid ASC')->orderBy('street DESC');
 
         $this->assertStatusCode(self::_200, $this->query());
-        $this->assertFirstRid('12:100', $this->query());
+        $this->assertFirstRid('13:100', $this->query());
 
         $this->query->orderBy('rid DESC', false);
 
         $this->assertStatusCode(self::_200, $this->query());
-        $this->assertFirstRid('12:101', $this->query());
+        $this->assertFirstRid('13:101', $this->query());
     }
 
     public function testDoingAComplexSelect()
     {
         $this->query->limit(10);
         $this->query->limit(20);
-        $this->query->from(array('12:2', '12:4'), false);
+        $this->query->from(array('13:2', '13:4'), false);
         $this->query->select(array('rid', 'street'));
         $this->query->select(array('type'));
-        $this->query->range('12:2');
-        $this->query->range(null, '12:4');
+        $this->query->range('13:2');
+        $this->query->range(null, '13:4');
         $this->query->orderBy('street ASC');
 
         $this->assertStatusCode(self::_200, $this->query());
@@ -137,7 +137,7 @@ class QueryBuilderTest extends TestCase
 
     public function testInsertARecord()
     {
-        $countQuery = $this->orient->command('SELECT count(*) FROM Address');
+        $countQuery = $this->orient->command('SELECT FROM Address');
         $count = $this->countResults($countQuery);
 
         $this->query->insert()
@@ -146,7 +146,7 @@ class QueryBuilderTest extends TestCase
                 ->into('Address');
 
         $this->assertStatusCode(self::_200, $this->query());
-        $recount = $this->countResults($this->orient->command('SELECT count(*) FROM Address'));
+        $recount = $this->countResults($this->orient->command('SELECT FROM Address'));
         $this->assertEquals($count + 1, $recount);
     }
 
@@ -155,7 +155,7 @@ class QueryBuilderTest extends TestCase
      */
     public function testADelete()
     {
-        $countQuery = $this->orient->command('SELECT count(*) FROM Address');
+        $countQuery = $this->orient->command('SELECT FROM Address');
         $count = $this->countResults($countQuery);
 
         $this->query->delete('Address')
@@ -163,7 +163,7 @@ class QueryBuilderTest extends TestCase
                 ->orWhere('type = "villetta"');
 
         $this->assertStatusCode(self::_200, $this->query());
-        $recount = $this->countResults($this->orient->command('SELECT count(*) FROM Address'));
+        $recount = $this->countResults($this->orient->command('SELECT FROM Address'));
         $this->assertEquals($count - 1, $recount);
     }
 
@@ -196,7 +196,7 @@ class QueryBuilderTest extends TestCase
         $this->query->index('in', 'unique', 'OGraphEdge');
 
         $this->assertStatusCode(self::_200, $this->query());
-        $countQuery = $this->orient->command('SELECT count(*) FROM OGraphEdge');
+        $countQuery = $this->orient->command('SELECT FROM OGraphEdge');
         $count = $this->countResults($countQuery);
         $this->assertEquals($count, $this->query()->getBody());
     }
@@ -231,7 +231,7 @@ class QueryBuilderTest extends TestCase
     {
         $this->query->indexCount('index_name_2');
         $count = $this->countResults($this->query());
-        $this->query->indexPut('index_name_2', 'k', '12:100');
+        $this->query->indexPut('index_name_2', 'k', '13:100');
 
         $this->assertStatusCode(self::_204, $this->query());
         
@@ -269,7 +269,7 @@ class QueryBuilderTest extends TestCase
 
     public function testFindingAReference()
     {
-        $this->query->findReferences('12:0');
+        $this->query->findReferences('13:0');
 
         $this->assertStatusCode(self::_200, $this->query());
     }
@@ -379,21 +379,21 @@ class QueryBuilderTest extends TestCase
     public function testUpdating()
     {        
         $this->query->update('Address')->set(array('nick' => 'Luca'));
-        $this->query->orWhere('@rid = ?', '12:101');
+        $this->query->orWhere('@rid = ?', '13:101');
         
         $this->assertStatusCode(self::_200, $this->query());
         
-        $res = json_decode($this->orient->command('SELECT FROM Address WHERE @rid = #12:101')->getBody());
+        $res = json_decode($this->orient->command('SELECT FROM Address WHERE @rid = #13:101')->getBody());
         $document = $res->result[0];
         
         $this->assertEquals('Luca', $document->nick);
         
         $this->query->update('Address')->set(array('nick' => 'Luca2'));
-        $this->query->orWhere('@rid = ?', '12:101');
+        $this->query->orWhere('@rid = ?', '13:101');
         
         $this->assertStatusCode(self::_200, $this->query());
         
-        $res = json_decode($this->orient->command('SELECT FROM Address WHERE @rid = #12:101')->getBody());
+        $res = json_decode($this->orient->command('SELECT FROM Address WHERE @rid = #13:101')->getBody());
         $document = $res->result[0];
         
         $this->assertEquals('Luca2', $document->nick);
@@ -401,19 +401,19 @@ class QueryBuilderTest extends TestCase
 
     public function testAddingALink()
     {
-        $res = json_decode($this->orient->command('SELECT FROM 25:1')->getBody());
+        $res = json_decode($this->orient->command('SELECT FROM 26:1')->getBody());
         $document = $res->result[0];
         $count = count($document->comments);
         
         $this->query->add(array('comments' => '26:0'), 'post');
-        $this->query->where('@rid = ?', '25:1');
+        $this->query->where('@rid = ?', '26:1');
 
         $this->assertStatusCode(self::_200, $this->query());
         
-        $res = json_decode($this->orient->command('SELECT FROM 25:1')->getBody());
+        $res = json_decode($this->orient->command('SELECT FROM 26:1')->getBody());
         $document = $res->result[0];
 
-        $res = json_decode($this->orient->command('SELECT FROM 25:1')->getBody());
+        $res = json_decode($this->orient->command('SELECT FROM 26:1')->getBody());
         $document = $res->result[0];
         $recount = count($document->comments);
         
@@ -425,16 +425,16 @@ class QueryBuilderTest extends TestCase
      */
     public function testRemovingALink()
     {
-        $res = json_decode($this->orient->command('SELECT FROM 25:1')->getBody());
+        $res = json_decode($this->orient->command('SELECT FROM 26:1')->getBody());
         $document = $res->result[0];
         $count = count($document->comments);
         
         $this->query->remove(array('comments' => '26:0'), 'post');
-        $this->query->where('@rid = ?', '25:1');
+        $this->query->where('@rid = ?', '26:1');
 
         $this->assertStatusCode(self::_200, $this->query());
         
-        $res = json_decode($this->orient->command('SELECT FROM 25:1')->getBody());
+        $res = json_decode($this->orient->command('SELECT FROM 26:1')->getBody());
         $document = $res->result[0];
         $recount = count($document->comments);
         
@@ -443,15 +443,16 @@ class QueryBuilderTest extends TestCase
 
     public function testPuttingALink()
     {
-        $this->query->put(array('knows' => array('Johnny' => '8:1')), 'account');
-        $this->query->where('@rid = ?', '8:0');
+        $this->query->put(array('knows' => array('Johnny' => '9:2')), 'account');
+        $this->query->where('@rid = ?', '9:1');
 
         $this->assertStatusCode(self::_200, $this->query());
 
-        $res = json_decode($this->orient->command('SELECT FROM 8:0')->getBody());
+        $res = json_decode($this->orient->command('SELECT FROM 9:1')->getBody());
+
         $document = $res->result[0];
         $this->assertInstanceOf('stdClass', $document->knows);
-        $this->assertEquals('#8:1', $document->knows->Johnny);
+        $this->assertEquals('#9:2', $document->knows->Johnny);
     }
     
     public function testTruncatingNonExistingClass()
