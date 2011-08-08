@@ -10,10 +10,10 @@
  */
 
 /**
- * Class Escaper
+ * Class Rid
  *
- * @package     Orient
- * @subpackage  Validator
+ * @package     
+ * @subpackage  
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -22,15 +22,19 @@ namespace Orient\Validator;
 use Orient\Validator;
 use Orient\Exception\Validation as ValidationException;
 
-class Escaper extends Validator
+class Rid extends Validator
 {
-    protected function clean($value)
+    protected function clean($rid)
     {
-        if ($value = addslashes($value)) {
-            return $value;
+        if (is_string($rid)) {
+            $parts = explode(':', $rid);
+
+            if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1])) {
+                return $rid;
+            }   
         }
         
-        throw new ValidationException($value, __CLASS__);
+        throw new ValidationException($rid, __CLASS__);
     }
 }
 

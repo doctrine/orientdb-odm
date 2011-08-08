@@ -496,4 +496,9 @@ class QueryTest extends TestCase
     {
         $this->assertInstanceOf('\Orient\Query\Command\Truncate\Cluster', $this->query->truncate('myFictionaryCluster', true));
     }
+    
+    public function testTruncatingARecord()
+    {
+        $this->assertInstanceOf('\Orient\Query\Command\Truncate\Record', $this->query->truncate('12:0'));
+    }
 }

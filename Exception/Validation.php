@@ -23,13 +23,13 @@ use Orient\Exception;
 
 class Validation extends Exception
 {
-    public function __construct($value)
+    public function __construct($value, $class)
     {
         if (is_array($value)) {
             $value = implode(', ', $value);
         }
         
-        $this->message = 'Validation of "' . $value . '" failed';
+        $this->message = sprintf('Validation of "%s" as %s failed', $value, $class);
     }
 }
 

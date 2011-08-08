@@ -167,6 +167,42 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals($count - 1, $recount);
     }
 
+    public function testInsertAnotherRecord()
+    {
+        $countQuery = $this->orient->command('SELECT FROM Address');
+        $count = $this->countResults($countQuery);
+
+        $this->query->insert()
+                ->fields(array('street', 'type', 'city'))
+                ->values(array('5th avenue', 'villetta', '#13:0'))
+                ->into('Address');
+
+        $this->assertStatusCode(self::_200, $this->query());
+        $recount = $this->countResults($this->orient->command('SELECT FROM Address'));
+        $this->assertEquals($count + 1, $recount);
+    }
+
+    /**
+     * @depends testInsertAnotherRecord
+     */
+    public function testTruncatingARecord()
+    {
+        $countQuery = $this->orient->command('SELECT FROM Address');
+        $count = $this->countResults($countQuery);
+
+        $this->query
+                ->from(array('Address'))
+                ->where('street = ?', '5th avenue')
+                ->orWhere('type = "villetta"');
+        
+        $res = json_decode($this->query()->getBody());
+        
+        $this->query->truncate(substr($res->result[0]->{"@rid"}, 1));
+        $this->assertStatusCode(self::_200, $this->query());
+        $recount = $this->countResults($this->orient->command('SELECT FROM Address'));
+        $this->assertEquals($count - 1, $recount);
+    }
+
     public function testGrantingACredential()
     {
         $this->query->grant('READ')
@@ -185,6 +221,10 @@ class QueryBuilderTest extends TestCase
         $this->assertStatusCode(self::_200, $this->query());
     }
 
+    /**
+     * @todo open a bug in the traccke of OrientDB
+     * count(*)  returns only 20 results.
+     */
     public function testCreateAnIndex()
     {
         $this->query->index('index_name_2', 'unique');

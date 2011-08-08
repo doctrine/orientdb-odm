@@ -20,6 +20,7 @@
 namespace Orient\Formatter;
 
 use Orient\Contract\Formatter\String as StringInterface;
+use Orient\Validator;
 
 class String  implements StringInterface
 {
@@ -58,15 +59,12 @@ class String  implements StringInterface
      *
      * @param   string $rid
      * @return  the rid is wellformed, false otherwise
+     * @todo this method is useless, delete it and make everyone use the validator, directly
      */
     public static function filterRid($rid)
     {
-        $parts = explode(':', $rid);
+        $validator = new Validator\Rid;
         
-        if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1])) {
-            return $rid;
-        }
-        
-        return false;
+        return $validator->check($rid, true);
     }
 }

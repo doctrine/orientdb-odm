@@ -48,6 +48,7 @@ class Query implements QueryInterface
         'class.alter'       => 'Orient\Query\Command\OClass\Alter',
         'truncate.class'    => 'Orient\Query\Command\Truncate\OClass',
         'truncate.cluster'  => 'Orient\Query\Command\Truncate\Cluster',
+        'truncate.record'   => 'Orient\Query\Command\Truncate\Record',
         'references.find'   => 'Orient\Query\Command\Reference\Find',
         'property.create'   => 'Orient\Query\Command\Property\Create',
         'property.drop'     => 'Orient\Query\Command\Property\Drop',
@@ -525,15 +526,22 @@ class Query implements QueryInterface
         return $this->command->to($to);
     }
     
-    public function truncate($class, $andCluster = false)
-    {
-        $commandClass   = $this->getCommandClass('truncate.class');
-
-        if ($andCluster) {
-            $commandClass   = $this->getCommandClass('truncate.cluster');
+    public function truncate($entity, $andCluster = false)
+    {        
+        try {
+            $validator      = new Validator\Rid;
+            $validator->check($entity);
+            $commandClass   = $this->getCommandClass('truncate.record');
+        }
+        catch (Exception\Validation $e) {
+            $commandClass   = $this->getCommandClass('truncate.class');
+            
+            if ($andCluster) {
+                $commandClass   = $this->getCommandClass('truncate.cluster');
+            }   
         }
         
-        $this->command  = new $commandClass($class);
+        $this->command  = new $commandClass($entity);
         
         return $this->command;
     }

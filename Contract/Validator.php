@@ -28,6 +28,6 @@ interface Validator
      * @return  mixed
      * @throws  Orient\Exception\validation
      */
-    public function clean($value);
+    public function check($value);
 }
 

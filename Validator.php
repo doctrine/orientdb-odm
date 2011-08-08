@@ -23,7 +23,7 @@ use Orient\Contract\Validator as ValidatorInterface;
 use Orient\Exception\Validation as ValidationException;
 
 abstract class Validator implements ValidatorInterface
-{
+{   
     /**
      * Cleans and returns the $value.
      * If it is invalid, the validator fails.
@@ -32,13 +32,14 @@ abstract class Validator implements ValidatorInterface
      * @param   boolean $silent
      * @return  mixed
      */
-    public function clean($value, $silent = false)
+    public function check($value, $silent = false)
     {
-        if ($value = $this->doClean($value)) {
-            return $value;
+        try {
+            return $this->clean($value);
         }
-        
-        return $this->fail($value, $silent);
+        catch (ValidationException $e) { 
+            return $this->fail($e, $value, $silent);
+        }
     }
     
     /**
@@ -46,7 +47,7 @@ abstract class Validator implements ValidatorInterface
      * 
      * @param   mixed $value
      */
-    abstract protected function doClean($value);
+    abstract protected function clean($value);
     
     /**
      * Makes the validator fail: if silent, null is returned, otherwise an
@@ -57,13 +58,13 @@ abstract class Validator implements ValidatorInterface
      * @return  null
      * @throws  Orient\Exception\Validation
      */
-    protected function fail($value, $silent = false)
+    protected function fail(ValidationException $e, $value, $silent = false)
     {
         if ($silent) {
             return null;
         }
         
-        throw new ValidationException($value);
+        throw $e;
     }
 }
 

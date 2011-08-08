@@ -344,7 +344,7 @@ abstract class Command implements CommandContract
     {            
         if (count($values) == substr_count($condition, '?')) {
               foreach ($values as $replacement) {
-                  $condition =  preg_replace("/\?/", '"' . $validator->clean($replacement, 1) . '"', $condition, 1);
+                  $condition =  preg_replace("/\?/", '"' . $validator->check($replacement, 1) . '"', $condition, 1);
               }
               
               return $condition;
@@ -358,7 +358,7 @@ abstract class Command implements CommandContract
     
     protected function formatWhereConditionWithSingleToken($condition, $value, EscapeValidator $validator)
     {
-        return str_replace("?", '"' . $validator->clean($value, 1) . '"', $condition);
+        return str_replace("?", '"' . $validator->check($value, 1) . '"', $condition);
     }
 
     /**

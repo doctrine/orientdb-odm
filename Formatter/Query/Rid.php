@@ -28,8 +28,8 @@ class Rid extends Query implements TokenFormatter
     public static function format(array $values)
     {
         $values = array_filter($values, function ($arr) {
-                    return String::filterRid($arr);
-                });
+            return String::filterRid($arr);
+        });
 
         return (count($values)) ? array_shift($values) : null;
     }
