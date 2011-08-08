@@ -25,32 +25,48 @@ class StubObject
 
 class CasterTest extends TestCase
 {
-    
-    public function testConversionToString()
+    public function setup()
     {
-        $this->assertTrue(is_string(Caster::castString('john')));
-        $this->assertTrue(is_string(Caster::castString(true)));
-        $this->assertTrue(is_string(Caster::castString(new StubObject())));
-        $emtpyString = Caster::castString(new \StdClass());
+        $this->caster = new Caster();
+    }
+    
+    public function testStringToStringConversion()
+    {
+        $this->assertTrue(is_string($this->caster->setValue('john')->castString()));
+    }
+    
+    public function testBooleanToStringConversion()
+    {
+        $this->assertTrue(is_string($this->caster->setValue(true)->castString()));
+    }
+    
+    public function testToStringableObjectToStringConversion()
+    {
+        $this->assertTrue(is_string($this->caster->setValue(new StubObject)->castString()));
+    }
+    
+    public function testNotToStringableObjectToStringConversion()
+    {
+        $emtpyString = $this->caster->setValue(new \stdClass())->castString();
         $this->assertTrue(empty($emtpyString));
-
     }
     
-    public function testConversionToBoolean()
+    public function testBooleanToBooleanConversion()
     {
-        $this->assertTrue(is_bool(Caster::castBoolean(true)));
-        $this->assertTrue(is_bool(Caster::castBoolean('john')));
-        $this->assertTrue(is_bool(Caster::castBoolean(new StubObject())));
-        
-        $this->assertEquals(true, Caster::castBoolean(true));
-        $this->assertEquals(true, Caster::castBoolean('john'));
-        $this->assertEquals(false, Caster::castBoolean('0'));
-        $this->assertEquals(true, Caster::castBoolean(new StubObject()));
+        $this->assertTrue(is_bool($this->caster->setValue(true)->castBoolean()));
+        $this->assertEquals(true, $this->caster->setValue(true)->castBoolean());
     }
     
-    public function testConversionToDate()
+    public function testStringToBooleanConversion()
     {
-        //$this->assertEquals(true, Caster::castDate('john')); //string
+        $this->assertTrue(is_bool($this->caster->setValue('john')->castBoolean()));
+        $this->assertEquals(true, $this->caster->setValue('john')->castBoolean());
+        $this->assertEquals(false, $this->caster->setValue('0')->castBoolean());
     }
-
+    
+    public function testObjectToBooleanConversion()
+    {
+        $this->assertTrue(is_bool($this->caster->setValue(new StubObject())->castBoolean()));
+        $this->assertEquals(true, $this->caster->setValue(new StubObject())->castBoolean());
+    }
 }

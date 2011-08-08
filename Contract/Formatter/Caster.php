@@ -24,33 +24,37 @@ interface Caster
     /**
      * Casts the given $value to boolean.
      *
-     * @param  mixed $value
      * @return boolean
      */    
-    public static function castBoolean($value);
+    public function castBoolean();
     
     /**
      * Casts the given $value to a DateTime object.
      *
-     * @param  mixed $value
-     * @return boolean
+     * @return \DateTime
      */
-    public static function castDate($value);
+    public function castDate();
 
     /**
      * Casts the given $value to a DateTime object.
      *
-     * @param  mixed $value
-     * @return boolean
+     * @return \DateTime
      */    
-    public static function castDateTime($value);
+    public function castDateTime();
 
     /**
      * Casts the given $value to string.
      *
-     * @param  mixed $value
-     * @return boolean
+     * @return string
      */    
-    public static function castString($value);
+    public function castString();
+    
+    /**
+     * Sets the internal value to cast.
+     * 
+     * @param   mixed value
+     * @return  void
+     */
+    public function setValue($value);
 }
 

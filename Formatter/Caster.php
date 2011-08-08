@@ -23,15 +23,25 @@ use Orient\Contract\Formatter\Caster as CasterInterface;
 
 class Caster implements CasterInterface
 {
+    protected $value = NULL;
+    
+    public function __construct($value = null)
+    {
+        if ($value) {
+            $this->setValue($value);
+        }
+    }
+    
+    
     /**
      * Casts the given $value to boolean.
      *
      * @param  mixed $value
      * @return boolean
      */
-    public static function castBoolean($value)
+    public function castBoolean()
     {
-        return (bool) $value;
+        return (bool) $this->value;
     }
     
     /**
@@ -40,9 +50,9 @@ class Caster implements CasterInterface
      * @param  mixed $value
      * @return boolean
      */
-    public static function castDate($value)
+    public function castDate()
     {
-        return new \DateTime($value);
+        return new \DateTime($this->value);
     }
 
     /**
@@ -51,9 +61,9 @@ class Caster implements CasterInterface
      * @param  mixed $value
      * @return boolean
      */
-    public static function castDateTime($value)
+    public function castDateTime()
     {
-        return self::castDate($value);
+        return $this->castDate($this->value);
     }
 
     /**
@@ -62,15 +72,27 @@ class Caster implements CasterInterface
      * @param  mixed $value
      * @return boolean
      */    
-    public static function castString($value)
+    public function castString()
     {
         
-        if($value instanceOf \StdClass){
-            if (!method_exists($value, '__toString')){
-                $value = null;
+        if($this->value instanceOf \StdClass){
+            if (!method_exists($this->value, '__toString')){
+                $this->value = null;
             }
         }
         
-        return (string) $value;
+        return (string) $this->value;
+    }
+    
+    /**
+     * Sets the internal value to work with.
+     *
+     * @param mixed $value 
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+        
+        return $this;
     }
 }

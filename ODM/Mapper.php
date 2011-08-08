@@ -150,15 +150,16 @@ class Mapper
      *
      * @param   Orient\ODM\Mapper\Annotations\Property    $annotation
      * @param   mixed                                     $propertyValue
+     * @param   CasterInterface                           $caster
      * @return  mixed
      */
     protected function castProperty($annotation, $propertyValue, CasterInterface $caster = null)
     {
         $caster     = $caster ?: new Caster;
-        $inflector  = $this->inflector;
-        $method     = 'cast' . $inflector::camelize($annotation->type);
+        $caster->setValue($propertyValue);
+        $method     = 'cast' . $this->inflector->camelize($annotation->type);
         
-        return $caster::$method($propertyValue);
+        return $caster->$method();
     }
 
     protected function fill($document, \stdClass $object)
@@ -308,8 +309,7 @@ class Mapper
             $value = $this->castProperty($annotation, $value);
         }
 
-        $inflector  = $this->inflector;
-        $setter     = 'set' . $inflector::camelize($property);
+        $setter     = 'set' . $this->inflector->camelize($property);
         
         if (method_exists($document, $setter))
         {
