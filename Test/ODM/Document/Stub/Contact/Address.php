@@ -2,38 +2,40 @@
 
 namespace Orient\Test\ODM\Document\Stub\Contact;
 
+use Orient\ODM\Mapper\Annotations as ODM;
+
 /**
-* @Orient\ODM\Mapper\Annotations\Document(class="Address,ForeignAddress")
+* @ODM\Document(class="Address,ForeignAddress")
 */
 class Address
 {
     /**
-     * @Orient\ODM\Mapper\Annotations\Property(name="nojson", type="nojson")
+     * @ODM\Property(name="nojson", type="nojson")
      */
     protected $annotatedNotInJSON;
     /**
-     * @Orient\ODM\Mapper\Annotations\Property(name="date", type="date")
+     * @ODM\Property(name="date", type="date")
      */
     protected $date;
     /**
-     * @Orient\ODM\Mapper\Annotations\Property(name="datetime", type="datetime")
+     * @ODM\Property(name="datetime", type="datetime")
      */
     protected $date_time;
     /**
-     * @Orient\ODM\Mapper\Annotations\Property(name="type", type="string")
+     * @ODM\Property(name="type", type="string")
      */
     protected $type;
     /**
-     * @Orient\ODM\Mapper\Annotations\Property(name="is_true", type="boolean")
+     * @ODM\Property(name="is_true", type="boolean")
      */
     protected $is__true;
     /**
-     * @Orient\ODM\Mapper\Annotations\Property(name="is_false", type="boolean")
+     * @ODM\Property(name="is_false", type="boolean")
      */
     protected $is__false;
     
     /**
-     * @Orient\ODM\Mapper\Annotations\Property(name="sample")
+     * @ODM\Property(name="sample")
      */
     protected $example_property;
     

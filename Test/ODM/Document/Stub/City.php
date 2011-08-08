@@ -2,8 +2,10 @@
 
 namespace Orient\Test\ODM\Document\Stub;
 
+use Orient\ODM\Mapper\Annotations as ODM;
+
 /**
-* @Orient\ODM\Mapper\Annotations\Document(class="OCity")
+* @ODM\Document(class="OCity")
 */
 class City
 {
