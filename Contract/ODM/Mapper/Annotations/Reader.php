@@ -22,54 +22,6 @@ namespace Orient\Contract\ODM\Mapper\Annotations;
 interface Reader
 {
     /**
-     * Sets the default namespace that the AnnotationReader should assume for annotations
-     * with not fully qualified names.
-     * 
-     * @param string $defaultNamespace
-     */
-    public function setDefaultAnnotationNamespace($defaultNamespace);
-
-    /**
-     * Sets the custom function to use for creating new annotations on the
-     * underlying parser.
-     *
-     * The function is supplied two arguments. The first argument is the name
-     * of the annotation and the second argument an array of values for this
-     * annotation. The function is assumed to return an object or null.
-     * Whenever the function returns null for an annotation, the implementation falls
-     * back to the default annotation creation process of the underlying parser.
-     *
-     * @param Closure $func
-     */
-    public function setAnnotationCreationFunction(\Closure $func);
-
-    /**
-     * Sets an alias for an annotation namespace.
-     * 
-     * @param string $namespace
-     * @param string $alias
-     */
-    public function setAnnotationNamespaceAlias($namespace, $alias);
-
-    /**
-     * Sets a flag whether to try to autoload annotation classes, as well as to distinguish
-     * between what is an annotation and what not by triggering autoloading.
-     *
-     * NOTE: Autoloading of annotation classes is inefficient and requires silently failing
-     *       autoloaders. In particular, setting this option to TRUE renders this AnnotationReader
-     *       incompatible with a {@link ClassLoader}.
-     * @param boolean $bool Boolean flag.
-     */
-    public function setAutoloadAnnotations($bool);
-    /**
-     * Gets a flag whether to try to autoload annotation classes.
-     *
-     * @see setAutoloadAnnotations
-     * @return boolean
-     */
-    public function getAutoloadAnnotations();
-
-    /**
      * Gets the annotations applied to a class.
      * 
      * @param ReflectionClass $class The ReflectionClass of the class from which

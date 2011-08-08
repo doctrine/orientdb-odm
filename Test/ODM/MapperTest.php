@@ -22,7 +22,6 @@ class ManagerTest extends TestCase
     public function setup()
     {
         $annotationReader = new AnnotationReader;
-        $annotationReader->setAutoloadAnnotations(true);
         $this->mapper = new Mapper($annotationReader);
         $this->mapper->setDocumentDirectories(array('./Test/ODM/Document/Stub' => 'Orient\\'));
         
@@ -93,7 +92,6 @@ class ManagerTest extends TestCase
     public function testYouCanDecideWheterInjectACustomAnnotationReaderOrNotToTheMapper()
     {
         $annotationReader = new AnnotationReader;
-        $annotationReader->setAutoloadAnnotations(true);
         $this->mapper = new Mapper($annotationReader);
         
         $this->assertInstanceOf('Orient\ODM\Mapper\Annotations\Reader', $this->mapper->getAnnotationReader());
@@ -181,7 +179,6 @@ class ManagerTest extends TestCase
     public function testGettingTheDirectoriesInWhichTheMapperLooksForPOPOs()
     {
         $annotationReader = new AnnotationReader;
-        $annotationReader->setAutoloadAnnotations(true);
         $this->mapper = new Mapper($annotationReader);
         $dirs = array(
             'dir'   => 'namespace',

@@ -210,7 +210,7 @@ class Mapper
      */
     protected function findClassMappingInDirectories($OClass)
     {      
-        foreach ($this->getDocumentDirectories() as $dir => $namespace) {            
+        foreach ($this->getDocumentDirectories() as $dir => $namespace) {
             if ($class = $this->findClassMappingInDirectory($OClass, $dir, $namespace)) {
                 return $class;
             }
@@ -260,12 +260,14 @@ class Mapper
      */
     protected function getClassAnnotation($class)
     {
-        $reader        = $this->getAnnotationReader();
-        $reflClass     = new \ReflectionClass($class);
-        $annotations   = $reader->getClassAnnotations($reflClass);
+        $reader                 = $this->getAnnotationReader();
+        $reflClass              = new \ReflectionClass($class);
+        $mappedDocumentClass    = self::ANNOTATION_CLASS_CLASS;
 
-        if ($annotations && isset($annotations[self::ANNOTATION_CLASS_CLASS])) {
-            return $annotations[self::ANNOTATION_CLASS_CLASS];
+        foreach ($reader->getClassAnnotations($reflClass) as $annotation) {
+            if ($annotation instanceOf $mappedDocumentClass) {
+                return $annotation;
+            }
         }
 
         return null;

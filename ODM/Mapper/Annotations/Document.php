@@ -19,6 +19,9 @@
 
 namespace Orient\ODM\Mapper\Annotations;
 
+/**
+ * @Annotation
+ */
 class Document extends \Doctrine\Common\Annotations\Annotation
 {
     public $class;
