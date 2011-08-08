@@ -10,7 +10,7 @@
  */
 
 /**
- * Caster class
+ * Caster class is responsible for converting an input value to another type.
  *
  * @package    Orient
  * @subpackage Formatter

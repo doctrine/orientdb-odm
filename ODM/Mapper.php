@@ -22,7 +22,8 @@
 
 namespace Orient\ODM;
 
-use Orient\Exception\Document as Exception;
+use Orient\Exception;
+use Orient\Exception\Document\NotFound as DocumentNotFoundException;
 use Orient\Formatter\CasterInterface as CasterInterface;
 use Orient\Formatter\Caster;
 use Orient\Contract\Formatter\Inflector;
@@ -97,7 +98,7 @@ class Mapper
             }
         }
 
-        throw new Exception\NotFound();
+        throw new DocumentNotFoundException();
     }
     
     /**
@@ -152,12 +153,23 @@ class Mapper
      * @param   mixed                                     $propertyValue
      * @param   CasterInterface                           $caster
      * @return  mixed
+     * @todo    do we need to pass an entire annotation object to only retrieve "type"?
      */
     protected function castProperty($annotation, $propertyValue, CasterInterface $caster = null)
     {
         $caster     = $caster ?: new Caster;
-        $caster->setValue($propertyValue);
         $method     = 'cast' . $this->inflector->camelize($annotation->type);
+        $caster->setValue($propertyValue);
+        
+        if (!method_exists($caster, $method)) {
+            $message  = sprintf(
+                'You are trying to map a property wich seems not to have a standard type (%s). Do you have a typo in your annotation? If you think everything\'s ok, go check on %s class which property types are supported.',
+                $annotation->type,
+                get_class($caster)
+            );
+            
+            throw new Exception($message);
+        }
         
         return $caster->$method();
     }
@@ -319,7 +331,7 @@ class Mapper
         {
             $message = "%s has not method %s: you have to add the setter in order to correctly let Orient hydrate your object";
             
-            throw new Orient\Exception(
+            throw new Exception(
                     sprintf($message),
                     get_class($document),
                     $setter
