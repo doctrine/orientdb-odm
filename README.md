@@ -2,7 +2,7 @@
 
 ## What's Orient?
 
-A Set of tools to use and manage any OrientDB instances from PHP.
+A set of tools to use and manage any OrientDB instance from PHP.
 
 Orient includes:
 
@@ -100,13 +100,14 @@ For the braves, if you want to run the full test suite, which includes the integ
 * add the server administration credential admin/admin in config/orientdb-server-config.xml
 * launch the server on :2424, reacheable via web at the :2480
 
-and the you can run the full test-suite:
+and then you can run the full test-suite:
 
     cd /path/to/repo
     phpunit --configuration=Test/PHPUnit/phpunit.xml Test/
 
 As you'll notice, tests are obviously slower (they need a direct connection through the HTTP protocol to OrientDB), so we highly discourage you from testing this way.
-Integration tests are run by the development team before any tag in the repository, so you are sure that any tag is fully tested against a real OrientDB instance.
+They also may file the first time you launch them, because we set the curl timeout limit to 1 second, and the first connections to OrientDB require it to bootstrap lots of stuff (so during more than 1 second, making the tests fail): try to re-launch the tests, you should see the green bar.
+Integration tests, by the way, are run by the development team before any tag in the repository, so you are sure that any tag is fully tested against a real OrientDB instance.
 
 You can take a look at the library coding health by using PHP_CodeBrowser.
 
@@ -120,7 +121,7 @@ You need to install:
 * phpunit ( of course )
 * phpcb
 
-and the run:
+and then run:
 
     chmod +x report.sh
     ./report.sh
