@@ -1,17 +1,17 @@
-# Congow\OrientDB PHP Library
+# OrientDB PHP Library
 
 ## What's Congow\Orient?
 
 A set of tools to use and manage any Congow\OrientDB instance from PHP.
 
-Congow\Orient includes:
+Orient includes:
 
 * the HTTP protocol binding
 * the query builder
 * the data mapper ( Object Graph Mapper )
 
 
-If you don't know Congow\OrientDB here are few resources:
+If you don't know OrientDB here are few resources:
 
 Homepage: http://www.orientechnologies.com/
 Documentation: http://code.google.com/p/orient | http://www.odino.org/tags?tag=orient
@@ -25,7 +25,7 @@ Set up the submodules after you cloned the repo:
 
 ## Current status of the binding
 
-The binding is complete: it is an HTTP client wrapper with some methods bound to Congow\OrientDB's HTTP interface.
+The binding is complete: it is an HTTP client wrapper with some methods bound to OrientDB's HTTP interface.
 
 Its usage is straightforward:
 
