@@ -1,0 +1,116 @@
+<?php
+
+/*
+ * This file is part of the Congow\Orient package.
+ *
+ * (c) Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
+ * This class wraps an HTTP response to easily manage some HTTP headers and
+ * the body.
+ *
+ * @package    
+ * @subpackage 
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ */
+
+namespace Congow\Orient\Http;
+
+class Response
+{
+    protected $headers;
+    protected $raw_headers;
+    protected $status_code;
+    protected $body;
+
+    /**
+     * Constructs a new object from an existing HTTP response.
+     *
+     * @param String $response
+     */
+    public function __construct($response)
+    {
+        @list($this->raw_headers, $this->body) = explode("\r\n\r\n", $response, 2);
+
+        $this->buildHeaders($this->raw_headers);
+    }
+
+    public function __toString()
+    {
+        return $this->getResponse();
+    }
+
+    /**
+     * Returns the body of the response.
+     *
+     * @return String
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+    
+    public function getHeader($header)
+    {
+        return isset($this->headers[$header]) ? $this->headers[$header] : null;
+    }
+
+    /**
+     * Returns the whole response.
+     *
+     * @return String
+     */
+    public function getResponse()
+    {
+        return $this->getRawHeaders() . "\r\n\r\n" . $this->getBody();
+    }
+
+    /**
+     * Returns the status code of the response.
+     *
+     * @return String
+     */
+    public function getStatusCode()
+    {
+        return $this->status_code;
+    }
+
+    /**
+     * Builds headers array from a well-formatted string.
+     *
+     * @param String $headers
+     */
+    protected function buildHeaders($headers)
+    {
+        $parts              = explode("\r\n", $headers);
+        $this->status_code  = array_shift($parts);
+
+        foreach ($parts as $header) {
+            list($header, $value)   = explode(':', $header, 2);
+            $header                 = trim($header, ' ');
+            
+            if (isset($this->headers[$header]))
+            {
+                $this->headers[$header] .= "," . $value;
+            }
+            else
+            {
+                $this->headers[$header] = trim($value, ' ');
+            }
+        }
+    }
+
+    /**
+     * Returns all the headers as a string.
+     *
+     * @return String
+     */
+    protected function getRawHeaders()
+    {
+        return $this->raw_headers;
+    }
+}
