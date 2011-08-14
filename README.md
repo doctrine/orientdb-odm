@@ -1,6 +1,6 @@
 # OrientDB PHP Library
 
-## What's Congow\Orient?
+## What's Orient?
 
 A set of tools to use and manage any OrientDB instance from PHP.
 
