@@ -60,6 +60,21 @@ class Address
     protected $invalid_short;
     
     /**
+     * @ODM\Property(name="negative_long", type="long")
+     */
+    protected $negative_long;
+    
+    /**
+     * @ODM\Property(name="positive_long", type="long")
+     */
+    protected $positive_long;
+    
+    /**
+     * @ODM\Property(name="invalid_long", type="long")
+     */
+    protected $invalid_long;
+    
+    /**
      * @ODM\Property(type="integer")
      */
     protected $number;
@@ -131,16 +146,6 @@ class Address
         $this->positive_short = $short;
     }
 
-    public function getNumber()
-    {
-        return $this->number;
-    }
-
-    public function setNumber($number)
-    {
-        $this->number = $number;
-    }
-
     public function getInvalidShort()
     {
         return $this->invalid_short;
@@ -149,6 +154,46 @@ class Address
     public function setInvalidShort($short)
     {
         $this->invalid_short = $short;
+    }
+
+    public function getNegativeLong()
+    {
+        return $this->negative_long;
+    }
+
+    public function setNegativeLong($long)
+    {
+        $this->negative_long = $long;
+    }
+
+    public function getPositiveLong()
+    {
+        return $this->positive_long;
+    }
+
+    public function setPositiveLong($long)
+    {
+        $this->positive_long = $long;
+    }
+
+    public function getInvalidLong()
+    {
+        return $this->invalid_long;
+    }
+
+    public function setInvalidLong($long)
+    {
+        $this->invalid_long = $long;
+    }
+
+    public function getNumber()
+    {
+        return $this->number;
+    }
+
+    public function setNumber($number)
+    {
+        $this->number = $number;
     }
 
     public function setStreet($street)

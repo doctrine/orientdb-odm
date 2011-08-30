@@ -42,7 +42,18 @@ class ManagerTest extends TestCase
             "positive_short":   "32000",
             "negative_short":   "-32000",
             "invalid_short":   "-38000",
-            "number":   "12"
+            "number":   "12",
+            "positive_long":     "32",
+            "negative_long":     "-32",
+            "invalid_long":     "3200000000000000000000"
+         }');
+        
+        $this->jsonLongRecord = json_decode('{
+            "@type":    "d",
+            "@rid":     "#12:0",
+            "@version":  0,
+            "@class":   "Address",
+            "invalid_long":     "3200000000000000000000"
          }');
 
         $this->jsonRecordWrongClass = json_decode('{
@@ -142,6 +153,13 @@ class ManagerTest extends TestCase
 
         $this->assertEquals(122.231, $object->getCapital());
     }
+    
+    public function testIntegersGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+
+        $this->assertEquals(12, $object->getNumber());
+    }
 
     public function testShortPropertiesGetsMappedInTheObject()
     {
@@ -149,13 +167,6 @@ class ManagerTest extends TestCase
 
         $this->assertEquals(-32000, $object->getNegativeShort());
         $this->assertEquals(32000, $object->getPositiveShort());
-    }
-
-    public function testIntegersGetsMappedInTheObject()
-    {
-        $object = $this->mapper->hydrate($this->jsonRecord);
-
-        $this->assertEquals(12, $object->getNumber());
     }
 
     public function testShortPropertiesDontThrowAnExceptionIfOverflowsAreTolerated()
@@ -172,6 +183,30 @@ class ManagerTest extends TestCase
     {
         $this->mapper->enableOverflows();
         $object = $this->mapper->hydrate($this->jsonRecord);
+    }
+
+    public function testLongPropertiesGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+
+        $this->assertEquals(-32, $object->getNegativeLong());
+        $this->assertEquals(32, $object->getPositiveLong());
+    }
+
+    public function testLongPropertiesDontThrowAnExceptionIfOverflowsAreTolerated()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+
+        $this->assertEquals(null, $object->getInvalidLong());
+    }
+
+    /**
+     * @expectedException Congow\Orient\Exception\Overflow
+     */
+    public function testLongPropertiesThrowAnExceptionIfOverflowsAreNotTolerated()
+    {
+        $this->mapper->enableOverflows();
+        $object = $this->mapper->hydrate($this->jsonLongRecord);
     }
     
     public function testPropertiesCanHaveDifferentNamesInCongowOrientAndPopo()

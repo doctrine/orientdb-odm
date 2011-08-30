@@ -27,6 +27,7 @@ class Caster implements CasterInterface
     protected $value    = NULL;
     
     const SHORT_LIMIT   = 32767;
+    const LONG_LIMIT    = 9223372036854775807;
     
     public function __construct($value = null)
     {
@@ -86,6 +87,27 @@ class Caster implements CasterInterface
     {
         return (int) $this->value;
     }
+    
+    /**
+     * Casts the given $value to a long.
+     *
+     * @return integer
+     */    
+    public function castLong()
+    {
+        return $this->castInBuffer(self::LONG_LIMIT, 'long');
+    }
+    
+    public function castInBuffer($limit, $type)
+    {
+        if (abs($this->value) > $limit) {
+            $message = sprintf($type . ' out of bounds (%d of %d)', $this->value, self::SHORT_LIMIT);
+            
+            throw new Overflow($message);
+        }
+        
+        return $this->value;
+    }
 
     /**
      * Casts the given $value to string.
@@ -94,7 +116,6 @@ class Caster implements CasterInterface
      */    
     public function castString()
     {
-        
         if($this->value instanceOf \StdClass){
             if (!method_exists($this->value, '__toString')){
                 $this->value = null;
@@ -111,13 +132,7 @@ class Caster implements CasterInterface
      */    
     public function castShort()
     {
-        if (abs($this->value) > self::SHORT_LIMIT) {
-            $message = sprintf('Short out of bounds (%d of %d)', $this->value, self::SHORT_LIMIT);
-            
-            throw new Overflow($message);
-        }
-        
-        return $this->value;
+        return $this->castInBuffer(self::SHORT_LIMIT, 'long');
     }
     
     /**
