@@ -80,6 +80,11 @@ class Address
     protected $floating;
     
     /**
+     * @ODM\Property(type="binary")
+     */
+    protected $image;
+    
+    /**
      * @ODM\Property(type="integer")
      */
     protected $number;
@@ -159,6 +164,16 @@ class Address
     public function setInvalidShort($short)
     {
         $this->invalid_short = $short;
+    }
+
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function setImage($image)
+    {
+        $this->image = $image;
     }
 
     public function getNegativeLong()

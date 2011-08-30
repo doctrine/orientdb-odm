@@ -48,6 +48,16 @@ class Caster implements CasterInterface
     }
     
     /**
+     * Casts the given $value to a binary.
+     *
+     * @return boolean
+     */
+    public function castBinary()
+    {
+        return 'data:;base64,' . $this->value;
+    }
+    
+    /**
      * Casts the given $value to a DateTime object.
      *
      * @return boolean
