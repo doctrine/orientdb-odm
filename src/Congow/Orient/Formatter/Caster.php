@@ -68,6 +68,17 @@ class Caster implements CasterInterface
     }
 
     /**
+     * Casts the given $value to a double (well... float).
+     *
+     * @param  mixed $value
+     * @return float
+     */
+    public function castDouble()
+    {
+        return floatval($this->value);
+    }
+
+    /**
      * Casts the given $value to string.
      *
      * @param  mixed $value

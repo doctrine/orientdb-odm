@@ -39,6 +39,11 @@ class Address
      */
     protected $example_property;
     
+    /**
+     * @ODM\Property(name="capital", type="double")
+     */
+    protected $capital;
+    
     protected $street;
 
     public function setType($type)
@@ -74,6 +79,16 @@ class Address
     public function getDateTime()
     {
         return $this->date_time;
+    }
+
+    public function getCapital()
+    {
+        return $this->capital;
+    }
+
+    public function setCapital($capital)
+    {
+        $this->capital = $capital;
     }
 
     public function setStreet($street)

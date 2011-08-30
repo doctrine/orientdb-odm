@@ -37,7 +37,8 @@ class ManagerTest extends TestCase
             "street":   "Piazza Navona, 1",
             "type":     "Residence",
             "city":     "#13:0",
-            "sample":   "ok"
+            "sample":   "ok",
+            "capital":   "122.231"
          }');
 
         $this->jsonRecordWrongClass = json_decode('{
@@ -129,6 +130,13 @@ class ManagerTest extends TestCase
         $object = $this->mapper->hydrate($this->jsonRecord);
 
         $this->assertEquals('Residence', $object->getType());
+    }
+
+    public function testDoublePropertiesGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+
+        $this->assertEquals(122.231, $object->getCapital());
     }
     
     public function testPropertiesCanHaveDifferentNamesInCongowOrientAndPopo()
