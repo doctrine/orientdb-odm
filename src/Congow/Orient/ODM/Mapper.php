@@ -167,6 +167,7 @@ class Mapper
      * @param   CasterInterface                           $caster
      * @return  mixed
      * @todo    do we need to pass an entire annotation object to only retrieve "type"?
+     * @todo    long method
      */
     protected function castProperty($annotation, $propertyValue, CasterInterface $caster = null)
     {
@@ -196,6 +197,9 @@ class Mapper
         }
     }
 
+    /**
+     * @todo no PHPDOC
+     */
     protected function fill($document, \stdClass $object)
     {
         $propertyAnnotations = $this->getObjectPropertyAnnotations($document);

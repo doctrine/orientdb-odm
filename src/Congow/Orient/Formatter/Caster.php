@@ -79,6 +79,16 @@ class Caster implements CasterInterface
     }
 
     /**
+     * Casts the given $value to a float.
+     *
+     * @return float
+     */
+    public function castFloat()
+    {
+        return (float) $this->value;
+    }
+
+    /**
      * Casts the given $value into an integer.
      *
      * @return integer
@@ -98,6 +108,15 @@ class Caster implements CasterInterface
         return $this->castInBuffer(self::LONG_LIMIT, 'long');
     }
     
+    /**
+     * Casts the current value into an integer verifying it belongs to a certain
+     * range ( -$limit < $value > + $limit ).
+     *
+     * @param integer   $limit
+     * @param string    $type
+     * @return integer
+     * @throws Congow\Orient\Exception\Overflow
+     */
     public function castInBuffer($limit, $type)
     {
         if (abs($this->value) > $limit) {

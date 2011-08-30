@@ -45,7 +45,8 @@ class ManagerTest extends TestCase
             "number":   "12",
             "positive_long":     "32",
             "negative_long":     "-32",
-            "invalid_long":     "3200000000000000000000"
+            "invalid_long":     "3200000000000000000000",
+            "floating":     "10.5"
          }');
         
         $this->jsonLongRecord = json_decode('{
@@ -159,6 +160,13 @@ class ManagerTest extends TestCase
         $object = $this->mapper->hydrate($this->jsonRecord);
 
         $this->assertEquals(12, $object->getNumber());
+    }
+    
+    public function testFloatGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+
+        $this->assertInternalType('float', $object->getFloating());
     }
 
     public function testShortPropertiesGetsMappedInTheObject()

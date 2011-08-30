@@ -75,6 +75,11 @@ class Address
     protected $invalid_long;
     
     /**
+     * @ODM\Property(type="float")
+     */
+    protected $floating;
+    
+    /**
      * @ODM\Property(type="integer")
      */
     protected $number;
@@ -194,6 +199,16 @@ class Address
     public function setNumber($number)
     {
         $this->number = $number;
+    }
+
+    public function getFloating()
+    {
+        return $this->floating;
+    }
+
+    public function setFloating($floating)
+    {
+        $this->floating = $floating;
     }
 
     public function setStreet($street)
