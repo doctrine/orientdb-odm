@@ -22,12 +22,17 @@ namespace Congow\Orient\Formatter;
 use Congow\Orient\Contract\Formatter\Caster as CasterInterface;
 use Congow\Orient\Exception\Overflow;
 
+/**
+ * @todo check @return types, some are wrong
+ */
 class Caster implements CasterInterface
 {
     protected $value    = NULL;
     
-    const SHORT_LIMIT   = 32767;
-    const LONG_LIMIT    = 9223372036854775807;
+    const SHORT_LIMIT       = 32767;
+    const LONG_LIMIT        = 9223372036854775807;
+    const BYTE_MAX_VALUE    = 127;
+    const BYTE_MIN_VALUE    = -128;
     
     public function __construct($value = null)
     {
@@ -50,11 +55,27 @@ class Caster implements CasterInterface
     /**
      * Casts the given $value to a binary.
      *
-     * @return boolean
+     * @return string
      */
     public function castBinary()
     {
         return 'data:;base64,' . $this->value;
+    }
+    
+    /**
+     * Casts the given $value to a byte.
+     *
+     * @return boolean
+     */
+    public function castByte()
+    {
+        if ($this->value > self::BYTE_MAX_VALUE || $this->value < self::BYTE_MIN_VALUE) {
+            $message = sprintf('byte out of bounds (%d of %d)', $this->value, self::SHORT_LIMIT);
+            
+            throw new Overflow($message);
+        }
+        
+        return $this->value;
     }
     
     /**

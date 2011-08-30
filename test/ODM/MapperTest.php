@@ -48,6 +48,9 @@ class ManagerTest extends TestCase
             "positive_long":     "32",
             "negative_long":     "-32",
             "invalid_long":     "3200000000000000000000",
+            "positive_byte":     "32",
+            "negative_byte":     "-32",
+            "invalid_byte":     "128",
             "floating":     "10.5",
             "image":     "' . base64_encode(fread(fopen(__DIR__ . '/bin/image.jpg', "r"), filesize(__DIR__ . '/bin/image.jpg'))) . '"
          }');
@@ -215,6 +218,30 @@ class ManagerTest extends TestCase
      * @expectedException Congow\Orient\Exception\Overflow
      */
     public function testLongPropertiesThrowAnExceptionIfOverflowsAreNotTolerated()
+    {
+        $this->mapper->enableOverflows();
+        $object = $this->mapper->hydrate($this->jsonLongRecord);
+    }
+
+    public function testBytePropertiesGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+
+        $this->assertEquals(-32, $object->getNegativeByte());
+        $this->assertEquals(32, $object->getPositiveByte());
+    }
+
+    public function testBytePropertiesDontThrowAnExceptionIfOverflowsAreTolerated()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+
+        $this->assertEquals(null, $object->getInvalidByte());
+    }
+
+    /**
+     * @expectedException Congow\Orient\Exception\Overflow
+     */
+    public function testBytePropertiesThrowAnExceptionIfOverflowsAreNotTolerated()
     {
         $this->mapper->enableOverflows();
         $object = $this->mapper->hydrate($this->jsonLongRecord);

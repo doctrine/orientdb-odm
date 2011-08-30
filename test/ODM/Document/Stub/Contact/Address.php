@@ -75,6 +75,21 @@ class Address
     protected $invalid_long;
     
     /**
+     * @ODM\Property(name="negative_byte", type="byte")
+     */
+    protected $negative_byte;
+    
+    /**
+     * @ODM\Property(name="positive_byte", type="byte")
+     */
+    protected $positive_byte;
+    
+    /**
+     * @ODM\Property(name="invalid_byte", type="byte")
+     */
+    protected $invalid_byte;
+    
+    /**
      * @ODM\Property(type="float")
      */
     protected $floating;
@@ -204,6 +219,36 @@ class Address
     public function setInvalidLong($long)
     {
         $this->invalid_long = $long;
+    }
+
+    public function getNegativeByte()
+    {
+        return $this->negative_byte;
+    }
+
+    public function setNegativeByte($Byte)
+    {
+        $this->negative_byte = $Byte;
+    }
+
+    public function getPositiveByte()
+    {
+        return $this->positive_byte;
+    }
+
+    public function setPositiveByte($Byte)
+    {
+        $this->positive_byte = $Byte;
+    }
+
+    public function getInvalidByte()
+    {
+        return $this->invalid_byte;
+    }
+
+    public function setInvalidByte($Byte)
+    {
+        $this->invalid_byte = $Byte;
     }
 
     public function getNumber()
