@@ -33,6 +33,7 @@ use Congow\Orient\Contract\Formatter\String as StringFormatterInterface;
 use Congow\Orient\Formatter\String as StringFormatter;
 use Congow\Orient\Contract\ODM\Mapper\Annotations\Reader as AnnotationreaderInterface;
 use Congow\Orient\Exception\ODM\OClass\NotFound as ClassNotFoundException;
+use Congow\Orient\Exception\Overflow;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
 
@@ -41,6 +42,7 @@ class Mapper
     protected $documentDirectories  = array();
     protected $annotationReader     = null;
     protected $inflector            = null;
+    protected $enableOverflows      = false;
     
     const ANNOTATION_PROPERTY_CLASS = 'Congow\Orient\ODM\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Congow\Orient\ODM\Mapper\Annotations\Document';
@@ -50,6 +52,17 @@ class Mapper
     {
         $this->annotationReader = $annotationReader ?: new AnnotationReader;
         $this->inflector        = $inflector ?: new DoctrineInflector;
+    }
+    
+    /**
+     * Enable or disable overflows' tolerance.
+     *
+     * @see   toleratesOverflow()
+     * @param boolean $value 
+     */
+    public function enableOverflows($value = true)
+    {
+        $this->enableOverflows = (bool) $value;
     }
     
     /**
@@ -171,7 +184,16 @@ class Mapper
             throw new Exception($message);
         }
         
-        return $caster->$method();
+        try {
+            return $caster->$method();
+        }
+        catch (Overflow $e) {
+            if ($this->toleratesOverflows()) {
+                return null;
+            }
+            
+            throw $e;
+        }
     }
 
     protected function fill($document, \stdClass $object)
@@ -339,5 +361,17 @@ class Mapper
                     $setter
             );
         }
+    }
+    
+    
+    /**
+     * Checks whether the Mapper throws exceptions or not when encountering an
+     * overflow error during hydration.
+     *
+     * @return bool
+     */
+    protected function toleratesOverflows()
+    {
+        return (bool) !$this->enableOverflows;
     }
 }

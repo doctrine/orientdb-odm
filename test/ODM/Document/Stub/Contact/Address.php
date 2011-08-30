@@ -44,6 +44,21 @@ class Address
      */
     protected $capital;
     
+    /**
+     * @ODM\Property(name="negative_short", type="short")
+     */
+    protected $negative_short;
+    
+    /**
+     * @ODM\Property(name="positive_short", type="short")
+     */
+    protected $positive_short;
+    
+    /**
+     * @ODM\Property(name="invalid_short", type="short")
+     */
+    protected $invalid_short;
+    
     protected $street;
 
     public function setType($type)
@@ -89,6 +104,36 @@ class Address
     public function setCapital($capital)
     {
         $this->capital = $capital;
+    }
+
+    public function getNegativeShort()
+    {
+        return $this->negative_short;
+    }
+
+    public function setNegativeShort($short)
+    {
+        $this->negative_short = $short;
+    }
+
+    public function getPositiveShort()
+    {
+        return $this->positive_short;
+    }
+
+    public function setPositiveShort($short)
+    {
+        $this->positive_short = $short;
+    }
+
+    public function getInvalidShort()
+    {
+        return $this->invalid_short;
+    }
+
+    public function setInvalidShort($short)
+    {
+        $this->invalid_short = $short;
     }
 
     public function setStreet($street)

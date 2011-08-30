@@ -38,7 +38,10 @@ class ManagerTest extends TestCase
             "type":     "Residence",
             "city":     "#13:0",
             "sample":   "ok",
-            "capital":   "122.231"
+            "capital":   "122.231",
+            "positive_short":   "32000",
+            "negative_short":   "-32000",
+            "invalid_short":   "-38000"
          }');
 
         $this->jsonRecordWrongClass = json_decode('{
@@ -137,6 +140,30 @@ class ManagerTest extends TestCase
         $object = $this->mapper->hydrate($this->jsonRecord);
 
         $this->assertEquals(122.231, $object->getCapital());
+    }
+
+    public function testShortPropertiesGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+
+        $this->assertEquals(-32000, $object->getNegativeShort());
+        $this->assertEquals(32000, $object->getPositiveShort());
+    }
+
+    public function testShortPropertiesDontThrowAnExceptionIfOverflowsAreTolerated()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+
+        $this->assertEquals(null, $object->getInvalidShort());
+    }
+
+    /**
+     * @expectedException Congow\Orient\Exception\Overflow
+     */
+    public function testShortPropertiesThrowAnExceptionIfOverflowsAreNotTolerated()
+    {
+        $this->mapper->enableOverflows();
+        $object = $this->mapper->hydrate($this->jsonRecord);
     }
     
     public function testPropertiesCanHaveDifferentNamesInCongowOrientAndPopo()

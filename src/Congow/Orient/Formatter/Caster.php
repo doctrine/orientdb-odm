@@ -20,10 +20,13 @@
 namespace Congow\Orient\Formatter;
 
 use Congow\Orient\Contract\Formatter\Caster as CasterInterface;
+use Congow\Orient\Exception\Overflow;
 
 class Caster implements CasterInterface
 {
-    protected $value = NULL;
+    protected $value    = NULL;
+    
+    const SHORT_LIMIT   = 32767;
     
     public function __construct($value = null)
     {
@@ -94,6 +97,23 @@ class Caster implements CasterInterface
         }
         
         return (string) $this->value;
+    }
+
+    /**
+     * Casts the given $value to a short.
+     *
+     * @param  mixed $value
+     * @return integer
+     */    
+    public function castShort()
+    {
+        if (abs($this->value) > self::SHORT_LIMIT) {
+            $message = sprintf('Short out of bounds (%d of %d)', $this->value, self::SHORT_LIMIT);
+            
+            throw new Overflow($message);
+        }
+        
+        return $this->value;
     }
     
     /**
