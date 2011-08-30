@@ -22,12 +22,23 @@ class StubObject
     }
 }
 
+class MockAdapter implements \Congow\Orient\Contract\Protocol\Adapter
+{
+ public function execute($sql)
+ {
+        
+ }
+ public function find($rid)
+ {
+    
+ }
+}
 
 class CasterTest extends TestCase
 {
     public function setup()
     {
-        $this->caster = new Caster();
+        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter));
     }
     
     public function testStringToStringConversion()

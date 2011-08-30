@@ -21,24 +21,31 @@ namespace Congow\Orient\Formatter;
 
 use Congow\Orient\Contract\Formatter\Caster as CasterInterface;
 use Congow\Orient\Exception\Overflow;
+use Congow\Orient\ODM\Mapper;
+use Congow\Orient\Validator\Rid as RidValidator;
+use Congow\Orient\Exception\Validation as ValidationException;
 
 /**
  * @todo check @return types, some are wrong
  */
 class Caster implements CasterInterface
 {
-    protected $value    = NULL;
+    protected $value    = null;
+    protected $mapper   = null;
     
     const SHORT_LIMIT       = 32767;
     const LONG_LIMIT        = 9223372036854775807;
     const BYTE_MAX_VALUE    = 127;
     const BYTE_MIN_VALUE    = -128;
     
-    public function __construct($value = null)
+    public function __construct(Mapper $mapper, $value = null)
     {
+        $this->mapper = $mapper;
+        
         if ($value) {
             $this->setValue($value);
         }
+        
     }
     
     
@@ -127,6 +134,37 @@ class Caster implements CasterInterface
     public function castInteger()
     {
         return (int) $this->value;
+    }
+    
+    /**
+     * @todo missing phpdoc
+     * @todo usefull to raise an exception when unable to validate rid
+     */
+    public function castLink()
+    {
+        $validator = new RidValidator;
+        
+        if($this->value instanceOf \stdClass ){
+            return $this->mapper->hydrate($this->value);
+        }else{
+            try {
+                return $this->mapper->find($validator->check($this->value));
+            } catch (ValidationException $e) {
+                //throw new
+                return null;
+            }
+        }
+        
+        
+
+    }
+    
+    /**
+     * @todo missing phpdoc
+     */
+    public function castLinkset()
+    {        
+        return $this->mapper->hydrateCollection($this->value);
     }
     
     /**

@@ -30,5 +30,10 @@ interface Adapter
      * @throws  \Exception
      */
     public function execute($command);
+    
+    /**
+     * @todo missing phpdoc
+     */
+    public function find($rid);
 }
 

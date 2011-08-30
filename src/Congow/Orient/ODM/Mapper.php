@@ -34,6 +34,7 @@ use Congow\Orient\Formatter\String as StringFormatter;
 use Congow\Orient\Contract\ODM\Mapper\Annotations\Reader as AnnotationreaderInterface;
 use Congow\Orient\Exception\ODM\OClass\NotFound as ClassNotFoundException;
 use Congow\Orient\Exception\Overflow;
+use Congow\Orient\Contract\Protocol\Adapter;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
 
@@ -43,13 +44,15 @@ class Mapper
     protected $annotationReader     = null;
     protected $inflector            = null;
     protected $enableOverflows      = false;
+    protected $protocolAdapter      = null;
     
     const ANNOTATION_PROPERTY_CLASS = 'Congow\Orient\ODM\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Congow\Orient\ODM\Mapper\Annotations\Document';
     const ORIENT_PROPERTY_CLASS     = '@class';
 
-    public function __construct(AnnotationReaderInterface $annotationReader = null, Inflector $inflector = null)
+    public function __construct(Adapter $protocolAdapter,AnnotationReaderInterface $annotationReader = null, Inflector $inflector = null)
     {
+        $this->protocolAdapter  = $protocolAdapter;
         $this->annotationReader = $annotationReader ?: new AnnotationReader;
         $this->inflector        = $inflector ?: new DoctrineInflector;
     }
@@ -171,7 +174,7 @@ class Mapper
      */
     protected function castProperty($annotation, $propertyValue, CasterInterface $caster = null)
     {
-        $caster     = $caster ?: new Caster;
+        $caster     = $caster ?: new Caster($this);
         $method     = 'cast' . $this->inflector->camelize($annotation->type);
         $caster->setValue($propertyValue);
         
@@ -377,5 +380,13 @@ class Mapper
     protected function toleratesOverflows()
     {
         return (bool) !$this->enableOverflows;
+    }
+    
+    /**
+     * @todo to implement and test
+     */
+    public function find($rid){
+        
+        return $this->hydrate(json_decode($this->protocolAdapter->find($rid)));
     }
 }

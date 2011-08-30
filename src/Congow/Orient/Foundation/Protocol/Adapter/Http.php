@@ -42,9 +42,9 @@ class Http implements protocolAdapter
     }
     
     /**
-     * Executes a command against Congow\OrientDB via the HTTP binding.
+     * Executes some SQL against Congow\OrientDB via the HTTP binding.
      *
-     * @param   type $command
+     * @param   string $sql
      * @return  mixed
      * @throws  \Exception
      * @todo should return StdObject for SELECT and stuff that retrieves data, true otherwise
@@ -52,9 +52,17 @@ class Http implements protocolAdapter
      * @exploding the status code should not be done hete, need to add an option to
      * ->getStatusCode($numeric) to return only 200 instead of HTTP/1.1 200 OK
      */
-    public function execute($command)
+    public function execute($sql)
     {
-        $response = $this->client->command($command);
+        $method = 'command';
+        
+        $parts = explode(' ', $sql);
+        
+        if (strtolower($parts[0]) == 'select') {
+          $method = 'query';
+        }
+        
+        $response = $this->client->$method($sql);
         
         if (!$response) {
             throw new \Exception('Unable to retrieve a response');
@@ -70,6 +78,13 @@ class Http implements protocolAdapter
         }
         
         throw new \Exception($response->getBody());
+    }
+    
+    /**
+     * @todo to implement and test
+     */
+    public function find($rid){
+        return null;
     }
 }
 

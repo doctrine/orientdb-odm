@@ -100,6 +100,21 @@ class Address
     protected $image;
     
     /**
+     * @ODM\Property(type="link")
+     */
+    protected $link;
+    
+    /**
+     * @ODM\Property(type="link")
+     */
+    protected $lazy_link;
+    
+    /**
+     * @ODM\Property(type="linkset")
+     */
+    protected $linkset;
+    
+    /**
      * @ODM\Property(type="integer")
      */
     protected $number;
@@ -169,6 +184,36 @@ class Address
     public function setPositiveShort($short)
     {
         $this->positive_short = $short;
+    }
+    
+    public function getLink()
+    {
+        return $this->link;
+    }
+
+    public function setLink($link)
+    {
+        $this->link = $link;
+    }
+    
+    public function getLinkset()
+    {
+        return $this->linkset;
+    }
+
+    public function setLinkset($linkset)
+    {
+        $this->linkset = $linkset;
+    }
+    
+    public function getLazyLink()
+    {
+        return $this->lazy_link;
+    }
+
+    public function setLazyLink($lazy_link)
+    {
+        $this->lazy_link = $lazy_link;
     }
 
     public function getInvalidShort()

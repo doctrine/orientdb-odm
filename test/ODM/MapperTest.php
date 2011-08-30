@@ -16,43 +16,78 @@ use Congow\Orient\ODM\Manager;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\ODM\Mapper\Annotations\Reader as AnnotationReader;
 
+class Adapter implements \Congow\Orient\Contract\Protocol\Adapter
+{
+    public function __construct()
+    {
 
-class ManagerTest extends TestCase
+    }
+    
+    public function execute($sql)
+    {
+        
+    }
+
+    public function find($rid){
+        return '{
+            "@type": "d", "@rid": "#19:0", "@version": 2, "@class": "Address", 
+            "name": "Luca", 
+            "surname": "Garulli", 
+            "out": ["#20:1"]
+          }';
+    }
+}
+
+
+
+class MapperTest extends TestCase
 {
     const BINARY_64_ENCODED = "data:;base64,/9j/4AAQSkZJRgABAgAAZABkAAD/7AARRHVja3kAAQAEAAAAWAAA/+4ADkFkb2JlAGTAAAAAAf/bAEMAAQEBAQEBAQEBAQIBAQECAgIBAQICAwICAgICAwQDAwMDAwMEBAQEBQQEBAYGBgYGBggICAgICQkJCQkJCQkJCf/bAEMBAgICAwMDBQQEBQgGBQYICQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCf/CABEIADAAMAMBEQACEQEDEQH/xAAZAAEBAQEBAQAAAAAAAAAAAAAABwkIBAb/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAHYQAAAnB9We4nBVQYsnfpVDFk37AAABxYQAFVO/QAAD//EAB0QAAMBAAIDAQAAAAAAAAAAAAUGBwQAFwgQIDD/2gAIAQEAAQUC+y7gor+kaTGmcWnTmxZhr0kGdvryNktBfHeJrZpRmL0N2mUiJxOnKNO/CjTFudDfQVJ50FSeJMhd1dn+/wD/xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAEDAQE/ARP/xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAECAQE/ARP/xAArEAABBAAFAgQHAQAAAAAAAAABAgMEBQAGERIUE0EHFSIxECAhMDiR1DL/2gAIAQEABj8C+dEO+zTXUkxxAdbiy5rMZxTZJAUEuKB01B+uGbKosGLWukbuPPjOpfZXsJSdq0Eg6EaYkTJkhESHEQp2VKdUENttoGqlKUfoAB7nDNbUZxqrWxkbuPAjWDD7y9gKjtQhZJ0A1+NXb5UoPNa6PVMxnpHKjMaPIffWU6POIPssYyzl7MMPy+4r+Zy4nUQ7t6sp1xPqbKknVKh3xnGorWeRY2tVYRoEfcEb3n2FoQnVRAGpPfGWcw5hyz5fT1/M5cvmRXdvViutp9LbqlHVSh2+zFtKHxWscjQ2IqGHKmIHum44la1F09OQ0NSFAe3bH5E3n6lf3Y/Im8/Ur+7FZe2/jPa5sroPW5FBJD/Rf6jSmxu3ynB6Srd/nt9j/8QAHhABAAEEAwEBAAAAAAAAAAAAAREAITFRECBBkTD/2gAIAQEAAT8h7uu2eWVZiIRI6raDENrRJQ2RKdNu18/g5UYCtoMQ2tElBYF59B5RNKsNkIvnNfQCO/8ApLLO61DIhaWSJQHrXwAD/wD6Syzr8Xbb+Xvptb2Dfw46dLIICdfT4SrjGTv/AP/aAAwDAQACAAMAAAAQAAAEAgAEgAAAAkAAAA//xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAEDAQE/EBP/xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAECAQE/EBP/xAAeEAEAAQQCAwAAAAAAAAAAAAABEQAQIWEwwSBBcf/aAAgBAQABPxDzFuqfDtNkkEMqNkhWCkv6SiESjvgt1rWNICqBWwQrBSX9JRALfchqwCRIrwEgOhPfKDCzBgIfQDRqEn5VIAtdCa/UCFmTAU4HVKT0rz5DIDIuVq3sQj0atSu5KOA//9k=";
     
     public function setup()
     {
         $annotationReader = new AnnotationReader;
-        $this->mapper = new Mapper($annotationReader);
+        $this->mapper = new Mapper(new Adapter, $annotationReader);
         $this->mapper->setDocumentDirectories(array('./test/ODM/Document/Stub' => '\\'));
         
         $this->jsonRecord = json_decode('{
-            "@type":    "d",
-            "@rid":     "#12:0",
-            "@version":  0,
-            "is_true":   1,
-            "is_false":  0,
-            "@class":   "Address",
-            "date":     "2011-01-01",
-            "datetime":     "2011-01-01 21:00:00",
-            "street":   "Piazza Navona, 1",
-            "type":     "Residence",
-            "city":     "#13:0",
-            "sample":   "ok",
-            "capital":   "122.231",
-            "positive_short":   "32000",
-            "negative_short":   "-32000",
-            "invalid_short":   "-38000",
-            "number":   "12",
-            "positive_long":     "32",
-            "negative_long":     "-32",
-            "invalid_long":     "3200000000000000000000",
-            "positive_byte":     "32",
-            "negative_byte":     "-32",
-            "invalid_byte":     "128",
-            "floating":     "10.5",
-            "image":     "' . base64_encode(fread(fopen(__DIR__ . '/bin/image.jpg', "r"), filesize(__DIR__ . '/bin/image.jpg'))) . '"
+            "@type":          "d",
+            "@rid":           "#12:0",
+            "@version":        0,
+            "is_true":         1,
+            "is_false":        0,
+            "@class":         "Address",
+            "date":           "2011-01-01",
+            "datetime":           "2011-01-01 21:00:00",
+            "street":         "Piazza Navona, 1",
+            "type":           "Residence",
+            "city":           "#13:0",
+            "sample":         "ok",
+            "capital":        "122.231",
+            "positive_short":  "32000",
+            "negative_short":  "-32000",
+            "invalid_short":  "-38000",
+            "number":         "12", 
+            "positive_long":  "32",
+            "negative_long":  "-32",
+            "invalid_long":   "3200000000000000000000",
+            "positive_byte":  "32",
+            "negative_byte":  "-32",
+            "invalid_byte":   "128",
+            "floating":       "10.5",
+            "image":          "' . base64_encode(fread(fopen(__DIR__ . '/bin/image.jpg', "r"), filesize(__DIR__ . '/bin/image.jpg'))) . '",
+            "link":           {
+                              "@type": "d", "@rid": "#14:0", "@version": 99, "@class": "Address", 
+                              "name": "Rome", 
+                              "link":{
+                                "@type": "d", "@rid": "#15:0", "@version": 99, "@class": "Address", 
+                                "name": "Italy"
+                              }},
+            "linkset":        [
+                                {"@type": "d", "@rid": "#20:102", "@version": 1, "@class": "Address"}, 
+                                {"@type": "d", "@rid": "#20:103", "@version": 1, "@class": "Address"}
+                              ],
+            "lazy_link":       "#1:1"
          }');
         
         $this->jsonLongRecord = json_decode('{
@@ -115,11 +150,11 @@ class ManagerTest extends TestCase
     public function testYouCanDecideWheterInjectACustomAnnotationReaderOrNotToTheMapper()
     {
         $annotationReader = new AnnotationReader;
-        $this->mapper = new Mapper($annotationReader);
+        $this->mapper = new Mapper(new Adapter, $annotationReader);
         
         $this->assertInstanceOf('Congow\Orient\ODM\Mapper\Annotations\Reader', $this->mapper->getAnnotationReader());
         
-        $this->mapper = new Mapper();
+        $this->mapper = new Mapper(new Adapter);
         
         $this->assertInstanceOf('Doctrine\Common\Annotations\AnnotationReader', $this->mapper->getAnnotationReader());
     }
@@ -268,7 +303,31 @@ class ManagerTest extends TestCase
 
         $this->assertEquals(self::BINARY_64_ENCODED, $object->getImage());
     }
-
+    
+    public function testLinkedRecordsGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+        
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLink());
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLink()->getLink());
+    }
+    
+    public function testLazyLinkedRecordsGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+        
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLazyLink());
+    }
+    
+    public function testLinkSetGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+        $linkset = $object->getLinkset();
+        
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[1]);
+    }
+    
     public function testDatePropertiesGetsMappedInTheObject()
     {
         $object = $this->mapper->hydrate($this->jsonRecord);
@@ -302,7 +361,7 @@ class ManagerTest extends TestCase
     public function testGettingTheDirectoriesInWhichTheMapperLooksForPOPOs()
     {
         $annotationReader = new AnnotationReader;
-        $this->mapper = new Mapper($annotationReader);
+        $this->mapper = new Mapper(new Adapter, $annotationReader);
         $dirs = array(
             'dir'   => 'namespace',
             'dir2'  => 'namespace2',

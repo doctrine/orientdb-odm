@@ -191,6 +191,9 @@ class BindingTest extends TestCase
         $this->assertTrue($client === $this->orient->getHttpClient());
     }
 
+    /**
+    * @todo: test not used
+    * */
     public function testFetchplanIsHandledCorrectly()
     {
         $response = $this->orient->getDocument('1:1', 'demo', 'myFetchplan');
