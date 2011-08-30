@@ -39,7 +39,6 @@ class Caster implements CasterInterface
     /**
      * Casts the given $value to boolean.
      *
-     * @param  mixed $value
      * @return boolean
      */
     public function castBoolean()
@@ -50,7 +49,6 @@ class Caster implements CasterInterface
     /**
      * Casts the given $value to a DateTime object.
      *
-     * @param  mixed $value
      * @return boolean
      * @todo is it possible to decide which class to return and not only datetime?
      */
@@ -62,7 +60,6 @@ class Caster implements CasterInterface
     /**
      * Casts the given $value to a DateTime object.
      *
-     * @param  mixed $value
      * @return boolean
      */
     public function castDateTime()
@@ -73,7 +70,6 @@ class Caster implements CasterInterface
     /**
      * Casts the given $value to a double (well... float).
      *
-     * @param  mixed $value
      * @return float
      */
     public function castDouble()
@@ -82,9 +78,18 @@ class Caster implements CasterInterface
     }
 
     /**
+     * Casts the given $value into an integer.
+     *
+     * @return integer
+     */
+    public function castInteger()
+    {
+        return (int) $this->value;
+    }
+
+    /**
      * Casts the given $value to string.
      *
-     * @param  mixed $value
      * @return boolean
      */    
     public function castString()
@@ -102,7 +107,6 @@ class Caster implements CasterInterface
     /**
      * Casts the given $value to a short.
      *
-     * @param  mixed $value
      * @return integer
      */    
     public function castShort()

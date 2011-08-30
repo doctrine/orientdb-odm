@@ -59,6 +59,11 @@ class Address
      */
     protected $invalid_short;
     
+    /**
+     * @ODM\Property(type="integer")
+     */
+    protected $number;
+    
     protected $street;
 
     public function setType($type)
@@ -124,6 +129,16 @@ class Address
     public function setPositiveShort($short)
     {
         $this->positive_short = $short;
+    }
+
+    public function getNumber()
+    {
+        return $this->number;
+    }
+
+    public function setNumber($number)
+    {
+        $this->number = $number;
     }
 
     public function getInvalidShort()

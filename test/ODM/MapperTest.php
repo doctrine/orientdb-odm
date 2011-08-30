@@ -41,7 +41,8 @@ class ManagerTest extends TestCase
             "capital":   "122.231",
             "positive_short":   "32000",
             "negative_short":   "-32000",
-            "invalid_short":   "-38000"
+            "invalid_short":   "-38000",
+            "number":   "12"
          }');
 
         $this->jsonRecordWrongClass = json_decode('{
@@ -148,6 +149,13 @@ class ManagerTest extends TestCase
 
         $this->assertEquals(-32000, $object->getNegativeShort());
         $this->assertEquals(32000, $object->getPositiveShort());
+    }
+
+    public function testIntegersGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+
+        $this->assertEquals(12, $object->getNumber());
     }
 
     public function testShortPropertiesDontThrowAnExceptionIfOverflowsAreTolerated()
