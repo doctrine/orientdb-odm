@@ -50,6 +50,14 @@ class Mapper
     const ANNOTATION_CLASS_CLASS    = 'Congow\Orient\ODM\Mapper\Annotations\Document';
     const ORIENT_PROPERTY_CLASS     = '@class';
 
+    /**
+     * Instantiates a new Mapper with a proper protocol adapter to make
+     * it talk with OrientDB.
+     *
+     * @param Adapter                   $protocolAdapter
+     * @param AnnotationReaderInterface $annotationReader
+     * @param Inflector                 $inflector
+     */
     public function __construct(Adapter $protocolAdapter,AnnotationReaderInterface $annotationReader = null, Inflector $inflector = null)
     {
         $this->protocolAdapter  = $protocolAdapter;
@@ -384,9 +392,9 @@ class Mapper
     
     /**
      * @todo to implement and test
+     * @todo probably better to receive a stdObjet rather than a JSON
      */
     public function find($rid){
-        
         return $this->hydrate(json_decode($this->protocolAdapter->find($rid)));
     }
 }

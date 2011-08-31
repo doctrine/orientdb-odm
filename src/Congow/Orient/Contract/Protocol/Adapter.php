@@ -29,10 +29,13 @@ interface Adapter
      * @param   string $command SQL-like command to execute
      * @throws  \Exception
      */
-    public function execute($command);
+    public function execute($sql);
     
     /**
-     * @todo missing phpdoc
+     * Retrieves a record, in form of a string that can be JSON-encoded.
+     * 
+     * @param   string $rid
+     * @return  string
      */
     public function find($rid);
 }

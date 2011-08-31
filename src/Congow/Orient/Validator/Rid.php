@@ -24,13 +24,14 @@ use Congow\Orient\Exception\Validation as ValidationException;
 
 class Rid extends Validator
 {
+    /**
+     * @todo str_replace(#) should only replace the 0 character of the string (#12:#12 should not be valid)
+     */
     protected function clean($rid)
     {   
         if (is_string($rid)) {
-            
-            $rid = str_replace('#','',$rid);
-            
-            $parts = explode(':', $rid);
+            $rid    = str_replace('#','',$rid);
+            $parts  = explode(':', $rid);
 
             if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1])) {
                 return $rid;

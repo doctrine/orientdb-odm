@@ -38,6 +38,12 @@ class Caster implements CasterInterface
     const BYTE_MAX_VALUE    = 127;
     const BYTE_MIN_VALUE    = -128;
     
+    /**
+     * Instantiates a new Caster.
+     *
+     * @param Mapper $mapper
+     * @param type $value 
+     */
     public function __construct(Mapper $mapper, $value = null)
     {
         $this->mapper = $mapper;
@@ -45,7 +51,6 @@ class Caster implements CasterInterface
         if ($value) {
             $this->setValue($value);
         }
-        
     }
     
     
@@ -137,30 +142,36 @@ class Caster implements CasterInterface
     }
     
     /**
-     * @todo missing phpdoc
-     * @todo usefull to raise an exception when unable to validate rid
+     * Casts the current internal value into an hydrated object through a
+     * Congow\Orient\ODM\Mapper object, finding it by rid.
+     * If the internal value is not a rid but an already decoded orient
+     * object, it simply hydrates it.
+     *
+     * @see     http://code.google.com/p/orient/wiki/FetchingStrategies
+     * @return  \stdObject|null
      */
     public function castLink()
     {
         $validator = new RidValidator;
         
-        if($this->value instanceOf \stdClass ){
+        if ($this->value instanceOf \stdClass) {
             return $this->mapper->hydrate($this->value);
-        }else{
+        } else {
             try {
-                return $this->mapper->find($validator->check($this->value));
+                $rid = $validator->check($this->value);
+                
+                return $this->mapper->find($rid);
             } catch (ValidationException $e) {
-                //throw new
                 return null;
             }
         }
-        
-        
-
     }
     
     /**
-     * @todo missing phpdoc
+     * Hydrates multiple objects through a Mapper.
+     *
+     * @todo   missing lazy loading, like in castLink
+     * @return Array
      */
     public function castLinkset()
     {        

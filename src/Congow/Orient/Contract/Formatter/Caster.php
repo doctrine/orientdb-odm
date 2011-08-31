@@ -19,6 +19,9 @@
 
 namespace Congow\Orient\Contract\Formatter;
 
+/**
+ * @todo add methods implemented in the library's effective Caster
+ */
 interface Caster
 {
     /**
