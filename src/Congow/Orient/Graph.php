@@ -10,34 +10,41 @@
  */
 
 /**
- * Class Graph
+ * Class Graph is a dataset to easily work with a simulated graph.
  *
- * @package     
- * @subpackage  
+ * @package     Orient
+ * @subpackage  Graph
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Congow\Orient;
+
+use Congow\Orient\Graph\Vertex;
 
 class Graph
 {
     protected $vertices = array();
     
     /**
-     * @todo missing phpdoc
-     * @todo throw custom exception
+     * Adds a new vertex to the current graph.
+     *
+     * @param   Graph\Vertex $vertex 
+     * @return  Congow\Orient\Graph
+     * @throws  Congow\Orient\Exception
      */
-    public function add(Graph\Vertex $vertex)
+    public function add(Vertex $vertex)
     {
         foreach ($this->getVertices() as $oldVertex) {
             if ($oldVertex->getId() == $vertex->getId()) {
                 $message = 'Unable to insert multiple Vertices with the same ID in a Graph';
                 
-                throw new \Exception($message);
+                throw new Exception($message);
             }
         }
         
-        $this->vertices[$vertex->getId()] = $vertex; 
+        $this->vertices[$vertex->getId()] = $vertex;
+        
+        return $this;
     }
     
     /**
