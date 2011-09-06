@@ -10,7 +10,7 @@
  */
 
 /**
- * Class Vertex
+ * Class Vertex is the foundation of a graph entity.
  *
  * @package     
  * @subpackage  
@@ -30,25 +30,31 @@ class Vertex
     protected $passed           = false;
     
     /**
+     * Instantiates a new vertex, requiring a ID to avoid collisions.
      *
-     * @todo missing phpdoc
+     * @param mixed $id 
      */
     public function __construct($id)
     {
         $this->id = $id;
     }
-    
+
     /**
+     * Connects the vertex to another $vertex.
+     * A $distance, to balance the connection, can be specified.
      *
-     * @todo missing phpdoc
+     * @param Vertex $vertex
+     * @param integer $distance 
      */
     public function connect(Vertex $vertex, $distance = 1)
     {
         $this->connections[$vertex->getId()] = $distance;
     }
-    
+
     /**
-     * @todo missing phpdoc
+     * Returns the connections of the current vertex.
+     *
+     * @return Array
      */
     public function getConnections()
     {
@@ -56,8 +62,9 @@ class Vertex
     }
     
     /**
+     * Returns the identifier of this vertex.
      *
-     * @todo missing phpdoc
+     * @return mixed
      */
     public function getId()
     {
@@ -65,8 +72,10 @@ class Vertex
     }
     
     /**
+     * Returns the most adjacent connection's ID of the current vertex,
+     * null if the vertex has no connections.
      *
-     * @todo missing phpdoc
+     * @return mixed
      */
     public function getMostAdjacentConnectionId()
     {
@@ -77,31 +86,9 @@ class Vertex
     }
     
     /**
+     * Returns vertex's potential.
      *
-     * @todo missing phpdoc
-     */
-    public function getMostAdjacentConnectionIdByPotential(Graph $graph)
-    {
-        $connections =  array();
-        
-        foreach ($this->getConnections() as $id => $distance) {
-            $connections[$id] = $graph->getVertex($id); 
-        }
-
-        usort($connections, function ($v1, $v2) use ($graph) {
-            if ($v1->getPotential() >= $v2->getPotential()) {
-                return 1;
-            }
-
-            return -1;
-        });
-
-        return count($this->getConnections()) ? array_shift($connections) : null;
-    }
-    
-    /**
-     *
-     * @todo missing phpdoc
+     * @return integer
      */
     public function getPotential()
     {
@@ -109,8 +96,9 @@ class Vertex
     }
     
     /**
+     * Returns the vertex which gave to the current vertex its potential.
      *
-     * @todo missing phpdoc
+     * @return Congow\Orient\Graph\Vertex
      */
     public function getPotentialFrom()
     {
@@ -118,8 +106,9 @@ class Vertex
     }
     
     /**
+     * Returns whether the vertex has passed or not.
      *
-     * @todo missing phpdoc
+     * @return boolean
      */
     public function isPassed()
     {
@@ -127,8 +116,8 @@ class Vertex
     }
     
     /**
-     *
-     * @todo missing phpdoc
+     * Marks this vertex as passed, meaning that, in the scope of a graph, he
+     * has already been processed in order to calculate its potential.
      */
     public function markPassed()
     {
@@ -136,8 +125,12 @@ class Vertex
     }
     
     /**
+     * Sets the potential for the vertex, if the vertex has no potential or the
+     * one it has is higher than the new one.
      *
-     * @todo missing phpdoc
+     * @param   integer $potential
+     * @param   Vertex $from 
+     * @return  boolean
      */
     public function setPotential($potential, Vertex $from)
     {
@@ -146,7 +139,11 @@ class Vertex
         if (!$this->getPotential() || $potential < $this->getPotential()) {
             $this->potential        = $potential;
             $this->potentialFrom    = $from;
+            
+            return true;
         }
+        
+        return false;
     }
 }
 
