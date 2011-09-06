@@ -85,6 +85,48 @@ However, it's under heavy work, so don't expect to be able to use it in a few we
 * provide a base repository class 
 * implementation of the persistence from the ODM to OrientDB
 
+## Utilities
+
+Orient incapsulates also a few utilities for PHP developers: on of them is an implementation of Dijkstra's algorithm.
+
+    use Congow\Orient\Graph;
+    use Congow\Orient\Graph\Vertex;
+    use Congow\Orient\Algorithm; 
+    
+    $graph = new Graph();
+    
+    $rome      = new Vertex('Rome');
+    $paris     = new Vertex('Paris');
+    $london    = new Vertex('London');
+    $amsterdam = new Vertex('Amsterdam');
+    $ny        = new Vertex('New York');
+    $la        = new Vertex('Los Angeles');
+    $tokio     = new Vertex('Tokio');
+    
+    $rome->connect($paris, 2);
+    $rome->connect($london, 3);
+    $rome->connect($amsterdam, 3);
+    $paris->connect($london, 1);
+    $paris->connect($amsterdam, 1);
+    $london->connect($ny, 10);
+    $amsterdam->connect($la, 8);
+    $la->connect($tokio, 2);
+    $ny->connect($tokio, 3);
+
+    $graph->add($rome);
+    $graph->add($paris);
+    $graph->add($london);
+    $graph->add($amsterdam);
+    $graph->add($ny);
+    $graph->add($la);
+    $graph->add($tokio);
+    
+    $algorithm = new Algorithm\Dijkstra($graph);
+    $algorithm->setStartingVertex($rome);
+    $algorithm->setEndingVertex($tokio);
+    
+    var_dump($algorithm->solve());
+
 ## Tests & reports
 
 In order to run the tests you only need to:
