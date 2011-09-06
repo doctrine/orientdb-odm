@@ -42,6 +42,16 @@ class Dijkstra implements AlgorithmInterface
     }
     
     /**
+     * Returns the distance between the starting and the ending point.
+     *
+     * @return integer
+     */
+    public function getDistance()
+    {
+        return $this->getEndingVertex()->getPotential();
+    }
+    
+    /**
      * Gets the vertex which we are pointing to.
      *
      * @return Vertex
@@ -49,6 +59,24 @@ class Dijkstra implements AlgorithmInterface
     public function getEndingVertex()
     {
         return $this->endingVertex;
+    }
+    
+    /**
+     * Returns the solution in a human-readable style.
+     * 
+     * @return string
+     */
+    public function getLiteralShortestPath()
+    {
+        $path = $this->solve();
+        
+        $literal = '';
+        
+        foreach ($path as $p) {
+            $literal .= "{$p->getId()} - ";
+        }
+        
+        return substr($literal, 0, count($literal) - 3);
     }
     
     /**
