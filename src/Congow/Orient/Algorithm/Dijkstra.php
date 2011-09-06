@@ -10,10 +10,11 @@
  */
 
 /**
- * Class Dijkstra
+ * Class Dijkstra is an implementation of the famous Dijkstra's algorithm to
+ * calculate the shortest path between two vertices of a graph.
  *
- * @package     
- * @subpackage  
+ * @package     Orient
+ * @subpackage  Graph
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -31,23 +32,19 @@ class Dijkstra implements AlgorithmInterface
     protected $paths            = array();
     
     /**
-     * @todo missing phpdoc
+     * Instantiates a new algorithm, requiring a graph to work with.
+     *
+     * @param Graph $graph 
      */
     public function __construct(Graph $graph)
     {
         $this->graph  = $graph;
     }
     
-    protected function doSolve(Vertex $root)
-    {        
-        $this->calculatePotentials($root);
-        
-        return $this->getShortestPath();
-    }
-    
     /**
+     * Gets the vertex which we are pointing to.
      *
-     * @todo missing phpdoc
+     * @return Vertex
      */
     public function getEndingVertex()
     {
@@ -55,8 +52,10 @@ class Dijkstra implements AlgorithmInterface
     }
     
     /**
+     * Reverse-calculates the shortest path of the graph thanks the potentials
+     * stored in the vertices.
      *
-     * @todo missing phpdoc
+     * @return Array
      */
     public function getShortestPath()
     {   
@@ -74,8 +73,9 @@ class Dijkstra implements AlgorithmInterface
     }
     
     /**
+     * Retrieves the vertex which we are starting from to calculate the shortest path.
      *
-     * @todo missing phpdoc
+     * @return Vertex
      */
     public function getStartingVertex()
     {        
@@ -83,8 +83,9 @@ class Dijkstra implements AlgorithmInterface
     }
     
     /**
-     *
-     * @todo missing phpdoc
+     * Sets the vertex which we are pointing to.
+     * 
+     * @param Vertex $vertex
      */
     public function setEndingVertex(Vertex $vertex)
     {
@@ -92,8 +93,9 @@ class Dijkstra implements AlgorithmInterface
     }
     
     /**
-     *
-     * @todo missing phpdoc
+     * Sets the vertex which we are starting from to calculate the shortest path.
+     * 
+     * @param Vertex $vertex
      */
     public function setStartingVertex(Vertex $vertex)
     {
@@ -102,14 +104,24 @@ class Dijkstra implements AlgorithmInterface
     }
     
     /**
+     * Solves the algorithm and returns the shortest path as an array.
      *
-     * @todo missing phpdoc
+     * @return  Array
      */
     public function solve()
     {
-        return $this->doSolve($this->getStartingVertex());
+        $this->calculatePotentials($this->getStartingVertex());
+        
+        return $this->getShortestPath();
     }
     
+    /**
+     * Recursively calculates the potentials of the graph, from the
+     * starting point you specify with ->setStartingVertex(), traversing
+     * the graph due to Vertex's $connections attribute.
+     *
+     * @param Vertex $vertex 
+     */
     protected function calculatePotentials(Vertex $vertex)
     {                
         foreach ($vertex->getConnections() as $id => $distance) {
@@ -142,24 +154,9 @@ class Dijkstra implements AlgorithmInterface
     }
     
     /**
+     * Returns the graph associated with this algorithm instance.
      *
-     * @todo missing phpdoc
-     */
-    protected function getMostAdjacentConnectionsByPotential(Vertex $vertex)
-    {
-        $adjacentVertex         = $vertex->getMostAdjacentConnectionIdByPotential($this->getGraph());
-        $this->shortestPath[]   = $adjacentVertex;
-        
-        if ($adjacentVertex && $adjacentVertex->getId() != $this->getEndingVertex()->getId()) {
-            $this->getMostAdjacentConnectionsByPotential($adjacentVertex);
-        }
-        
-        return $this->shortestPath;
-    }
-    
-    /**
-     *
-     * @todo missing phpdoc
+     * @return Graph
      */
     protected function getGraph()
     {
@@ -167,8 +164,9 @@ class Dijkstra implements AlgorithmInterface
     }
     
     /**
+     * Returns the possible paths registered in the graph.
      *
-     * @todo missing phpdoc
+     * @return Array
      */
     protected function getPaths()
     {

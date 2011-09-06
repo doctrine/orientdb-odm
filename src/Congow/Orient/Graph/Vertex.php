@@ -12,8 +12,8 @@
 /**
  * Class Vertex is the foundation of a graph entity.
  *
- * @package     
- * @subpackage  
+ * @package     Orient
+ * @subpackage  Graph
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
