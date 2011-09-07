@@ -21,10 +21,4 @@ namespace Congow\Orient\Contract\Query\Command;
 
 interface OClass
 {
-    /**
-     * Sets the class to manipulate within this command.
-     *
-     * @param   string  $class
-     */
-    public function __construct($class);
 }

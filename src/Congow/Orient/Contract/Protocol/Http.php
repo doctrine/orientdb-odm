@@ -26,19 +26,6 @@ use Congow\Orient\Contract\Http\Client;
 interface Http
 {
     /**
-     * Instantiate a new object injecting a $client able to perform HTTP
-     * requests on the given $hostname:$port.
-     * $username and $password are used for HTTP authentication.
-     *
-     * @param   Client  $client
-     * @param   string  $hostname
-     * @param   string  $port
-     * @param   string  $username
-     * @param   string  $password
-     */
-    public function __construct(Client $client, $hostname, $port, $username, $password);
-
-    /**
      * Executes an HTTP requests in order to delete the given $class in the
      * $database.
      *

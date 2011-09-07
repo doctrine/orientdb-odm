@@ -12,8 +12,8 @@
 /**
  * This interface is responsible of general-purpose manipulation of strings.
  *
- * @package    
- * @subpackage 
+ * @package    Congow\Orient
+ * @subpackage Contract
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 

@@ -23,14 +23,6 @@ namespace Congow\Orient\Contract\Query\Command\Reference;
 interface Find
 {
   /**
-   * Istantiates a new SQL command to find refences pointing to an object,
-   * identified by the given $rid.
-   *
-   * @param string $rid
-   */
-  public function __construct($rid);
-
-  /**
    * Sets a list of $classes in which you can look for object's references.
    * The $append parameter is used to determine wheter to append or overwrite
    * the classes to existing ones ( usually set with a fluent interface ).

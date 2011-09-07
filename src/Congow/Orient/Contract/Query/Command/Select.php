@@ -23,14 +23,6 @@ namespace Congow\Orient\Contract\Query\Command;
 interface Select
 {
     /**
-     * Istantiates a new object setting the classes or records to look for, with
-     * the $target parameter, which accepts Congow\OrientDB classes or RIDs.
-     *
-     * @param   array $target
-     */
-    public function __construct(array $target);
-
-    /**
      * Converts the "normal" select into an index one.
      * Index selects can query with the BETWEEN operator:
      * <code>select from index:name where x between 10.3 and 10.7</code>

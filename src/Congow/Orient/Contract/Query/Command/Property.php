@@ -23,13 +23,6 @@ namespace Congow\Orient\Contract\Query\Command;
 interface Property
 {
     /**
-     * Builds a new object setting the $property to manipulate.
-     *
-     * @param   string  $property
-     */
-    public function __construct($property);
-
-    /**
      * Sets the class of the property to manipulate.
      *
      * @param   string  $class
