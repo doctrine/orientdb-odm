@@ -32,8 +32,11 @@ class Curl implements HttpClient
 
     /**
      * Creates a new Curl instance.
+     * 
+     * @param   boolean $reuseHandle
+     * @param   integer $timeout
      */
-    public function __construct($reuseHandle = false, $timeout = 2 )
+    public function __construct($reuseHandle = true, $timeout = 2 )
     {
         $this->reuseHandle = $reuseHandle;
         $this->client = $this->createCurlHandle();
@@ -56,28 +59,6 @@ class Curl implements HttpClient
     public function setTimeout($timeout)
     {
       curl_setopt($this->client, CURLOPT_TIMEOUT,$timeout);
-    }
-
-    /**
-     * Create and initialize the underlying cURL handle.
-     *
-     * @return resource
-     */
-    protected function createCurlHandle()
-    {
-        $client = curl_init();
-
-        $options = array(
-            CURLOPT_HEADER => true,
-            CURLOPT_RETURNTRANSFER => true,
-        );
-        if ($this->authentication) {
-            $options[CURLOPT_USERPWD] = $this->authentication;
-        }
-        
-        curl_setopt_array($client, $options);
-
-        return $client;
     }
 
     /**
@@ -206,5 +187,27 @@ class Curl implements HttpClient
     public function reuseHandle($value)
     {
         $this->reuseHandle = $value;
+    }
+    
+    /**
+     * Create and initialize the underlying cURL handle.
+     *
+     * @return resource
+     */
+    protected function createCurlHandle()
+    {
+        $client = curl_init();
+
+        $options = array(
+            CURLOPT_HEADER => true,
+            CURLOPT_RETURNTRANSFER => true,
+        );
+        if ($this->authentication) {
+            $options[CURLOPT_USERPWD] = $this->authentication;
+        }
+        
+        curl_setopt_array($client, $options);
+
+        return $client;
     }
 }

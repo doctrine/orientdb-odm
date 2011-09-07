@@ -27,7 +27,7 @@ class BindingTest extends TestCase
 
     public function setup()
     {
-        $this->driver = new Curl();
+        $this->driver = new Curl(true, 5);
         $this->orient = new Binding($this->driver, '127.0.0.1', '2480', 'admin', 'admin');
     }
 
@@ -86,15 +86,10 @@ class BindingTest extends TestCase
 
     public function testManagingADatabase()
     {
-        $this->orient->setDatabase('demo');
         $this->orient->setAuthentication('admin', 'admin');
-
+        
         $this->assertStatusCode(self::_200, $this->orient->getDatabase('demo'), 'get informations about an existing database');
-        $this->assertStatusCode(self::_401, $this->orient->getDatabase("OMGOMGOMG"), 'get informations about a non-existing database');
-        # HTTPTODO: status code should be  404
-        //$this->orient->setAuthentication('root', 'EAD5A71FAD21DB3216567E4BACD711C3E39AD0C953CEAEC4EC1464A5C645A6FC');
-        // ohhhh problems, can't delete DB
-        //$this->assertEquals(self::_204, $this->orient->postDatabase('db.' . rand(0, 999)), 'ry to create a database that exists');
+        $this->assertStatusCode(self::_500, $this->orient->getDatabase("OMGOMGOMG"), 'get informations about a non-existing database');
     }
 
     public function testRetrievingInformationsFromAServer()
@@ -156,6 +151,7 @@ class BindingTest extends TestCase
 
     public function testManagingADocument()
     {
+        $this->orient->setHttpClient(new Curl(false));
         $this->orient->setDatabase('demo');
         $this->orient->setAuthentication('admin', 'admin');
 
@@ -174,6 +170,11 @@ class BindingTest extends TestCase
         $document = json_encode(array('@class' => 'Address', 'name' => 'Test', '@version' => 1));
         $this->assertStatusCode(self::_200, $this->orient->putDocument($rid, $document), 'updates a valid document');
         $this->assertStatusCode(self::_500, $this->orient->putDocument('9991', $document), 'updates a non valid document');
+        
+        /**
+         * disable reusing curl handle, otherwise we won't get 409 Conflict
+         * @see https://github.com/congow/Orient/commit/44dfff40e25251fc2b8941525e71d0464a1867ef#commitcomment-450144
+         */ 
         $this->assertStatusCode(self::_409, $this->orient->deleteDocument($rid, 3), 'deletes a valid document');
         $this->assertStatusCode(self::_204, $this->orient->deleteDocument($rid, 2), 'deletes a valid document');
         $this->assertStatusCode(self::_500, $this->orient->deleteDocument('999:1'), 'deletes a non existing document');
