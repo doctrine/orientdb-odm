@@ -23,6 +23,7 @@ namespace Congow\Orient\Algorithm;
 use Congow\Orient\Contract\Algorithm as AlgorithmInterface;
 use Congow\Orient\Graph;
 use Congow\Orient\Graph\Vertex;
+use Congow\Orient\Exception;
 
 class Dijkstra implements AlgorithmInterface
 {
@@ -30,6 +31,7 @@ class Dijkstra implements AlgorithmInterface
     protected $endingVertex     = null;
     protected $graph            = null;
     protected $paths            = array();
+    protected $solution         = false;
     
     /**
      * Instantiates a new algorithm, requiring a graph to work with.
@@ -48,6 +50,13 @@ class Dijkstra implements AlgorithmInterface
      */
     public function getDistance()
     {
+        if (!$this->isSolved()) {
+            $message = "Cannot calculate the distance of a non-solved algorithm:\n";
+            $message .= "Did you forget to call ->solve() ?";
+            
+            throw new Exception\Logic($message);
+        }
+        
         return $this->getEndingVertex()->getPotential();
     }
     
@@ -76,7 +85,7 @@ class Dijkstra implements AlgorithmInterface
             $literal .= "{$p->getId()} - ";
         }
         
-        return substr($literal, 0, count($literal) - 3);
+        return substr($literal, 0, count($literal) - 4);
     }
     
     /**
@@ -138,9 +147,16 @@ class Dijkstra implements AlgorithmInterface
      */
     public function solve()
     {
-        $this->calculatePotentials($this->getStartingVertex());
+        if (!$this->getStartingVertex() || !$this->getEndingVertex()) {
+            $message = "Cannot solve the algorithm without both starting and ending vertices";
+            
+            throw new Exception\Logic($message);
+        }
         
-        return $this->getShortestPath();
+        $this->calculatePotentials($this->getStartingVertex());
+        $this->solution = $this->getShortestPath();
+        
+        return $this->solution;
     }
     
     /**
@@ -199,6 +215,16 @@ class Dijkstra implements AlgorithmInterface
     protected function getPaths()
     {
         return $this->paths;
+    }
+    
+    /**
+     * Checks wheter the current algorithm has been solved or not.
+     *
+     * @return boolean
+     */
+    protected function isSolved()
+    {
+        return (bool) $this->solution;
     }
 }
 

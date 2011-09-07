@@ -136,5 +136,56 @@ class DijkstraTest extends TestCase
 
         $this->assertEquals(array($home, $a, $c, $d, $e, $office), $algorithm->solve());
     }
+    
+    public function testYouGetTheDistance()
+    {
+        $this->rome->connect($this->zurich, 4);
+        
+        $this->algorithm->setStartingVertex($this->rome);
+        $this->algorithm->setEndingVertex($this->zurich);
+        $this->algorithm->solve();
+        
+        $this->assertEquals(4, $this->algorithm->getDistance());
+    }
+    
+    /**
+     * @expectedException \Congow\Orient\Exception\Logic
+     */
+    public function testYouNeedToSolveTheAlgorithmBeforeCalculatingTheDistance()
+    {
+        $this->rome->connect($this->zurich, 4);
+        $this->algorithm->setStartingVertex($this->rome);
+        $this->algorithm->setEndingVertex($this->zurich);
+        $this->algorithm->getDistance();
+    }
+    
+    public function testYouRetrieveANiceStringToOutputThePath()
+    {
+        $this->rome->connect($this->zurich, 4);
+        $this->algorithm->setStartingVertex($this->rome);
+        $this->algorithm->setEndingVertex($this->zurich);
+        
+        $this->assertEquals('rome - zurich', $this->algorithm->getLiteralShortestPath());
+    }
+    
+    /**
+     * @expectedException \Congow\Orient\Exception\Logic
+     */
+    public function testYouCantSolveTheAlgorithmWithoutaStart()
+    {
+        $this->rome->connect($this->zurich, 4);
+        $this->algorithm->setEndingVertex($this->zurich);
+        $this->algorithm->solve();
+    }
+    
+    /**
+     * @expectedException \Congow\Orient\Exception\Logic
+     */
+    public function testYouCantSolveTheAlgorithmWithoutaEnd()
+    {
+        $this->rome->connect($this->zurich, 4);
+        $this->algorithm->setStartingVertex($this->zurich);
+        $this->algorithm->solve();
+    }
 }
 

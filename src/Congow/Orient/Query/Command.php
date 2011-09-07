@@ -352,7 +352,7 @@ abstract class Command implements CommandContract
         else {
             $message = "Number of given parameters does not match number of tokens";
 
-            throw new \LogicException($message);
+            throw new Exception\Logic($message);
         }
     }
     

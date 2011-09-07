@@ -24,6 +24,9 @@
           <directory >../../test/Query</directory>
           <file >./test/QueryTest.php</file>
       </testsuite>
+      <testsuite name="Graph">
+          <file >./test/GraphTest.php</file>
+      </testsuite>
       <testsuite name="HTTP">
           <directory >../../test/Http</directory>
       </testsuite>
@@ -35,6 +38,12 @@
       </testsuite>
       <testsuite name="Algorithm">
           <directory >../../test/Algorithm</directory>
+      </testsuite>
+      <testsuite name="ODM">
+          <directory >../../test/ODM</directory>
+      </testsuite>
+      <testsuite name="Excp">
+          <directory >../../test/Exception</directory>
       </testsuite>
 <!--      <testsuite name="Test">
           <directory >../../Test/Foundation</directory>

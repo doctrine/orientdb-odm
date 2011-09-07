@@ -41,6 +41,16 @@ class Command extends TestCase
         $this->command->getRaw();
     }
 
+    /**
+     * @expectedException Congow\Orient\Exception\Logic
+     */
+    public function testAnExceptionIsRaisedIfYouMakeAWhereWithDifferentParamsAndValues()
+    {
+        $this->command = new StubCommand();
+        $this->command->where('c = ? AND b = ?', array(1));
+        $this->command->getRaw();
+    }
+
     public function testYouCanInjectACustomQueryFormatter()
     {
         $this->command  = new StubExceptionedCommand();

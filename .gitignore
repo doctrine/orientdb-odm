@@ -1,6 +1,7 @@
 Test/Report
 log
 try.php
-Docs/html
-Docs/latex
+docs/html
+docs/latex
+docs/coverage
 lib/*

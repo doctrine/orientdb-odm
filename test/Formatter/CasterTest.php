@@ -41,6 +41,12 @@ class CasterTest extends TestCase
         $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter));
     }
     
+    public function testInjectingTheValueInTheConstructor()
+    {
+        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter), 'v');
+        $this->assertEquals('v', $this->caster->castString());
+    }
+    
     public function testStringToStringConversion()
     {
         $this->assertTrue(is_string($this->caster->setValue('john')->castString()));
@@ -79,5 +85,11 @@ class CasterTest extends TestCase
     {
         $this->assertTrue(is_bool($this->caster->setValue(new StubObject())->castBoolean()));
         $this->assertEquals(true, $this->caster->setValue(new StubObject())->castBoolean());
+    }
+    
+    public function testNullIsReturnedWhenCastingToRidAnInvalidRid()
+    {
+        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter), 'OMGO');
+        $this->assertEquals(null, $this->caster->castLink());
     }
 }
