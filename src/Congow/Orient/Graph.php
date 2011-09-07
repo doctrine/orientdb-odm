@@ -20,8 +20,9 @@
 namespace Congow\Orient;
 
 use Congow\Orient\Graph\Vertex;
+use Congow\Orient\Contract\Graph as GraphInterface;
 
-class Graph
+class Graph implements GraphInterface
 {
     protected $vertices = array();
     

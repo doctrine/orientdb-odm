@@ -20,8 +20,9 @@
 namespace Congow\Orient\Graph;
 
 use Congow\Orient\Graph;
+use Congow\Orient\Contract\Graph\Vertex as VertexInterface;
 
-class Vertex
+class Vertex implements VertexInterface
 {
     protected $id;
     protected $connections      = array();
@@ -46,7 +47,7 @@ class Vertex
      * @param Vertex $vertex
      * @param integer $distance 
      */
-    public function connect(Vertex $vertex, $distance = 1)
+    public function connect(VertexInterface $vertex, $distance = 1)
     {
         $this->connections[$vertex->getId()] = $distance;
     }
@@ -132,7 +133,7 @@ class Vertex
      * @param   Vertex $from 
      * @return  boolean
      */
-    public function setPotential($potential, Vertex $from)
+    public function setPotential($potential, VertexInterface $from)
     {
         $potential = (int) $potential;
         

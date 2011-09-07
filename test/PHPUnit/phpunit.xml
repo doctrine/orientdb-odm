@@ -33,6 +33,9 @@
       <testsuite name="Formatter">
           <directory >../../test/Formatter</directory>
       </testsuite>
+      <testsuite name="Algorithm">
+          <directory >../../test/Algorithm</directory>
+      </testsuite>
 <!--      <testsuite name="Test">
           <directory >../../Test/Foundation</directory>
       </testsuite>-->
