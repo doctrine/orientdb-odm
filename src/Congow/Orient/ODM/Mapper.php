@@ -121,7 +121,7 @@ class Mapper
                 return $this->createDocument($class, $orientObject);
             }
         }
-
+        
         throw new DocumentNotFoundException();
     }
     
@@ -133,8 +133,8 @@ class Mapper
     {
         $records = array();
         
-        foreach ($collection as $record) {
-            $records[] = $this->hydrate($record);
+        foreach ($collection as $key => $record) {
+            $records[$key] = $this->hydrate($record);
         }
         
         return $records; 

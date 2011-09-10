@@ -168,6 +168,14 @@ class Caster implements CasterInterface
     }
     
     /**
+     * @todo phpdoc 
+     */
+    public function castEmbedded()
+    {
+        return $this->mapper->hydrate($this->value);
+    }
+    
+    /**
      * Hydrates multiple objects through a Mapper.
      *
      * @todo   missing lazy loading, like in castLink
@@ -175,7 +183,42 @@ class Caster implements CasterInterface
      */
     public function castLinkset()
     {        
-        return $this->mapper->hydrateCollection($this->value);
+        return $this->castLinkCollection();
+    }
+    
+    /**
+     * Hydrates multiple objects through a Mapper.
+     *
+     * @todo   missing lazy loading, like in castLink
+     * @return Array
+     */
+    public function castLinklist()
+    {        
+        return $this->castLinkCollection();
+    }
+    
+    /**
+     * Hydrates multiple objects through a Mapper.
+     *
+     * @todo   missing lazy loading, like in castLink
+     * @return Array
+     */
+    public function castLinkmap()
+    {
+        if(!is_array($this->value) && is_object($this->value) ){
+            $Oobjects = array();
+            
+            $refClass = new \ReflectionObject($this->value);
+            
+            $props = $refClass->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
+            foreach ($props as $property) {
+                $Oobjects[$property->name] = $this->value->{$property->name};
+            }
+            
+            $this->setValue($Oobjects);
+        }
+        
+        return $this->castLinkCollection();
     }
     
     /**
@@ -244,5 +287,13 @@ class Caster implements CasterInterface
         $this->value = $value;
         
         return $this;
+    }
+    
+    /**
+     * @todo missing phpdoc
+     */
+    protected function castLinkCollection()
+    {
+        return $this->mapper->hydrateCollection($this->value);
     }
 }

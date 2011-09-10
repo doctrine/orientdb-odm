@@ -105,6 +105,11 @@ class Address
     protected $link;
     
     /**
+     * @ODM\Property(type="embedded")
+     */
+    protected $embedded;
+    
+    /**
      * @ODM\Property(type="link")
      */
     protected $lazy_link;
@@ -113,6 +118,16 @@ class Address
      * @ODM\Property(type="linkset")
      */
     protected $linkset;
+    
+    /**
+     * @ODM\Property(type="linklist")
+     */
+    protected $linklist;
+    
+    /**
+     * @ODM\Property(type="linkmap")
+     */
+    protected $linkmap;
     
     /**
      * @ODM\Property(type="integer")
@@ -196,6 +211,16 @@ class Address
         $this->link = $link;
     }
     
+    public function getEmbedded()
+    {
+        return $this->embedded;
+    }
+
+    public function setEmbedded($embedded)
+    {
+        $this->embedded = $embedded;
+    }
+    
     public function getLinkset()
     {
         return $this->linkset;
@@ -204,6 +229,26 @@ class Address
     public function setLinkset($linkset)
     {
         $this->linkset = $linkset;
+    }
+    
+    public function getLinklist()
+    {
+        return $this->linklist;
+    }
+
+    public function setLinklist($linklist)
+    {
+        $this->linklist = $linklist;
+    }
+    
+    public function getLinkmap()
+    {
+        return $this->linkmap;
+    }
+
+    public function setLinkmap($linkmap)
+    {
+        $this->linkmap = $linkmap;
     }
     
     public function getLazyLink()

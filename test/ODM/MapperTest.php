@@ -87,6 +87,18 @@ class MapperTest extends TestCase
                                 {"@type": "d", "@rid": "#20:102", "@version": 1, "@class": "Address"}, 
                                 {"@type": "d", "@rid": "#20:103", "@version": 1, "@class": "Address"}
                               ],
+            "linklist":       [
+                                {"@type": "d", "@rid": "#20:102", "@version": 1, "@class": "Address"}, 
+                                {"@type": "d", "@rid": "#20:103", "@version": 1, "@class": "Address"}
+                              ],
+              "linkmap":       {
+                                  "first_key" : {"@type": "d", "@rid": "#20:102", "@version": 1, "@class": "Address"}, 
+                                  "second_key": {"@type": "d", "@rid": "#20:103", "@version": 1, "@class": "Address"}
+                                },
+              "embedded":      {
+                                "@type": "d", "@version": 99, "@class": "OCity", 
+                                "name": "Rome"
+                               },
             "lazy_link":       "#1:1"
          }');
         
@@ -328,6 +340,28 @@ class MapperTest extends TestCase
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[1]);
     }
     
+    public function testLinkListGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+        $linklist = $object->getLinkList();
+        
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[1]);
+    }
+    
+    public function testLinkMapGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+        $linkmap = $object->getLinkMap();
+        
+        $keys = array_keys($linkmap);
+        
+        $this->assertEquals('first_key', $keys[0]);
+        $this->assertEquals('second_key', $keys[1]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['first_key']);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['second_key']);
+    }
+        
     public function testDatePropertiesGetsMappedInTheObject()
     {
         $object = $this->mapper->hydrate($this->jsonRecord);
@@ -388,5 +422,12 @@ class MapperTest extends TestCase
     {
         $collection = $this->mapper->hydrateCollection($this->jsonCollection);
         $this->assertInstanceOf('Test\ODM\Document\Stub\Contact\Address', $collection[2] );
+    }
+    
+    public function testEmbeddedLinkedRecordsGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+        
+        $this->assertInstanceOf("Test\ODM\Document\Stub\City", $object->getEmbedded());
     }
 }
