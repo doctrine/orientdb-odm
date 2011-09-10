@@ -293,7 +293,21 @@ class Caster implements CasterInterface
      * @todo missing phpdoc
      */
     protected function castLinkCollection()
-    {
-        return $this->mapper->hydrateCollection($this->value);
+    {   
+        foreach ($this->value as $key => $value) {
+            
+            if (is_object($value)) {
+                return $this->mapper->hydrateCollection($this->value);
+            }
+            try {
+                $validator = new RidValidator();
+                $rid = $validator->check($value);
+                
+                return $this->mapper->findRecords($this->value);
+            } catch (ValidationException $e) {
+                
+                return null;
+            }
+        }
     }
 }

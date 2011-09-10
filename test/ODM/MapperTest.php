@@ -28,13 +28,20 @@ class Adapter implements \Congow\Orient\Contract\Protocol\Adapter
         
     }
 
-    public function find($rid){
+    public function find($rid)
+    {
         return '{
             "@type": "d", "@rid": "#19:0", "@version": 2, "@class": "Address", 
             "name": "Luca", 
             "surname": "Garulli", 
             "out": ["#20:1"]
           }';
+    }
+    
+    public function findRecords(array $rids)
+    {
+        return array(json_decode($this->find("#20:1")),json_decode($this->find("#20:2")));
+        
     }
 }
 
@@ -99,8 +106,9 @@ class MapperTest extends TestCase
                                 "@type": "d", "@version": 99, "@class": "OCity", 
                                 "name": "Rome"
                                },
-            "lazy_link":       "#1:1"
-         }');
+            "lazy_link":       "#1:1",
+            "lazy_linklist":  [ "#20:102", "#20:103" ]
+         }');                   
         
         $this->jsonLongRecord = json_decode('{
             "@type":    "d",
@@ -329,6 +337,15 @@ class MapperTest extends TestCase
         $object = $this->mapper->hydrate($this->jsonRecord);
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLazyLink());
+    }
+    
+    public function testLazyLinkListGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonRecord);
+        $linklist = $object->getLazyLinkList();
+        
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[1]);
     }
     
     public function testLinkSetGetsMappedInTheObject()

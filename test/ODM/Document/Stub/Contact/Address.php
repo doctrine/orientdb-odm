@@ -115,6 +115,11 @@ class Address
     protected $lazy_link;
     
     /**
+     * @ODM\Property(type="linklist")
+     */
+    protected $lazy_linklist;
+    
+    /**
      * @ODM\Property(type="linkset")
      */
     protected $linkset;
@@ -259,6 +264,16 @@ class Address
     public function setLazyLink($lazy_link)
     {
         $this->lazy_link = $lazy_link;
+    }
+    
+    public function getLazyLinkList()
+    {
+        return $this->lazy_linklist;
+    }
+    
+    public function setLazyLinkList($lazy_linklist)
+    {
+        $this->lazy_linklist = $lazy_linklist;
     }
 
     public function getInvalidShort()

@@ -393,8 +393,18 @@ class Mapper
     /**
      * @todo to implement and test
      * @todo probably better to receive a stdObjet rather than a JSON
+     * @todo phpdoc
      */
     public function find($rid){
         return $this->hydrate(json_decode($this->protocolAdapter->find($rid)));
+    }
+    
+    /**
+     * @todo to implement and test
+     * @todo probably better to receive a stdObjet rather than a JSON
+     * @todo phpdoc
+     */
+    public function findRecords(array $rids){
+        return $this->hydrateCollection($this->protocolAdapter->findRecords($rids));
     }
 }
