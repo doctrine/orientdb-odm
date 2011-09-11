@@ -83,6 +83,19 @@ class MapperTest extends TestCase
             "invalid_byte":   "128",
             "floating":       "10.5",
             "image":          "' . base64_encode(fread(fopen(__DIR__ . '/bin/image.jpg', "r"), filesize(__DIR__ . '/bin/image.jpg'))) . '",
+              "embedded":      {
+                                "@type": "d", "@version": 99, "@class": "OCity", 
+                                "name": "Rome"
+                               }
+         }');        
+        
+        $this->jsonLinkedRecord = json_decode('{
+            "@type":          "d",
+            "@rid":           "#12:0",
+            "@version":        0,
+            "is_true":         1,
+            "is_false":        0,
+            "@class":         "Address",
             "link":           {
                               "@type": "d", "@rid": "#14:0", "@version": 99, "@class": "Address", 
                               "name": "Rome", 
@@ -102,13 +115,23 @@ class MapperTest extends TestCase
                                   "first_key" : {"@type": "d", "@rid": "#20:102", "@version": 1, "@class": "Address"}, 
                                   "second_key": {"@type": "d", "@rid": "#20:103", "@version": 1, "@class": "Address"}
                                 },
-              "embedded":      {
-                                "@type": "d", "@version": 99, "@class": "OCity", 
-                                "name": "Rome"
-                               },
             "lazy_link":       "#1:1",
             "lazy_linklist":  [ "#20:102", "#20:103" ]
          }');                   
+        
+        $this->jsonEmbeddedRecord = json_decode('{
+            "@type":    "d",
+            "@rid":     "#12:0",
+            "@version":  0,
+            "@class":   "Address",
+            "embeddedlist": [
+                         {"@type": "d", "@version": 1, "@class": "Address"}, 
+                         {"@type": "d", "@version": 1, "@class": "Address"}
+                        ],
+            "embeddedintegers": [10, 20],
+            "embeddedstrings": ["hola", "halo"],
+            "embeddedbooleans": ["0", "1"]
+         }');
         
         $this->jsonLongRecord = json_decode('{
             "@type":    "d",
@@ -326,22 +349,22 @@ class MapperTest extends TestCase
     
     public function testLinkedRecordsGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
-        
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
+
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLink());
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLink()->getLink());
     }
     
     public function testLazyLinkedRecordsGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLazyLink());
     }
     
     public function testLazyLinkListGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         $linklist = $object->getLazyLinkList();
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
@@ -350,7 +373,7 @@ class MapperTest extends TestCase
     
     public function testLinkSetGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         $linkset = $object->getLinkset();
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[0]);
@@ -359,7 +382,7 @@ class MapperTest extends TestCase
     
     public function testLinkListGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         $linklist = $object->getLinkList();
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
@@ -368,7 +391,7 @@ class MapperTest extends TestCase
     
     public function testLinkMapGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         $linkmap = $object->getLinkMap();
         
         $keys = array_keys($linkmap);
@@ -441,10 +464,34 @@ class MapperTest extends TestCase
         $this->assertInstanceOf('Test\ODM\Document\Stub\Contact\Address', $collection[2] );
     }
     
-    public function testEmbeddedLinkedRecordsGetsMappedInTheObject()
+    public function testEmbeddedRecordsGetsMappedInTheObject()
     {
         $object = $this->mapper->hydrate($this->jsonRecord);
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\City", $object->getEmbedded());
+    }
+    
+    public function testEmbeddedListedRecordsGetsMappedInTheObject()
+    {
+        $object     = $this->mapper->hydrate($this->jsonEmbeddedRecord);
+        $embedded   = $object->getEmbeddedList();
+        
+        $this->assertEquals(2, count($embedded));
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $embedded[0]);
+    }
+    
+    public function testEmbeddedListedDataGetsMappedInTheObject()
+    {
+        $object             = $this->mapper->hydrate($this->jsonEmbeddedRecord);
+        $embeddedIntegers   = $object->getEmbeddedIntegers();
+        $embeddedStrings    = $object->getEmbeddedStrings();
+        $embeddedBooleans   = $object->getEmbeddedBooleans();
+        
+        $this->assertEquals(2, count($embeddedIntegers));
+        $this->assertEquals(10, $embeddedIntegers[0]);        
+        $this->assertEquals(2, count($embeddedStrings));
+        $this->assertEquals('hola', $embeddedStrings[0]);
+        $this->assertEquals(2, count($embeddedBooleans));
+        $this->assertEquals(false, $embeddedBooleans[0]);
     }
 }

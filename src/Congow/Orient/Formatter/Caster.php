@@ -24,6 +24,7 @@ use Congow\Orient\Exception\Overflow;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\Validator\Rid as RidValidator;
 use Congow\Orient\Exception\Validation as ValidationException;
+use Congow\Orient\ODM\Mapper\Annotations\Property as PropertyAnnotation;
 
 /**
  * @todo check @return types, some are wrong
@@ -46,7 +47,7 @@ class Caster implements CasterInterface
      */
     public function __construct(Mapper $mapper, $value = null)
     {
-        $this->mapper = $mapper;
+        $this->mapper       = $mapper;
         
         if ($value) {
             $this->setValue($value);
@@ -126,7 +127,41 @@ class Caster implements CasterInterface
      */
     public function castEmbedded()
     {
-        return $this->mapper->hydrate($this->value);
+        return $this->getMapper()->hydrate($this->value);
+    }
+    
+    /**
+     * @todo phpdoc 
+     * @todo annotations should use getters, not public properties
+     * @todo throw custom exception, add an explicative essage ("please add the cast to embeddedlists..")
+     * @todo probably theres a better way instead of a crappy switch
+     */
+    public function castEmbeddedList()
+    {
+        $listType = $this->getAnnotation()->cast;
+        
+        switch ($listType) {
+            case "link":
+                $value = $this->getMapper()->hydrateCollection($this->value);
+                break;
+            case "integer":
+                $value = $this->castArrayOf('integer');
+                break;
+            case "string":
+                $value = $this->castArrayOf('string');
+                break;
+            case "boolean":
+                $value = $this->castArrayOf('boolean');
+                break;
+            default:
+                $value = null;
+        }
+        
+        if (!$value) {
+            throw new \Exception();
+        }
+        
+        return $value;
     }
 
     /**
@@ -163,12 +198,12 @@ class Caster implements CasterInterface
         $validator = new RidValidator;
         
         if ($this->value instanceOf \stdClass) {
-            return $this->mapper->hydrate($this->value);
+            return $this->getMapper()->hydrate($this->value);
         } else {
             try {
                 $rid = $validator->check($this->value);
                 
-                return $this->mapper->find($rid);
+                return $this->getMapper()->find($rid);
             } catch (ValidationException $e) {
                 return null;
             }
@@ -277,6 +312,11 @@ class Caster implements CasterInterface
         return $this->castInBuffer(self::SHORT_LIMIT, 'long');
     }
     
+    public function setAnnotation(PropertyAnnotation $annotation)
+    {
+        $this->annotation = $annotation;
+    }
+    
     /**
      * Sets the internal value to work with.
      *
@@ -290,6 +330,23 @@ class Caster implements CasterInterface
     }
     
     /**
+     * @todo phpdoc
+     */
+    protected function castArrayOf($type)
+    {
+        $method         = 'cast' . ucfirst($type);
+        $results        = array();
+        $innerCaster    = new self($this->getMapper());
+        
+        foreach ($this->value as $key => $value) {
+            $innerCaster->setValue($value);
+            $results[$key] = $innerCaster->$method();
+        }
+        
+        return $results;
+    }
+    
+    /**
      * @todo missing phpdoc
      */
     protected function castLinkCollection()
@@ -297,17 +354,35 @@ class Caster implements CasterInterface
         foreach ($this->value as $key => $value) {
             
             if (is_object($value)) {
-                return $this->mapper->hydrateCollection($this->value);
+                return $this->getMapper()->hydrateCollection($this->value);
             }
             
             try {
                 $validator      = new RidValidator();
                 $rid            = $validator->check($value);
                 
-                return $this->mapper->findRecords($this->value);
+                return $this->getMapper()->findRecords($this->value);
             } catch (ValidationException $e) {
                 return null;
             }
         }
+    }
+    
+    /**
+     *
+     * @todo phpdoc
+     */
+    protected function getAnnotation()
+    {
+        return $this->annotation;
+    }
+    
+    /**
+     *
+     * @todo phpdoc
+     */
+    protected function getMapper()
+    {
+        return $this->mapper;
     }
 }

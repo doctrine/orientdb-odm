@@ -177,7 +177,6 @@ class Mapper
      * @param   mixed                                     $propertyValue
      * @param   CasterInterface                           $caster
      * @return  mixed
-     * @todo    do we need to pass an entire annotation object to only retrieve "type"?
      * @todo    long method
      */
     protected function castProperty($annotation, $propertyValue, CasterInterface $caster = null)
@@ -185,6 +184,7 @@ class Mapper
         $caster     = $caster ?: new Caster($this);
         $method     = 'cast' . $this->inflector->camelize($annotation->type);
         $caster->setValue($propertyValue);
+        $caster->setAnnotation($annotation);
         
         if (!method_exists($caster, $method)) {
             $message  = sprintf(

@@ -110,6 +110,26 @@ class Address
     protected $embedded;
     
     /**
+     * @ODM\Property(type="embedded_list", cast="link")
+     */
+    protected $embeddedlist;
+    
+    /**
+     * @ODM\Property(type="embedded_list", cast="boolean")
+     */
+    protected $embeddedbooleans;
+    
+    /**
+     * @ODM\Property(type="embedded_list", cast="string")
+     */
+    protected $embeddedstrings;
+    
+    /**
+     * @ODM\Property(type="embedded_list", cast="integer")
+     */
+    protected $embeddedintegers;
+    
+    /**
      * @ODM\Property(type="link")
      */
     protected $lazy_link;
@@ -164,6 +184,46 @@ class Address
     public function getDate()
     {
         return $this->date;
+    }
+
+    public function setEmbeddedList($list)
+    {
+        $this->embeddedlist = $list;
+    }
+
+    public function getEmbeddedList()
+    {
+        return $this->embeddedlist;
+    }
+    
+    public function setEmbeddedIntegers($list)
+    {
+        $this->embeddedintegers = $list;
+    }
+
+    public function getEmbeddedIntegers()
+    {
+        return $this->embeddedintegers;
+    }
+    
+    public function setEmbeddedBooleans($list)
+    {
+        $this->embeddedbooleans = $list;
+    }
+
+    public function getEmbeddedBooleans()
+    {
+        return $this->embeddedbooleans;
+    }
+    
+    public function setEmbeddedStrings($list)
+    {
+        $this->embeddedstrings = $list;
+    }
+
+    public function getEmbeddedStrings()
+    {
+        return $this->embeddedstrings;
     }
 
     public function setDateTime($date)
