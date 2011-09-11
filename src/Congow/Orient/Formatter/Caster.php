@@ -120,6 +120,14 @@ class Caster implements CasterInterface
     {
         return floatval($this->value);
     }
+    
+    /**
+     * @todo phpdoc 
+     */
+    public function castEmbedded()
+    {
+        return $this->mapper->hydrate($this->value);
+    }
 
     /**
      * Casts the given $value to a float.
@@ -168,14 +176,6 @@ class Caster implements CasterInterface
     }
     
     /**
-     * @todo phpdoc 
-     */
-    public function castEmbedded()
-    {
-        return $this->mapper->hydrate($this->value);
-    }
-    
-    /**
      * Hydrates multiple objects through a Mapper.
      *
      * @todo   missing lazy loading, like in castLink
@@ -205,17 +205,17 @@ class Caster implements CasterInterface
      */
     public function castLinkmap()
     {
-        if(!is_array($this->value) && is_object($this->value) ){
-            $Oobjects = array();
+        if(!is_array($this->value) && is_object($this->value)) {
+            $orientObjects = array();
             
             $refClass = new \ReflectionObject($this->value);
             
-            $props = $refClass->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
-            foreach ($props as $property) {
-                $Oobjects[$property->name] = $this->value->{$property->name};
+            $properties = $refClass->getProperties(\ReflectionProperty::IS_PUBLIC);
+            foreach ($properties as $property) {
+                $orientObjects[$property->name] = $this->value->{$property->name};
             }
             
-            $this->setValue($Oobjects);
+            $this->setValue($orientObjects);
         }
         
         return $this->castLinkCollection();
@@ -299,13 +299,13 @@ class Caster implements CasterInterface
             if (is_object($value)) {
                 return $this->mapper->hydrateCollection($this->value);
             }
+            
             try {
-                $validator = new RidValidator();
-                $rid = $validator->check($value);
+                $validator      = new RidValidator();
+                $rid            = $validator->check($value);
                 
                 return $this->mapper->findRecords($this->value);
             } catch (ValidationException $e) {
-                
                 return null;
             }
         }
