@@ -47,7 +47,7 @@ class Caster implements CasterInterface
      */
     public function __construct(Mapper $mapper, $value = null)
     {
-        $this->mapper       = $mapper;
+        $this->mapper = $mapper;
         
         if ($value) {
             $this->setValue($value);
@@ -135,6 +135,7 @@ class Caster implements CasterInterface
      * @todo annotations should use getters, not public properties
      * @todo throw custom exception, add an explicative essage ("please add the cast to embeddedlists..")
      * @todo probably theres a better way instead of a crappy switch
+     * @todo missing Date, DateTime... 
      */
     public function castEmbeddedList()
     {
