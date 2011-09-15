@@ -362,19 +362,25 @@ class Mapper
 
         $setter     = 'set' . $this->inflector->camelize($property);
         
-        if (method_exists($document, $setter))
-        {
+        if (method_exists($document, $setter)) {
             $document->$setter($value);            
-        }
-        else
-        {
-            $message = "%s has not method %s: you have to add the setter in order to correctly let Congow\Orient hydrate your object";
+        } 
+        else {
+            $refClass     = new \ReflectionObject($document);
+            $refProperty  = $refClass->getProperty($property);
             
-            throw new Exception(
-                    sprintf($message),
-                    get_class($document),
-                    $setter
-            );
+            if ($refProperty->isPublic()) {
+                $document->$property = $value;
+            } 
+            else {
+                $message = "%s has not method %s: you have to added the setter in order to correctly let Congow\Orient hydrate your object ?";
+                
+                throw new Exception(
+                        sprintf($message,
+                        get_class($document),
+                        $setter)
+                );
+            }
         }
     }
     

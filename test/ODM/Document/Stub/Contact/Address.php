@@ -163,6 +163,16 @@ class Address
     /**
      * @ODM\Property(type="linkset")
      */
+    public $lazy_linkset;
+    
+    /**
+     * @ODM\Property(type="linkmap")
+     */
+    public $lazy_linkmap;
+    
+    /**
+     * @ODM\Property(type="linkset")
+     */
     protected $linkset;
     
     /**

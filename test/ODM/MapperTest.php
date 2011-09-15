@@ -117,7 +117,9 @@ class MapperTest extends TestCase
                                   "second_key": {"@type": "d", "@rid": "#20:103", "@version": 1, "@class": "Address"}
                                 },
             "lazy_link":       "#1:1",
-            "lazy_linklist":  [ "#20:102", "#20:103" ]
+            "lazy_linklist":  [ "#20:102", "#20:103" ],
+            "lazy_linkset":   [ "#20:102", "#20:103" ],
+            "lazy_linkmap":   { "first_key" : "#20:102", "second_key": "#20:103" }
          }');
          
          $this->jsonEmbeddedMapRecord = json_decode('{
@@ -398,6 +400,15 @@ class MapperTest extends TestCase
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[1]);
     }
+
+    public function testLazyLinkSetGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
+        $linkset = $object->lazy_linkset;
+        
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[1]);
+    }
     
     public function testLinkSetGetsMappedInTheObject()
     {
@@ -406,6 +417,15 @@ class MapperTest extends TestCase
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[0]);
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[1]);
+    }
+    
+    public function testLazyLinkMapGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
+        $linkmap = $object->lazy_linkmap;
+        
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap[0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap[1]);
     }
     
     public function testLinkListGetsMappedInTheObject()
