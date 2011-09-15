@@ -108,6 +108,12 @@ class Address
      * @ODM\Property(type="embedded")
      */
     protected $embedded;
+
+    
+    /**
+     * @ODM\Property(type="embedded_set", cast="link")
+     */
+    protected $embeddedset;
     
     /**
      * @ODM\Property(type="embedded_list", cast="link")
@@ -128,6 +134,21 @@ class Address
      * @ODM\Property(type="embedded_list", cast="integer")
      */
     protected $embeddedintegers;
+    
+    /**
+     * @ODM\Property(type="embedded_set", cast="boolean")
+     */
+    protected $embeddedsetbooleans;
+    
+    /**
+     * @ODM\Property(type="embedded_set", cast="string")
+     */
+    protected $embeddedsetstrings;
+    
+    /**
+     * @ODM\Property(type="embedded_set", cast="integer")
+     */
+    protected $embeddedsetintegers;
     
     /**
      * @ODM\Property(type="link")
@@ -153,6 +174,11 @@ class Address
      * @ODM\Property(type="linkmap")
      */
     protected $linkmap;
+    
+    /**
+     * @ODM\Property(type="embedded_map", cast="link")
+     */
+    protected $embedded_map;
     
     /**
      * @ODM\Property(type="integer")
@@ -185,15 +211,25 @@ class Address
     {
         return $this->date;
     }
-
+    
     public function setEmbeddedList($list)
     {
         $this->embeddedlist = $list;
     }
-
+    
     public function getEmbeddedList()
     {
         return $this->embeddedlist;
+    }
+    
+    public function setEmbeddedSet($set)
+    {
+        $this->embeddedset = $set;
+    }
+
+    public function getEmbeddedSet()
+    {
+        return $this->embeddedset;
     }
     
     public function setEmbeddedIntegers($list)
@@ -225,6 +261,37 @@ class Address
     {
         return $this->embeddedstrings;
     }
+
+    public function setEmbeddedSetIntegers($list)
+    {
+        $this->embeddedsetintegers = $list;
+    }
+
+    public function getEmbeddedSetIntegers()
+    {
+        return $this->embeddedsetintegers;
+    }
+
+    public function setEmbeddedSetBooleans($list)
+    {
+        $this->embeddedsetbooleans = $list;
+    }
+
+    public function getEmbeddedSetBooleans()
+    {
+        return $this->embeddedsetbooleans;
+    }
+
+    public function setEmbeddedSetStrings($list)
+    {
+        $this->embeddedsetstrings = $list;
+    }
+
+    public function getEmbeddedSetStrings()
+    {
+        return $this->embeddedsetstrings;
+    }
+
 
     public function setDateTime($date)
     {
@@ -314,6 +381,16 @@ class Address
     public function setLinkmap($linkmap)
     {
         $this->linkmap = $linkmap;
+    }
+    
+    public function getEmbeddedMap()
+    {
+        return $this->embedded_map;
+    }
+
+    public function setEmbeddedMap($embedded_map)
+    {
+        $this->embedded_map = $embedded_map;
     }
     
     public function getLazyLink()

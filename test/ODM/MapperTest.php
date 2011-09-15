@@ -6,6 +6,7 @@
  * @package    Congow\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     David Funaro <ing.davidino@gmail.com>
  * @version
  */
 
@@ -117,7 +118,20 @@ class MapperTest extends TestCase
                                 },
             "lazy_link":       "#1:1",
             "lazy_linklist":  [ "#20:102", "#20:103" ]
-         }');                   
+         }');
+         
+         $this->jsonEmbeddedMapRecord = json_decode('{
+             "@type":          "d",
+             "@rid":           "#12:0",
+             "@version":        0,
+             "is_true":         1,
+             "is_false":        0,
+             "@class":         "Address",
+             "embedded_map":    {
+                                   "first_key" : {"@type": "d", "@version": 1, "@class": "Address"},
+                                   "second_key": {"@type": "d", "@version": 1, "@class": "Address"}
+                                }
+          }');                   
         
         $this->jsonEmbeddedRecord = json_decode('{
             "@type":    "d",
@@ -132,6 +146,20 @@ class MapperTest extends TestCase
             "embeddedstrings": ["hola", "halo"],
             "embeddedbooleans": ["0", "1"]
          }');
+    
+     $this->jsonEmbeddedSetRecord = json_decode('{
+         "@type":    "d",
+         "@rid":     "#12:0",
+         "@version":  0,
+         "@class":   "Address",
+         "embeddedset": [
+                      {"@type": "d", "@version": 1, "@class": "Address"}, 
+                      {"@type": "d", "@version": 1, "@class": "Address"}
+                     ],
+         "embeddedsetintegers": [10, 20],
+         "embeddedsetstrings": ["hola", "halo"],
+         "embeddedsetbooleans": ["0", "1"]
+      }');
         
         $this->jsonLongRecord = json_decode('{
             "@type":    "d",
@@ -401,7 +429,20 @@ class MapperTest extends TestCase
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['first_key']);
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['second_key']);
     }
+     
+    public function testEmbeddedMapGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonEmbeddedMapRecord);
+        $linkmap = $object->getEmbeddedMap();
         
+        $keys = array_keys($linkmap);
+        
+        $this->assertEquals('first_key', $keys[0]);
+        $this->assertEquals('second_key', $keys[1]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['first_key']);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['second_key']);
+    }
+    
     public function testDatePropertiesGetsMappedInTheObject()
     {
         $object = $this->mapper->hydrate($this->jsonRecord);
@@ -486,6 +527,31 @@ class MapperTest extends TestCase
         $embeddedIntegers   = $object->getEmbeddedIntegers();
         $embeddedStrings    = $object->getEmbeddedStrings();
         $embeddedBooleans   = $object->getEmbeddedBooleans();
+        
+        $this->assertEquals(2, count($embeddedIntegers));
+        $this->assertEquals(10, $embeddedIntegers[0]);        
+        $this->assertEquals(2, count($embeddedStrings));
+        $this->assertEquals('hola', $embeddedStrings[0]);
+        $this->assertEquals(2, count($embeddedBooleans));
+        $this->assertEquals(false, $embeddedBooleans[0]);
+    }
+
+    /* embedded set */
+    public function testEmbeddedSetRecordsGetsMappedInTheObject()
+    {
+        $object     = $this->mapper->hydrate($this->jsonEmbeddedSetRecord);
+        $embedded   = $object->getEmbeddedSet();
+        
+        $this->assertEquals(2, count($embedded));
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $embedded[0]);
+    }
+    
+    public function testEmbeddedSetDataGetsMappedInTheObject()
+    {
+        $object             = $this->mapper->hydrate($this->jsonEmbeddedSetRecord);
+        $embeddedIntegers   = $object->getEmbeddedSetIntegers();
+        $embeddedStrings    = $object->getEmbeddedSetStrings();
+        $embeddedBooleans   = $object->getEmbeddedSetBooleans();
         
         $this->assertEquals(2, count($embeddedIntegers));
         $this->assertEquals(10, $embeddedIntegers[0]);        

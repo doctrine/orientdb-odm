@@ -139,30 +139,25 @@ class Caster implements CasterInterface
      */
     public function castEmbeddedList()
     {
-        $listType = $this->getAnnotation()->cast;
+         return $this->castEmbeddedArrays();
+    }
+    
+    /**
+     * @todo: phpdoc
+     */
+    public function castEmbeddedMap()
+    {
+        $this->convertJsonCollectionToArray();
         
-        switch ($listType) {
-            case "link":
-                $value = $this->getMapper()->hydrateCollection($this->value);
-                break;
-            case "integer":
-                $value = $this->castArrayOf('integer');
-                break;
-            case "string":
-                $value = $this->castArrayOf('string');
-                break;
-            case "boolean":
-                $value = $this->castArrayOf('boolean');
-                break;
-            default:
-                $value = null;
-        }
-        
-        if (!$value) {
-            throw new \Exception();
-        }
-        
-        return $value;
+        return $this->castEmbeddedArrays();
+    }
+    
+    /**
+     * @todo: phpdoc
+     */
+    public function castEmbeddedSet()
+    {
+         return $this->castEmbeddedArrays();
     }
 
     /**
@@ -240,19 +235,8 @@ class Caster implements CasterInterface
      * @return Array
      */
     public function castLinkmap()
-    {
-        if(!is_array($this->value) && is_object($this->value)) {
-            $orientObjects = array();
-            
-            $refClass = new \ReflectionObject($this->value);
-            
-            $properties = $refClass->getProperties(\ReflectionProperty::IS_PUBLIC);
-            foreach ($properties as $property) {
-                $orientObjects[$property->name] = $this->value->{$property->name};
-            }
-            
-            $this->setValue($orientObjects);
-        }
+    {   
+        $this->convertJsonCollectionToArray();
         
         return $this->castLinkCollection();
     }
@@ -348,6 +332,37 @@ class Caster implements CasterInterface
     }
     
     /**
+     * @todo: phpdoc
+     */
+    public function castEmbeddedArrays()
+    {
+        $listType = $this->getAnnotation()->cast;
+        
+        switch ($listType) {
+            case "link":
+                $value = $this->getMapper()->hydrateCollection($this->value);
+                break;
+            case "integer":
+                $value = $this->castArrayOf('integer');
+                break;
+            case "string":
+                $value = $this->castArrayOf('string');
+                break;
+            case "boolean":
+                $value = $this->castArrayOf('boolean');
+                break;
+            default:
+                $value = null;
+        }
+        
+        if (!$value) {
+            throw new \Exception();
+        }
+        
+        return $value;
+    }
+    
+    /**
      * @todo missing phpdoc
      */
     protected function castLinkCollection()
@@ -367,6 +382,22 @@ class Caster implements CasterInterface
                 return null;
             }
         }
+    }
+    
+    protected function convertJsonCollectionToArray()
+    {
+        if(!is_array($this->value) && is_object($this->value)) {
+            $orientObjects = array();
+            
+            $refClass = new \ReflectionObject($this->value);
+            
+            $properties = $refClass->getProperties(\ReflectionProperty::IS_PUBLIC);
+            foreach ($properties as $property) {
+                $orientObjects[$property->name] = $this->value->{$property->name};
+            }
+            
+            $this->setValue($orientObjects);
+        }    
     }
     
     /**
