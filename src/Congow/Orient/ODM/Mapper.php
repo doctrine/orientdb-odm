@@ -399,6 +399,7 @@ class Mapper
     /**
      * @todo to implement and test
      * @todo probably better to receive a stdObjet rather than a JSON
+     * @todo the protocol adapter should be retrieved via getter
      * @todo phpdoc
      */
     public function find($rid){
@@ -408,6 +409,7 @@ class Mapper
     /**
      * @todo to implement and test
      * @todo probably better to receive a stdObjet rather than a JSON
+     * @todo the protocol adapter should be retrieved via getter
      * @todo phpdoc
      */
     public function findRecords(array $rids){
