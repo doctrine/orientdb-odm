@@ -24,7 +24,7 @@ class HttpTest extends TestCase
     
     public function testYouRetrieveAValidResponse()
     {
-        $this->assertTrue($this->adapter->execute('SELECT FROM Address'));
+        $this->assertInternalType('array',$this->adapter->execute('SELECT FROM Address'));
     }
     
     /**

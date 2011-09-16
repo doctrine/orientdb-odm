@@ -26,4 +26,5 @@ class Property extends \Doctrine\Common\Annotations\Annotation
 {
     public $name;
     public $type;
+    public $cast;
 }

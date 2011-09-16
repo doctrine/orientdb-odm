@@ -37,6 +37,6 @@ interface Adapter
      * @param   string $rid
      * @return  string
      */
-    public function find($rid);
+    //public function find($rid);
 }
 

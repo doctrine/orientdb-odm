@@ -56,9 +56,10 @@ class Http implements protocolAdapter
     {
         $method = 'command';
         
-        $parts = explode(' ', $sql);
+        $parts   = explode(' ', $sql);
+        $command = strtolower($parts[0]);
         
-        if (strtolower($parts[0]) == 'select') {
+        if ($command == 'select') {
           $method = 'query';
         }
         
@@ -74,6 +75,11 @@ class Http implements protocolAdapter
          * @todo ugly
          */
         if ($statusCode[1][0] == 2) {
+            if($command == 'select'){
+                $body = json_decode($response->getBody());
+                
+                return $body->result;
+            }
             return true;
         }
         
@@ -81,10 +87,16 @@ class Http implements protocolAdapter
     }
     
     /**
-     * @todo to implement and test
+     * @todo phpdoc
      */
-    public function find($rid){
-        return null;
-    }
+    // public function find($rid){
+    //     $result =  $this->execute('SELECT FROM ' . $rid);
+    //     
+    //     if (is_array($result) && count($result) == 1){
+    //         return array_shift($result);
+    //     }
+    //     
+    //     return null;
+    // }
 }
 

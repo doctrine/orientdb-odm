@@ -105,14 +105,90 @@ class Address
     protected $link;
     
     /**
+     * @ODM\Property(type="embedded")
+     */
+    protected $embedded;
+
+    
+    /**
+     * @ODM\Property(type="embedded_set", cast="link")
+     */
+    protected $embeddedset;
+    
+    /**
+     * @ODM\Property(type="embedded_list", cast="link")
+     */
+    protected $embeddedlist;
+    
+    /**
+     * @ODM\Property(type="embedded_list", cast="boolean")
+     */
+    protected $embeddedbooleans;
+    
+    /**
+     * @ODM\Property(type="embedded_list", cast="string")
+     */
+    protected $embeddedstrings;
+    
+    /**
+     * @ODM\Property(type="embedded_list", cast="integer")
+     */
+    protected $embeddedintegers;
+    
+    /**
+     * @ODM\Property(type="embedded_set", cast="boolean")
+     */
+    protected $embeddedsetbooleans;
+    
+    /**
+     * @ODM\Property(type="embedded_set", cast="string")
+     */
+    protected $embeddedsetstrings;
+    
+    /**
+     * @ODM\Property(type="embedded_set", cast="integer")
+     */
+    protected $embeddedsetintegers;
+    
+    /**
      * @ODM\Property(type="link")
      */
     protected $lazy_link;
     
     /**
+     * @ODM\Property(type="linklist")
+     */
+    protected $lazy_linklist;
+    
+    /**
+     * @ODM\Property(type="linkset")
+     */
+    public $lazy_linkset;
+    
+    /**
+     * @ODM\Property(type="linkmap")
+     */
+    public $lazy_linkmap;
+    
+    /**
      * @ODM\Property(type="linkset")
      */
     protected $linkset;
+    
+    /**
+     * @ODM\Property(type="linklist")
+     */
+    protected $linklist;
+    
+    /**
+     * @ODM\Property(type="linkmap")
+     */
+    protected $linkmap;
+    
+    /**
+     * @ODM\Property(type="embedded_map", cast="link")
+     */
+    protected $embedded_map;
     
     /**
      * @ODM\Property(type="integer")
@@ -145,6 +221,87 @@ class Address
     {
         return $this->date;
     }
+    
+    public function setEmbeddedList($list)
+    {
+        $this->embeddedlist = $list;
+    }
+    
+    public function getEmbeddedList()
+    {
+        return $this->embeddedlist;
+    }
+    
+    public function setEmbeddedSet($set)
+    {
+        $this->embeddedset = $set;
+    }
+
+    public function getEmbeddedSet()
+    {
+        return $this->embeddedset;
+    }
+    
+    public function setEmbeddedIntegers($list)
+    {
+        $this->embeddedintegers = $list;
+    }
+
+    public function getEmbeddedIntegers()
+    {
+        return $this->embeddedintegers;
+    }
+    
+    public function setEmbeddedBooleans($list)
+    {
+        $this->embeddedbooleans = $list;
+    }
+
+    public function getEmbeddedBooleans()
+    {
+        return $this->embeddedbooleans;
+    }
+    
+    public function setEmbeddedStrings($list)
+    {
+        $this->embeddedstrings = $list;
+    }
+
+    public function getEmbeddedStrings()
+    {
+        return $this->embeddedstrings;
+    }
+
+    public function setEmbeddedSetIntegers($list)
+    {
+        $this->embeddedsetintegers = $list;
+    }
+
+    public function getEmbeddedSetIntegers()
+    {
+        return $this->embeddedsetintegers;
+    }
+
+    public function setEmbeddedSetBooleans($list)
+    {
+        $this->embeddedsetbooleans = $list;
+    }
+
+    public function getEmbeddedSetBooleans()
+    {
+        return $this->embeddedsetbooleans;
+    }
+
+    public function setEmbeddedSetStrings($list)
+    {
+        $this->embeddedsetstrings = $list;
+    }
+
+    public function getEmbeddedSetStrings()
+    {
+        return $this->embeddedsetstrings;
+    }
+
 
     public function setDateTime($date)
     {
@@ -196,6 +353,16 @@ class Address
         $this->link = $link;
     }
     
+    public function getEmbedded()
+    {
+        return $this->embedded;
+    }
+
+    public function setEmbedded($embedded)
+    {
+        $this->embedded = $embedded;
+    }
+    
     public function getLinkset()
     {
         return $this->linkset;
@@ -206,6 +373,36 @@ class Address
         $this->linkset = $linkset;
     }
     
+    public function getLinklist()
+    {
+        return $this->linklist;
+    }
+
+    public function setLinklist($linklist)
+    {
+        $this->linklist = $linklist;
+    }
+    
+    public function getLinkmap()
+    {
+        return $this->linkmap;
+    }
+
+    public function setLinkmap($linkmap)
+    {
+        $this->linkmap = $linkmap;
+    }
+    
+    public function getEmbeddedMap()
+    {
+        return $this->embedded_map;
+    }
+
+    public function setEmbeddedMap($embedded_map)
+    {
+        $this->embedded_map = $embedded_map;
+    }
+    
     public function getLazyLink()
     {
         return $this->lazy_link;
@@ -214,6 +411,16 @@ class Address
     public function setLazyLink($lazy_link)
     {
         $this->lazy_link = $lazy_link;
+    }
+    
+    public function getLazyLinkList()
+    {
+        return $this->lazy_linklist;
+    }
+    
+    public function setLazyLinkList($lazy_linklist)
+    {
+        $this->lazy_linklist = $lazy_linklist;
     }
 
     public function getInvalidShort()

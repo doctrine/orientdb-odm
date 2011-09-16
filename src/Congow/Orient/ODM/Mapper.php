@@ -121,7 +121,7 @@ class Mapper
                 return $this->createDocument($class, $orientObject);
             }
         }
-
+        
         throw new DocumentNotFoundException();
     }
     
@@ -133,8 +133,8 @@ class Mapper
     {
         $records = array();
         
-        foreach ($collection as $record) {
-            $records[] = $this->hydrate($record);
+        foreach ($collection as $key => $record) {
+            $records[$key] = $this->hydrate($record);
         }
         
         return $records; 
@@ -177,7 +177,6 @@ class Mapper
      * @param   mixed                                     $propertyValue
      * @param   CasterInterface                           $caster
      * @return  mixed
-     * @todo    do we need to pass an entire annotation object to only retrieve "type"?
      * @todo    long method
      */
     protected function castProperty($annotation, $propertyValue, CasterInterface $caster = null)
@@ -185,6 +184,7 @@ class Mapper
         $caster     = $caster ?: new Caster($this);
         $method     = 'cast' . $this->inflector->camelize($annotation->type);
         $caster->setValue($propertyValue);
+        $caster->setAnnotation($annotation);
         
         if (!method_exists($caster, $method)) {
             $message  = sprintf(
@@ -362,19 +362,25 @@ class Mapper
 
         $setter     = 'set' . $this->inflector->camelize($property);
         
-        if (method_exists($document, $setter))
-        {
+        if (method_exists($document, $setter)) {
             $document->$setter($value);            
-        }
-        else
-        {
-            $message = "%s has not method %s: you have to add the setter in order to correctly let Congow\Orient hydrate your object";
+        } 
+        else {
+            $refClass     = new \ReflectionObject($document);
+            $refProperty  = $refClass->getProperty($property);
             
-            throw new Exception(
-                    sprintf($message),
-                    get_class($document),
-                    $setter
-            );
+            if ($refProperty->isPublic()) {
+                $document->$property = $value;
+            } 
+            else {
+                $message = "%s has not method %s: you have to added the setter in order to correctly let Congow\Orient hydrate your object ?";
+                
+                throw new Exception(
+                        sprintf($message,
+                        get_class($document),
+                        $setter)
+                );
+            }
         }
     }
     
@@ -393,8 +399,20 @@ class Mapper
     /**
      * @todo to implement and test
      * @todo probably better to receive a stdObjet rather than a JSON
+     * @todo the protocol adapter should be retrieved via getter
+     * @todo phpdoc
      */
     public function find($rid){
         return $this->hydrate(json_decode($this->protocolAdapter->find($rid)));
+    }
+    
+    /**
+     * @todo to implement and test
+     * @todo probably better to receive a stdObjet rather than a JSON
+     * @todo the protocol adapter should be retrieved via getter
+     * @todo phpdoc
+     */
+    public function findRecords(array $rids){
+        return $this->hydrateCollection($this->protocolAdapter->findRecords($rids));
     }
 }
