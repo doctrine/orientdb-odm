@@ -24,13 +24,13 @@ class StubObject
 
 class MockAdapter implements \Congow\Orient\Contract\Protocol\Adapter
 {
- public function execute($sql)
+ public function execute($sql, $return = false)
  {
         
  }
- public function find($rid)
+ public function getResult()
  {
-    
+        
  }
 }
 

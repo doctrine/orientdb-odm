@@ -44,7 +44,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
     {
         $response = new Http\Response("HTTP/1.1 200 OK\r\nCache-Control: max-age=30\r\nCache-Control: s-maxage=50\r\n\r\n");
 
-        $this->assertEquals("HTTP/1.1 200 OK", $response->getStatusCode());
+        $this->assertEquals("200", $response->getStatusCode());
     }
 
     public function testnullIsReturnedWhenRequestingANonExistingHeader()

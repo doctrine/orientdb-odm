@@ -12,8 +12,9 @@
 /**
  * Class Http
  *
- * @package     
- * @subpackage  
+ * @todo        what to do with commented method?
+ * @package     Orient
+ * @subpackage  Foundation
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -22,9 +23,16 @@ namespace Congow\Orient\Foundation\Protocol\Adapter;
 use Congow\Orient\Contract\Protocol\Adapter as ProtocolAdapter;
 use Congow\Orient\Contract\Http\Client;
 use Congow\Orient\Foundation\Binding;
+use Congow\Orient\Exception\Query\SQL\Invalid as InvalidSQL;
+use Congow\Orient\Exception\Http\Response\Void as VoidResponse;
+use Congow\Orient\Http\Response;
 
-class Http implements protocolAdapter
+class Http implements ProtocolAdapter
 {
+    
+    protected $client;
+    protected $result;
+    
     /**
      * Instantiates a new adapter.
      *
@@ -52,42 +60,60 @@ class Http implements protocolAdapter
      * @exploding the status code should not be done hete, need to add an option to
      * ->getStatusCode($numeric) to return only 200 instead of HTTP/1.1 200 OK
      */
-    public function execute($sql)
+    public function execute($sql, $return = false)
     {
-        $method = 'command';
+        $method     = $return ? 'query' : 'command';
+        $response   = $this->getClient()->$method($sql);
+        $this->checkResponse($response);
         
-        $parts   = explode(' ', $sql);
-        $command = strtolower($parts[0]);
-        
-        if ($command == 'select') {
-          $method = 'query';
+        if ($return) {
+            $body = json_decode($response->getBody());
+
+            $this->setResult($body->result);   
         }
         
-        $response = $this->client->$method($sql);
-        
-        if (!$response) {
-            throw new \Exception('Unable to retrieve a response');
-        }
-        
-        $statusCode = explode(' ', $response->getStatusCode());
-        
-        /**
-         * @todo ugly
-         */
-        if ($statusCode[1][0] == 2) {
-            if($command == 'select'){
-                $body = json_decode($response->getBody());
-                
-                return $body->result;
-            }
-            return true;
-        }
-        
-        throw new \Exception($response->getBody());
+        return true;
     }
     
     /**
      * @todo phpdoc
+     * @return Array
+     */
+    public function getResult()
+    {
+        return $this->result;
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function checkResponse(Response $response = null)
+    {
+        if (!$response) {
+            throw new VoidResponse(get_class($this->getClient()), $sql);
+        }
+
+        if (!in_array($response->getStatusCode(), $response->getValidStatusCodes())) {
+            throw new InvalidSQL($response);   
+        }
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function getClient()
+    {
+        return $this->client;
+    }
+    
+    protected function setResult(Array $result)
+    {
+        $this->result = $result;
+    }
+    
+    /**
+     * @todo phpdoc
+     * @todo is this method useful here?
      */
     // public function find($rid){
     //     $result =  $this->execute('SELECT FROM ' . $rid);

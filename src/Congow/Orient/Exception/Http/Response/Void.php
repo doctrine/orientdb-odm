@@ -19,7 +19,7 @@
 
 namespace Congow\Orient\Exception\Http\Response;
 
-use \Congow\Orient\Exception;
+use Congow\Orient\Exception;
 
 class Void extends Exception
 {

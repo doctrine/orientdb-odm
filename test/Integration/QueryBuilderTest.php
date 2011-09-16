@@ -17,12 +17,12 @@ use Congow\Orient\Foundation\Binding;
 
 class QueryBuilderTest extends TestCase
 {
-    const _200 = 'HTTP/1.1 200 OK';
-    const _201 = 'HTTP/1.1 201 Created';
-    const _204 = 'HTTP/1.1 204 OK';
-    const _401 = 'HTTP/1.1 401 Unauthorized';
-    const _404 = 'HTTP/1.1 404 Not Found';
-    const _500 = 'HTTP/1.1 500 Internal Server Error';
+    const _200 = '200';
+    const _201 = '201';
+    const _204 = '204';
+    const _401 = '401';
+    const _404 = '404';
+    const _500 = '500';
 
     public function setup()
     {

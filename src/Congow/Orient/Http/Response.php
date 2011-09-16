@@ -26,6 +26,15 @@ class Response
     protected $raw_headers;
     protected $status_code;
     protected $body;
+    protected $protocol;
+    
+    const STATUS_OK                             = 200;
+    const STATUS_CREATED                        = 201;
+    const STATUS_ACCEPTED                       = 202;
+    const STATUS_NON_AUTHORITATIVE_INFORMATION  = 203;
+    const STATUS_NO_CONTENT                     = 204;
+    const STATUS_RESET_CONTENT                  = 205;
+    const STATUS_PARTIAL_CONTENT                = 206;
 
     /**
      * Constructs a new object from an existing HTTP response.
@@ -78,16 +87,39 @@ class Response
     {
         return $this->status_code;
     }
+    
+    public function getValidStatusCodes()
+    {
+        return array(
+            self::STATUS_OK,
+            self::STATUS_ACCEPTED,
+            self::STATUS_NON_AUTHORITATIVE_INFORMATION,
+            self::STATUS_NO_CONTENT,
+            self::STATUS_RESET_CONTENT,
+            self::STATUS_PARTIAL_CONTENT,
+        );
+    }
 
     /**
      * Builds headers array from a well-formatted string.
      *
+     * @todo set status code and protocol via setter
+     * @todo expose a public setter for protocol
      * @param String $headers
      */
     protected function buildHeaders($headers)
     {
         $parts              = explode("\r\n", $headers);
-        $this->status_code  = array_shift($parts);
+        $status             = array_shift($parts);
+        $statusParts        = explode(" ", $status);
+        
+        if (array_key_exists(0, $statusParts)) {
+            $this->protocol     = $statusParts[0];
+        }
+        
+        if (array_key_exists(1, $statusParts)) {
+            $this->status_code  = $statusParts[1];   
+        }        
 
         foreach ($parts as $header) {
             list($header, $value)   = explode(':', $header, 2);

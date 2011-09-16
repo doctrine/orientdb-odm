@@ -24,7 +24,12 @@ class Adapter implements \Congow\Orient\Contract\Protocol\Adapter
 
     }
     
-    public function execute($sql)
+    public function getResult()
+    {
+
+    }
+    
+    public function execute($sql, $return)
     {
         
     }
