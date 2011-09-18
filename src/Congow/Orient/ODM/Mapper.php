@@ -209,7 +209,12 @@ class Mapper
     }
 
     /**
-     * @todo no PHPDOC
+     * Given an object and an Orient-object, it fills the former with the
+     * latter.
+     *
+     * @param   object $document
+     * @param   \stdClass $object
+     * @return  object
      */
     protected function fill($document, \stdClass $object)
     {

@@ -40,13 +40,14 @@ class Caster implements CasterInterface
     /**
      * Instantiates a new Caster.
      *
-     * @param Mapper $mapper
-     * @param type $value 
+     * @param Mapper    $mapper
+     * @param mixed     $value 
+     * @param string    $dateClass  The class used to cast dates and datetimes
      */
     public function __construct(Mapper $mapper, $value = null, $dateClass = "\DateTime")
     {
         $this->mapper       = $mapper;
-        $this->dateClass    = $dateClass;
+        $this->assignDateClass($dateClass);
         
         if ($value) {
             $this->setValue($value);
@@ -94,7 +95,6 @@ class Caster implements CasterInterface
      * Casts the given $value to a DateTime object.
      *
      * @return \DateTime
-     * @todo is it possible to decide which class to return and not only datetime?
      */
     public function castDate()
     {
@@ -320,6 +320,26 @@ class Caster implements CasterInterface
         $this->value = $value;
         
         return $this;
+    }
+    
+    /**
+     * Assigns the class used to cast dates and datetimes.
+     * If the $class is a subclass of \DateTime, it uses it, it uses \DateTime
+     * otherwise.
+     *
+     * @param string $class 
+     */
+    protected function assignDateClass($class)
+    {
+        $refClass = new \ReflectionClass($class);
+        
+        if ($refClass->isSubclassOf("\DateTime"))
+        {
+            $this->dateClass = $class;
+        }
+        else {
+            $this->dateClass = "\DateTime";
+        }
     }
     
     /**

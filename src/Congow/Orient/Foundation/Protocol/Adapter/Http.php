@@ -76,8 +76,19 @@ class Http implements ProtocolAdapter
     }
     
     /**
-     * @todo phpdoc
-     * @return Array
+     * Returns OrientDB's response to an HTTP request.
+     * 
+     * Pseudo code:
+     * <code>
+     * if ($adapter->execute('SELECT...')) {
+     *   foreach ($adapter->getResult() as $records) {
+     *     ...
+     *   }
+     * }
+     * </code>
+     * 
+     * @see    Congow\Orient\Contract\Protocol\Adapter::getResult
+     * @return Array|null
      */
     public function getResult()
     {
@@ -85,7 +96,12 @@ class Http implements ProtocolAdapter
     }
     
     /**
-     * @todo phpdoc
+     * Checks whether the $response is valid.
+     * A response is *not* considere valid when:
+     * * it's void
+     * * it returns a status code different from 2XX
+     *
+     * @param Response $response 
      */
     protected function checkResponse(Response $response = null)
     {
@@ -99,30 +115,23 @@ class Http implements ProtocolAdapter
     }
     
     /**
-     * @todo phpdoc
+     * Returns the internal client used to make requests to OrientDB.
+     *
+     * @return Congow\Orient\Contract\Http\Client
      */
     protected function getClient()
     {
         return $this->client;
     }
     
+    /**
+     * Sets the result of the execute() method.
+     *
+     * @param Array $result 
+     */
     protected function setResult(Array $result)
     {
         $this->result = $result;
     }
-    
-    /**
-     * @todo phpdoc
-     * @todo is this method useful here?
-     */
-    // public function find($rid){
-    //     $result =  $this->execute('SELECT FROM ' . $rid);
-    //     
-    //     if (is_array($result) && count($result) == 1){
-    //         return array_shift($result);
-    //     }
-    //     
-    //     return null;
-    // }
 }
 

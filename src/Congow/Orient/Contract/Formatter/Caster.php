@@ -48,7 +48,6 @@ interface Caster
      * Casts the given $value to a DateTime object.
      *
      * @return \DateTime
-     * @todo is it possible to decide which class to return and not only datetime?
      */
     public function castDate();
 
