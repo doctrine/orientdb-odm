@@ -354,8 +354,12 @@ class Caster implements CasterInterface
         $results        = array();
         $innerCaster    = new self($this->getMapper());
         
+        if (!method_exists($innerCaster, $method)) {
+            throw new Congow\Orient\Exception();
+        }
+        
         foreach ($this->value as $key => $value) {
-            $innerCaster->setValue($value);
+            $innerCaster->setValue($value);            
             $results[$key] = $innerCaster->$method();
         }
         
@@ -366,38 +370,27 @@ class Caster implements CasterInterface
      * Casts embedded entities, given the $cast property of the internal
      * annotation.
      *
-     * @todo annotations should use getters, not public properties
-     * @todo throw custom exception, add an explicative essage ("please add the cast to embeddedlists..")
-     * @todo probably theres a better way instead of a crappy switch
-     * @todo missing Date, DateTime... 
      * @return Array
      */
     public function castEmbeddedArrays()
     {
-        $listType = $this->getAnnotation()->cast;
+        $listType = $this->getAnnotation()->getCast();
         
-        switch ($listType) {
-            case "link":
-                $value = $this->getMapper()->hydrateCollection($this->value);
-                break;
-            case "integer":
-                $value = $this->castArrayOf('integer');
-                break;
-            case "string":
-                $value = $this->castArrayOf('string');
-                break;
-            case "boolean":
-                $value = $this->castArrayOf('boolean');
-                break;
-            default:
-                $value = null;
+        if ($listType == "link") {
+            return $this->getMapper()->hydrateCollection($this->value);
         }
         
-        if (!$value) {
-            throw new \Exception();
+        try {
+            return $this->castArrayOf($listType);
         }
-        
-        return $value;
+        catch (Congow\Orient\Exception $e) {
+            $message  = "Seems like you are trying to hydrate an embedded ";
+            $message .= "property without specifying its type.\n";
+            $message .= "Please add the 'cast' (eg cast='boolean') ";
+            $message .= "to the annotation.";
+            
+            throw new Congow\Orient\Exception($message);
+        }
     }
     
     /**

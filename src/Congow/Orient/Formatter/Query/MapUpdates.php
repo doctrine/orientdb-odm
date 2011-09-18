@@ -22,19 +22,21 @@ namespace Congow\Orient\Formatter\Query;
 use Congow\Orient\Formatter\Query;
 use Congow\Orient\Formatter\String;
 use Congow\Orient\Contract\Formatter\Query\Token as TokenFormatter;
+use Congow\Orient\Validator\Rid as RidValidator;
 
 class MapUpdates extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {
-        $updates = array();
+        $updates    = array();
+        $validator  = new RidValidator;
       
         foreach ($values as $map => $update) {
             $map = String::filterNonSQLChars($map);
             
             if ($map && is_array($update)) {
                 foreach ($update as $key => $rid) {
-                  $rid = String::filterRid($rid);
+                  $rid = $validator->check($rid, true);
                   $key = String::filterNonSQLChars($key);
                 }
               

@@ -22,13 +22,16 @@ namespace Congow\Orient\Formatter\Query;
 use Congow\Orient\Formatter\Query;
 use Congow\Orient\Formatter\String;
 use Congow\Orient\Contract\Formatter\Query\Token as TokenFormatter;
+use Congow\Orient\Validator\Rid as RidValidator;
 
 class Rid extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {
-        $values = array_filter($values, function ($arr) {
-            return String::filterRid($arr);
+        $validator = new RidValidator();
+        
+        $values = array_filter($values, function ($arr) use ($validator) {
+            return $validator->check($arr, true);
         });
 
         return (count($values)) ? array_shift($values) : null;

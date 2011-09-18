@@ -53,18 +53,4 @@ class String  implements StringInterface
 
         return preg_replace($pattern, "", $string);
     }
-
-    /**
-     * Checks wheter the given $rid is wellformed.
-     *
-     * @param   string $rid
-     * @return  the rid is wellformed, false otherwise
-     * @todo this method is useless, delete it and make everyone use the validator, directly
-     */
-    public static function filterRid($rid)
-    {
-        $validator = new Validator\Rid;
-        
-        return $validator->check($rid, true);
-    }
 }

@@ -54,7 +54,6 @@ class Query implements Formatter\Query
      *
      * @param   array $values
      * @return  array
-     * @todo hardcoded dependency to String
      */
     protected static function filterRegularChars(array $values, $nonFilter = null)
     {
