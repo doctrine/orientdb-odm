@@ -67,6 +67,16 @@ class Response
     {
         return isset($this->headers[$header]) ? $this->headers[$header] : null;
     }
+    
+    /**
+     * Returns the protocol used to communicate with the client.
+     *
+     * @return string
+     */
+    public function getProtocol()
+    {
+        return $this->protocol;
+    }
 
     /**
      * Returns the whole response.
@@ -103,8 +113,6 @@ class Response
     /**
      * Builds headers array from a well-formatted string.
      *
-     * @todo set status code and protocol via setter
-     * @todo expose a public setter for protocol
      * @param String $headers
      */
     protected function buildHeaders($headers)
@@ -114,11 +122,11 @@ class Response
         $statusParts        = explode(" ", $status);
         
         if (array_key_exists(0, $statusParts)) {
-            $this->protocol     = $statusParts[0];
+            $this->setProtocol($statusParts[0]);
         }
         
         if (array_key_exists(1, $statusParts)) {
-            $this->status_code  = $statusParts[1];   
+            $this->setStatusCode($statusParts[1]);   
         }        
 
         foreach ($parts as $header) {
@@ -144,5 +152,25 @@ class Response
     protected function getRawHeaders()
     {
         return $this->raw_headers;
+    }
+    
+    /**
+     * Sets the protocol used for the communication with the client.
+     *
+     * @param string $protocol 
+     */
+    protected function setProtocol($protocol)
+    {
+        $this->protocol = $protocol;
+    }
+    
+    /**
+     * Sets the status code of the response.
+     *
+     * @param integer $code 
+     */
+    protected function setStatusCode($code)
+    {
+        $this->status_code = (int) $code;
     }
 }

@@ -177,7 +177,6 @@ class Mapper
      * @param   mixed                                     $propertyValue
      * @param   CasterInterface                           $caster
      * @return  mixed
-     * @todo    long method
      */
     protected function castProperty($annotation, $propertyValue, CasterInterface $caster = null)
     {
@@ -186,17 +185,9 @@ class Mapper
         $caster->setValue($propertyValue);
         $caster->setAnnotation($annotation);
         
-        if (!method_exists($caster, $method)) {
-            $message  = sprintf(
-                'You are trying to map a property wich seems not to have a standard type (%s). Do you have a typo in your annotation? If you think everything\'s ok, go check on %s class which property types are supported.',
-                $annotation->type,
-                get_class($caster)
-            );
-            
-            throw new Exception($message);
-        }
-        
         try {
+            $this->verifyCastingSupport($caster, $method, $annotation->type);
+            
             return $caster->$method();
         }
         catch (Overflow $e) {
@@ -399,6 +390,28 @@ class Mapper
     protected function toleratesOverflows()
     {
         return (bool) !$this->enableOverflows;
+    }
+    
+    /**
+     * Verifies if the given $caster supports casting with $method.
+     * If not, an excepttion is raised.
+     *
+     * @param Caster $caster
+     * @param string $method
+     * @param string $annotationType 
+     * @throws Congow\Orient\Exception
+     */
+    protected function verifyCastingSupport(Caster $caster, $method, $annotationType)
+    {
+        if (!method_exists($caster, $method)) {
+            $message  = sprintf(
+                'You are trying to map a property wich seems not to have a standard type (%s). Do you have a typo in your annotation? If you think everything\'s ok, go check on %s class which property types are supported.',
+                $type,
+                get_class($caster)
+            );
+            
+            throw new Exception($message);
+        }
     }
     
     /**

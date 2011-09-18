@@ -54,11 +54,6 @@ class Http implements ProtocolAdapter
      *
      * @param   string $sql
      * @return  mixed
-     * @throws  \Exception
-     * @todo should return StdObject for SELECT and stuff that retrieves data, true otherwise
-     * @todo throw a specific exception
-     * @exploding the status code should not be done hete, need to add an option to
-     * ->getStatusCode($numeric) to return only 200 instead of HTTP/1.1 200 OK
      */
     public function execute($sql, $return = false)
     {
