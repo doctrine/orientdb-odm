@@ -26,9 +26,6 @@ use Congow\Orient\Validator\Rid as RidValidator;
 use Congow\Orient\Exception\Validation as ValidationException;
 use Congow\Orient\ODM\Mapper\Annotations\Property as PropertyAnnotation;
 
-/**
- * @todo check @return types, some are wrong
- */
 class Caster implements CasterInterface
 {
     protected $value    = null;
@@ -78,7 +75,7 @@ class Caster implements CasterInterface
     /**
      * Casts the given $value to a byte.
      *
-     * @return boolean
+     * @return mixed
      */
     public function castByte()
     {
@@ -94,7 +91,7 @@ class Caster implements CasterInterface
     /**
      * Casts the given $value to a DateTime object.
      *
-     * @return boolean
+     * @return \DateTime
      * @todo is it possible to decide which class to return and not only datetime?
      */
     public function castDate()
@@ -105,7 +102,7 @@ class Caster implements CasterInterface
     /**
      * Casts the given $value to a DateTime object.
      *
-     * @return boolean
+     * @return \DateTime
      */
     public function castDateTime()
     {
@@ -123,7 +120,9 @@ class Caster implements CasterInterface
     }
     
     /**
-     * @todo phpdoc 
+     * Given an embedded record, it uses the mapper to hydrate it.
+     *
+     * @return mixed
      */
     public function castEmbedded()
     {
@@ -131,11 +130,9 @@ class Caster implements CasterInterface
     }
     
     /**
-     * @todo phpdoc 
-     * @todo annotations should use getters, not public properties
-     * @todo throw custom exception, add an explicative essage ("please add the cast to embeddedlists..")
-     * @todo probably theres a better way instead of a crappy switch
-     * @todo missing Date, DateTime... 
+     * Casts a list of embedded entities
+     *
+     * @return Array
      */
     public function castEmbeddedList()
     {
@@ -143,7 +140,9 @@ class Caster implements CasterInterface
     }
     
     /**
-     * @todo: phpdoc
+     * Casts a map (key-value preserved) of embedded entities
+     *
+     * @return Array
      */
     public function castEmbeddedMap()
     {
@@ -153,7 +152,9 @@ class Caster implements CasterInterface
     }
     
     /**
-     * @todo: phpdoc
+     * Casts a set of embedded entities
+     *
+     * @return Array
      */
     public function castEmbeddedSet()
     {
@@ -161,7 +162,7 @@ class Caster implements CasterInterface
     }
 
     /**
-     * Casts the given $value to a float.
+     * Casts the value to a float.
      *
      * @return float
      */
@@ -171,7 +172,7 @@ class Caster implements CasterInterface
     }
 
     /**
-     * Casts the given $value into an integer.
+     * Casts the value into an integer.
      *
      * @return integer
      */
@@ -187,7 +188,7 @@ class Caster implements CasterInterface
      * object, it simply hydrates it.
      *
      * @see     http://code.google.com/p/orient/wiki/FetchingStrategies
-     * @return  \stdObject|null
+     * @return  mixed|null
      */
     public function castLink()
     {
@@ -209,7 +210,6 @@ class Caster implements CasterInterface
     /**
      * Hydrates multiple objects through a Mapper.
      *
-     * @todo   missing lazy loading, like in castLink
      * @return Array
      */
     public function castLinkset()
@@ -220,7 +220,6 @@ class Caster implements CasterInterface
     /**
      * Hydrates multiple objects through a Mapper.
      *
-     * @todo   missing lazy loading, like in castLink
      * @return Array
      */
     public function castLinklist()
@@ -231,7 +230,6 @@ class Caster implements CasterInterface
     /**
      * Hydrates multiple objects through a Mapper.
      *
-     * @todo   missing lazy loading, like in castLink
      * @return Array
      */
     public function castLinkmap()
@@ -244,7 +242,7 @@ class Caster implements CasterInterface
     /**
      * Casts the given $value to a long.
      *
-     * @return integer
+     * @return mixed
      */    
     public function castLong()
     {
@@ -272,9 +270,9 @@ class Caster implements CasterInterface
     }
 
     /**
-     * Casts the given $value to string.
+     * Casts the value to string.
      *
-     * @return boolean
+     * @return string
      */    
     public function castString()
     {
@@ -288,15 +286,21 @@ class Caster implements CasterInterface
     }
 
     /**
-     * Casts the given $value to a short.
+     * Casts the value to a short.
      *
-     * @return integer
+     * @return mixed
      */    
     public function castShort()
     {
         return $this->castInBuffer(self::SHORT_LIMIT, 'long');
     }
     
+    /**
+     * Defines the internl annotation object which is used when hydrating
+     * collections.
+     *
+     * @param PropertyAnnotation $annotation 
+     */
     public function setAnnotation(PropertyAnnotation $annotation)
     {
         $this->annotation = $annotation;
@@ -315,7 +319,10 @@ class Caster implements CasterInterface
     }
     
     /**
-     * @todo phpdoc
+     * Given a $type, it casts each element of the value array with a method.
+     *
+     * @param   string $type
+     * @return  Array 
      */
     protected function castArrayOf($type)
     {
@@ -332,7 +339,14 @@ class Caster implements CasterInterface
     }
     
     /**
-     * @todo: phpdoc
+     * Casts embedded entities, given the $cast property of the internal
+     * annotation.
+     *
+     * @todo annotations should use getters, not public properties
+     * @todo throw custom exception, add an explicative essage ("please add the cast to embeddedlists..")
+     * @todo probably theres a better way instead of a crappy switch
+     * @todo missing Date, DateTime... 
+     * @return Array
      */
     public function castEmbeddedArrays()
     {
@@ -363,7 +377,12 @@ class Caster implements CasterInterface
     }
     
     /**
-     * @todo missing phpdoc
+     * Given the internl value of the caster (an array), it iterates iver each
+     * element of the array and hydrates it.
+     * If the element is not a JSON-decoded object but a Rid, the Mapper is used
+     * to hydrate the object from the Rid.
+     *
+     * @return Array|null
      */
     protected function castLinkCollection()
     {   
@@ -384,6 +403,10 @@ class Caster implements CasterInterface
         }
     }
     
+    /**
+     * If a JSON value is converted in an object containing other objects to
+     * hydrate, this method converts the main object in an array.
+     */
     protected function convertJsonCollectionToArray()
     {
         if(!is_array($this->value) && is_object($this->value)) {
@@ -401,8 +424,9 @@ class Caster implements CasterInterface
     }
     
     /**
+     * Returns the internal annotation object.
      *
-     * @todo phpdoc
+     * @return PropertyAnnotation
      */
     protected function getAnnotation()
     {
@@ -410,8 +434,9 @@ class Caster implements CasterInterface
     }
     
     /**
+     * Returns the internl mapper.
      *
-     * @todo phpdoc
+     * @return Mapper
      */
     protected function getMapper()
     {
