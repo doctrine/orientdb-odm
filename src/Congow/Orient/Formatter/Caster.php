@@ -28,8 +28,9 @@ use Congow\Orient\ODM\Mapper\Annotations\Property as PropertyAnnotation;
 
 class Caster implements CasterInterface
 {
-    protected $value    = null;
-    protected $mapper   = null;
+    protected $value        = null;
+    protected $mapper       = null;
+    protected $dateClass    = null;
     
     const SHORT_LIMIT       = 32767;
     const LONG_LIMIT        = 9223372036854775807;
@@ -42,9 +43,10 @@ class Caster implements CasterInterface
      * @param Mapper $mapper
      * @param type $value 
      */
-    public function __construct(Mapper $mapper, $value = null)
+    public function __construct(Mapper $mapper, $value = null, $dateClass = "\DateTime")
     {
-        $this->mapper = $mapper;
+        $this->mapper       = $mapper;
+        $this->dateClass    = $dateClass;
         
         if ($value) {
             $this->setValue($value);
@@ -96,7 +98,9 @@ class Caster implements CasterInterface
      */
     public function castDate()
     {
-        return new \DateTime($this->value);
+        $dateClass = $this->getDateClass();
+        
+        return new $dateClass($this->value);
     }
 
     /**
@@ -431,6 +435,16 @@ class Caster implements CasterInterface
     protected function getAnnotation()
     {
         return $this->annotation;
+    }
+    
+    /**
+     * Returns the class used to cast date and datetimes.
+     *
+     * @return string
+     */
+    protected function getdateClass()
+    {
+        return $this->dateClass;
     }
     
     /**
