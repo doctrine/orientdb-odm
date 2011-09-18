@@ -1,4 +1,4 @@
-# OrientDB PHP Library
+# OrientDB PHP Library![project status](http://stillmaintained.com/odino/Orient.png)#
 
 ## What's Orient?
 
