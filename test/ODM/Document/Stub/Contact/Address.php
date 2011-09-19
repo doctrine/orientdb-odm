@@ -405,7 +405,7 @@ class Address
     
     public function getLazyLink()
     {
-        return $this->lazy_link;
+        return call_user_func( $this->lazy_link);
     }
 
     public function setLazyLink($lazy_link)
@@ -415,7 +415,7 @@ class Address
     
     public function getLazyLinkList()
     {
-        return $this->lazy_linklist;
+        return call_user_func($this->lazy_linklist);
     }
     
     public function setLazyLinkList($lazy_linklist)

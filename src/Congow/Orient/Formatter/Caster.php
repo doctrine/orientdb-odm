@@ -25,6 +25,8 @@ use Congow\Orient\ODM\Mapper;
 use Congow\Orient\Validator\Rid as RidValidator;
 use Congow\Orient\Exception\Validation as ValidationException;
 use Congow\Orient\ODM\Mapper\Annotations\Property as PropertyAnnotation;
+use Congow\Orient\ODM\Proxy;
+use Congow\Orient\ODM\Proxy\Collection as CollectionProxy;
 
 class Caster implements CasterInterface
 {
@@ -202,9 +204,9 @@ class Caster implements CasterInterface
             return $this->getMapper()->hydrate($this->value);
         } else {
             try {
-                $rid = $validator->check($this->value);
+                $rid    = $validator->check($this->value);
                 
-                return $this->getMapper()->find($rid);
+                return $this->lazyLoad($rid);
             } catch (ValidationException $e) {
                 return null;
             }
@@ -413,7 +415,7 @@ class Caster implements CasterInterface
                 $validator      = new RidValidator();
                 $rid            = $validator->check($value);
                 
-                return $this->getMapper()->findRecords($this->value);
+                return $this->lazyLoadCollection($this->value);
             } catch (ValidationException $e) {
                 return null;
             }
@@ -468,5 +470,15 @@ class Caster implements CasterInterface
     protected function getMapper()
     {
         return $this->mapper;
+    }
+    
+    protected function lazyLoad($rid)
+    {
+        return new Proxy($this->getMapper(), $rid);
+    }
+    
+    protected function lazyLoadCollection($rids)
+    {
+        return new CollectionProxy($this->getMapper(), $rids);
     }
 }

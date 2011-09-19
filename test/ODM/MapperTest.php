@@ -409,7 +409,7 @@ class MapperTest extends TestCase
     public function testLazyLinkSetGetsMappedInTheObject()
     {
         $object = $this->mapper->hydrate($this->jsonLinkedRecord);
-        $linkset = $object->lazy_linkset;
+        $linkset = call_user_func($object->lazy_linkset);
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[0]);
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[1]);
@@ -427,7 +427,7 @@ class MapperTest extends TestCase
     public function testLazyLinkMapGetsMappedInTheObject()
     {
         $object = $this->mapper->hydrate($this->jsonLinkedRecord);
-        $linkmap = $object->lazy_linkmap;
+        $linkmap = call_user_func($object->lazy_linkmap);
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap[0]);
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap[1]);
