@@ -12,7 +12,6 @@
 /**
  * Class Http
  *
- * @todo        what to do with commented method?
  * @package     Orient
  * @subpackage  Foundation
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
@@ -36,17 +35,15 @@ class Http implements ProtocolAdapter
     /**
      * Instantiates a new adapter.
      *
-     * @api
      * @param Http\Client $client
      * @param String $host
      * @param String $port
      * @param String $username
      * @param String $password
-     * @todo better to inject the binding
      */
-    public function __construct(Client $client, $host = '127.0.0.1', $port = 2480, $username = null, $password = null, $database = null)
+    public function __construct(Binding $binding)
     {
-        $this->client = new Binding($client, $host, $port, $username, $password, $database);
+        $this->client = $binding;
     }
     
     /**

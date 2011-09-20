@@ -26,27 +26,22 @@ class Adapter implements \Congow\Orient\Contract\Protocol\Adapter
     
     public function getResult()
     {
-
-    }
-    
-    public function execute($sql, $return)
-    {
-        
-    }
-
-    public function find($rid)
-    {
-        return '{
+        return json_decode('{
             "@type": "d", "@rid": "#19:0", "@version": 2, "@class": "Address", 
             "name": "Luca", 
             "surname": "Garulli", 
             "out": ["#20:1"]
-          }';
+          }');
+    }
+    
+    public function execute($sql)
+    {
+        return true;
     }
     
     public function findRecords(array $rids)
     {
-        return array(json_decode($this->find("#20:1")),json_decode($this->find("#20:2")));
+        return array($this->getResult("#20:1"),$this->getResult("#20:2"));
         
     }
 }

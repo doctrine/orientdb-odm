@@ -19,7 +19,8 @@ class HttpAdapterTest extends TestCase
 {
     public function setup()
     {
-        $this->adapter = new HttpAdapter(new Curl, '127.0.0.1', '2480','admin','admin','demo');
+        $binding = new \Congow\Orient\Foundation\Binding(new Curl, '127.0.0.1', '2480','admin','admin','demo');
+        $this->adapter = new HttpAdapter($binding);
     }
     
     public function testFindingARecord()

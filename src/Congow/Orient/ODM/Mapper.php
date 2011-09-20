@@ -23,6 +23,7 @@
 namespace Congow\Orient\ODM;
 
 use Congow\Orient\Exception;
+use Congow\Orient\Query;
 use Congow\Orient\Exception\Document\NotFound as DocumentNotFoundException;
 use Congow\Orient\Formatter\CasterInterface as CasterInterface;
 use Congow\Orient\Formatter\Caster;
@@ -74,6 +75,66 @@ class Mapper
     public function enableOverflows($value = true)
     {
         $this->enableOverflows = (bool) $value;
+    }
+
+    /**
+     * Via a protocol adapter, it queries for an object with the given $rid.
+     * If $lazy loading is used, all of this won't be executed unless the
+     * returned Proxy object is called via __invoke, e.g.:
+     * 
+     * <code>
+     *   $lazyLoadedRecord = $mapper->find('1:1', true);
+     * 
+     *   $record = $lazyLoadedRecord();
+     * </code>
+     *
+     * @param string    $rid
+     * @param boolean   $lazy
+     * @return Proxy|object
+     */
+    public function find($rid, $lazy = false){
+        if ($lazy) {
+            return new Proxy($this, $rid);
+        }
+        
+        try
+        {
+            $query      = new Query(array($rid));
+            $adapter    = $this->getProtocolAdapter();
+            
+            if ($adapter->execute($query->getRaw()) && $adapter->getResult()) {
+              return $this->hydrate($adapter->getResult());   
+            }
+            
+            return null;
+        }
+        catch (Exception $e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Via a protocol adapter, it queries for an array of objects with the given
+     * $rids.
+     * If $lazy loading is used, all of this won't be executed unless the
+     * returned Proxy object is called via __invoke, e.g.:
+     * 
+     * <code>
+     *   $lazyLoadedRecords = $mapper->find('1:1', true);
+     * 
+     *   $records = $lazyLoadedRecord();
+     * </code>
+     *
+     * @param string    $rid
+     * @param boolean   $lazy
+     * @return Proxy\Collection|array
+     */
+    public function findRecords(Array $rids, $lazy = false){
+        if ($lazy) {
+            return new Proxy\Collection($this, $rids);
+        }
+        
+        return $this->hydrateCollection($this->getProtocolAdapter()->findRecords($rids));
     }
     
     /**
@@ -340,6 +401,17 @@ class Mapper
                 $property, self::ANNOTATION_PROPERTY_CLASS
         );
     }
+    
+    /**
+     * Returns the protocol adapter used to communicate with a OrientDB
+     * binding.
+     *
+     * @return Adapter
+     */
+    protected function getProtocolAdapter()
+    {
+        return $this->protocolAdapter;
+    }
 
     /**
      * Given a $property and its $value, sets that property on the $given object
@@ -412,33 +484,5 @@ class Mapper
             
             throw new Exception($message);
         }
-    }
-    
-    /**
-     * @todo to implement and test
-     * @todo probably better to receive a stdObjet rather than a JSON
-     * @todo the protocol adapter should be retrieved via getter
-     * @todo phpdoc
-     */
-    public function find($rid, $lazy = false){
-        if ($lazy) {
-            return new Proxy($this, $rid);
-        }
-        
-        return $this->hydrate(json_decode($this->protocolAdapter->find($rid)));
-    }
-    
-    /**
-     * @todo to implement and test
-     * @todo probably better to receive a stdObjet rather than a JSON
-     * @todo the protocol adapter should be retrieved via getter
-     * @todo phpdoc
-     */
-    public function findRecords(Array $rids, $lazy = false){
-        if ($lazy) {
-            return new Proxy\Collection($this, $rids);
-        }
-        
-        return $this->hydrateCollection($this->protocolAdapter->findRecords($rids));
     }
 }
