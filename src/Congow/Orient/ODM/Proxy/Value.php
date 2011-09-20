@@ -20,16 +20,27 @@
 namespace Congow\Orient\ODM\Proxy;
 
 use Congow\Orient\ODM\Mapper;
+use Congow\Orient\ODM\Proxy\AbstractProxy;
 
-class Value
+class Value extends AbstractProxy
 {
     protected $value;
     
+    /**
+     * Sets the value of the proxy.
+     *
+     * @param mixed $value 
+     */
     public function __construct($value)
     {
         $this->value = $value;
     }
     
+    /**
+     * Returns the value associated with this proxy.
+     *
+     * @return mixed
+     */
     public function __invoke()
     {
         return $this->value;

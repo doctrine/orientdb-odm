@@ -21,16 +21,19 @@
 namespace Congow\Orient\ODM;
 
 use Congow\Orient\ODM\Mapper;
+use Congow\Orient\ODM\Proxy\AbstractProxy;
 
-class Proxy
+class Proxy extends AbstractProxy
 {   
     protected $mapper;
     protected $rid;
     protected $record;
-    
+
     /**
-     * @todo php doc proxy and collection
-     * @todo create a Proxy interface for proxy and collection.
+     * Istantiates a new Proxy.
+     *
+     * @param Mapper $mapper
+     * @param string $rid 
      */
     function __construct(Mapper $mapper, $rid)
     {
@@ -38,13 +41,29 @@ class Proxy
         $this->rid    = $rid;
     }
     
+    /**
+     * Returns the record loaded with the Mapper.
+     *
+     * @return object
+     */
     public function __invoke()
     {
         if ($this->record) {
             return $this->record;
         } else {
-            $this->record = $this->mapper->find($this->rid);
+            $this->record = $this->getMapper()->find($this->getRid());
+            
             return $this->record;
         }    
+    }
+    
+    /**
+     * Returns the RID of the record to find.
+     *
+     * @return string
+     */
+    protected function getRid()
+    {
+        return $this->rid;
     }
 }

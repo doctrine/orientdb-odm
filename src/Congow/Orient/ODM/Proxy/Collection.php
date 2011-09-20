@@ -21,26 +21,48 @@
 namespace Congow\Orient\ODM\Proxy;
 
 use Congow\Orient\ODM\Mapper;
+use Congow\Orient\ODM\Proxy\AbstractProxy;
 
-class Collection
+class Collection extends AbstractProxy
 {   
     protected $mapper;
     protected $rids;
     protected $collection;
     
+    /**
+     * Instantiates a new Proxy collection.
+     *
+     * @param Mapper $mapper
+     * @param array $rids 
+     */
     function __construct(Mapper $mapper, Array $rids)
     {
         $this->mapper = $mapper;
         $this->rids    = $rids;
     }
     
+    /**
+     * Returns the array of records associated with this proxy.
+     *
+     * @return Array
+     */
     public function __invoke()
     {
         if ($this->collection) {
             return $this->collection;
         } else {
-            $this->collection = $this->mapper->findRecords($this->rids);
+            $this->collection = $this->getMapper()->findRecords($this->getRids());
             return $this->collection;
         }    
+    }
+    
+    /**
+     * Returns the RIDs to find.
+     *
+     * @return array
+     */
+    protected function getRids()
+    {
+        return $this->rids;
     }
 }
