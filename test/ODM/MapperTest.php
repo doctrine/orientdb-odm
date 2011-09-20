@@ -126,6 +126,27 @@ class MapperTest extends TestCase
             "lazy_linkset":   [ "#20:102", "#20:103" ],
             "lazy_linkmap":   { "first_key" : "#20:102", "second_key": "#20:103" }
          }');
+        
+        $this->jsonNotLazyLinkedRecord = json_decode('{
+            "@type":          "d",
+            "@rid":           "#12:0",
+            "@version":        0,
+            "is_true":         1,
+            "is_false":        0,
+            "@class":         "Address",
+            "lazy_link":           {
+                              "@type": "d", "@rid": "#14:0", "@version": 99, "@class": "Address", 
+                              "name": "Rome", 
+                              "link":{
+                                "@type": "d", "@rid": "#15:0", "@version": 99, "@class": "Address", 
+                                "name": "Italy"
+                              }},
+            "lazy_linklist":  [
+                                {"@type": "d", "@rid": "#20:102", "@version": 1, "@class": "Address"}, 
+                                {"@type": "d", "@rid": "#20:103", "@version": 1, "@class": "Address"}
+                              ]
+         }');
+
          
          $this->jsonEmbeddedMapRecord = json_decode('{
              "@type":          "d",
@@ -395,6 +416,10 @@ class MapperTest extends TestCase
         $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLazyLink());
+
+        $object = $this->mapper->hydrate($this->jsonNotLazyLinkedRecord);
+
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLazyLink());
     }
     
     public function testLazyLinkListGetsMappedInTheObject()
@@ -402,6 +427,12 @@ class MapperTest extends TestCase
         $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         $linklist = $object->getLazyLinkList();
         
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[1]);
+        
+        $object = $this->mapper->hydrate($this->jsonNotLazyLinkedRecord);
+        $linklist = $object->getLazyLinkList();
+
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[1]);
     }

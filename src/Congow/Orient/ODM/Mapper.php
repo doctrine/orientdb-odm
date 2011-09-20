@@ -420,7 +420,11 @@ class Mapper
      * @todo the protocol adapter should be retrieved via getter
      * @todo phpdoc
      */
-    public function find($rid){
+    public function find($rid, $lazy = false){
+        if ($lazy) {
+            return new Proxy($this, $rid);
+        }
+        
         return $this->hydrate(json_decode($this->protocolAdapter->find($rid)));
     }
     
@@ -430,7 +434,11 @@ class Mapper
      * @todo the protocol adapter should be retrieved via getter
      * @todo phpdoc
      */
-    public function findRecords(array $rids){
+    public function findRecords(Array $rids, $lazy = false){
+        if ($lazy) {
+            return new Proxy\Collection($this, $rids);
+        }
+        
         return $this->hydrateCollection($this->protocolAdapter->findRecords($rids));
     }
 }

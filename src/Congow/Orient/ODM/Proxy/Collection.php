@@ -28,7 +28,7 @@ class Collection
     protected $rids;
     protected $collection;
     
-    function __construct(Mapper $mapper, $rids)
+    function __construct(Mapper $mapper, Array $rids)
     {
         $this->mapper = $mapper;
         $this->rids    = $rids;

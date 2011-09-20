@@ -345,7 +345,7 @@ class Address
     
     public function getLink()
     {
-        return $this->link;
+        return call_user_func($this->link);
     }
 
     public function setLink($link)
@@ -365,7 +365,7 @@ class Address
     
     public function getLinkset()
     {
-        return $this->linkset;
+        return call_user_func($this->linkset);
     }
 
     public function setLinkset($linkset)
@@ -375,7 +375,7 @@ class Address
     
     public function getLinklist()
     {
-        return $this->linklist;
+        return call_user_func($this->linklist);
     }
 
     public function setLinklist($linklist)
@@ -385,7 +385,7 @@ class Address
     
     public function getLinkmap()
     {
-        return $this->linkmap;
+        return call_user_func($this->linkmap);
     }
 
     public function setLinkmap($linkmap)
@@ -405,7 +405,7 @@ class Address
     
     public function getLazyLink()
     {
-        return call_user_func( $this->lazy_link);
+        return call_user_func($this->lazy_link);
     }
 
     public function setLazyLink($lazy_link)
