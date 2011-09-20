@@ -22,6 +22,7 @@ namespace Congow\Orient\Formatter\Query;
 use Congow\Orient\Formatter\Query;
 use Congow\Orient\Formatter\String;
 use Congow\Orient\Contract\Formatter\Query\Token as TokenFormatter;
+use Congow\Orient\Validator\Rid as RidValidator;
 
 class RidUpdates extends Query implements TokenFormatter
 {
@@ -31,7 +32,8 @@ class RidUpdates extends Query implements TokenFormatter
 
         foreach ($values as $key => $value) {
             $key = String::filterNonSQLChars($key);
-            $rid = String::filterRid($value);
+            $validator = new RidValidator;
+            $rid = $validator->check($value, true);
 
             if ($key && $rid) {
                 $rids[$key] = "$key = " . $rid;

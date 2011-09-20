@@ -6,6 +6,7 @@
  * @package    Congow\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     David Funaro <ing.davidino@gmail.com>
  * @version
  */
 
@@ -23,24 +24,24 @@ class Adapter implements \Congow\Orient\Contract\Protocol\Adapter
 
     }
     
-    public function execute($sql)
+    public function getResult()
     {
-        
-    }
-
-    public function find($rid)
-    {
-        return '{
+        return json_decode('{
             "@type": "d", "@rid": "#19:0", "@version": 2, "@class": "Address", 
             "name": "Luca", 
             "surname": "Garulli", 
             "out": ["#20:1"]
-          }';
+          }');
+    }
+    
+    public function execute($sql)
+    {
+        return true;
     }
     
     public function findRecords(array $rids)
     {
-        return array(json_decode($this->find("#20:1")),json_decode($this->find("#20:2")));
+        return array($this->getResult("#20:1"),$this->getResult("#20:2"));
         
     }
 }
@@ -83,6 +84,19 @@ class MapperTest extends TestCase
             "invalid_byte":   "128",
             "floating":       "10.5",
             "image":          "' . base64_encode(fread(fopen(__DIR__ . '/bin/image.jpg', "r"), filesize(__DIR__ . '/bin/image.jpg'))) . '",
+              "embedded":      {
+                                "@type": "d", "@version": 99, "@class": "OCity", 
+                                "name": "Rome"
+                               }
+         }');        
+        
+        $this->jsonLinkedRecord = json_decode('{
+            "@type":          "d",
+            "@rid":           "#12:0",
+            "@version":        0,
+            "is_true":         1,
+            "is_false":        0,
+            "@class":         "Address",
             "link":           {
                               "@type": "d", "@rid": "#14:0", "@version": 99, "@class": "Address", 
                               "name": "Rome", 
@@ -102,13 +116,73 @@ class MapperTest extends TestCase
                                   "first_key" : {"@type": "d", "@rid": "#20:102", "@version": 1, "@class": "Address"}, 
                                   "second_key": {"@type": "d", "@rid": "#20:103", "@version": 1, "@class": "Address"}
                                 },
-              "embedded":      {
-                                "@type": "d", "@version": 99, "@class": "OCity", 
-                                "name": "Rome"
-                               },
             "lazy_link":       "#1:1",
-            "lazy_linklist":  [ "#20:102", "#20:103" ]
-         }');                   
+            "lazy_linklist":  [ "#20:102", "#20:103" ],
+            "lazy_linkset":   [ "#20:102", "#20:103" ],
+            "lazy_linkmap":   { "first_key" : "#20:102", "second_key": "#20:103" }
+         }');
+        
+        $this->jsonNotLazyLinkedRecord = json_decode('{
+            "@type":          "d",
+            "@rid":           "#12:0",
+            "@version":        0,
+            "is_true":         1,
+            "is_false":        0,
+            "@class":         "Address",
+            "lazy_link":           {
+                              "@type": "d", "@rid": "#14:0", "@version": 99, "@class": "Address", 
+                              "name": "Rome", 
+                              "link":{
+                                "@type": "d", "@rid": "#15:0", "@version": 99, "@class": "Address", 
+                                "name": "Italy"
+                              }},
+            "lazy_linklist":  [
+                                {"@type": "d", "@rid": "#20:102", "@version": 1, "@class": "Address"}, 
+                                {"@type": "d", "@rid": "#20:103", "@version": 1, "@class": "Address"}
+                              ]
+         }');
+
+         
+         $this->jsonEmbeddedMapRecord = json_decode('{
+             "@type":          "d",
+             "@rid":           "#12:0",
+             "@version":        0,
+             "is_true":         1,
+             "is_false":        0,
+             "@class":         "Address",
+             "embedded_map":    {
+                                   "first_key" : {"@type": "d", "@version": 1, "@class": "Address"},
+                                   "second_key": {"@type": "d", "@version": 1, "@class": "Address"}
+                                }
+          }');                   
+        
+        $this->jsonEmbeddedRecord = json_decode('{
+            "@type":    "d",
+            "@rid":     "#12:0",
+            "@version":  0,
+            "@class":   "Address",
+            "embeddedlist": [
+                         {"@type": "d", "@version": 1, "@class": "Address"}, 
+                         {"@type": "d", "@version": 1, "@class": "Address"}
+                        ],
+            "embeddedintegers": [10, 20],
+            "embeddedstrings": ["hola", "halo"],
+            "embeddedbooleans": ["0", "1"]
+         }');
+    
+     $this->jsonEmbeddedSetRecord = json_decode('{
+         "@type":    "d",
+         "@rid":     "#12:0",
+         "@version":  0,
+         "@class":   "Address",
+         "embeddedset": [
+                      {"@type": "d", "@version": 1, "@class": "Address"}, 
+                      {"@type": "d", "@version": 1, "@class": "Address"}
+                     ],
+         "embeddedsetintegers": [10, 20],
+         "embeddedsetstrings": ["hola", "halo"],
+         "embeddedsetbooleans": ["0", "1"]
+      }');
         
         $this->jsonLongRecord = json_decode('{
             "@type":    "d",
@@ -326,40 +400,68 @@ class MapperTest extends TestCase
     
     public function testLinkedRecordsGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
-        
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
+
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLink());
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLink()->getLink());
     }
     
     public function testLazyLinkedRecordsGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLazyLink());
+
+        $object = $this->mapper->hydrate($this->jsonNotLazyLinkedRecord);
+
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getLazyLink());
     }
     
     public function testLazyLinkListGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         $linklist = $object->getLazyLinkList();
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[1]);
+        
+        $object = $this->mapper->hydrate($this->jsonNotLazyLinkedRecord);
+        $linklist = $object->getLazyLinkList();
+
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[1]);
+    }
+
+    public function testLazyLinkSetGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
+        $linkset = call_user_func($object->lazy_linkset);
+        
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[1]);
     }
     
     public function testLinkSetGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         $linkset = $object->getLinkset();
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[0]);
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[1]);
     }
     
+    public function testLazyLinkMapGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
+        $linkmap = call_user_func($object->lazy_linkmap);
+        
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap[0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap[1]);
+    }
+    
     public function testLinkListGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         $linklist = $object->getLinkList();
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
@@ -368,7 +470,7 @@ class MapperTest extends TestCase
     
     public function testLinkMapGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
         $linkmap = $object->getLinkMap();
         
         $keys = array_keys($linkmap);
@@ -378,7 +480,20 @@ class MapperTest extends TestCase
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['first_key']);
         $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['second_key']);
     }
+     
+    public function testEmbeddedMapGetsMappedInTheObject()
+    {
+        $object = $this->mapper->hydrate($this->jsonEmbeddedMapRecord);
+        $linkmap = $object->getEmbeddedMap();
         
+        $keys = array_keys($linkmap);
+        
+        $this->assertEquals('first_key', $keys[0]);
+        $this->assertEquals('second_key', $keys[1]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['first_key']);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['second_key']);
+    }
+    
     public function testDatePropertiesGetsMappedInTheObject()
     {
         $object = $this->mapper->hydrate($this->jsonRecord);
@@ -441,10 +556,59 @@ class MapperTest extends TestCase
         $this->assertInstanceOf('Test\ODM\Document\Stub\Contact\Address', $collection[2] );
     }
     
-    public function testEmbeddedLinkedRecordsGetsMappedInTheObject()
+    public function testEmbeddedRecordsGetsMappedInTheObject()
     {
         $object = $this->mapper->hydrate($this->jsonRecord);
         
         $this->assertInstanceOf("Test\ODM\Document\Stub\City", $object->getEmbedded());
+    }
+    
+    public function testEmbeddedListedRecordsGetsMappedInTheObject()
+    {
+        $object     = $this->mapper->hydrate($this->jsonEmbeddedRecord);
+        $embedded   = $object->getEmbeddedList();
+        
+        $this->assertEquals(2, count($embedded));
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $embedded[0]);
+    }
+    
+    public function testEmbeddedListedDataGetsMappedInTheObject()
+    {
+        $object             = $this->mapper->hydrate($this->jsonEmbeddedRecord);
+        $embeddedIntegers   = $object->getEmbeddedIntegers();
+        $embeddedStrings    = $object->getEmbeddedStrings();
+        $embeddedBooleans   = $object->getEmbeddedBooleans();
+        
+        $this->assertEquals(2, count($embeddedIntegers));
+        $this->assertEquals(10, $embeddedIntegers[0]);        
+        $this->assertEquals(2, count($embeddedStrings));
+        $this->assertEquals('hola', $embeddedStrings[0]);
+        $this->assertEquals(2, count($embeddedBooleans));
+        $this->assertEquals(false, $embeddedBooleans[0]);
+    }
+
+    /* embedded set */
+    public function testEmbeddedSetRecordsGetsMappedInTheObject()
+    {
+        $object     = $this->mapper->hydrate($this->jsonEmbeddedSetRecord);
+        $embedded   = $object->getEmbeddedSet();
+        
+        $this->assertEquals(2, count($embedded));
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $embedded[0]);
+    }
+    
+    public function testEmbeddedSetDataGetsMappedInTheObject()
+    {
+        $object             = $this->mapper->hydrate($this->jsonEmbeddedSetRecord);
+        $embeddedIntegers   = $object->getEmbeddedSetIntegers();
+        $embeddedStrings    = $object->getEmbeddedSetStrings();
+        $embeddedBooleans   = $object->getEmbeddedSetBooleans();
+        
+        $this->assertEquals(2, count($embeddedIntegers));
+        $this->assertEquals(10, $embeddedIntegers[0]);        
+        $this->assertEquals(2, count($embeddedStrings));
+        $this->assertEquals('hola', $embeddedStrings[0]);
+        $this->assertEquals(2, count($embeddedBooleans));
+        $this->assertEquals(false, $embeddedBooleans[0]);
     }
 }

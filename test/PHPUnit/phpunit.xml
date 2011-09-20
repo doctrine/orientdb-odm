@@ -45,6 +45,9 @@
       <testsuite name="Excp">
           <directory >../../test/Exception</directory>
       </testsuite>
+      <testsuite name="Validator">
+          <directory >../../test/Validator</directory>
+      </testsuite>
 <!--      <testsuite name="Test">
           <directory >../../Test/Foundation</directory>
       </testsuite>-->

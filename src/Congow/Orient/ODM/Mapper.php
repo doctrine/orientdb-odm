@@ -23,6 +23,7 @@
 namespace Congow\Orient\ODM;
 
 use Congow\Orient\Exception;
+use Congow\Orient\Query;
 use Congow\Orient\Exception\Document\NotFound as DocumentNotFoundException;
 use Congow\Orient\Formatter\CasterInterface as CasterInterface;
 use Congow\Orient\Formatter\Caster;
@@ -74,6 +75,66 @@ class Mapper
     public function enableOverflows($value = true)
     {
         $this->enableOverflows = (bool) $value;
+    }
+
+    /**
+     * Via a protocol adapter, it queries for an object with the given $rid.
+     * If $lazy loading is used, all of this won't be executed unless the
+     * returned Proxy object is called via __invoke, e.g.:
+     * 
+     * <code>
+     *   $lazyLoadedRecord = $mapper->find('1:1', true);
+     * 
+     *   $record = $lazyLoadedRecord();
+     * </code>
+     *
+     * @param string    $rid
+     * @param boolean   $lazy
+     * @return Proxy|object
+     */
+    public function find($rid, $lazy = false){
+        if ($lazy) {
+            return new Proxy($this, $rid);
+        }
+        
+        try
+        {
+            $query      = new Query(array($rid));
+            $adapter    = $this->getProtocolAdapter();
+            
+            if ($adapter->execute($query->getRaw()) && $adapter->getResult()) {
+              return $this->hydrate($adapter->getResult());   
+            }
+            
+            return null;
+        }
+        catch (Exception $e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Via a protocol adapter, it queries for an array of objects with the given
+     * $rids.
+     * If $lazy loading is used, all of this won't be executed unless the
+     * returned Proxy object is called via __invoke, e.g.:
+     * 
+     * <code>
+     *   $lazyLoadedRecords = $mapper->find('1:1', true);
+     * 
+     *   $records = $lazyLoadedRecord();
+     * </code>
+     *
+     * @param string    $rid
+     * @param boolean   $lazy
+     * @return Proxy\Collection|array
+     */
+    public function findRecords(Array $rids, $lazy = false){
+        if ($lazy) {
+            return new Proxy\Collection($this, $rids);
+        }
+        
+        return $this->hydrateCollection($this->getProtocolAdapter()->findRecords($rids));
     }
     
     /**
@@ -177,26 +238,17 @@ class Mapper
      * @param   mixed                                     $propertyValue
      * @param   CasterInterface                           $caster
      * @return  mixed
-     * @todo    do we need to pass an entire annotation object to only retrieve "type"?
-     * @todo    long method
      */
     protected function castProperty($annotation, $propertyValue, CasterInterface $caster = null)
     {
         $caster     = $caster ?: new Caster($this);
         $method     = 'cast' . $this->inflector->camelize($annotation->type);
         $caster->setValue($propertyValue);
-        
-        if (!method_exists($caster, $method)) {
-            $message  = sprintf(
-                'You are trying to map a property wich seems not to have a standard type (%s). Do you have a typo in your annotation? If you think everything\'s ok, go check on %s class which property types are supported.',
-                $annotation->type,
-                get_class($caster)
-            );
-            
-            throw new Exception($message);
-        }
+        $caster->setAnnotation($annotation);
         
         try {
+            $this->verifyCastingSupport($caster, $method, $annotation->type);
+            
             return $caster->$method();
         }
         catch (Overflow $e) {
@@ -209,7 +261,12 @@ class Mapper
     }
 
     /**
-     * @todo no PHPDOC
+     * Given an object and an Orient-object, it fills the former with the
+     * latter.
+     *
+     * @param   object $document
+     * @param   \stdClass $object
+     * @return  object
      */
     protected function fill($document, \stdClass $object)
     {
@@ -344,6 +401,17 @@ class Mapper
                 $property, self::ANNOTATION_PROPERTY_CLASS
         );
     }
+    
+    /**
+     * Returns the protocol adapter used to communicate with a OrientDB
+     * binding.
+     *
+     * @return Adapter
+     */
+    protected function getProtocolAdapter()
+    {
+        return $this->protocolAdapter;
+    }
 
     /**
      * Given a $property and its $value, sets that property on the $given object
@@ -362,19 +430,25 @@ class Mapper
 
         $setter     = 'set' . $this->inflector->camelize($property);
         
-        if (method_exists($document, $setter))
-        {
+        if (method_exists($document, $setter)) {
             $document->$setter($value);            
-        }
-        else
-        {
-            $message = "%s has not method %s: you have to add the setter in order to correctly let Congow\Orient hydrate your object";
+        } 
+        else {
+            $refClass     = new \ReflectionObject($document);
+            $refProperty  = $refClass->getProperty($property);
             
-            throw new Exception(
-                    sprintf($message),
-                    get_class($document),
-                    $setter
-            );
+            if ($refProperty->isPublic()) {
+                $document->$property = $value;
+            } 
+            else {
+                $message = "%s has not method %s: you have to added the setter in order to correctly let Congow\Orient hydrate your object ?";
+                
+                throw new Exception(
+                        sprintf($message,
+                        get_class($document),
+                        $setter)
+                );
+            }
         }
     }
     
@@ -391,20 +465,24 @@ class Mapper
     }
     
     /**
-     * @todo to implement and test
-     * @todo probably better to receive a stdObjet rather than a JSON
-     * @todo phpdoc
+     * Verifies if the given $caster supports casting with $method.
+     * If not, an excepttion is raised.
+     *
+     * @param Caster $caster
+     * @param string $method
+     * @param string $annotationType 
+     * @throws Congow\Orient\Exception
      */
-    public function find($rid){
-        return $this->hydrate(json_decode($this->protocolAdapter->find($rid)));
-    }
-    
-    /**
-     * @todo to implement and test
-     * @todo probably better to receive a stdObjet rather than a JSON
-     * @todo phpdoc
-     */
-    public function findRecords(array $rids){
-        return $this->hydrateCollection($this->protocolAdapter->findRecords($rids));
+    protected function verifyCastingSupport(Caster $caster, $method, $annotationType)
+    {
+        if (!method_exists($caster, $method)) {
+            $message  = sprintf(
+                'You are trying to map a property wich seems not to have a standard type (%s). Do you have a typo in your annotation? If you think everything\'s ok, go check on %s class which property types are supported.',
+                $type,
+                get_class($caster)
+            );
+            
+            throw new Exception($message);
+        }
     }
 }

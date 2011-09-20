@@ -26,6 +26,7 @@ namespace Congow\Orient\Foundation;
 
 use Congow\Orient\Contract\Protocol;
 use Congow\Orient\Contract\Http;
+use Congow\Orient\Exception;
 
 class Binding implements Protocol\Http
 {
@@ -362,7 +363,6 @@ class Binding implements Protocol\Http
      *
      * @return true
      * @throws Exception
-     * @todo throw a custom exception
      */
     protected function checkDatabase()
     {
@@ -370,7 +370,7 @@ class Binding implements Protocol\Http
             return true;
         }
 
-        throw new \Exception(sprintf('In order to perform the operation you must specify a database'));
+        throw new Exception(sprintf('In order to perform the operation you must specify a database'));
     }
 
     /**

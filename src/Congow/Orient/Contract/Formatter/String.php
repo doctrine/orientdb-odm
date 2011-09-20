@@ -39,12 +39,4 @@ interface String
      * @return  string
      */
     public static function filterNonSQLChars($string, $nonFilter = null);
-
-    /**
-     * Checks wheter the given $rid is wellformed.
-     *
-     * @param   string $rid
-     * @return  the rid is wellformed, false otherwise
-     */
-    public static function filterRid($rid);
 }

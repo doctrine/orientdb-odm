@@ -12,8 +12,8 @@
 /**
  * Class Http
  *
- * @package     
- * @subpackage  
+ * @package     Orient
+ * @subpackage  Foundation
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -22,23 +22,28 @@ namespace Congow\Orient\Foundation\Protocol\Adapter;
 use Congow\Orient\Contract\Protocol\Adapter as ProtocolAdapter;
 use Congow\Orient\Contract\Http\Client;
 use Congow\Orient\Foundation\Binding;
+use Congow\Orient\Exception\Query\SQL\Invalid as InvalidSQL;
+use Congow\Orient\Exception\Http\Response\Void as VoidResponse;
+use Congow\Orient\Http\Response;
 
-class Http implements protocolAdapter
+class Http implements ProtocolAdapter
 {
+    
+    protected $client;
+    protected $result;
+    
     /**
      * Instantiates a new adapter.
      *
-     * @api
      * @param Http\Client $client
      * @param String $host
      * @param String $port
      * @param String $username
      * @param String $password
-     * @todo better to inject the binding
      */
-    public function __construct(Client $client, $host = '127.0.0.1', $port = 2480, $username = null, $password = null, $database = null)
+    public function __construct(Binding $binding)
     {
-        $this->client = new Binding($client, $host, $port, $username, $password, $database);
+        $this->client = $binding;
     }
     
     /**
@@ -46,45 +51,79 @@ class Http implements protocolAdapter
      *
      * @param   string $sql
      * @return  mixed
-     * @throws  \Exception
-     * @todo should return StdObject for SELECT and stuff that retrieves data, true otherwise
-     * @todo throw a specific exception
-     * @exploding the status code should not be done hete, need to add an option to
-     * ->getStatusCode($numeric) to return only 200 instead of HTTP/1.1 200 OK
      */
-    public function execute($sql)
+    public function execute($sql, $return = false)
     {
-        $method = 'command';
+        $method     = $return ? 'query' : 'command';
+        $response   = $this->getClient()->$method($sql);
+        $this->checkResponse($response);
         
-        $parts = explode(' ', $sql);
-        
-        if (strtolower($parts[0]) == 'select') {
-          $method = 'query';
+        if ($return) {
+            $body = json_decode($response->getBody());
+
+            $this->setResult($body->result);   
         }
         
-        $response = $this->client->$method($sql);
-        
-        if (!$response) {
-            throw new \Exception('Unable to retrieve a response');
-        }
-        
-        $statusCode = explode(' ', $response->getStatusCode());
-        
-        /**
-         * @todo ugly
-         */
-        if ($statusCode[1][0] == 2) {
-            return true;
-        }
-        
-        throw new \Exception($response->getBody());
+        return true;
     }
     
     /**
-     * @todo to implement and test
+     * Returns OrientDB's response to an HTTP request.
+     * 
+     * Pseudo code:
+     * <code>
+     * if ($adapter->execute('SELECT...')) {
+     *   foreach ($adapter->getResult() as $records) {
+     *     ...
+     *   }
+     * }
+     * </code>
+     * 
+     * @see    Congow\Orient\Contract\Protocol\Adapter::getResult
+     * @return Array|null
      */
-    public function find($rid){
-        return null;
+    public function getResult()
+    {
+        return $this->result;
+    }
+    
+    /**
+     * Checks whether the $response is valid.
+     * A response is *not* considere valid when:
+     * * it's void
+     * * it returns a status code different from 2XX
+     *
+     * @param Response $response 
+     */
+    protected function checkResponse(Response $response = null)
+    {
+        if (!$response) {
+            throw new VoidResponse(get_class($this->getClient()), $sql);
+        }
+
+        if (!in_array($response->getStatusCode(), $response->getValidStatusCodes())) {
+            throw new InvalidSQL($response);   
+        }
+    }
+    
+    /**
+     * Returns the internal client used to make requests to OrientDB.
+     *
+     * @return Congow\Orient\Contract\Http\Client
+     */
+    protected function getClient()
+    {
+        return $this->client;
+    }
+    
+    /**
+     * Sets the result of the execute() method.
+     *
+     * @param Array $result 
+     */
+    protected function setResult(Array $result)
+    {
+        $this->result = $result;
     }
 }
 

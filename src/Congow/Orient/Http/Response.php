@@ -26,6 +26,15 @@ class Response
     protected $raw_headers;
     protected $status_code;
     protected $body;
+    protected $protocol;
+    
+    const STATUS_OK                             = 200;
+    const STATUS_CREATED                        = 201;
+    const STATUS_ACCEPTED                       = 202;
+    const STATUS_NON_AUTHORITATIVE_INFORMATION  = 203;
+    const STATUS_NO_CONTENT                     = 204;
+    const STATUS_RESET_CONTENT                  = 205;
+    const STATUS_PARTIAL_CONTENT                = 206;
 
     /**
      * Constructs a new object from an existing HTTP response.
@@ -58,6 +67,16 @@ class Response
     {
         return isset($this->headers[$header]) ? $this->headers[$header] : null;
     }
+    
+    /**
+     * Returns the protocol used to communicate with the client.
+     *
+     * @return string
+     */
+    public function getProtocol()
+    {
+        return $this->protocol;
+    }
 
     /**
      * Returns the whole response.
@@ -78,6 +97,18 @@ class Response
     {
         return $this->status_code;
     }
+    
+    public function getValidStatusCodes()
+    {
+        return array(
+            self::STATUS_OK,
+            self::STATUS_ACCEPTED,
+            self::STATUS_NON_AUTHORITATIVE_INFORMATION,
+            self::STATUS_NO_CONTENT,
+            self::STATUS_RESET_CONTENT,
+            self::STATUS_PARTIAL_CONTENT,
+        );
+    }
 
     /**
      * Builds headers array from a well-formatted string.
@@ -87,7 +118,16 @@ class Response
     protected function buildHeaders($headers)
     {
         $parts              = explode("\r\n", $headers);
-        $this->status_code  = array_shift($parts);
+        $status             = array_shift($parts);
+        $statusParts        = explode(" ", $status);
+        
+        if (array_key_exists(0, $statusParts)) {
+            $this->setProtocol($statusParts[0]);
+        }
+        
+        if (array_key_exists(1, $statusParts)) {
+            $this->setStatusCode($statusParts[1]);   
+        }        
 
         foreach ($parts as $header) {
             list($header, $value)   = explode(':', $header, 2);
@@ -112,5 +152,25 @@ class Response
     protected function getRawHeaders()
     {
         return $this->raw_headers;
+    }
+    
+    /**
+     * Sets the protocol used for the communication with the client.
+     *
+     * @param string $protocol 
+     */
+    protected function setProtocol($protocol)
+    {
+        $this->protocol = $protocol;
+    }
+    
+    /**
+     * Sets the status code of the response.
+     *
+     * @param integer $code 
+     */
+    protected function setStatusCode($code)
+    {
+        $this->status_code = (int) $code;
     }
 }

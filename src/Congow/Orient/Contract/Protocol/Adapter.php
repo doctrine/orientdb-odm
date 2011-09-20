@@ -26,17 +26,34 @@ interface Adapter
      * Executes a command against Congow\OrientDB thorugh the protocol binding, 
      * returning mixed feedback or throwing an exception in case of error.
      * 
-     * @param   string $command SQL-like command to execute
-     * @throws  \Exception
+     * @param  string $command SQL-like command to execute
+     * @throws Congow\Orient\Exception\Query\SQL\Invalid
+     * @throws Congow\Orient\Exception\Http\Response\Void
+     * @return boolean
      */
     public function execute($sql);
     
     /**
-     * Retrieves a record, in form of a string that can be JSON-encoded.
+     * When calling ->execute() with the $return set to true, it might happen
+     * that OrientDB, after a query, gives back you a result, like when doing a
+     * SELECT, not when doing an UPDATE, for example.
      * 
-     * @param   string $rid
-     * @return  string
+     * When OrientDB gives you a consistent response, it gets stored in an
+     * internal variable of the adapter, and can be retrieved at any time.
+     * 
+     * For example, you may want to know if ->execute('SELECT FROM ADDRESS') was
+     * received properly by OrientDB, checking execute()'s return parameter,
+     * then you may want to use the result of that SELECT in your code.
+     * 
+     * Pseudo code:
+     * <code>
+     * if ($adapter->execute('SELECT...')) {
+     *   foreach ($adapter->getResult() as $records) {
+     *     ...
+     *   }
+     * }
+     * </code>
      */
-    public function find($rid);
+    public function getResult();
 }
 

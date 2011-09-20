@@ -67,9 +67,6 @@ class Query implements QueryInterface
      *
      * @param array   $target
      * @param string  $command
-     * @todo unit test validators
-     * @todo add missing tests seen with phpcodecoverage
-     * @todo fix TODOs
      */
     public function __construct(array $target = null, array $commands = array())
     {
