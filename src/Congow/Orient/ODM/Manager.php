@@ -23,23 +23,28 @@ namespace Congow\Orient\ODM;
 
 use Congow\Orient\ODM\Mapper;
 use Doctrine\Common\Persistence\ObjectManager;
+use Congow\Orient\ODM\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
 
 class Manager implements ObjectManager
 {
     protected $mapper;
+    protected $metadataFactory;
     
     /**
-     * @param Mapper $mapper
+     * @param   Mapper $mapper
+     * @todo    inject the metadata factory
      */
     public function __construct(Mapper $mapper)
     {
-        $this->mapper = $mapper;
+        $this->mapper           = $mapper;
+        $this->metadataFactory  = new ClassMetadataFactory();
     }
     
     /**
      * delegate the hydration of orientDB record to the mapper
      * @param JSON $json
      * @return mixed the hydrated object
+     * @todo test and phpdoc
      */
     public function hydrate($json)
     {
@@ -55,14 +60,15 @@ class Manager implements ObjectManager
         return $this->mapper->getDocumentDirectories();
     }
     
+    
     /**
-     * Set the document directories paths
-     * @param Array $directories
-     * @return void
+     * @todo to implement/test
+     *
+     * @param \stdClass $object 
      */
-    public function setDocumentDirectories(array $directories)
+    public function detach($object)
     {
-        $this->mapper->setDocumentDirectories($directories);
+        throw new \Exception();
     }
     
     /**
@@ -116,6 +122,16 @@ class Manager implements ObjectManager
     }
     
     /**
+     * @todo to implement/test
+     *
+     * @param \stdClass $object 
+     */
+    public function flush()
+    {
+        throw new \Exception;
+    }
+    
+    /**
      * Returns the internal object used to parse annotations.
      *
      * @return AnnotationReader
@@ -123,6 +139,31 @@ class Manager implements ObjectManager
     public function getAnnotationReader()
     {
         return $this->mapper->getAnnotationReader();
+    }
+    
+    /**
+     *
+     * @todo phpdoc
+     * @todo test
+     */
+    public function getClassMetadata($class)
+    {
+        return $this->getMetadataFactory()->getMetadataFor($class);
+    }
+    
+    public function getMetadataFactory()
+    {
+        return $this->metadataFactory;
+    }
+    
+    /**
+     * @todo to implement/test
+     *
+     * @param \stdClass $object 
+     */
+    public function getRepository($classname)
+    {
+        throw new \Exception;
     }
     
     /**
@@ -134,4 +175,55 @@ class Manager implements ObjectManager
         return $this->mapper->hydrateCollection($collection);
     }
     
+    
+    /**
+     * @todo to implement/test
+     *
+     * @param \stdClass $object 
+     */
+    public function merge($object)
+    {
+        throw new \Exception();
+    }
+    
+    /**
+     * @todo to implement/test
+     *
+     * @param \stdClass $object 
+     */
+    public function persist($object)
+    {
+        throw new \Exception();
+    }
+    
+    /**
+     * @todo to implement/test
+     *
+     * @param \stdClass $object 
+     */
+    public function remove($object)
+    {
+        throw new \Exception();
+    }
+    
+    /**
+     * @todo to implement/test
+     *
+     * @param \stdClass $object 
+     */
+    public function refresh($object)
+    {
+        throw new \Exception();
+    }
+    
+    
+    /**
+     * Set the document directories paths
+     * @param Array $directories
+     * @return void
+     */
+    public function setDocumentDirectories(array $directories)
+    {
+        $this->mapper->setDocumentDirectories($directories);
+    }    
 }
