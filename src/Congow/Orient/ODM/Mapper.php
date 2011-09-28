@@ -103,7 +103,7 @@ class Mapper
             $adapter    = $this->getProtocolAdapter();
             
             if ($adapter->execute($query->getRaw()) && $adapter->getResult()) {
-              return $this->hydrate($adapter->getResult());   
+              return $this->hydrate($adapter->getResult());
             }
             
             return null;
@@ -222,10 +222,62 @@ class Mapper
      * @param string    $class
      * @param \stdClass $orientObject
      * @return class
+     * @todo proxy generation should not be here
+     * @todo the proxy directory should be injected
      */
     protected function createDocument($class, \stdClass $orientObject)
     {
-        $document = new $class();
+        $proxyClass = $class . "Proxy";
+        $namespaces = explode('\\', $proxyClass);
+        $proxyClassName = array_pop($namespaces);
+        $namespace = implode("\\", $namespaces);
+
+        if (!class_exists("Congow\Orient\Proxy\\" . $proxyClassName)) {
+            $refClass = new \ReflectionClass($class);
+            $methods = "";
+
+            foreach ($refClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
+                if (!$refMethod->isStatic()) {
+                    $parameters = array();
+
+                    foreach ($refMethod->getParameters() as $parameter) {
+                        $parameters[] = "$" . $parameter->getName();
+                    }
+
+                    $parametersAsString = implode(', ', $parameters);
+
+                    $methods .= <<<EOT
+    public function {$refMethod->getName()}($parametersAsString) {
+        \$parent = parent::{$refMethod->getName()}($parametersAsString);
+
+        if (!is_null(\$parent)) { 
+            if (\$parent instanceOf \Congow\Orient\ODM\Proxy\AbstractProxy) {
+                return \$parent();
+            }
+
+            return \$parent;
+        }
+    }
+
+EOT;
+                }
+            }
+            
+            $proxy = <<<EOT
+<?php
+            
+namespace Congow\Orient\Proxy;
+    
+class $proxyClassName extends $class
+{
+  $methods    
+}
+EOT;
+            $f = file_put_contents(__DIR__ . "/../../../../proxies/Congow/Orient/Proxy/" . $proxyClassName . ".php", $proxy);
+        }
+        
+        $proxyClass = "Congow\Orient\Proxy\\" . $proxyClassName;
+        $document   = new $proxyClass();
         $this->fill($document, $orientObject);
         
         return $document;

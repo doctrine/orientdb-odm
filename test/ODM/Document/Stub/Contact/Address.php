@@ -345,7 +345,7 @@ class Address
     
     public function getLink()
     {
-        return call_user_func($this->link);
+        return $this->link;
     }
 
     public function setLink($link)
@@ -365,7 +365,7 @@ class Address
     
     public function getLinkset()
     {
-        return call_user_func($this->linkset);
+        return $this->linkset;
     }
 
     public function setLinkset($linkset)
@@ -375,7 +375,7 @@ class Address
     
     public function getLinklist()
     {
-        return call_user_func($this->linklist);
+        return $this->linklist;
     }
 
     public function setLinklist($linklist)
@@ -385,7 +385,7 @@ class Address
     
     public function getLinkmap()
     {
-        return call_user_func($this->linkmap);
+        return $this->linkmap;
     }
 
     public function setLinkmap($linkmap)
@@ -405,7 +405,7 @@ class Address
     
     public function getLazyLink()
     {
-        return call_user_func($this->lazy_link);
+        return $this->lazy_link;
     }
 
     public function setLazyLink($lazy_link)
@@ -415,7 +415,7 @@ class Address
     
     public function getLazyLinkList()
     {
-        return call_user_func($this->lazy_linklist);
+        return $this->lazy_linklist;
     }
     
     public function setLazyLinkList($lazy_linklist)
@@ -561,5 +561,15 @@ class Address
     public function setExampleProperty($value)
     {
         $this->example_property = $value;
+    }
+    
+    public function testCustomMethod($k1, $k2)
+    {
+        return $k1 + $k2;
+    }
+    
+    public static function testStaticMethod($k1, $k2)
+    {
+        return $k1 + $k2;
     }
 }

@@ -130,7 +130,11 @@ class SplClassLoader
             }
             $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . $this->_fileExtension;
 
-            require ($this->_includePath !== null ? $this->_includePath . DIRECTORY_SEPARATOR : '') . $fileName;
+            $file =  ($this->_includePath !== null ? $this->_includePath . DIRECTORY_SEPARATOR : '') . $fileName;
+            
+            if (file_exists($file)) {
+                require $file;
+            }
         }
     }
 }
@@ -141,5 +145,9 @@ $classLoader->register();
 $classLoader = new SplClassLoader('Congow\Orient', __DIR__ . "/../../src");
 $classLoader->register();
 
+$classLoader = new SplClassLoader('Congow\Orient\Proxy', __DIR__ . "/../../proxies");
+$classLoader->register();
+
 $classLoader = new SplClassLoader('Doctrine\Common', 'lib/vendor/Doctrine/Common/lib/');
 $classLoader->register();
+
