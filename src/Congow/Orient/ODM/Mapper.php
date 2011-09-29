@@ -41,11 +41,12 @@ use Doctrine\Common\Annotations\AnnotationReader;
 
 class Mapper
 {
-    protected $documentDirectories  = array();
-    protected $annotationReader     = null;
-    protected $inflector            = null;
-    protected $enableOverflows      = false;
-    protected $protocolAdapter      = null;
+    protected $documentDirectories              = array();
+    protected $annotationReader                 = null;
+    protected $inflector                        = null;
+    protected $enableOverflows                  = false;
+    protected $protocolAdapter                  = null;
+    protected $documentProxiesDirectory         = null;
     
     const ANNOTATION_PROPERTY_CLASS = 'Congow\Orient\ODM\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Congow\Orient\ODM\Mapper\Annotations\Document';
@@ -58,12 +59,14 @@ class Mapper
      * @param Adapter                   $protocolAdapter
      * @param AnnotationReaderInterface $annotationReader
      * @param Inflector                 $inflector
+     * @todo outdated phpdoc
      */
-    public function __construct(Adapter $protocolAdapter,AnnotationReaderInterface $annotationReader = null, Inflector $inflector = null)
+    public function __construct(Adapter $protocolAdapter, $documentProxyDirectory, AnnotationReaderInterface $annotationReader = null, Inflector $inflector = null)
     {
-        $this->protocolAdapter  = $protocolAdapter;
-        $this->annotationReader = $annotationReader ?: new AnnotationReader;
-        $this->inflector        = $inflector ?: new DoctrineInflector;
+        $this->protocolAdapter              = $protocolAdapter;
+        $this->annotationReader             = $annotationReader ?: new AnnotationReader;
+        $this->inflector                    = $inflector ?: new DoctrineInflector;
+        $this->documentProxyDirectory       = $documentProxyDirectory;
     }
     
     /**
@@ -224,59 +227,11 @@ class Mapper
      * @return class
      * @todo proxy generation should not be here
      * @todo the proxy directory should be injected
+     * @todo phpdoc outdated
      */
     protected function createDocument($class, \stdClass $orientObject)
-    {
-        $proxyClass = $class . "Proxy";
-        $namespaces = explode('\\', $proxyClass);
-        $proxyClassName = array_pop($namespaces);
-        $namespace = implode("\\", $namespaces);
-
-        if (!class_exists("Congow\Orient\Proxy\\" . $proxyClassName)) {
-            $refClass = new \ReflectionClass($class);
-            $methods = "";
-
-            foreach ($refClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
-                if (!$refMethod->isStatic()) {
-                    $parameters = array();
-
-                    foreach ($refMethod->getParameters() as $parameter) {
-                        $parameters[] = "$" . $parameter->getName();
-                    }
-
-                    $parametersAsString = implode(', ', $parameters);
-
-                    $methods .= <<<EOT
-    public function {$refMethod->getName()}($parametersAsString) {
-        \$parent = parent::{$refMethod->getName()}($parametersAsString);
-
-        if (!is_null(\$parent)) { 
-            if (\$parent instanceOf \Congow\Orient\ODM\Proxy\AbstractProxy) {
-                return \$parent();
-            }
-
-            return \$parent;
-        }
-    }
-
-EOT;
-                }
-            }
-            
-            $proxy = <<<EOT
-<?php
-            
-namespace Congow\Orient\Proxy;
-    
-class $proxyClassName extends $class
-{
-  $methods    
-}
-EOT;
-            $f = file_put_contents(__DIR__ . "/../../../../proxies/Congow/Orient/Proxy/" . $proxyClassName . ".php", $proxy);
-        }
-        
-        $proxyClass = "Congow\Orient\Proxy\\" . $proxyClassName;
+    {        
+        $proxyClass = $this->getProxyClass($class);
         $document   = new $proxyClass();
         $this->fill($document, $orientObject);
         
@@ -397,6 +352,55 @@ EOT;
         
         return null;
     }
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function generateProxyClass($class, $proxyClassName)
+    {
+        $refClass = new \ReflectionClass($class);
+        $methods = "";
+
+        foreach ($refClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
+            if (!$refMethod->isStatic()) {
+                $parameters = array();
+
+                foreach ($refMethod->getParameters() as $parameter) {
+                    $parameters[] = "$" . $parameter->getName();
+                }
+
+                $parametersAsString = implode(', ', $parameters);
+
+                $methods .= <<<EOT
+    public function {$refMethod->getName()}($parametersAsString) {
+        \$parent = parent::{$refMethod->getName()}($parametersAsString);
+
+        if (!is_null(\$parent)) { 
+            if (\$parent instanceOf \Congow\Orient\ODM\Proxy\AbstractProxy) {
+                return \$parent();
+            }
+
+            return \$parent;
+        }
+    }
+
+EOT;
+                }
+            }
+            
+            $proxy = <<<EOT
+<?php
+            
+namespace Congow\Orient\Proxy;
+    
+class $proxyClassName extends $class
+{
+  $methods    
+}
+EOT;
+        
+        $f = file_put_contents($this->getDocumentProxyDirectory() . "/Congow/Orient/Proxy/" . $proxyClassName . ".php", $proxy);
+    }
 
     /**
      * Returns the annotation of a class.
@@ -417,6 +421,31 @@ EOT;
         }
 
         return null;
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function getDocumentProxyDirectory()
+    {
+        return $this->documentProxyDirectory;
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function getProxyClass($class)
+    {
+        $proxyClass = $class . "Proxy";
+        $namespaces = explode('\\', $proxyClass);
+        $proxyClassName = array_pop($namespaces);
+        $namespace = implode("\\", $namespaces);
+        
+        if (!class_exists("Congow\Orient\Proxy\\" . $proxyClassName)) {
+            $this->generateProxyClass($class, $proxyClassName);
+        }
+        
+        return "Congow\Orient\Proxy\\" . $proxyClassName;
     }
 
     /**

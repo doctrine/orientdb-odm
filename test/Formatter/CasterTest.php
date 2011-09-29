@@ -23,7 +23,7 @@ class StubObject
 }
 
 class MockAdapter implements \Congow\Orient\Contract\Protocol\Adapter
-{
+{   
  public function execute($sql, $return = false)
  {
         
@@ -38,12 +38,12 @@ class CasterTest extends TestCase
 {
     public function setup()
     {
-        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter));
+        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter, __DIR__));
     }
     
     public function testInjectingTheValueInTheConstructor()
     {
-        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter), 'v');
+        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter, __DIR__), 'v');
         $this->assertEquals('v', $this->caster->castString());
     }
     
@@ -89,7 +89,7 @@ class CasterTest extends TestCase
     
     public function testNullIsReturnedWhenCastingToRidAnInvalidRid()
     {
-        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter), 'OMGO');
+        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter, __DIR__), 'OMGO');
         $this->assertEquals(null, $this->caster->castLink());
     }
 }

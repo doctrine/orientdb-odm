@@ -88,32 +88,48 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @param string $fieldName 
      * @return boolean
+     * @todo to implement and test
      */
-    function hasField($fieldName);
+    function hasField($fieldName)
+    {
+        
+    }
 
     /**
      * Checks if the given field is a mapped association for this class.
      *
      * @param string $fieldName
      * @return boolean
+     * @todo to implement and test
      */
-    function hasAssociation($fieldName);
+    function hasAssociation($fieldName)
+    {
+        
+    }
 
     /**
      * Checks if the given field is a mapped single valued association for this class.
      *
      * @param string $fieldName
      * @return boolean
+     * @todo to implement and test
      */
-    function isSingleValuedAssociation($fieldName);
+    function isSingleValuedAssociation($fieldName)
+    {
+        
+    }
 
     /**
      * Checks if the given field is a mapped collection valued association for this class.
      *
      * @param string $fieldName
      * @return boolean
+     * @todo to implement and test
      */
-    function isCollectionValuedAssociation($fieldName);
+    function isCollectionValuedAssociation($fieldName)
+    {
+        
+    }
     
     /**
      * A numerically indexed list of field names of this persistent class.
@@ -121,8 +137,12 @@ class ClassMetadata implements DoctrineMetadata
      * This array includes identifier fields if present on this class.
      * 
      * @return array
+     * @todo to implement and test
      */
-    function getFieldNames();
+    function getFieldNames()
+    {
+        
+    }
     
     /**
      * A numerically indexed list of association names of this persistent class.
@@ -130,8 +150,12 @@ class ClassMetadata implements DoctrineMetadata
      * This array includes identifier associations if present on this class.
      * 
      * @return array
+     * @todo to implement and test
      */
-    function getAssociationNames();
+    function getAssociationNames()
+    {
+        
+    }
     
     /**
      * Returns a type name of this field.
@@ -141,8 +165,12 @@ class ClassMetadata implements DoctrineMetadata
      * 
      * @param string $fieldName
      * @return string
+     * @todo to implement and test
      */
-    function getTypeOfField($fieldName);
+    function getTypeOfField($fieldName)
+    {
+        
+    }
     
     /**
      * Returns the target class name of the given association.

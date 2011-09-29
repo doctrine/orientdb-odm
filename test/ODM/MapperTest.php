@@ -55,7 +55,7 @@ class MapperTest extends TestCase
     public function setup()
     {
         $annotationReader = new AnnotationReader;
-        $this->mapper = new Mapper(new Adapter, $annotationReader);
+        $this->mapper = new Mapper(new Adapter, "proxies", $annotationReader);
         $this->mapper->setDocumentDirectories(array('./test/ODM/Document/Stub' => '\\'));
         
         $this->jsonRecord = json_decode('{
@@ -244,11 +244,11 @@ class MapperTest extends TestCase
     public function testYouCanDecideWheterInjectACustomAnnotationReaderOrNotToTheMapper()
     {
         $annotationReader = new AnnotationReader;
-        $this->mapper = new Mapper(new Adapter, $annotationReader);
+        $this->mapper = new Mapper(new Adapter, "/../../../../proxies", $annotationReader);
         
         $this->assertInstanceOf('Congow\Orient\ODM\Mapper\Annotations\Reader', $this->mapper->getAnnotationReader());
         
-        $this->mapper = new Mapper(new Adapter);
+        $this->mapper = new Mapper(new Adapter, "/../../../../proxies");
         
         $this->assertInstanceOf('Doctrine\Common\Annotations\AnnotationReader', $this->mapper->getAnnotationReader());
     }
