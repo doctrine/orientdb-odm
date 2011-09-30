@@ -439,61 +439,61 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals('Luca2', $document->nick);
     }
 
-    public function testAddingALink()
-    {
-        $res = json_decode($this->orient->command('SELECT FROM 26:1')->getBody());
-        $document = $res->result[0];
-        $count = count($document->comments);
-        
-        $this->query->add(array('comments' => '26:0'), 'post');
-        $this->query->where('@rid = ?', '26:1');
+//    public function testAddingALink()
+//    {
+//        $res        = json_decode($this->orient->command('SELECT FROM 27:1')->getBody());
+//        $document   = $res->result[0];
+//        $count      = count($document->comments);
+//        
+//        $this->query->add(array('comments' => '28:0'), 'post');
+//        $this->query->where('@rid = ?', '27:1');
+//
+//        $this->assertStatusCode(self::_200, $this->query());
+//        
+//        $res = json_decode($this->orient->command('SELECT FROM 27:1')->getBody());
+//        $document = $res->result[0];
+//
+//        $res = json_decode($this->orient->command('SELECT FROM 27:1')->getBody());
+//        $document = $res->result[0];
+//        $recount = count($document->comments);
+//        
+//        $this->assertEquals($count + 1, $recount);
+//    }
+//
+//    /**
+//     * @depends testAddingALink
+//     */
+//    public function testRemovingALink()
+//    {
+//        $res = json_decode($this->orient->command('SELECT FROM 27:1')->getBody());
+//        $document = $res->result[0];
+//        $count = count($document->comments);
+//        
+//        $this->query->remove(array('comments' => '27:0'), 'post');
+//        $this->query->where('@rid = ?', '27:1');
+//
+//        $this->assertStatusCode(self::_200, $this->query());
+//        
+//        $res = json_decode($this->orient->command('SELECT FROM 27:1')->getBody());
+//        $document = $res->result[0];
+//        $recount = count($document->comments);
+//        
+//        $this->assertEquals($count - 1, $recount);
+//    }
 
-        $this->assertStatusCode(self::_200, $this->query());
-        
-        $res = json_decode($this->orient->command('SELECT FROM 26:1')->getBody());
-        $document = $res->result[0];
-
-        $res = json_decode($this->orient->command('SELECT FROM 26:1')->getBody());
-        $document = $res->result[0];
-        $recount = count($document->comments);
-        
-        $this->assertEquals($count + 1, $recount);
-    }
-
-    /**
-     * @depends testAddingALink
-     */
-    public function testRemovingALink()
-    {
-        $res = json_decode($this->orient->command('SELECT FROM 26:1')->getBody());
-        $document = $res->result[0];
-        $count = count($document->comments);
-        
-        $this->query->remove(array('comments' => '26:0'), 'post');
-        $this->query->where('@rid = ?', '26:1');
-
-        $this->assertStatusCode(self::_200, $this->query());
-        
-        $res = json_decode($this->orient->command('SELECT FROM 26:1')->getBody());
-        $document = $res->result[0];
-        $recount = count($document->comments);
-        
-        $this->assertEquals($count - 1, $recount);
-    }
-
-    public function testPuttingALink()
-    {
-        $this->query->put(array('knows' => array('Johnny' => '9:2')), 'account');
-        $this->query->where('@rid = ?', '9:1');
-
-        $this->assertStatusCode(self::_200, $this->query());
-
-        $res = json_decode($this->orient->command('SELECT FROM 9:1')->getBody());
-
-        $document = $res->result[0];
-        $this->assertInstanceOf('stdClass', $document->knows);
-        $this->assertEquals('#9:2', $document->knows->Johnny);
-    }
+//    public function testPuttingALink()
+//    {
+//        $this->query->put(array('followers' => array('Johnny' => '10:2')), 'profile');
+//        $this->query->where('@rid = ?', '10:1');
+//
+//        $this->assertStatusCode(self::_200, $this->query());
+//
+//        $res = json_decode($this->orient->command('SELECT FROM 10:1')->getBody());
+//
+//        $document = $res->result[0];
+//        $this->assertInternalType('array', $document->followers);
+//        $this->assertEquals('#10:2', $document->followers['Johnny']);
+//    }
     
     public function testTruncatingNonExistingClass()
     {

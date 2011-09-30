@@ -356,9 +356,23 @@ abstract class Command implements CommandContract
         }
     }
     
+    /**
+     * @todo phpdoc
+     * @todo rid should be validated in where(), not here
+     */
     protected function formatWhereConditionWithSingleToken($condition, $value, EscapeValidator $validator)
     {
-        return str_replace("?", '"' . $validator->check($value, 1) . '"', $condition);
+        $ridValidator = new \Congow\Orient\Validator\Rid();
+        
+        try {
+            $rid    = $ridValidator->check($value);
+            $value  = $rid;
+        }
+        catch (\Exception $e) {
+            $value =  '"' . $validator->check($value, 1) . '"';
+        }
+        
+        return str_replace("?", $value, $condition);
     }
 
     /**

@@ -67,8 +67,8 @@ class BindingTest extends TestCase
         $this->assertEquals('Address', $result['schema']['name'], 'The cluster is wrong');
         $this->assertEquals(1, count($result['result']), 'The limi is wrong');
 
-        $result = json_decode($this->orient->cluster('City', false, 10)->getBody(), true);
-        $this->assertEquals('City', $result['schema']['name'], 'The cluster is wrong');
+        $result = json_decode($this->orient->cluster('Country', false, 10)->getBody(), true);
+        $this->assertEquals('Country', $result['schema']['name'], 'The cluster is wrong');
         $this->assertEquals(10, count($result['result']), 'The limit is wrong');
     }
 
