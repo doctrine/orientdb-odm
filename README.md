@@ -98,28 +98,14 @@ Orient incapsulates also a few utilities for PHP developers: on of them is an im
     $rome      = new Vertex('Rome');
     $paris     = new Vertex('Paris');
     $london    = new Vertex('London');
-    $amsterdam = new Vertex('Amsterdam');
-    $ny        = new Vertex('New York');
-    $la        = new Vertex('Los Angeles');
-    $tokio     = new Vertex('Tokio');
     
     $rome->connect($paris, 2);
     $rome->connect($london, 3);
-    $rome->connect($amsterdam, 3);
     $paris->connect($london, 1);
-    $paris->connect($amsterdam, 1);
-    $london->connect($ny, 10);
-    $amsterdam->connect($la, 8);
-    $la->connect($tokio, 2);
-    $ny->connect($tokio, 3);
 
     $graph->add($rome);
     $graph->add($paris);
     $graph->add($london);
-    $graph->add($amsterdam);
-    $graph->add($ny);
-    $graph->add($la);
-    $graph->add($tokio);
     
     $algorithm = new Algorithm\Dijkstra($graph);
     $algorithm->setStartingVertex($rome);
