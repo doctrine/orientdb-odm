@@ -15,7 +15,7 @@ namespace test;
 use test\PHPUnit\TestCase;
 use Congow\Orient\ODM\Manager;
 
-class Mapper extends \Congow\Orient\ODM\Mapper
+class TestMapper extends \Congow\Orient\ODM\Mapper
 {
     public function __construct()
     {
@@ -27,7 +27,7 @@ class ManagerTest extends TestCase
 {
     public function setup()
     {
-        $this->manager = new Manager(new Mapper());
+        $this->manager = new Manager(new TestMapper());
     }
     
     public function testMethodUsedToTryTheManager()
