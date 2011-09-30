@@ -251,7 +251,7 @@ class Mapper
         $caster     = $caster ?: new Caster($this);
         $method     = 'cast' . $this->inflector->camelize($annotation->type);
         $caster->setValue($propertyValue);
-        $caster->setAnnotation($annotation);
+        $caster->setProperty('annotation', $annotation);
         
         try {
             $this->verifyCastingSupport($caster, $method, $annotation->type);

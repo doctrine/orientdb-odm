@@ -34,6 +34,7 @@ class Caster implements CasterInterface
     protected $value        = null;
     protected $mapper       = null;
     protected $dateClass    = null;
+    protected $properties   = array();
     
     const SHORT_LIMIT       = 32767;
     const LONG_LIMIT        = 9223372036854775807;
@@ -308,10 +309,11 @@ class Caster implements CasterInterface
      * collections.
      *
      * @param PropertyAnnotation $annotation 
+     * @todo outdated phpdocs
      */
-    public function setAnnotation(PropertyAnnotation $annotation)
+    public function setProperty($key, $property)
     {
-        $this->annotation = $annotation;
+        $this->properties[$key] = $property;
     }
     
     /**
@@ -375,10 +377,11 @@ class Caster implements CasterInterface
      * annotation.
      *
      * @return Array
+     * @todo what if theres no annotation? better to throw an exception
      */
     public function castEmbeddedArrays()
     {
-        $listType = $this->getAnnotation()->getCast();
+        $listType = $this->getProperty('annotation')->getCast();
         
         if ($listType == "link") {
             return $this->getMapper()->hydrateCollection($this->value);
@@ -448,10 +451,11 @@ class Caster implements CasterInterface
      * Returns the internal annotation object.
      *
      * @return PropertyAnnotation
+     * @todo outdated phpdoc
      */
-    protected function getAnnotation()
+    protected function getProperty($key)
     {
-        return $this->annotation;
+        return isset($this->properties[$key]) ? $this->properties[$key] : null;
     }
     
     /**

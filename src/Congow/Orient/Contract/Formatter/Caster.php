@@ -176,8 +176,9 @@ interface Caster
      * collections.
      *
      * @param PropertyAnnotation $annotation 
+     * @todo outdated phpdoc
      */
-    public function setAnnotation(PropertyAnnotation $annotation);
+    public function setProperty($key, $property);
     
     /**
      * Sets the internal value to work with.
