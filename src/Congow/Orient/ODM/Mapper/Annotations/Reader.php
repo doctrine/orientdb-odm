@@ -36,9 +36,13 @@ class Reader implements ReaderInterface
 {
     protected $reader = null;
     
+    /**
+     * @todo phpdoc
+     * @todo possibility to inject the cache system
+     */
     public function __construct(AnnotationReader $reader = null)
     {
-        $this->reader = $reader ?: new AnnotationReader;
+        $this->reader = $reader ?: new \Doctrine\Common\Annotations\CachedReader(new AnnotationReader, new \Doctrine\Common\Cache\APCCache);
         
         AnnotationRegistry::registerAutoloadNamespace("Congow\Orient");
         AnnotationRegistry::registerFile( __DIR__ . '/Document.php');
