@@ -89,7 +89,7 @@ abstract class Command implements CommandContract
      */
     public static function getTokens()
     {
-        $class = get_called_class();
+        $class  = get_called_class();
         $tokens = array();
         preg_match_all("/(\:\w+)/", $class::SCHEMA, $matches);
 
@@ -308,10 +308,9 @@ abstract class Command implements CommandContract
         $replaces = array();
 
         foreach ($this->tokens as $token => $value) {
-            $token              = $this->getFormatter()->untokenize($token);
-            $formatter          = $this->getTokenFormatter($token);
+            $key                = $this->getFormatter()->untokenize($token);
+            $formatter          = $this->getTokenFormatter($key);
             $values             = array_filter($value);
-            $token              = Formatter::tokenize($token);
             $replaces[$token]   = $formatter::format($values);
         }
 
@@ -340,7 +339,11 @@ abstract class Command implements CommandContract
      * @return  string
      * @throws  \LogicException
      */
-    protected function formatWhereConditionWithMultipleTokens($condition, Array $values, EscapeValidator $validator)
+    protected function formatWhereConditionWithMultipleTokens(
+        $condition, 
+        Array $values, 
+        EscapeValidator $validator
+    )
     {            
         if (count($values) == substr_count($condition, '?')) {
               foreach ($values as $replacement) {
@@ -360,7 +363,11 @@ abstract class Command implements CommandContract
      * @todo phpdoc
      * @todo rid should be validated in where(), not here
      */
-    protected function formatWhereConditionWithSingleToken($condition, $value, EscapeValidator $validator)
+    protected function formatWhereConditionWithSingleToken(
+        $condition, 
+        $value, 
+        EscapeValidator $validator
+    )
     {
         $ridValidator = new \Congow\Orient\Validator\Rid();
         

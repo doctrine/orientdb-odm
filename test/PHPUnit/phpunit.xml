@@ -48,9 +48,6 @@
       <testsuite name="Validator">
           <directory >../../test/Validator</directory>
       </testsuite>
-<!--      <testsuite name="Test">
-          <directory >../../Test/Foundation</directory>
-      </testsuite>-->
     </testsuites>
 
     <filter>
