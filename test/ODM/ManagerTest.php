@@ -10,7 +10,7 @@
  * @version
  */
 
-namespace test;
+namespace test\ODM;
 
 use test\PHPUnit\TestCase;
 use Congow\Orient\ODM\Manager;

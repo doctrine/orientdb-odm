@@ -37,7 +37,7 @@ class Manager implements ObjectManager
     public function __construct(Mapper $mapper)
     {
         $this->mapper           = $mapper;
-        $this->metadataFactory  = new ClassMetadataFactory();
+        $this->metadataFactory  = new ClassMetadataFactory($this->getMapper());
     }
     
     /**
@@ -225,5 +225,14 @@ class Manager implements ObjectManager
     public function setDocumentDirectories(array $directories)
     {
         $this->mapper->setDocumentDirectories($directories);
-    }    
+    } 
+    
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function getMapper()
+    {
+        return $this->mapper;
+    }   
 }

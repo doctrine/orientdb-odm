@@ -20,7 +20,8 @@
 
 namespace Congow\Orient\ODM\Mapper\ClassMetadata;
 
-use Congow\Orient\ODM\Mapper\ClassMetadata; 
+use Congow\Orient\ODM\Mapper\ClassMetadata;
+use Congow\Orient\ODM\Mapper;
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 
 /**
@@ -28,6 +29,16 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
  */
 class Factory implements ClassMetadataFactory
 {
+    protected $mapper;
+    
+    /**
+     * @todo phpdoc
+     */
+    public function  __construct(Mapper $mapper)
+    {
+        $this->mapper = $mapper;
+    }
+    
     protected $metadata = array();
     
     /**
@@ -44,7 +55,7 @@ class Factory implements ClassMetadataFactory
     public function getMetadataFor($className)
     {
         if (!$this->hasMetadataFor($className)) {
-            $metadata = new ClassMetadata($className);
+            $metadata = new ClassMetadata($className, $this->getMapper());
             $this->setMetadataFor($className, $metadata);
         }
         
@@ -65,6 +76,15 @@ class Factory implements ClassMetadataFactory
     public function setMetadataFor($className, $metadata)
     {
         $this->metadata[$className] = $metadata;
+    }
+    
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function getMapper()
+    {
+        return $this->mapper;
     }
 }
 

@@ -15,7 +15,7 @@ namespace test;
 use test\PHPUnit\TestCase;
 use Congow\Orient\ODM\Manager;
 use Congow\Orient\ODM\Mapper;
-use Congow\Orient\ODM\Mapper\Annotations\Reader as AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationReader;
 
 class Adapter implements \Congow\Orient\Contract\Protocol\Adapter
 {
@@ -54,8 +54,7 @@ class MapperTest extends TestCase
     
     public function setup()
     {
-        $annotationReader = new AnnotationReader;
-        $this->mapper = new Mapper(new Adapter, "proxies", $annotationReader);
+        $this->mapper = new Mapper(new Adapter, "proxies");
         $this->mapper->setDocumentDirectories(array('./test/ODM/Document/Stub' => '\\'));
         
         $this->jsonRecord = json_decode('{
@@ -239,18 +238,6 @@ class MapperTest extends TestCase
               }'),
          );
          
-    }
-    
-    public function testYouCanDecideWheterInjectACustomAnnotationReaderOrNotToTheMapper()
-    {
-        $annotationReader = new AnnotationReader;
-        $this->mapper = new Mapper(new Adapter, "/../../../../proxies", $annotationReader);
-        
-        $this->assertInstanceOf('Congow\Orient\ODM\Mapper\Annotations\Reader', $this->mapper->getAnnotationReader());
-        
-        $this->mapper = new Mapper(new Adapter, "/../../../../proxies");
-        
-        $this->assertInstanceOf('Doctrine\Common\Annotations\AnnotationReader', $this->mapper->getAnnotationReader());
     }
     
     public function testAJsonGetsConvertedToAnObject()

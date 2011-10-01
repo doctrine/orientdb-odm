@@ -36,6 +36,7 @@ use Congow\Orient\Contract\ODM\Mapper\Annotations\Reader as AnnotationreaderInte
 use Congow\Orient\Exception\ODM\OClass\NotFound as ClassNotFoundException;
 use Congow\Orient\Exception\Overflow;
 use Congow\Orient\Contract\Protocol\Adapter;
+use Congow\Orient\ODM\Mapper\Annotations\Reader;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
 
@@ -60,11 +61,12 @@ class Mapper
      * @param AnnotationReaderInterface $annotationReader
      * @param Inflector                 $inflector
      * @todo outdated phpdoc
+     * @todo use the cached annotation reader
      */
     public function __construct(Adapter $protocolAdapter, $documentProxyDirectory, AnnotationReaderInterface $annotationReader = null, Inflector $inflector = null)
     {
         $this->protocolAdapter              = $protocolAdapter;
-        $this->annotationReader             = $annotationReader ?: new AnnotationReader;
+        $this->annotationReader             = $annotationReader ?: new Reader;
         $this->inflector                    = $inflector ?: new DoctrineInflector;
         $this->documentProxyDirectory       = $documentProxyDirectory;
     }
@@ -149,6 +151,27 @@ class Mapper
     {
         return $this->annotationReader;
     }
+    
+    /**
+     * Returns the annotation of a class.
+     *
+     * @param   string                    $class
+     * @return  Congow\Orient\ODM\Mapper\Class
+     */
+    public function getClassAnnotation($class)
+    {
+        $reader                 = $this->getAnnotationReader();
+        $reflClass              = new \ReflectionClass($class);
+        $mappedDocumentClass    = self::ANNOTATION_CLASS_CLASS;
+
+        foreach ($reader->getClassAnnotations($reflClass) as $annotation) {
+            if ($annotation instanceOf $mappedDocumentClass) {
+                return $annotation;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Returns the directories in which the mapper is going to look for
@@ -159,6 +182,19 @@ class Mapper
     public function getDocumentDirectories()
     {
         return $this->documentDirectories;
+    }
+    
+    /**
+     * Returns the annotation of a property.
+     *
+     * @param ReflectionProperty            $property
+     * @return Congow\Orient\ODM\Mapper\Property
+     */
+    public function getPropertyAnnotation(\ReflectionProperty $property)
+    {
+        return $this->annotationReader->getPropertyAnnotation(
+                $property, self::ANNOTATION_PROPERTY_CLASS
+        );
     }
 
     /**
@@ -401,27 +437,6 @@ EOT;
         
         $f = file_put_contents($this->getDocumentProxyDirectory() . "/Congow/Orient/Proxy/" . $proxyClassName . ".php", $proxy);
     }
-
-    /**
-     * Returns the annotation of a class.
-     *
-     * @param   string                    $class
-     * @return  Congow\Orient\ODM\Mapper\Class
-     */
-    protected function getClassAnnotation($class)
-    {
-        $reader                 = $this->getAnnotationReader();
-        $reflClass              = new \ReflectionClass($class);
-        $mappedDocumentClass    = self::ANNOTATION_CLASS_CLASS;
-
-        foreach ($reader->getClassAnnotations($reflClass) as $annotation) {
-            if ($annotation instanceOf $mappedDocumentClass) {
-                return $annotation;
-            }
-        }
-
-        return null;
-    }
     
     /**
      * @todo phpdoc
@@ -468,19 +483,6 @@ EOT;
         }
 
         return $annotations;
-    }
-
-    /**
-     * Returns the annotation of a property.
-     *
-     * @param ReflectionProperty            $property
-     * @return Congow\Orient\ODM\Mapper\Property
-     */
-    protected function getPropertyAnnotation(\ReflectionProperty $property)
-    {
-        return $this->annotationReader->getPropertyAnnotation(
-                $property, self::ANNOTATION_PROPERTY_CLASS
-        );
     }
     
     /**

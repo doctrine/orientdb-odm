@@ -29,6 +29,8 @@ use ReflectionMethod;
 use ReflectionProperty;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Annotations\Parser;
+use Doctrine\Common\Annotations\CachedReader;
+use Doctrine\Common\Cache\ApcCache;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
@@ -38,11 +40,15 @@ class Reader implements ReaderInterface
     
     /**
      * @todo phpdoc
-     * @todo possibility to inject the cache system
+     * @todo is there a way to avoid if else if else
      */
-    public function __construct(AnnotationReader $reader = null)
+    public function __construct(Cache $cacheReader = null)
     {
-        $this->reader = $reader ?: new \Doctrine\Common\Annotations\CachedReader(new AnnotationReader, new \Doctrine\Common\Cache\APCCache);
+        if (!$cacheReader) {
+            $cacheReader = new ApcCache;
+        }
+        
+        $this->reader = new CachedReader(new AnnotationReader, $cacheReader);
         
         AnnotationRegistry::registerAutoloadNamespace("Congow\Orient");
         AnnotationRegistry::registerFile( __DIR__ . '/Document.php');

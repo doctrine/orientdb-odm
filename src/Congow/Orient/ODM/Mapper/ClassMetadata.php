@@ -20,20 +20,26 @@
 
 namespace Congow\Orient\ODM\Mapper;
 
+use Congow\Orient\ODM\Mapper as DataMapper;
+
 use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineMetadata;
 
 class ClassMetadata implements DoctrineMetadata
 {
     protected $class;
     protected $refClass;
+    protected $mapper;
+    private   $singleAssociations   = array('link');
+    private   $multipleAssociations = array('linklist', 'linkset', 'linkmap');
     
     /**
      * @todo phpdoc
      * @todo test
      */
-    public function __construct($className)
+    public function  __construct($className, DataMapper $mapper)
     {
-        $this->class = $className;
+        $this->class  = $className;
+        $this->mapper = $mapper;
     }
     
     /**
@@ -41,7 +47,7 @@ class ClassMetadata implements DoctrineMetadata
      * 
      * @return string
      */
-    function getName()
+    public function  getName()
     {
         return $this->class;
     }
@@ -53,7 +59,7 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @return array
      */
-    function getIdentifier()
+    public function  getIdentifier()
     {
         return array('@rid');
     }
@@ -63,7 +69,7 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @return ReflectionClass
      */
-    function getReflectionClass()
+    public function  getReflectionClass()
     {
         if (!$this->refClass) {
             $this->refClass = new \ReflectionClass($this->getName());
@@ -78,7 +84,7 @@ class ClassMetadata implements DoctrineMetadata
      * @param string $fieldName
      * @return boolean
      */
-    function isIdentifier($fieldName)
+    public function  isIdentifier($fieldName)
     {
         return ($fieldName == "@rid");
     }
@@ -90,9 +96,9 @@ class ClassMetadata implements DoctrineMetadata
      * @return boolean
      * @todo to implement and test
      */
-    function hasField($fieldName)
+    public function  hasField($fieldName)
     {
-        
+        return (bool) $this->getField($fieldName);
     }
 
     /**
@@ -102,9 +108,9 @@ class ClassMetadata implements DoctrineMetadata
      * @return boolean
      * @todo to implement and test
      */
-    function hasAssociation($fieldName)
+    public function  hasAssociation($fieldName)
     {
-        
+        return (bool) $this->getAssociation($fieldName);
     }
 
     /**
@@ -114,9 +120,9 @@ class ClassMetadata implements DoctrineMetadata
      * @return boolean
      * @todo to implement and test
      */
-    function isSingleValuedAssociation($fieldName)
+    public function  isSingleValuedAssociation($fieldName)
     {
-        
+        return $this->isValuedAssociation($fieldName, $this->singleAssociations);
     }
 
     /**
@@ -126,9 +132,9 @@ class ClassMetadata implements DoctrineMetadata
      * @return boolean
      * @todo to implement and test
      */
-    function isCollectionValuedAssociation($fieldName)
+    public function  isCollectionValuedAssociation($fieldName)
     {
-        
+        return $this->isValuedAssociation($fieldName, $this->multipleAssociations);
     }
     
     /**
@@ -139,9 +145,15 @@ class ClassMetadata implements DoctrineMetadata
      * @return array
      * @todo to implement and test
      */
-    function getFieldNames()
+    public function  getFieldNames()
     {
+        $names = array();
+
+        foreach ($this->getFields() as $field) {
+            $names[] = $field->name;
+        }
         
+        return $names;
     }
     
     /**
@@ -152,9 +164,15 @@ class ClassMetadata implements DoctrineMetadata
      * @return array
      * @todo to implement and test
      */
-    function getAssociationNames()
+    public function  getAssociationNames()
     {
+        $names = array();
+
+        foreach ($this->getAssociations() as $field) {
+            $names[] = $field->name;
+        }
         
+        return $names;
     }
     
     /**
@@ -167,9 +185,13 @@ class ClassMetadata implements DoctrineMetadata
      * @return string
      * @todo to implement and test
      */
-    function getTypeOfField($fieldName)
+    public function  getTypeOfField($fieldName)
     {
+        if ($field = $this->getField($fieldName)) {
+            return $field->type;
+        }
         
+        return null;
     }
     
     /**
@@ -178,9 +200,101 @@ class ClassMetadata implements DoctrineMetadata
      * @param string $assocName
      * @return string
      */
-    function getAssociationTargetClass($assocName)
+    public function  getAssociationTargetClass($assocName)
     {
         return null;
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function getAssociation($fieldName)
+    {
+        foreach ($this->getAssociations() as $association) {
+            if ($association->name === $fieldName) {
+                return $association;
+            }
+        }
+        
+        return null;
+    }    
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function getAssociations()
+    {
+        $associations = array();
+        
+        foreach ($this->getReflectionClass()->getProperties() as $refProperty) {
+            $association = $this->getMapper()->getPropertyAnnotation($refProperty);
+
+            if ($association && in_array($association->type, $this->getAssociationTypes())) {
+                $associations[] = $association;
+            }
+        }
+        
+        return $associations;
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function getAssociationTypes()
+    {
+        return array_merge($this->singleAssociations, $this->multipleAssociations);
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function getField($fieldName)
+    {        
+        foreach ($this->getFields() as $field) {
+            if ($field->name === $fieldName) {
+                return $field;
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function getFields()
+    {
+        $fields = array();
+
+        foreach ($this->getReflectionClass()->getProperties() as $refProperty) {
+            $field = $this->getMapper()->getPropertyAnnotation($refProperty);
+         
+            if ($field && !in_array($field->type, $this->getAssociationTypes())) {
+                 $fields[] = $field;
+            }
+        }
+
+         return $fields;
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function isValuedAssociation($fieldName, Array $associationTypes)
+    {
+        $association = $this->getAssociation($fieldName);
+        
+        if ($association) {
+            return in_array($association->type, $associationTypes);
+        }
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    protected function getMapper()
+    {
+        return $this->mapper;
     }
 }
 
