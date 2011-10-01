@@ -68,7 +68,7 @@ class Query implements QueryInterface
      * @param array   $target
      * @param string  $command
      */
-    public function __construct(array $target = null, array $commands = array())
+    public function __construct(array $target = array(), array $commands = array())
     {
         $this->setCommands($commands);
 
