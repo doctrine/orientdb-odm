@@ -23,11 +23,19 @@ class TestMapper extends \Congow\Orient\ODM\Mapper
     }
 }
 
+class TestAdapter extends \Congow\Orient\Foundation\Protocol\Adapter\Http
+{
+    public function __construct()
+    {
+
+    }
+}
+
 class ManagerTest extends TestCase
 {
     public function setup()
     {
-        $this->manager = new Manager(new TestMapper());
+        $this->manager = new Manager(new TestMapper(), new TestAdapter());
     }
     
     public function testMethodUsedToTryTheManager()

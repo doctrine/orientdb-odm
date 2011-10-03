@@ -24,6 +24,7 @@ namespace Congow\Orient\ODM;
 
 use Congow\Orient\Exception;
 use Congow\Orient\Query;
+use Congow\Orient\ODM\Mapper\LinkTracker;
 use Congow\Orient\Exception\Document\NotFound as DocumentNotFoundException;
 use Congow\Orient\Formatter\CasterInterface as CasterInterface;
 use Congow\Orient\Formatter\Caster;
@@ -35,7 +36,6 @@ use Congow\Orient\Formatter\String as StringFormatter;
 use Congow\Orient\Contract\ODM\Mapper\Annotations\Reader as AnnotationreaderInterface;
 use Congow\Orient\Exception\ODM\OClass\NotFound as ClassNotFoundException;
 use Congow\Orient\Exception\Overflow;
-use Congow\Orient\Contract\Protocol\Adapter;
 use Congow\Orient\ODM\Mapper\Annotations\Reader;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -46,7 +46,6 @@ class Mapper
     protected $annotationReader                 = null;
     protected $inflector                        = null;
     protected $enableOverflows                  = false;
-    protected $protocolAdapter                  = null;
     protected $documentProxiesDirectory         = null;
     
     const ANNOTATION_PROPERTY_CLASS = 'Congow\Orient\ODM\Mapper\Annotations\Property';
@@ -63,9 +62,8 @@ class Mapper
      * @todo outdated phpdoc
      * @todo use the cached annotation reader
      */
-    public function __construct(Adapter $protocolAdapter, $documentProxyDirectory, AnnotationReaderInterface $annotationReader = null, Inflector $inflector = null)
+    public function __construct($documentProxyDirectory, AnnotationReaderInterface $annotationReader = null, Inflector $inflector = null)
     {
-        $this->protocolAdapter              = $protocolAdapter;
         $this->annotationReader             = $annotationReader ?: new Reader;
         $this->inflector                    = $inflector ?: new DoctrineInflector;
         $this->documentProxyDirectory       = $documentProxyDirectory;
@@ -80,66 +78,6 @@ class Mapper
     public function enableOverflows($value = true)
     {
         $this->enableOverflows = (bool) $value;
-    }
-
-    /**
-     * Via a protocol adapter, it queries for an object with the given $rid.
-     * If $lazy loading is used, all of this won't be executed unless the
-     * returned Proxy object is called via __invoke, e.g.:
-     * 
-     * <code>
-     *   $lazyLoadedRecord = $mapper->find('1:1', true);
-     * 
-     *   $record = $lazyLoadedRecord();
-     * </code>
-     *
-     * @param string    $rid
-     * @param boolean   $lazy
-     * @return Proxy|object
-     */
-    public function find($rid, $lazy = false){
-        if ($lazy) {
-            return new Proxy($this, $rid);
-        }
-        
-        try
-        {
-            $query      = new Query(array($rid));
-            $adapter    = $this->getProtocolAdapter();
-            
-            if ($adapter->execute($query->getRaw()) && $adapter->getResult()) {
-              return $this->hydrate($adapter->getResult());
-            }
-            
-            return null;
-        }
-        catch (Exception $e) {
-            return null;
-        }
-    }
-    
-    /**
-     * Via a protocol adapter, it queries for an array of objects with the given
-     * $rids.
-     * If $lazy loading is used, all of this won't be executed unless the
-     * returned Proxy object is called via __invoke, e.g.:
-     * 
-     * <code>
-     *   $lazyLoadedRecords = $mapper->find('1:1', true);
-     * 
-     *   $records = $lazyLoadedRecord();
-     * </code>
-     *
-     * @param string    $rid
-     * @param boolean   $lazy
-     * @return Proxy\Collection|array
-     */
-    public function findRecords(Array $rids, $lazy = false){
-        if ($lazy) {
-            return new Proxy\Collection($this, $rids);
-        }
-        
-        return $this->hydrateCollection($this->getProtocolAdapter()->findRecords($rids));
     }
     
     /**
@@ -217,8 +155,11 @@ class Mapper
             
             if ($orientClass) {
                 $class = $this->findClassMappingInDirectories($orientClass);
-
-                return $this->createDocument($class, $orientObject);
+                $linkTracker = new LinkTracker();
+                
+                $document = $this->createDocument($class, $orientObject, $linkTracker);
+                
+                return array($document, $linkTracker);
             }
         }
         
@@ -265,11 +206,11 @@ class Mapper
      * @todo the proxy directory should be injected
      * @todo phpdoc outdated
      */
-    protected function createDocument($class, \stdClass $orientObject)
+    protected function createDocument($class, \stdClass $orientObject, LinkTracker $linkTracker)
     {        
         $proxyClass = $this->getProxyClass($class);
         $document   = new $proxyClass();
-        $this->fill($document, $orientObject);
+        $this->fill($document, $orientObject, $linkTracker);
         
         return $document;
     }
@@ -282,9 +223,9 @@ class Mapper
      * @param   CasterInterface                           $caster
      * @return  mixed
      */
-    protected function castProperty($annotation, $propertyValue, CasterInterface $caster = null)
+    protected function castProperty($annotation, $propertyValue)
     {
-        $caster     = $caster ?: new Caster($this);
+        $caster = new Caster($this);
         $method     = 'cast' . $this->inflector->camelize($annotation->type);
         $caster->setValue($propertyValue);
         $caster->setProperty('annotation', $annotation);
@@ -311,7 +252,7 @@ class Mapper
      * @param   \stdClass $object
      * @return  object
      */
-    protected function fill($document, \stdClass $object)
+    protected function fill($document, \stdClass $object, LinkTracker $linkTracker)
     {
         $propertyAnnotations = $this->getObjectPropertyAnnotations($document);
 
@@ -328,7 +269,8 @@ class Mapper
                         $document,
                         $documentProperty,
                         $object->$property,
-                        $annotation
+                        $annotation,
+                        $linkTracker
                 );
             }
         }
@@ -441,6 +383,14 @@ EOT;
     /**
      * @todo phpdoc
      */
+    protected function getCaster()
+    {
+        return $this->caster;
+    }
+    
+    /**
+     * @todo phpdoc
+     */
     protected function getDocumentProxyDirectory()
     {
         return $this->documentProxyDirectory;
@@ -484,17 +434,6 @@ EOT;
 
         return $annotations;
     }
-    
-    /**
-     * Returns the protocol adapter used to communicate with a OrientDB
-     * binding.
-     *
-     * @return Adapter
-     */
-    protected function getProtocolAdapter()
-    {
-        return $this->protocolAdapter;
-    }
 
     /**
      * Given a $property and its $value, sets that property on the $given object
@@ -505,10 +444,15 @@ EOT;
      * @param string                $value
      * @param PropertyAnnotation    $annotation
      */
-    protected function mapProperty($document, $property, $value, PropertyAnnotation $annotation)
+    protected function mapProperty($document, $property, $value, PropertyAnnotation $annotation, LinkTracker $linkTracker)
     {
         if ($annotation->type) {
             $value = $this->castProperty($annotation, $value);
+
+            if($value instanceOf Rid) {
+                $value = $value->getValue();
+                $linkTracker->add($property, $value);
+            }
         }
 
         $setter     = 'set' . $this->inflector->camelize($property);

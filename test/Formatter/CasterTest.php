@@ -13,6 +13,8 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
+use Congow\Orient\ODM\Mapper;
+use Congow\Orient\ODM\Manager;
 use Congow\Orient\Formatter\Caster;
 
 class StubObject
@@ -38,12 +40,12 @@ class CasterTest extends TestCase
 {
     public function setup()
     {
-        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter, __DIR__));
+        $this->caster = new Caster(new Mapper('/'));
     }
     
     public function testInjectingTheValueInTheConstructor()
     {
-        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter, __DIR__), 'v');
+        $this->caster = new Caster(new Mapper('/'),'v');
         $this->assertEquals('v', $this->caster->castString());
     }
     
@@ -89,7 +91,7 @@ class CasterTest extends TestCase
     
     public function testNullIsReturnedWhenCastingToRidAnInvalidRid()
     {
-        $this->caster = new Caster(new \Congow\Orient\ODM\Mapper(new MockAdapter, __DIR__), 'OMGO');
+        $this->caster = new Caster(new Mapper('/'),'v');
         $this->assertEquals(null, $this->caster->castLink());
     }
 }

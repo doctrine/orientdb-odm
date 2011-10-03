@@ -22,21 +22,26 @@
 namespace Congow\Orient\ODM;
 
 use Congow\Orient\ODM\Mapper;
-use Doctrine\Common\Persistence\ObjectManager;
+use Congow\Orient\Query;
+use Congow\Orient\Exception;
+use Congow\Orient\Contract\Protocol\Adapter as ProtocolAdapter;
 use Congow\Orient\ODM\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
+use Doctrine\Common\Persistence\ObjectManager;
 
 class Manager implements ObjectManager
 {
     protected $mapper;
     protected $metadataFactory;
+    protected $protocolAdapter;
     
     /**
      * @param   Mapper $mapper
      * @todo    inject the metadata factory
      */
-    public function __construct(Mapper $mapper)
+    public function __construct(Mapper $mapper, ProtocolAdapter $protocolAdapter)
     {
         $this->mapper           = $mapper;
+        $this->protocolAdapter  = $protocolAdapter;
         $this->metadataFactory  = new ClassMetadataFactory($this->getMapper());
     }
     
@@ -48,7 +53,7 @@ class Manager implements ObjectManager
      */
     public function hydrate($json)
     {
-        return $this->mapper->hydrate($json);
+        return $this->getMapper()->hydrate($json);
     }
     
     /**
@@ -57,7 +62,7 @@ class Manager implements ObjectManager
      */
     public function getDocumentDirectories()
     {
-        return $this->mapper->getDocumentDirectories();
+        return $this->getMapper()->getDocumentDirectories();
     }
     
     
@@ -79,7 +84,15 @@ class Manager implements ObjectManager
      */
     public function enableOverflows($value = true)
     {
-        $this->mapper->enableOverflows($value);
+        $this->getMapper()->enableOverflows($value);
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    public function execute(Query $query)
+    {
+        return $this->getProtocolAdapter()->execute($query->getRaw());
     }
 
     /**
@@ -88,7 +101,7 @@ class Manager implements ObjectManager
      * returned Proxy object is called via __invoke, e.g.:
      * 
      * <code>
-     *   $lazyLoadedRecord = $mapper->find('1:1', true);
+     *   $lazyLoadedRecord = $manager->find('1:1', true);
      * 
      *   $record = $lazyLoadedRecord();
      * </code>
@@ -96,9 +109,36 @@ class Manager implements ObjectManager
      * @param string    $rid
      * @param boolean   $lazy
      * @return Proxy|object
+     * @todo wrap the returning array as an object (Hydration\Result? PartialObject?)
      */
-    public function find($rid, $lazy = false){
-        return $this->mapper->find($rid, $lazy);
+    public function find($rid, $lazy = false)
+    {
+        if ($lazy) {
+            return new Proxy($this, $rid);
+        }
+        
+        try
+        {
+            $query      = new Query(array($rid));
+            $adapter    = $this->getProtocolAdapter();
+            
+            if ($adapter->execute($query->getRaw()) && $adapter->getResult()) {
+              $result = $this->hydrate($adapter->getResult());
+              $document    = $result[0];
+              $linkTracker = $result[1];
+              
+              foreach ($linkTracker->getProperties() as $property => $value) {
+                  $method = 'set' . ucfirst($property);
+                  
+                  $document->$method($this->find($value, true));
+              }
+            }
+            
+            return null;
+        }
+        catch (Exception $e) {
+            return null;
+        }
     }
     
     /**
@@ -108,7 +148,7 @@ class Manager implements ObjectManager
      * returned Proxy object is called via __invoke, e.g.:
      * 
      * <code>
-     *   $lazyLoadedRecords = $mapper->find('1:1', true);
+     *   $lazyLoadedRecords = $manager->find('1:1', true);
      * 
      *   $records = $lazyLoadedRecord();
      * </code>
@@ -116,9 +156,28 @@ class Manager implements ObjectManager
      * @param string    $rid
      * @param boolean   $lazy
      * @return Proxy\Collection|array
+     * @todo duplicated logic to hydrate partial results (here and in find() method)
      */
-    public function findRecords(Array $rids, $lazy = false){
-        return $this->mapper->findRecords($rids, $lazy);
+    public function findRecords(Array $rids, $lazy = false)
+    {
+        if ($lazy) {
+            return new Proxy\Collection($this, $rids);
+        }
+        
+        $collection = $this->hydrateCollection($this->getProtocolAdapter()->findRecords($rids));
+        
+        foreach ($collection as $key => $partialObject) {
+            $document    = $partialObject[0];
+            $linkTracker = $partialObject[1];
+            
+            foreach ($linkTracker->getProperties() as $property => $value) {
+                $method = 'set' . ucfirst($property);
+                
+                $document->$method($this->find($value, true));
+            }
+            
+            $collection[$key] = $document;
+        }
     }
     
     /**
@@ -138,7 +197,7 @@ class Manager implements ObjectManager
      */
     public function getAnnotationReader()
     {
-        return $this->mapper->getAnnotationReader();
+        return $this->getMapper()->getAnnotationReader();
     }
     
     /**
@@ -149,6 +208,14 @@ class Manager implements ObjectManager
     public function getClassMetadata($class)
     {
         return $this->getMetadataFactory()->getMetadataFor($class);
+    }
+    
+    /**
+     * @todo phpdoc
+     */
+    public function getMapper()
+    {
+        return $this->mapper;
     }
     
     public function getMetadataFactory()
@@ -172,7 +239,7 @@ class Manager implements ObjectManager
      */
     public function hydrateCollection(array $collection)
     {
-        return $this->mapper->hydrateCollection($collection);
+        return $this->getMapper()->hydrateCollection($collection);
     }
     
     
@@ -216,7 +283,6 @@ class Manager implements ObjectManager
         throw new \Exception();
     }
     
-    
     /**
      * Set the document directories paths
      * @param Array $directories
@@ -224,15 +290,17 @@ class Manager implements ObjectManager
      */
     public function setDocumentDirectories(array $directories)
     {
-        $this->mapper->setDocumentDirectories($directories);
+        $this->getMapper()->setDocumentDirectories($directories);
     } 
     
-    
     /**
-     * @todo phpdoc
+     * Returns the protocol adapter used to communicate with a OrientDB
+     * binding.
+     *
+     * @return Adapter
      */
-    protected function getMapper()
+    protected function getProtocolAdapter()
     {
-        return $this->mapper;
-    }   
+        return $this->protocolAdapter;
+    }
 }

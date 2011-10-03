@@ -22,6 +22,7 @@ namespace Congow\Orient\Formatter;
 use Congow\Orient\Contract\Formatter\Caster as CasterInterface;
 use Congow\Orient\Exception\Overflow;
 use Congow\Orient\ODM\Mapper;
+use Congow\Orient\Foundation\Types\Rid;
 use Congow\Orient\Validator\Rid as RidValidator;
 use Congow\Orient\Exception\Validation as ValidationException;
 use Congow\Orient\ODM\Mapper\Annotations\Property as PropertyAnnotation;
@@ -44,7 +45,7 @@ class Caster implements CasterInterface
     /**
      * Instantiates a new Caster.
      *
-     * @param Mapper    $mapper
+     * @param Manager    $manager
      * @param mixed     $value 
      * @param string    $dateClass  The class used to cast dates and datetimes
      */
@@ -128,7 +129,7 @@ class Caster implements CasterInterface
     }
     
     /**
-     * Given an embedded record, it uses the mapper to hydrate it.
+     * Given an embedded record, it uses the manager to hydrate it.
      *
      * @return mixed
      */
@@ -195,6 +196,8 @@ class Caster implements CasterInterface
      * If the internal value is not a rid but an already decoded orient
      * object, it simply hydrates it.
      *
+     * @todo the validation of the rid should be done in the Rid costructor
+     * 
      * @see     http://code.google.com/p/orient/wiki/FetchingStrategies
      * @return  mixed|null
      */
@@ -208,8 +211,9 @@ class Caster implements CasterInterface
         } else {
             try {
                 $rid    = $validator->check($this->value);
-
-                return $this->getMapper()->find($rid, true);
+                
+                return new Rid($rid);
+                
             } catch (ValidationException $e) {
                 return null;
             }
@@ -406,6 +410,8 @@ class Caster implements CasterInterface
      * If the element is not a JSON-decoded object but a Rid, the Mapper is used
      * to hydrate the object from the Rid.
      *
+     * @todo when he Rid will validate the rid you inject to it, the validation inside the for will be useless
+     * 
      * @return Array|null
      */
     protected function castLinkCollection()
@@ -419,12 +425,17 @@ class Caster implements CasterInterface
             try {
                 $validator      = new RidValidator();
                 $rid            = $validator->check($value);
+
+                $ridCollection = new Rid\Collection(array_map(function($rid){
+                    return new Rid($rid);
+                }, $this->value));
                 
-                return $this->getMapper()->findRecords($this->value, true);
+                return $ridCollection;
             } catch (ValidationException $e) {
                 return null;
             }
         }
+        
     }
     
     /**
@@ -469,7 +480,7 @@ class Caster implements CasterInterface
     }
     
     /**
-     * Returns the internl mapper.
+     * Returns the internl manager.
      *
      * @return Mapper
      */
