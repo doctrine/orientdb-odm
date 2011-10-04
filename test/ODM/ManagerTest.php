@@ -20,12 +20,11 @@ class TestMapper extends \Congow\Orient\ODM\Mapper
 {    
     public function hydrate($document)
     {
-        $this->generateProxyClass("test\ODM\Document\Stub\Contact\Address", "ProxyAddress");
         $linktracker = new \Congow\Orient\ODM\Mapper\LinkTracker;
-        $linktracker->add('capital', new \Congow\Orient\Proxy\AddressProxy);
+        $linktracker->add('capital', new Document\Stub\Contact\Address);
         
         return array(
-          new \Congow\Orient\Proxy\AddressProxy, $linktracker
+          new Document\Stub\Contact\Address, $linktracker
         );
     }
     
