@@ -23,6 +23,7 @@ namespace Congow\Orient\ODM;
 
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\Query;
+use Congow\Orient\Query\Command\Select;
 use Congow\Orient\Exception;
 use Congow\Orient\Contract\Protocol\Adapter as ProtocolAdapter;
 use Congow\Orient\ODM\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
@@ -43,17 +44,7 @@ class Manager implements ObjectManager
         $this->mapper           = $mapper;
         $this->protocolAdapter  = $protocolAdapter;
         $this->metadataFactory  = new ClassMetadataFactory($this->getMapper());
-    }
-    
-    /**
-     * get the document directories paths
-     * @return Array 
-     */
-    public function getDocumentDirectories()
-    {
-        return $this->getMapper()->getDocumentDirectories();
-    }
-    
+    }    
     
     /**
      * @todo to implement/test
@@ -67,10 +58,43 @@ class Manager implements ObjectManager
     
     /**
      * @todo phpdoc
+     * @todo document that this function should be used to retrieve multiple objects
      */
     public function execute(Query $query)
     {
-        return $this->getProtocolAdapter()->execute($query->getRaw());
+        $adapter    = $this->getProtocolAdapter();
+        $return     = false;
+        
+        if ($query->getCommand() instanceOf Select) {
+            $return = true;
+        }
+        
+        $execution = $adapter->execute($query->getRaw(), $return);
+        
+        if ($execution) {
+            if ($adapter->getResult()) {
+                $collection = $this->getMapper()->hydrateCollection($adapter->getResult());
+              
+                foreach ($collection as $key => $partialObject) {
+                    $document    = $partialObject[0];
+                    $linkTracker = $partialObject[1];
+
+                    foreach ($linkTracker->getProperties() as $property => $value) {
+                        $method = 'set' . ucfirst($property);
+
+                        $document->$method($this->find($value, true));
+                    }
+
+                    $collection[$key] = $document;
+                }
+            
+                return $collection;
+            }
+            
+            return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -88,6 +112,7 @@ class Manager implements ObjectManager
      * @param boolean   $lazy
      * @return Proxy|object
      * @todo wrap the returning array as an object (Hydration\Result? PartialObject?)
+     * @todo throw custom exception
      */
     public function find($rid, $lazy = false)
     {
@@ -100,8 +125,9 @@ class Manager implements ObjectManager
             $query      = new Query(array($rid));
             $adapter    = $this->getProtocolAdapter();
 
-            if ($adapter->execute($query->getRaw()) && $adapter->getResult()) {
-              $result = $this->getMapper()->hydrate($adapter->getResult());
+            if ($adapter->execute($query->getRaw(), true) && $adapter->getResult()) {
+              $record       = is_array($adapter->getResult()) ? array_shift($adapter->getResult()) : $adapter->getResult();
+              $result       = $this->getMapper()->hydrate($record);
               $document    = $result[0];
               $linkTracker = $result[1];
               
@@ -137,6 +163,8 @@ class Manager implements ObjectManager
      * @param boolean   $lazy
      * @return Proxy\Collection|array
      * @todo duplicated logic to hydrate partial results (here and in find() method)
+     * @throws Congow\Orient\Exception\Query\SQL\Invalid
+     * @todo throw specific exception "You are trying to retrieve 11:0, 11:1 but some of these are out of cluster size..."
      */
     public function findRecords(Array $rids, $lazy = false)
     {
@@ -144,20 +172,30 @@ class Manager implements ObjectManager
             return new Proxy\Collection($this, $rids);
         }
         
-        $collection = $this->getMapper()->hydrateCollection($this->getProtocolAdapter()->findRecords($rids));
-        
-        foreach ($collection as $key => $partialObject) {
-            $document    = $partialObject[0];
-            $linkTracker = $partialObject[1];
-            
-            foreach ($linkTracker->getProperties() as $property => $value) {
-                $method = 'set' . ucfirst($property);
-                
-                $document->$method($this->find($value, true));
+        $query      = new Query($rids);
+        $adapter    = $this->getProtocolAdapter();
+
+        if ($adapter->execute($query->getRaw(), true) && $adapter->getResult()) {
+
+            $collection = $this->getMapper()->hydrateCollection($adapter->getResult());
+
+            foreach ($collection as $key => $partialObject) {
+                $document    = $partialObject[0];
+                $linkTracker = $partialObject[1];
+
+                foreach ($linkTracker->getProperties() as $property => $value) {
+                    $method = 'set' . ucfirst($property);
+
+                    $document->$method($this->find($value, true));
+                }
+
+                $collection[$key] = $document;
             }
-            
-            $collection[$key] = $document;
+
+            return $collection;
         }
+
+        return array();
     }
     
     /**

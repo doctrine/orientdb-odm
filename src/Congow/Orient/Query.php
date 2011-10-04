@@ -215,6 +215,15 @@ class Query implements QueryInterface
     {
         return $this->command->from($target, $append);
     }
+    
+    /**
+     *
+     * @todo phpdoc
+     */
+    public function getCommand()
+    {
+        return $this->command;
+    }
 
     /**
      * Returns the raw SQL query statement.

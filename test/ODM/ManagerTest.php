@@ -54,12 +54,14 @@ class TestAdapter extends \Congow\Orient\Foundation\Protocol\Adapter\Http
     
     public function getResult()
     {
-        return json_decode('{
+        $record = json_decode('{
                     "@type": "d", "@rid": "#19:0", "@version": 2, "@class": "Address", 
                     "name": "Luca", 
                     "surname": "Garulli", 
                     "out": ["#20:1"]
         }');
+        
+        return $record;
     }
 }
 
