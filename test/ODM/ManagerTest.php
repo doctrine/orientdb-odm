@@ -13,13 +13,30 @@
 namespace test\ODM;
 
 use test\PHPUnit\TestCase;
+use Congow\Orient\Query;
 use Congow\Orient\ODM\Manager;
 
 class TestMapper extends \Congow\Orient\ODM\Mapper
-{
-    public function __construct()
+{    
+    public function hydrate($document)
     {
-
+        $this->generateProxyClass("test\ODM\Document\Stub\Contact\Address", "ProxyAddress");
+        $linktracker = new \Congow\Orient\ODM\Mapper\LinkTracker;
+        $linktracker->add('capital', new \Congow\Orient\Proxy\AddressProxy);
+        
+        return array(
+          new \Congow\Orient\Proxy\AddressProxy, $linktracker
+        );
+    }
+    
+    public function getDocumentDirectories()
+    {
+        return 'dir';
+    }
+    
+    protected function findClassMappingInDirectories($OClass)
+    {
+        return "Document\Stub\Contact\Address";
     }
 }
 
@@ -29,17 +46,48 @@ class TestAdapter extends \Congow\Orient\Foundation\Protocol\Adapter\Http
     {
 
     }
+    
+    public function execute($sql)
+    {
+        return 'query';
+    }
+    
+    public function getResult()
+    {
+        return json_decode('{
+                    "@type": "d", "@rid": "#19:0", "@version": 2, "@class": "Address", 
+                    "name": "Luca", 
+                    "surname": "Garulli", 
+                    "out": ["#20:1"]
+        }');
+    }
 }
 
 class ManagerTest extends TestCase
 {
     public function setup()
     {
-        $this->manager = new Manager(new TestMapper(), new TestAdapter());
+        $this->manager = new Manager(new TestMapper(__DIR__ . "/../../proxies"), new TestAdapter());
     }
     
     public function testMethodUsedToTryTheManager()
     {
-        $this->manager->getClassMetadata("test\ODM\Document\Stub\Contact\Address");
+        $metadata = $this->manager->getClassMetadata("test\ODM\Document\Stub\Contact\Address");
+        $this->assertInstanceOf('\Congow\Orient\ODM\Mapper\ClassMetadata', $metadata);
+    }
+    
+    public function managerActsAsAProxyForDocumentDirectories()
+    {
+        $this->assertInstanceOf('dir', $this->manager->getDocumentDirectories());
+    }
+    
+    public function managerActsAsAProxyForExecutingQueries()
+    {
+        $this->assertInstanceOf('query', $this->manager->execute(new Query));
+    }
+    
+    public function testFindingADocument()
+    {
+        $this->assertInstanceOf("test\ODM\Document\Stub\Contact\Address", $this->manager->find('1:1'));
     }
 }

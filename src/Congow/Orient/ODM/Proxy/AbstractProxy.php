@@ -23,11 +23,11 @@ use Congow\Orient\Contract\ODM\Proxy as ProxyInterface;
 
 abstract class AbstractProxy implements ProxyInterface
 {
-    protected $mapper;
+    protected $manager;
     
-    protected function getMapper()
+    protected function getManager()
     {
-        return $this->mapper;
+        return $this->manager;
     }
 }
 

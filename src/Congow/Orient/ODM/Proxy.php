@@ -25,19 +25,19 @@ use Congow\Orient\ODM\Proxy\AbstractProxy;
 
 class Proxy extends AbstractProxy
 {   
-    protected $mapper;
+    protected $manager;
     protected $rid;
     protected $record;
 
     /**
      * Istantiates a new Proxy.
      *
-     * @param Mapper $mapper
+     * @param Mapper $manager
      * @param string $rid 
      */
-    function __construct(Mapper $mapper, $rid)
+    function __construct(Manager $manager, $rid)
     {
-        $this->mapper = $mapper;
+        $this->manager = $manager;
         $this->rid    = $rid;
     }
     
@@ -51,7 +51,7 @@ class Proxy extends AbstractProxy
         if ($this->record) {
             return $this->record;
         } else {
-            $this->record = $this->getMapper()->find($this->getRid());
+            $this->record = $this->getManager()->find($this->getRid());
             
             return $this->record;
         }    

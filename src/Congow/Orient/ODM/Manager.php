@@ -46,17 +46,6 @@ class Manager implements ObjectManager
     }
     
     /**
-     * delegate the hydration of orientDB record to the mapper
-     * @param JSON $json
-     * @return mixed the hydrated object
-     * @todo test and phpdoc
-     */
-    public function hydrate($json)
-    {
-        return $this->getMapper()->hydrate($json);
-    }
-    
-    /**
      * get the document directories paths
      * @return Array 
      */
@@ -74,17 +63,6 @@ class Manager implements ObjectManager
     public function detach($object)
     {
         throw new \Exception();
-    }
-    
-    /**
-     * Enable or disable overflows' tolerance.
-     *
-     * @see   toleratesOverflow()
-     * @param boolean $value 
-     */
-    public function enableOverflows($value = true)
-    {
-        $this->getMapper()->enableOverflows($value);
     }
     
     /**
@@ -121,9 +99,9 @@ class Manager implements ObjectManager
         {
             $query      = new Query(array($rid));
             $adapter    = $this->getProtocolAdapter();
-            
+
             if ($adapter->execute($query->getRaw()) && $adapter->getResult()) {
-              $result = $this->hydrate($adapter->getResult());
+              $result = $this->getMapper()->hydrate($adapter->getResult());
               $document    = $result[0];
               $linkTracker = $result[1];
               
@@ -132,6 +110,8 @@ class Manager implements ObjectManager
                   
                   $document->$method($this->find($value, true));
               }
+              
+              return $document;
             }
             
             return null;
@@ -164,7 +144,7 @@ class Manager implements ObjectManager
             return new Proxy\Collection($this, $rids);
         }
         
-        $collection = $this->hydrateCollection($this->getProtocolAdapter()->findRecords($rids));
+        $collection = $this->getMapper()->hydrateCollection($this->getProtocolAdapter()->findRecords($rids));
         
         foreach ($collection as $key => $partialObject) {
             $document    = $partialObject[0];
@@ -191,16 +171,6 @@ class Manager implements ObjectManager
     }
     
     /**
-     * Returns the internal object used to parse annotations.
-     *
-     * @return AnnotationReader
-     */
-    public function getAnnotationReader()
-    {
-        return $this->getMapper()->getAnnotationReader();
-    }
-    
-    /**
      *
      * @todo phpdoc
      * @todo test
@@ -208,14 +178,6 @@ class Manager implements ObjectManager
     public function getClassMetadata($class)
     {
         return $this->getMetadataFactory()->getMetadataFor($class);
-    }
-    
-    /**
-     * @todo phpdoc
-     */
-    public function getMapper()
-    {
-        return $this->mapper;
     }
     
     public function getMetadataFactory()
@@ -231,17 +193,7 @@ class Manager implements ObjectManager
     public function getRepository($classname)
     {
         throw new \Exception;
-    }
-    
-    /**
-     * @param   array $json
-     * @return  array of Documents
-     */
-    public function hydrateCollection(array $collection)
-    {
-        return $this->getMapper()->hydrateCollection($collection);
-    }
-    
+    }    
     
     /**
      * @todo to implement/test
@@ -283,15 +235,13 @@ class Manager implements ObjectManager
         throw new \Exception();
     }
     
-    /**
-     * Set the document directories paths
-     * @param Array $directories
-     * @return void
+     /**
+     * @todo phpdoc
      */
-    public function setDocumentDirectories(array $directories)
+    protected function getMapper()
     {
-        $this->getMapper()->setDocumentDirectories($directories);
-    } 
+        return $this->mapper;
+    }
     
     /**
      * Returns the protocol adapter used to communicate with a OrientDB
