@@ -31,7 +31,6 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Annotations\Parser;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\ApcCache;
-
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class Reader implements ReaderInterface

@@ -20,7 +20,7 @@ class ManagerTest extends TestCase
     public function setup()
     {
         $mapper          = new Mapper(__DIR__ . "/../../proxies");
-        $mapper->setDocumentDirectories(array('./test/ODM/Document/Stub/Contact' => '\\'));
+        $mapper->setDocumentDirectories(array('./test/Integration/Document' => '\\'));
         $client          = new \Congow\Orient\Http\Client\Curl(false, 10);
         $binding         = new \Congow\Orient\Foundation\Binding($client, '127.0.0.1', '2480', 'admin', 'admin', 'demo');
         $protocolAdapter = new \Congow\Orient\Foundation\Protocol\Adapter\Http($binding);
@@ -33,8 +33,7 @@ class ManagerTest extends TestCase
         $addresses  = $this->manager->execute($query);
         
         $this->assertEquals(20, count($addresses));
-        $this->assertInstanceOf("test\ODM\Document\Stub\Contact\Address", $addresses[0]);
-        $this->assertInstanceOf("\Congow\Orient\Proxy\AddressProxy", $addresses[0]);
+        $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
     }
     
     public function testExecutionOfAnUpdate()
@@ -61,8 +60,29 @@ class ManagerTest extends TestCase
     {
         $address    = $this->manager->find('13:0');
         
-        $this->assertInstanceOf("test\ODM\Document\Stub\Contact\Address", $address);
-        $this->assertInstanceOf("\Congow\Orient\Proxy\AddressProxy", $address);
+        $this->assertInstanceOf("test\Integration\Document\Address", $address);
+    }
+    
+        
+    public function testGettingARelatedRecord()
+    {
+        $address    = $this->manager->find('13:0');
+        
+        $this->assertInstanceOf("test\Integration\Document\Country", $address->getCity());
+    }
+    
+    /**
+     * @expectedException \Congow\Orient\Exception\ODM\OClass\NotFound
+     */
+    public function testLookingForANonMappedTypeRaisesAnException()
+    {
+        $mapper          = new Mapper(__DIR__ . "/../../proxies");
+        $mapper->setDocumentDirectories(array('./docs' => '\\'));
+        $client          = new \Congow\Orient\Http\Client\Curl(false, 10);
+        $binding         = new \Congow\Orient\Foundation\Binding($client, '127.0.0.1', '2480', 'admin', 'admin', 'demo');
+        $protocolAdapter = new \Congow\Orient\Foundation\Protocol\Adapter\Http($binding);
+        $this->manager   = new Manager($mapper, $protocolAdapter);
+        $address = $this->manager->find('13:0');
     }
     
     public function testFindingANonExistingRecord()
@@ -77,8 +97,7 @@ class ManagerTest extends TestCase
         $addresses    = $this->manager->findRecords(array('13:0', '13:1'));
         
         $this->assertEquals(2, count($addresses));
-        $this->assertInstanceOf("test\ODM\Document\Stub\Contact\Address", $addresses[0]);
-        $this->assertInstanceOf("\Congow\Orient\Proxy\AddressProxy", $addresses[0]);
+        $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
     }
     
     /**

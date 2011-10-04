@@ -24,6 +24,7 @@ namespace Congow\Orient\ODM;
 
 use Congow\Orient\Exception;
 use Congow\Orient\Query;
+use Congow\Orient\Foundation\Types\Rid;
 use Congow\Orient\ODM\Mapper\LinkTracker;
 use Congow\Orient\Exception\Document\NotFound as DocumentNotFoundException;
 use Congow\Orient\Formatter\CasterInterface as CasterInterface;
@@ -144,6 +145,7 @@ class Mapper
      * @param   StdClass    $orientObject
      * @return  mixed
      * @throws  Congow\Orient\Exception\Document\NotFound
+     * @todo the returning array is ugly, provide a Hydration\Result object
      */
     public function hydrate(\StdClass $orientObject)
     {
@@ -154,11 +156,10 @@ class Mapper
             $orientClass  = $orientObject->$classProperty;
             
             if ($orientClass) {
-                $class = $this->findClassMappingInDirectories($orientClass);
-                $linkTracker = new LinkTracker();
-                
-                $document = $this->createDocument($class, $orientObject, $linkTracker);
-                
+                $class          = $this->findClassMappingInDirectories($orientClass);
+                $linkTracker    = new LinkTracker();
+                $document       = $this->createDocument($class, $orientObject, $linkTracker);
+
                 return array($document, $linkTracker);
             }
         }
@@ -207,7 +208,7 @@ class Mapper
      * @todo phpdoc outdated
      */
     protected function createDocument($class, \stdClass $orientObject, LinkTracker $linkTracker)
-    {        
+    {
         $proxyClass = $this->getProxyClass($class);
         $document   = new $proxyClass();
         $this->fill($document, $orientObject, $linkTracker);
@@ -334,10 +335,11 @@ class Mapper
     /**
      * @todo phpdoc
      */
-    protected function generateProxyClass($class, $proxyClassName)
+    protected function generateProxyClass($class, $proxyClassName, $dir)
     {
         $refClass = new \ReflectionClass($class);
         $methods = "";
+        $namespace = substr($class, 0, strlen($class) - strlen($proxyClassName) - 1);
 
         foreach ($refClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
             if (!$refMethod->isStatic()) {
@@ -369,7 +371,7 @@ EOT;
             $proxy = <<<EOT
 <?php
             
-namespace Congow\Orient\Proxy;
+namespace Congow\Orient\Proxy$namespace;
     
 class $proxyClassName extends $class
 {
@@ -377,7 +379,7 @@ class $proxyClassName extends $class
 }
 EOT;
         
-        $f = file_put_contents($this->getDocumentProxyDirectory() . "/Congow/Orient/Proxy/" . $proxyClassName . ".php", $proxy);
+        $f = file_put_contents($dir . '/' . $proxyClassName . ".php", $proxy);
     }
     
     /**
@@ -400,17 +402,26 @@ EOT;
      * @todo phpdoc
      */
     protected function getProxyClass($class)
-    {
-        $proxyClass = $class . "Proxy";
-        $namespaces = explode('\\', $proxyClass);
-        $proxyClassName = array_pop($namespaces);
-        $namespace = implode("\\", $namespaces);
-        
+    { 
+        $namespaces         = explode('\\', $class);
+        $proxyClassName     = array_pop($namespaces);
+
         if (!class_exists("Congow\Orient\Proxy\\" . $proxyClassName)) {
-            $this->generateProxyClass($class, $proxyClassName);
+            $dir = $this->getDocumentProxyDirectory() . '/Congow/Orient/Proxy';
+            
+            foreach ($namespaces as $namespace) {
+                $dir = $dir . '/' . $namespace;
+                if (!is_dir($dir)) {
+                    mkdir($dir);
+                }
+            }
+            
+            $namespace = implode('\\', $namespaces);
+
+            $this->generateProxyClass($class, $proxyClassName, $dir);
         }
-        
-        return "Congow\Orient\Proxy\\" . $proxyClassName;
+
+        return "Congow\Orient\Proxy" . $namespace . "\\" . $proxyClassName;
     }
 
     /**
@@ -458,7 +469,7 @@ EOT;
         $setter     = 'set' . $this->inflector->camelize($property);
         
         if (method_exists($document, $setter)) {
-            $document->$setter($value);            
+            $document->$setter($value);
         } 
         else {
             $refClass     = new \ReflectionObject($document);

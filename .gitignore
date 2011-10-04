@@ -5,4 +5,4 @@ docs/html
 docs/latex
 docs/coverage
 lib/*
-proxies/Congow/Orient/Proxy/*.php
+proxies/Congow/Orient/Proxy/*

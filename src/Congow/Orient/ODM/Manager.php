@@ -23,6 +23,7 @@ namespace Congow\Orient\ODM;
 
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\Query;
+use Congow\Orient\Exception\ODM\OClass\NotFound as UnmappedClass;
 use Congow\Orient\Query\Command\Select;
 use Congow\Orient\Exception;
 use Congow\Orient\Contract\Protocol\Adapter as ProtocolAdapter;
@@ -130,10 +131,9 @@ class Manager implements ObjectManager
               $result       = $this->getMapper()->hydrate($record);
               $document    = $result[0];
               $linkTracker = $result[1];
-              
+
               foreach ($linkTracker->getProperties() as $property => $value) {
                   $method = 'set' . ucfirst($property);
-                  
                   $document->$method($this->find($value, true));
               }
               
@@ -141,6 +141,9 @@ class Manager implements ObjectManager
             }
             
             return null;
+        }
+        catch (UnmappedClass $e) {
+            throw $e;
         }
         catch (Exception $e) {
             return null;
@@ -230,7 +233,7 @@ class Manager implements ObjectManager
      */
     public function getRepository($classname)
     {
-        throw new \Exception;
+        return new Repository($className);
     }    
     
     /**
