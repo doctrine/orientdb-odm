@@ -19,6 +19,8 @@
 
 namespace Congow\Orient\Foundation\Types;
 
+use Congow\Orient\Validator\Rid as RidValidator;
+use Congow\Orient\Exception\Validation as ValidationException;
 
 class Rid
 {
@@ -31,6 +33,8 @@ class Rid
      */
     public function __construct($rid)
     {
+        $validator = new RidValidator();
+        $validator->check($rid);
         $this->rid = $rid;
     }
     

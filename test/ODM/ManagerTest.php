@@ -21,7 +21,7 @@ class TestMapper extends \Congow\Orient\ODM\Mapper
     public function hydrate($document)
     {
         $linktracker = new \Congow\Orient\ODM\Mapper\LinkTracker;
-        $linktracker->add('capital', new Document\Stub\Contact\Address);
+        $linktracker->add('capital', '1:2');
         
         return array(
           new Document\Stub\Contact\Address, $linktracker

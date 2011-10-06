@@ -67,7 +67,6 @@ class ManagerTest extends TestCase
     public function testGettingARelatedRecord()
     {
         $address    = $this->manager->find('13:0');
-        
         $this->assertInstanceOf("test\Integration\Document\Country", $address->getCity());
     }
     

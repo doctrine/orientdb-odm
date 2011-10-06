@@ -21,6 +21,7 @@ namespace Congow\Orient\Formatter;
 
 use Congow\Orient\Contract\Formatter\Caster as CasterInterface;
 use Congow\Orient\Exception\Overflow;
+use Congow\Orient\Exception;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\Foundation\Types\Rid;
 use Congow\Orient\Validator\Rid as RidValidator;
@@ -198,23 +199,17 @@ class Caster implements CasterInterface
      * If the internal value is not a rid but an already decoded orient
      * object, it simply hydrates it through the mapper.
      *
-     * @todo the validation of the rid should be done in the Rid costructor
      * @see     http://code.google.com/p/orient/wiki/FetchingStrategies
      * @return  ValueProxy|Rid
      */
     public function castLink()
     {
-        $validator = new RidValidator;
-        
         if ($this->value instanceOf \stdClass) {
 
             return new ValueProxy($this->getMapper()->hydrate($this->value));
         } else {
             try {
-                $rid    = $validator->check($this->value);
-                
-                return new Rid($rid);
-                
+                return new Rid($this->value);
             } catch (ValidationException $e) {
                 return null;
             }
@@ -383,11 +378,19 @@ class Caster implements CasterInterface
      * annotation.
      *
      * @return Array
-     * @todo what if theres no annotation? better to throw an exception
      */
     public function castEmbeddedArrays()
     {
-        $listType = $this->getProperty('annotation')->getCast();
+        $annotation = $this->getProperty('annotation');
+        
+        if (!$annotation) {
+            $message =  "In order to cast collections you should inject\n";
+            $message .= "an annotation object into the caster.";
+            
+            throw new Exception($message);
+        }
+        
+        $listType = $annotation->getCast();
         
         if ($listType == "link") {
             return $this->getMapper()->hydrateCollection($this->value);
@@ -410,7 +413,6 @@ class Caster implements CasterInterface
      * Given the internl value of the caster (an array), it iterates iver each
      * element of the array and hydrates it.
      *
-     * @todo when he Rid will validate the rid you inject to it, the validation inside the for will be useless
      * @see Caster::castLink for more insights
      * @return Array|null
      */
@@ -423,9 +425,6 @@ class Caster implements CasterInterface
             }
             
             try {
-                $validator      = new RidValidator();
-                $rid            = $validator->check($value);
-
                 $ridCollection = new Rid\Collection(array_map(function($rid){
                     return new Rid($rid);
                 }, $this->value));

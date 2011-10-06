@@ -25,27 +25,31 @@ use Congow\Orient\ODM\Mapper;
 use Congow\Orient\Query;
 use Doctrine\Common\Persistence\ObjectRepository;
 
-
 class Repository implements ObjectRepository
 {
     protected $manager;
+    protected $mapper;
     protected $className;
     
     /**
-    * @todo phpdoc
-    */
+     * Instantiates a new repository.
+     *
+     * @param type $className
+     * @param Manager $manager
+     * @param Mapper $mapper 
+     */
     public function __construct($className, Manager $manager, Mapper $mapper)
     {
         $this->manager   = $manager;
         $this->className = $className;
-        $this->mapper    = $mapper;  
+        $this->mapper    = $mapper;
     }
     
     /**
      * Finds an object by its primary key / identifier.
      *
-     * @param $rid The identifier.
-     * @return object The object.
+     * @param   $rid The identifier.
+     * @return  object The object.
      */
     public function find($rid)
     {
@@ -59,9 +63,14 @@ class Repository implements ObjectRepository
      */
     public function findAll()
     {
-        $query = new Query($this->getOrientClasses());
+        $results = array();
         
-        return $this->getManager()->execute($query);
+        foreach ($this->getOrientClasses() as $mapperClass) {
+            $query      = new Query($this->getOrientClasses());
+            $results    = array_merge($results, $this->getManager()->execute($query));
+        }
+
+        return $results;
     }
 
     /**
@@ -93,13 +102,20 @@ class Repository implements ObjectRepository
         
     }
     
+    /**
+     * Returns the POPO class associated with this repository.
+     *
+     * @return string
+     */
     protected function getClassName()
     {
         return $this->className;
     }
     
     /**
-     * @todo phpdoc
+     * Returns the manager associated with this repository.
+     *
+     * @return Manager
      */
     protected function getManager()
     {
@@ -107,7 +123,9 @@ class Repository implements ObjectRepository
     }
     
     /**
-     * @todo phpdoc
+     * Returns the mapper associated with this repository.
+     *
+     * @return Mapper
      */
     protected function getMapper()
     {
@@ -115,7 +133,10 @@ class Repository implements ObjectRepository
     }
     
     /**
-     * @todo phpdoc
+     * Returns the OrientDB classes which are mapper by the
+     * Repository's $className.
+     *
+     * @return Array 
      */
     protected function getOrientClasses()
     {

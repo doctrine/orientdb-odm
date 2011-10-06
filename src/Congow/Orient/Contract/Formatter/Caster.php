@@ -172,11 +172,10 @@ interface Caster
     public function castShort();
     
     /**
-     * Defines the internl annotation object which is used when hydrating
-     * collections.
+     * Defines properties that can be internally used by the caster.
      *
-     * @param PropertyAnnotation $annotation 
-     * @todo outdated phpdoc
+     * @param string    $key
+     * @param mixed     $property
      */
     public function setProperty($key, $property);
     

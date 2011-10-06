@@ -582,6 +582,9 @@ class Query implements QueryInterface
         return $this->command;
     }
 
+    /**
+     * @todo phpdoc
+     */
     public function put(array $values, $class, $append = true)
     {
         $commandClass = $this->getCommandClass('update.put');
@@ -589,7 +592,25 @@ class Query implements QueryInterface
 
         return $this->command;
     }
+    
+    /**
+     * Checks whether the current query, when executed against OrientDB,
+     * should return some results.
+     *
+     * @return boolean
+     */
+    public function shouldReturn()
+    {   
+        if ($this->getCommand() instanceOf Select) {
+            return true;
+        }
+        
+        return false;
+    }
 
+    /**
+     * @todo phpdoc
+     */
     public function update($class)
     {
         $commandClass = $this->getCommandClass('update');

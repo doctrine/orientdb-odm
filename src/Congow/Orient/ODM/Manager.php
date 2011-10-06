@@ -28,6 +28,7 @@ use Congow\Orient\Query\Command\Select;
 use Congow\Orient\Exception;
 use Congow\Orient\Contract\Protocol\Adapter as ProtocolAdapter;
 use Congow\Orient\ODM\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
+use Congow\Orient\Validator\Rid as RidValidator;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;
 
@@ -44,7 +45,6 @@ class Manager implements ObjectManager
      * @param   Mapper          $mapper
      * @param   ProtocolAdapter $protocolAdapter
      * @param   MetadataFactory $metadataFactory
-     * @todo    inject the metadata factory
      */
     public function __construct(
         Mapper $mapper, 
@@ -69,7 +69,8 @@ class Manager implements ObjectManager
     
     /**
      * Executes a $query against OrientDB.
-     * This method should be used to retrieve multiple objects: to retrieve a
+     * This method should be used to executes query which should not return a
+     * result (UPDATE, INSERT) or to retrieve multiple objects: to retrieve a
      * single record look at ->find*() methods.
      *
      * @param   Query $query
@@ -80,32 +81,16 @@ class Manager implements ObjectManager
     public function execute(Query $query)
     {
         $adapter    = $this->getProtocolAdapter();
-        $return     = false;
-        
-        if ($query->getCommand() instanceOf Select) {
-            $return = true;
-        }
-        
-        $execution = $adapter->execute($query->getRaw(), $return);
+        $return     = $query->shouldReturn();
+        $execution  = $adapter->execute($query->getRaw(), $return);
         
         if ($execution) {
-            if ($adapter->getResult()) {
-                $collection = $this->getMapper()->hydrateCollection($adapter->getResult());
-              
-                foreach ($collection as $key => $partialObject) {
-                    $document    = $partialObject[0];
-                    $linkTracker = $partialObject[1];
-
-                    foreach ($linkTracker->getProperties() as $property => $value) {
-                        $method = 'set' . ucfirst($property);
-
-                        $document->$method($this->find($value, true));
-                    }
-
-                    $collection[$key] = $document;
-                }
+            $results = $adapter->getResult();
             
-                return $collection;
+            if ($results) {
+                $hydrationResults = $this->getMapper()->hydrateCollection($results);
+                
+                return $this->returnACollection($hydrationResults);
             }
             
             return true;
@@ -133,6 +118,9 @@ class Manager implements ObjectManager
      */
     public function find($rid, $lazy = false)
     {
+        $validator  = new RidValidator;
+        $rid        = $validator->check($rid);
+        
         if ($lazy) {
             return new Proxy($this, $rid);
         }
@@ -312,5 +300,29 @@ class Manager implements ObjectManager
     protected function getProtocolAdapter()
     {
         return $this->protocolAdapter;
+    }
+    
+    /**
+     * Given a collection of Hydration\Result, it returns an array of POPOs.
+     *
+     * @param   Array $collection
+     * @return  Array
+     * @todo find is good for retrieving links, what if $value is a set of links? 
+     */
+    protected function returnACollection(Array $collection)
+    {
+        foreach ($collection as $key => $partialObject) {
+            $document    = $partialObject[0];
+            $linkTracker = $partialObject[1];
+
+            foreach ($linkTracker->getProperties() as $property => $value) {
+                $method = 'set' . ucfirst($property);
+                $document->$method($this->find($value, true));
+            }
+
+            $collection[$key] = $document;
+        }
+
+        return $collection;
     }
 }

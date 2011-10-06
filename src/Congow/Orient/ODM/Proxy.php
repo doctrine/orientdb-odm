@@ -52,7 +52,7 @@ class Proxy extends AbstractProxy
             return $this->record;
         } else {
             $this->record = $this->getManager()->find($this->getRid());
-            
+
             return $this->record;
         }    
     }
