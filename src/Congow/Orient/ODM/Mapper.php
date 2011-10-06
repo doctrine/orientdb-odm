@@ -43,33 +43,35 @@ use Doctrine\Common\Annotations\AnnotationReader;
 
 class Mapper
 {
-    protected $documentDirectories              = array();
-    protected $annotationReader                 = null;
-    protected $inflector                        = null;
-    protected $enableOverflows                  = false;
-    protected $documentProxiesDirectory         = null;
+    protected $documentDirectories          = array();
+    protected $enableOverflows              = false;
+    protected $annotationReader;
+    protected $inflector;
+    protected $documentProxiesDirectory;
     
     const ANNOTATION_PROPERTY_CLASS = 'Congow\Orient\ODM\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Congow\Orient\ODM\Mapper\Annotations\Document';
     const ORIENT_PROPERTY_CLASS     = '@class';
 
     /**
-     * Instantiates a new Mapper with a proper protocol adapter to make
-     * it talk with OrientDB.
+     * Instantiates a new Mapper, which stores proxies in $documentProxyDirectory
      *
-     * @param Adapter                   $protocolAdapter
+     * @param string                    $documentProxyDirectory
      * @param AnnotationReaderInterface $annotationReader
      * @param Inflector                 $inflector
-     * @todo outdated phpdoc
-     * @todo use the cached annotation reader
      */
-    public function __construct($documentProxyDirectory, AnnotationReaderInterface $annotationReader = null, Inflector $inflector = null)
+    public function __construct(
+        $documentProxyDirectory, 
+        AnnotationReaderInterface 
+        $annotationReader = null, 
+        Inflector $inflector = null
+    )
     {
         $this->annotationReader             = $annotationReader ?: new Reader;
         $this->inflector                    = $inflector ?: new DoctrineInflector;
         $this->documentProxyDirectory       = $documentProxyDirectory;
     }
-    
+
     /**
      * Enable or disable overflows' tolerance.
      *
@@ -94,7 +96,7 @@ class Mapper
     /**
      * Returns the annotation of a class.
      *
-     * @param   string                    $class
+     * @param   string   $class
      * @return  Congow\Orient\ODM\Mapper\Class
      */
     public function getClassAnnotation($class)
@@ -111,7 +113,7 @@ class Mapper
 
         return null;
     }
-
+    
     /**
      * Returns the directories in which the mapper is going to look for
      * classes mapped for the Congow\Orient ODM.
@@ -126,7 +128,7 @@ class Mapper
     /**
      * Returns the annotation of a property.
      *
-     * @param ReflectionProperty            $property
+     * @param ReflectionProperty $property
      * @return Congow\Orient\ODM\Mapper\Property
      */
     public function getPropertyAnnotation(\ReflectionProperty $property)
@@ -168,8 +170,10 @@ class Mapper
     }
     
     /**
-     * @param   array $json
-     * @return  array of Documents
+     * Hydrates an array of documents.
+     * 
+     * @param   Array $json
+     * @return  Array
      */
     public function hydrateCollection(array $collection)
     {
@@ -197,17 +201,21 @@ class Mapper
     }
 
     /**
-     * Creates a new $class object, filling it with the properties of
+     * Creates a new Proxy $class object, filling it with the properties of
      * $orientObject.
+     * The proxy class extends from $class and is used to implement
+     * lazy-loading.
      *
-     * @param string    $class
-     * @param \stdClass $orientObject
-     * @return class
-     * @todo proxy generation should not be here
-     * @todo the proxy directory should be injected
-     * @todo phpdoc outdated
+     * @param   string      $class
+     * @param   \stdClass   $orientObject
+     * @param   LinkTracker $linkTracker
+     * @return  object of type $class
      */
-    protected function createDocument($class, \stdClass $orientObject, LinkTracker $linkTracker)
+    protected function createDocument(
+        $class,
+        \stdClass $orientObject, 
+        LinkTracker $linkTracker
+     )
     {
         $proxyClass = $this->getProxyClass($class);
         $document   = new $proxyClass();
@@ -217,11 +225,10 @@ class Mapper
     }
 
     /**
-     * Casts a value according to an $annotation.
+     * Casts a value according to how it was annotated.
      *
-     * @param   Congow\Orient\ODM\Mapper\Annotations\Property    $annotation
-     * @param   mixed                                     $propertyValue
-     * @param   CasterInterface                           $caster
+     * @param   Congow\Orient\ODM\Mapper\Annotations\Property  $annotation
+     * @param   mixed                                          $propertyValue
      * @return  mixed
      */
     protected function castProperty($annotation, $propertyValue)
@@ -249,8 +256,9 @@ class Mapper
      * Given an object and an Orient-object, it fills the former with the
      * latter.
      *
-     * @param   object $document
-     * @param   \stdClass $object
+     * @param   object      $document
+     * @param   \stdClass   $object
+     * @param   LinkTracker $linkTracker
      * @return  object
      */
     protected function fill($document, \stdClass $object, LinkTracker $linkTracker)
@@ -284,7 +292,6 @@ class Mapper
      * directories where the documents are stored.
      * 
      * @param   string $OClass
-     * @param   \Iterator $iterator
      * @return  string
      * @throws  Congow\Orient\Exception\ODM\OClass\NotFound
      */
@@ -300,13 +307,14 @@ class Mapper
     }
     
     /**
-     * Seraches a PHP class mapping Congow\OrientDB's $OClass in $directory, which uses
-     * the given $namespace.
+     * Searches a PHP class mapping Congow\OrientDB's $OClass in $directory, 
+     * which uses the given $namespace.
      *
-     * @param   string $OClass
-     * @param   string $directory
-     * @param   string $namespace
-     * @param   StringFormatterInterface $stringFormatter
+     * @param   string                      $OClass
+     * @param   string                      $directory
+     * @param   string                      $namespace
+     * @param   StringFormatterInterface    $stringFormatter
+     * @param   \Iterator                   $iterator
      * @return  string|null
      */
     protected function findClassMappingInDirectory(
@@ -333,7 +341,15 @@ class Mapper
     }
     
     /**
-     * @todo phpdoc
+     * Generate a proxy class for the given $class, writing it in the
+     * filesystem.
+     * A proxy class is a simple class extending $class, copying all its public
+     * methods with some rules in order to implement lazy-loading
+     *
+     * @param type $class
+     * @param type $proxyClassName
+     * @param type $dir 
+     * @see   http://congoworient.readthedocs.org/en/latest/implementation-of-lazy-loading.html
      */
     protected function generateProxyClass($class, $proxyClassName, $dir)
     {
@@ -383,15 +399,10 @@ EOT;
     }
     
     /**
-     * @todo phpdoc
-     */
-    protected function getCaster()
-    {
-        return $this->caster;
-    }
-    
-    /**
-     * @todo phpdoc
+     * Returns the directory in which all the documents' proxy classes are
+     * stored.
+     *
+     * @return string
      */
     protected function getDocumentProxyDirectory()
     {
@@ -399,7 +410,11 @@ EOT;
     }
     
     /**
-     * @todo phpdoc
+     * Retrieves the proxy class for the given $class.
+     * If the proxy does not exists, it will be generated here at run-time.
+     *
+     * @param  string $class
+     * @return string
      */
     protected function getProxyClass($class)
     { 
@@ -449,11 +464,21 @@ EOT;
     /**
      * Given a $property and its $value, sets that property on the $given object
      * using a public setter.
+     * The $linkTracker is used to verify if the property has to be retrieved
+     * with an extra query, which is a domain the Mapper should not know about,
+     * so it is used only to keep track of properties that the mapper simply
+     * can't handle (a typical example is a @rid, which requires an extra query
+     * to retrieve the linked entity).
+     * 
+     * Generally the LinkTracker is used by a Manager after he call the
+     * ->hydrate() method of its mapper, to verify that the object is ready to
+     * be used in the userland application.
      *
      * @param mixed                 $document
      * @param string                $property
      * @param string                $value
      * @param PropertyAnnotation    $annotation
+     * @param LinkTracker           $linkTracker
      */
     protected function mapProperty($document, $property, $value, PropertyAnnotation $annotation, LinkTracker $linkTracker)
     {
@@ -477,8 +502,7 @@ EOT;
             
             if ($refProperty->isPublic()) {
                 $document->$property = $value;
-            } 
-            else {
+            } else {
                 $message = "%s has not method %s: you have to added the setter in order to correctly let Congow\Orient hydrate your object ?";
                 
                 throw new Exception(
@@ -504,12 +528,12 @@ EOT;
     
     /**
      * Verifies if the given $caster supports casting with $method.
-     * If not, an excepttion is raised.
+     * If not, an exception is raised.
      *
-     * @param Caster $caster
-     * @param string $method
-     * @param string $annotationType 
-     * @throws Congow\Orient\Exception
+     * @param   Caster $caster
+     * @param   string $method
+     * @param   string $annotationType 
+     * @throws  Congow\Orient\Exception
      */
     protected function verifyCastingSupport(Caster $caster, $method, $annotationType)
     {

@@ -25,11 +25,21 @@ class Collection extends Rid
 {
     protected $rids;
     
+    /**
+     * Instatiates a new collection, setting the $rids belonging to it.
+     *
+     * @param Array $rids 
+     */
     public function __construct($rids)
     {
         $this->rids = $rids;
     }
     
+    /**
+     * Returns the rids associated to the collection.
+     *
+     * @return Array
+     */
     public function getValue()
     {
         return $this->rids;

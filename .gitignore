@@ -6,3 +6,4 @@ docs/latex
 docs/coverage
 lib/*
 proxies/Congow/Orient/Proxy/*
+nbproject

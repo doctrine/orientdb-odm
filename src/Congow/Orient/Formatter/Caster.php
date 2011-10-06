@@ -45,7 +45,7 @@ class Caster implements CasterInterface
     /**
      * Instantiates a new Caster.
      *
-     * @param Manager    $manager
+     * @param Mapper    $mapper
      * @param mixed     $value 
      * @param string    $dateClass  The class used to cast dates and datetimes
      */
@@ -191,15 +191,16 @@ class Caster implements CasterInterface
     }
     
     /**
-     * Casts the current internal value into an hydrated object through a
-     * Congow\Orient\ODM\Mapper object, finding it by rid.
+     * If the link is a rid, it returns back a rid object, cause the Managar,
+     * which eventually will get back the document, will know from the Mapper
+     * that the Caster was not able to cast the link (via a LinkTracker object),
+     * so the manager will do an extra query to retrieve the link.
      * If the internal value is not a rid but an already decoded orient
-     * object, it simply hydrates it.
+     * object, it simply hydrates it through the mapper.
      *
      * @todo the validation of the rid should be done in the Rid costructor
-     * 
      * @see     http://code.google.com/p/orient/wiki/FetchingStrategies
-     * @return  mixed|null
+     * @return  ValueProxy|Rid
      */
     public function castLink()
     {
@@ -242,6 +243,8 @@ class Caster implements CasterInterface
     
     /**
      * Hydrates multiple objects through a Mapper.
+     * A conversion needs to be done because of the non linearity of a JSON
+     * collection compared to a PHP array.
      *
      * @return Array
      */
@@ -289,8 +292,8 @@ class Caster implements CasterInterface
      */    
     public function castString()
     {
-        if($this->value instanceOf \StdClass){
-            if (!method_exists($this->value, '__toString')){
+        if($this->value instanceOf \StdClass) {
+            if (!method_exists($this->value, '__toString')) {
                 $this->value = null;
             }
         }
@@ -309,11 +312,10 @@ class Caster implements CasterInterface
     }
     
     /**
-     * Defines the internl annotation object which is used when hydrating
-     * collections.
+     * Defines properties that can be internally used by the caster.
      *
-     * @param PropertyAnnotation $annotation 
-     * @todo outdated phpdocs
+     * @param string    $key
+     * @param mixed     $property
      */
     public function setProperty($key, $property)
     {
@@ -407,11 +409,9 @@ class Caster implements CasterInterface
     /**
      * Given the internl value of the caster (an array), it iterates iver each
      * element of the array and hydrates it.
-     * If the element is not a JSON-decoded object but a Rid, the Mapper is used
-     * to hydrate the object from the Rid.
      *
      * @todo when he Rid will validate the rid you inject to it, the validation inside the for will be useless
-     * 
+     * @see Caster::castLink for more insights
      * @return Array|null
      */
     protected function castLinkCollection()
@@ -458,23 +458,13 @@ class Caster implements CasterInterface
         }    
     }
     
-    /**
-     * Returns the internal annotation object.
-     *
-     * @return PropertyAnnotation
-     * @todo outdated phpdoc
-     */
-    protected function getProperty($key)
-    {
-        return isset($this->properties[$key]) ? $this->properties[$key] : null;
-    }
     
     /**
      * Returns the class used to cast date and datetimes.
      *
      * @return string
      */
-    protected function getdateClass()
+    protected function getDateClass()
     {
         return $this->dateClass;
     }
@@ -487,5 +477,16 @@ class Caster implements CasterInterface
     protected function getMapper()
     {
         return $this->mapper;
+    }
+    
+    /**
+     * Returns a property of the Caster, given its $key.
+     *
+     * @param   string $key
+     * @return  mixed
+     */
+    protected function getProperty($key)
+    {
+        return isset($this->properties[$key]) ? $this->properties[$key] : null;
     }
 }

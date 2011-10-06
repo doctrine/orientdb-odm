@@ -10,7 +10,7 @@
  */
 
 /**
- * Rid class
+ * Rid class encapsulates a rid.
  *
  * @package    Congow\Orient
  * @subpackage Foundation
@@ -22,15 +22,25 @@ namespace Congow\Orient\Foundation\Types;
 
 class Rid
 {
-    protected $value;
+    protected $rid;
     
-    public function __construct($value)
+    /**
+     * Instantiates a new object, injecting the $rid;
+     *
+     * @param string $rid
+     */
+    public function __construct($rid)
     {
-        $this->value = $value;
+        $this->rid = $rid;
     }
     
+    /**
+     * Returns the rid associated with the current object.
+     *
+     * @return string
+     */
     public function getValue()
     {
-        return $this->value;
+        return $this->rid;
     }
 }

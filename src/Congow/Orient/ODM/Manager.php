@@ -29,6 +29,7 @@ use Congow\Orient\Exception;
 use Congow\Orient\Contract\Protocol\Adapter as ProtocolAdapter;
 use Congow\Orient\ODM\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;
 
 class Manager implements ObjectManager
 {
@@ -37,14 +38,23 @@ class Manager implements ObjectManager
     protected $protocolAdapter;
     
     /**
-     * @param   Mapper $mapper
+     * Instatiates a new Mapper, injecting the $mapper that will be used to
+     * hydrate record retrieved through the $protocolAdapter.
+     * 
+     * @param   Mapper          $mapper
+     * @param   ProtocolAdapter $protocolAdapter
+     * @param   MetadataFactory $metadataFactory
      * @todo    inject the metadata factory
      */
-    public function __construct(Mapper $mapper, ProtocolAdapter $protocolAdapter)
+    public function __construct(
+        Mapper $mapper, 
+        ProtocolAdapter $protocolAdapter, 
+        MetadataFactory $metadataFactory = null
+    )
     {
         $this->mapper           = $mapper;
         $this->protocolAdapter  = $protocolAdapter;
-        $this->metadataFactory  = new ClassMetadataFactory($this->getMapper());
+        $this->metadataFactory  = $metadataFactory ?: new ClassMetadataFactory($this->getMapper());
     }    
     
     /**
@@ -58,8 +68,14 @@ class Manager implements ObjectManager
     }
     
     /**
-     * @todo phpdoc
-     * @todo document that this function should be used to retrieve multiple objects
+     * Executes a $query against OrientDB.
+     * This method should be used to retrieve multiple objects: to retrieve a
+     * single record look at ->find*() methods.
+     *
+     * @param   Query $query
+     * @return  Array 
+     * @todo test what happens when executing a find here
+     * @todo messy code
      */
     public function execute(Query $query)
     {
@@ -112,8 +128,8 @@ class Manager implements ObjectManager
      * @param string    $rid
      * @param boolean   $lazy
      * @return Proxy|object
-     * @todo wrap the returning array as an object (Hydration\Result? PartialObject?)
-     * @todo throw custom exception
+     * @todo throw custom exception | aware that orient gives an exception when it does not fiind the record with $rid
+     * @todo messy code
      */
     public function find($rid, $lazy = false)
     {
@@ -155,16 +171,10 @@ class Manager implements ObjectManager
      * $rids.
      * If $lazy loading is used, all of this won't be executed unless the
      * returned Proxy object is called via __invoke, e.g.:
-     * 
-     * <code>
-     *   $lazyLoadedRecords = $manager->find('1:1', true);
-     * 
-     *   $records = $lazyLoadedRecord();
-     * </code>
-     *
-     * @param string    $rid
-     * @param boolean   $lazy
-     * @return Proxy\Collection|array
+     * @see     ->find()
+     * @param   string    $rid
+     * @param   boolean   $lazy
+     * @return  Proxy\Collection|array
      * @todo duplicated logic to hydrate partial results (here and in find() method)
      * @throws Congow\Orient\Exception\Query\SQL\Invalid
      * @todo throw specific exception "You are trying to retrieve 11:0, 11:1 but some of these are out of cluster size..."
@@ -212,26 +222,33 @@ class Manager implements ObjectManager
     }
     
     /**
+     * Gets the $class Metadata.
      *
-     * @todo phpdoc
-     * @todo test
+     * @param   string $class
+     * @return  Doctrine\Common\Persistence\Mapping\ClassMetadata
      */
     public function getClassMetadata($class)
     {
         return $this->getMetadataFactory()->getMetadataFor($class);
     }
     
+    /**
+     * Returns the Metadata factory associated with this manager.
+     *
+     * @return MetadataFactory
+     */
     public function getMetadataFactory()
     {
         return $this->metadataFactory;
     }
     
     /**
-     * @todo to implement/test
+     * Returns the Repository class associated with the $class.
      *
-     * @param \stdClass $object 
+     * @param   string $className
+     * @return  Repository
      */
-    public function getRepository($classname)
+    public function getRepository($className)
     {
         return new Repository($className);
     }    
@@ -276,8 +293,10 @@ class Manager implements ObjectManager
         throw new \Exception();
     }
     
-     /**
-     * @todo phpdoc
+    /**
+     * Returns the mapper of the current object.
+     *
+     * @return Mapper
      */
     protected function getMapper()
     {
