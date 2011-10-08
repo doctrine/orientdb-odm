@@ -60,18 +60,6 @@ class RepositoryTest extends TestCase
         $this->repository = new Repository('test\ODM\Document\Stub\Contact\Address', new TestManager($mapper,new Stubadapter), $mapper);
     }
     
-    public function testFindingADocument()
-    {
-        $document = $this->repository->find('27:1');
-        $this->assertInstanceOf('test\ODM\Document\Stub\Contact\Address', $document);
-    }
-    
-    public function testFindingANonExistantDocument()
-    {
-        $document = $this->repository->find('97:1');
-        $this->assertInternalType('null', $document);
-    }
-    
     public function testFindAll()
     {
         $documents = $this->repository->findAll();

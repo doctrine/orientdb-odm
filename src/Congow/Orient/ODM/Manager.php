@@ -83,14 +83,15 @@ class Manager implements ObjectManager
         $adapter    = $this->getProtocolAdapter();
         $return     = $query->shouldReturn();
         $execution  = $adapter->execute($query->getRaw(), $return);
+        $results    = $adapter->getResult();
         
         if ($execution) {
-            if ($results = $adapter->getResult()) {
+            if (is_array($results)) {
                 $hydrationResults = $this->getMapper()->hydrateCollection($results);
                 
                 return $this->finalizeCollection($hydrationResults);
             }
-            
+
             return true;
         }
         

@@ -32,6 +32,21 @@ class Post
      */
     public $comments;
     
+    /**
+     * @ODM\Property(name="@rid", type="string")
+     */
+    public $rid;
+    
+    public function getRid()
+    {
+        return $this->rid;
+    }
+    
+    public function setRid($rid)
+    {
+        $this->rid = $rid;
+    }
+    
     public function getComments()
     {
         return $this->comments;

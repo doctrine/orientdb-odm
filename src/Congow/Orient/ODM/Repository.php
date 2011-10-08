@@ -54,13 +54,27 @@ class Repository implements ObjectRepository
      */
     public function find($rid)
     {
-        return $this->getManager()->find($rid);
+        $document   = $this->getManager()->find($rid);
+        
+        if ($document) {
+            if ($this->contains($document)) {
+                return $document;
+            }
+            
+            $message = "You are asking to find record $rid through the repository ";
+            $message .= "{$this->getClassName()} but the document belongs to another repository (" . get_class($document) . ")";
+            
+            throw new Exception($message);
+        }
+        
+        return null;
     }
 
     /**
      * Finds all objects in the repository.
      *
      * @return mixed The objects.
+     * @todo duplication in the find*()
      */
     public function findAll()
     {
@@ -79,7 +93,7 @@ EOT;
                 throw new Exception($message);
             }
             
-            $results    = array_merge($results, $collection);
+            $results = array_merge($results, $collection);
         }
 
         return $results;
@@ -100,7 +114,34 @@ EOT;
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
+        $results = array();
         
+        foreach ($this->getOrientClasses() as $mappedClass) {
+            $query      = new Query(array($mappedClass));
+            
+            foreach ($criteria as $key => $value) {
+                $query->where("$key = ?", $value);
+            }
+            
+            foreach ($orderBy as $key => $order) {
+                $query->orderBy("$key $order");
+            }
+
+            $collection = $this->getManager()->execute($query);
+
+            if (!is_array($collection)) {
+                $message = <<<EOT
+Problems executing the query "{$query->getRaw()}".
+The server returned $collection, while it should be an Array.
+EOT;
+              
+                throw new Exception($message);
+            }
+            
+            $results = array_merge($results, $collection);
+        }
+
+        return $results;
     }
 
     /**
@@ -112,6 +153,17 @@ EOT;
     public function findOneBy(array $criteria)
     {
         
+    }
+    
+    /**
+     * Verifies if the $document should belog to this repository.
+     *
+     * @param   object  $document
+     * @return  boolean
+     */
+    protected function contains($document)
+    {
+        return in_array($this->getClassName(), class_parents(get_class($document)));
     }
     
     /**
