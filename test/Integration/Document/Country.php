@@ -23,7 +23,7 @@ namespace test\Integration\Document;
 use Congow\Orient\ODM\Mapper\Annotations as ODM;
 
 /**
-* @ODM\Document(class="Country")
+* @ODM\Document(class="Country,City")
 */
 class Country
 {

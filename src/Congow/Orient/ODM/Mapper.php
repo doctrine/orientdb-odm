@@ -147,9 +147,8 @@ class Mapper
      * inside the JSON object.
      *
      * @param   StdClass    $orientObject
-     * @return  mixed
+     * @return  Hydration\Result
      * @throws  Congow\Orient\Exception\Document\NotFound
-     * @todo the returning array is ugly, provide a Hydration\Result object
      */
     public function hydrate(\StdClass $orientObject)
     {

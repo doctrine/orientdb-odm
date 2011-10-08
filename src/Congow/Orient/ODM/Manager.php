@@ -109,22 +109,22 @@ class Manager implements ObjectManager
      * </code>
      *
      * @param   string    $rid
-     * @param   boolean   $lazy
+     * @param   string    $fetchPlan
      * @return  Proxy|object
      * @throws  UnmappedClass|Exception
      */
-    public function find($rid, $lazy = false)
+    public function find($rid, $fetchPlan = null)
     {
         $validator  = new RidValidator;
         $rid        = $validator->check($rid);
         
-        if ($lazy) {
+        if ($fetchPlan === false) {
             return new Proxy($this, $rid);
         }
-        
+            
         try
         {
-            return $this->doFind($rid);
+            return $this->doFind($rid, $fetchPlan);
         }
         catch (UnmappedClass $e) {
             throw $e;
@@ -134,43 +134,28 @@ class Manager implements ObjectManager
         }
     }
     
-    protected function doFind($rid)
-    {
-        $query      = new Query(array($rid));
-        $adapter    = $this->getProtocolAdapter();
-        $execution  = $adapter->execute($query->getRaw(), true);
-
-        if ($execution && $result = $adapter->getResult()) {
-          $record       = is_array($result) ? array_shift($result) : $result;
-          $result       = $this->getMapper()->hydrate($record);
-
-          return $this->finalize($result);
-        }
-
-        return null;
-    }
-    
     /**
      * Via a protocol adapter, it queries for an array of objects with the given
      * $rids.
      * If $lazy loading is used, all of this won't be executed unless the
      * returned Proxy object is called via __invoke.
      * @see     ->find()
-     * @param   string    $rid
-     * @param   boolean   $lazy
+     * @param   string      $rid
+     * @param   mixed       $fetchPlan
      * @return  Proxy\Collection|array
      * @throws  Congow\Orient\Exception\Query\SQL\Invalid
      */
-    public function findRecords(Array $rids, $lazy = false)
+    public function findRecords(Array $rids, $fetchPlan = null)
     {
-        if ($lazy) {
+        if ($fetchPlan === false) {
             return new Proxy\Collection($this, $rids);
         }
         
         $query      = new Query($rids);
         $adapter    = $this->getProtocolAdapter();
-
-        if ($adapter->execute($query->getRaw(), true) && $adapter->getResult()) {
+        $execution  = $adapter->execute($query->getRaw(), true, $fetchPlan);
+        
+        if ($execution && $adapter->getResult()) {
             $collection = $this->getMapper()->hydrateCollection($adapter->getResult());
             
             return $this->finalizeCollection($collection);
@@ -262,6 +247,31 @@ class Manager implements ObjectManager
     }
     
     /**
+     * Executes a query against OrientDB, via the protocolAdapter, specifying
+     * a $fetchPlan (which is optional) and a $rid to look for.
+     * Then, it finalizes the hydration result.
+     *
+     * @param   type        $rid
+     * @param   mixed       $fetchPlan
+     * @return  object|null 
+     */
+    protected function doFind($rid, $fetchPlan = null)
+    {
+        $query      = new Query(array($rid));
+        $adapter    = $this->getProtocolAdapter();
+        $execution  = $adapter->execute($query->getRaw(), true, $fetchPlan);
+
+        if ($execution && $result = $adapter->getResult()) {
+          $record       = is_array($result) ? array_shift($result) : $result;
+          $result       = $this->getMapper()->hydrate($record);
+
+          return $this->finalize($result);
+        }
+
+        return null;
+    }
+    
+    /**
      * Given an Hydration\Result, it implements lazy-loading for all its'
      * document's related links.
      *
@@ -273,7 +283,7 @@ class Manager implements ObjectManager
         foreach ($result->getLinkTracker()->getProperties() as $property => $value) {
             $setter = 'set' . ucfirst($property);
             $method = $value instanceof Rid\Collection ? 'findRecords' : 'find';
-            $result->getDocument()->$setter($this->$method($value->getValue(), true));
+            $result->getDocument()->$setter($this->$method($value->getValue(), false));
         }
         
         return $result->getDocument();

@@ -32,7 +32,10 @@ class Factory implements ClassMetadataFactory
     protected $mapper;
     
     /**
-     * @todo phpdoc
+     * Instantiates a new Metadata factory, injecting a Mapper which is used to
+     * istantiate new Metadatas.
+     *
+     * @param Mapper $mapper 
      */
     public function  __construct(Mapper $mapper)
     {
@@ -80,7 +83,9 @@ class Factory implements ClassMetadataFactory
     
     
     /**
-     * @todo phpdoc
+     * Returns the mapper associated with this Factory.
+     *
+     * @return Mapper
      */
     protected function getMapper()
     {

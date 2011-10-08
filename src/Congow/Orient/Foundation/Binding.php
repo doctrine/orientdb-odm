@@ -208,7 +208,7 @@ class Binding implements Protocol\Http
         if ($limit) {
             $location .= '/' . (int) $limit;
 
-            $locations = $this->addFetchPlan($fetchPlan, $location);
+            $location = $this->addFetchPlan($fetchPlan, $location);
         }
 
         return $this->getHttpClient()->get($location);
@@ -382,11 +382,7 @@ class Binding implements Protocol\Http
      */
     protected function addFetchPlan($fetchPlan, $location)
     {
-        if ($fetchPlan) {
-            $location .= '/' . $fetchPlan;
-        }
-
-        return $location;
+        return $location .= '/' . $fetchPlan;
     }
 
     /**

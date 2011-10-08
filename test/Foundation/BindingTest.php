@@ -193,14 +193,6 @@ class BindingTest extends TestCase
     }
 
     /**
-    * @todo: test not used
-    * */
-    public function testFetchplanIsHandledCorrectly()
-    {
-        $response = $this->orient->getDocument('1:1', 'demo', 'myFetchplan');
-    }
-
-    /**
      * @expectedException Congow\Orient\Exception\Http\Response\Void
      */
     public function testAnExceptionIsRaisedWhenExecutingOperationsWithNoHttpClient()

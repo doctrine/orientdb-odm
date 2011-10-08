@@ -52,10 +52,14 @@ class Http implements ProtocolAdapter
      * @param   string $sql
      * @return  mixed
      */
-    public function execute($sql, $return = false)
+    public function execute($sql, $return = false, $fetchPlan = null)
     {
-        $method     = $return ? 'query' : 'command';
-        $response   = $this->getClient()->$method($sql);
+        if ($return) {
+            $response = $this->getClient()->query($sql, null, -1, $fetchPlan);
+        } else {
+            $response = $this->getClient()->command($sql);
+        }
+
         $this->checkResponse($response);
         
         if ($return) {

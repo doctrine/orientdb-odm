@@ -96,7 +96,6 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @param string $fieldName 
      * @return boolean
-     * @todo to implement and test
      */
     public function  hasField($fieldName)
     {
@@ -108,7 +107,6 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @param string $fieldName
      * @return boolean
-     * @todo to implement and test
      */
     public function  hasAssociation($fieldName)
     {
@@ -120,7 +118,6 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @param string $fieldName
      * @return boolean
-     * @todo to implement and test
      */
     public function  isSingleValuedAssociation($fieldName)
     {
@@ -132,7 +129,6 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @param string $fieldName
      * @return boolean
-     * @todo to implement and test
      */
     public function  isCollectionValuedAssociation($fieldName)
     {
@@ -144,8 +140,7 @@ class ClassMetadata implements DoctrineMetadata
      * 
      * This array includes identifier fields if present on this class.
      * 
-     * @return array
-     * @todo to implement and test
+     * @return Array
      */
     public function  getFieldNames()
     {
@@ -163,8 +158,7 @@ class ClassMetadata implements DoctrineMetadata
      * 
      * This array includes identifier associations if present on this class.
      * 
-     * @return array
-     * @todo to implement and test
+     * @return Array
      */
     public function  getAssociationNames()
     {
@@ -183,9 +177,8 @@ class ClassMetadata implements DoctrineMetadata
      * This type names can be implementation specific but should at least include the php types:
      * integer, string, boolean, float/double, datetime.
      * 
-     * @param string $fieldName
-     * @return string
-     * @todo to implement and test
+     * @param   string $fieldName
+     * @return  string
      */
     public function  getTypeOfField($fieldName)
     {
@@ -199,8 +192,8 @@ class ClassMetadata implements DoctrineMetadata
     /**
      * Returns the target class name of the given association.
      * 
-     * @param string $assocName
-     * @return string
+     * @param   string $assocName
+     * @return  string
      */
     public function  getAssociationTargetClass($assocName)
     {
@@ -309,7 +302,9 @@ class ClassMetadata implements DoctrineMetadata
     }
     
     /**
-     * @todo phpdoc
+     * Returns the mapper associated with this Metadata.
+     *
+     * @return Mapper
      */
     protected function getMapper()
     {

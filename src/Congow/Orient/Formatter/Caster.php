@@ -413,22 +413,23 @@ class Caster implements CasterInterface
      * Given the internl value of the caster (an array), it iterates iver each
      * element of the array and hydrates it.
      *
-     * @see Caster::castLink for more insights
-     * @return Array|null
+     * @see     Caster::castLink for more insights
+     * @return  Array|null
      */
     protected function castLinkCollection()
     {   
         foreach ($this->value as $key => $value) {
-            
             if (is_object($value)) {
-                return new ValueProxy($this->getMapper()->hydrateCollection($this->value));
+                return $this->getMapper()->hydrateCollection($this->value);
             }
             
             try {
                 $ridCollection = new Rid\Collection(array_map(function($rid){
-                    return new Rid($rid);
+                    new Rid($rid);
+                    
+                    return $rid;
                 }, $this->value));
-                
+
                 return $ridCollection;
             } catch (ValidationException $e) {
                 return null;

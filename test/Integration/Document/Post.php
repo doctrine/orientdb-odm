@@ -30,7 +30,7 @@ class Post
     /**
      * @ODM\Property(type="link_list")
      */
-    protected $comments;
+    public $comments;
     
     public function getComments()
     {

@@ -32,7 +32,7 @@ class ManagerTest extends TestCase
         $query      = new Query(array('Address'));
         $addresses  = $this->manager->execute($query);
         
-        $this->assertEquals(20, count($addresses));
+        $this->assertEquals(165, count($addresses));
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
     }
     
@@ -70,6 +70,13 @@ class ManagerTest extends TestCase
         $address    = $this->manager->find('13:0');
         
         $this->assertInstanceOf("test\Integration\Document\Address", $address);
+    }
+    
+    public function testFindingARecordWithAFetchPlan()
+    {
+        $post       = $this->manager->find('27:0', '*:-1');
+        $this->assertInternalType('array', $post->comments);
+        $this->assertFalse($post->comments instanceOf \Congow\Orient\ODM\Proxy\Collection);
     }
     
         

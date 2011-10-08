@@ -51,10 +51,7 @@ class Collection extends AbstractProxy
         if ($this->collection) {
             return $this->collection;
         } else {
-            $rids               = array_map(function($rid) {
-                return $rid->getValue();
-            }, $this->getRids());
-            $this->collection   = $this->getManager()->findRecords($rids);
+            $this->collection   = $this->getManager()->findRecords($this->getRids());
             
             return $this->collection;
         }    

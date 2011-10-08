@@ -23,6 +23,7 @@ namespace Congow\Orient\Query;
 use Congow\Orient\Exception\Query\Command as CommandException;
 use Congow\Orient\Contract\Formatter\Query as QueryFormatter;
 use Congow\Orient\Formatter\Query as Formatter;
+use Congow\Orient\Validator\Rid as RidValidator;
 use Congow\Orient\Exception;
 use Congow\Orient\Contract\Query\Command as CommandContract;
 use Congow\Orient\Validator\Escaper as EscapeValidator;
@@ -163,8 +164,17 @@ abstract class Command implements CommandContract
             $condition = $this->formatWhereConditionWithMultipleTokens($condition, $value, $validator);
         }
         else
-        {
-            $condition = $this->formatWhereConditionWithSingleToken($condition, $value, $validator);
+        {        
+            $ridValidator = new RidValidator();
+        
+            try {
+                $value    = $ridValidator->check($value);
+            }
+            catch (Exception $e) {
+                $value    =  '"' . $validator->check($value, 1) . '"';
+            }
+
+            $condition = str_replace("?", $value, $condition);
         } 
         
         $this->setTokenValues('Where', array("{$clause} " . $condition), $append, false, false);
@@ -357,29 +367,6 @@ abstract class Command implements CommandContract
 
             throw new Exception\Logic($message);
         }
-    }
-    
-    /**
-     * @todo phpdoc
-     * @todo rid should be validated in where(), not here
-     */
-    protected function formatWhereConditionWithSingleToken(
-        $condition, 
-        $value, 
-        EscapeValidator $validator
-    )
-    {
-        $ridValidator = new \Congow\Orient\Validator\Rid();
-        
-        try {
-            $rid    = $ridValidator->check($value);
-            $value  = $rid;
-        }
-        catch (\Exception $e) {
-            $value =  '"' . $validator->check($value, 1) . '"';
-        }
-        
-        return str_replace("?", $value, $condition);
     }
 
     /**
