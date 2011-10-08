@@ -60,25 +60,48 @@ class RepositoryTest extends TestCase
         
         $this->assertEquals(2, count($posts));
     }
-    
-    /**
-     * @missing test of the limit
-     */
+
     public function testRetrievingByCriteria()
     {
         $criteria = array(
           'title' => 'aaaa'
         );
-        $posts = $this->repository->findBy($criteria, array('@rid' => 'DESC'), 1);
+        $posts = $this->repository->findBy($criteria, array('@rid' => 'DESC'));
         
         $this->assertEquals(0, count($posts));
         
-        $posts = $this->repository->findBy(array(), array('@rid' => 'DESC'), 1);
+        $posts = $this->repository->findBy(array(), array('@rid' => 'DESC'));
         
         $this->assertTrue($posts[0]->getRid() > $posts[1]->getRid());
 
-        $posts = $this->repository->findBy(array(), array('@rid' => 'ASC'), 1);
+        $posts = $this->repository->findBy(array(), array('@rid' => 'ASC'));
         
         $this->assertTrue($posts[0]->getRid() < $posts[1]->getRid());
+
+        $posts = $this->repository->findBy(array(), array('@rid' => 'ASC'), 1);
+        
+        $this->assertEquals(1, count($posts));
+    }
+
+    public function testRetrievingARecordByCriteria()
+    {
+        $criteria = array(
+          'title' => 'aaaa'
+        );
+        $post = $this->repository->findOneBy($criteria, array('@rid' => 'DESC'));
+        
+        $this->assertEquals(null, $post);
+        
+        $post = $this->repository->findOneBy(array());
+        
+        $this->assertInstanceOf("test\Integration\Document\Post", $post);
+
+        $post = $this->repository->findOneBy(array());
+        
+        $this->assertInstanceOf("test\Integration\Document\Post", $post);
+
+        $post = $this->repository->findOneBy(array());
+        
+        $this->assertInstanceOf("test\Integration\Document\Post", $post);
     }
 }

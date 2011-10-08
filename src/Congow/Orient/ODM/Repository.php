@@ -74,29 +74,10 @@ class Repository implements ObjectRepository
      * Finds all objects in the repository.
      *
      * @return mixed The objects.
-     * @todo duplication in the find*()
      */
     public function findAll()
     {
-        $results = array();
-        
-        foreach ($this->getOrientClasses() as $mappedClass) {
-            $query      = new Query(array($mappedClass));
-            $collection = $this->getManager()->execute($query);
-
-            if (!is_array($collection)) {
-                $message = <<<EOT
-Problems executing the query "{$query->getRaw()}".
-The server returned $collection, while it should be an Array.
-EOT;
-                
-                throw new Exception($message);
-            }
-            
-            $results = array_merge($results, $collection);
-        }
-
-        return $results;
+        return $this->findBy(array());
     }
 
     /**
@@ -112,7 +93,7 @@ EOT;
      * @param int|null $offset
      * @return mixed The objects.
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, array $orderBy = array(), $limit = null, $offset = null)
     {
         $results = array();
         
@@ -125,6 +106,10 @@ EOT;
             
             foreach ($orderBy as $key => $order) {
                 $query->orderBy("$key $order");
+            }
+            
+            if ($limit) {
+                $query->limit($limit);
             }
 
             $collection = $this->getManager()->execute($query);
@@ -152,7 +137,13 @@ EOT;
      */
     public function findOneBy(array $criteria)
     {
+        $documents = $this->findBy($criteria, array(), 1);
         
+        if (is_array($documents) && count($documents)) {
+            return array_shift($documents);
+        }
+        
+        return null;
     }
     
     /**
