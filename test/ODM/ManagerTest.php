@@ -21,11 +21,9 @@ class TestMapper extends \Congow\Orient\ODM\Mapper
     public function hydrate($document)
     {
         $linktracker = new \Congow\Orient\ODM\Mapper\LinkTracker;
-        $linktracker->add('capital', '1:2');
+        $linktracker->add('capital', new \Congow\Orient\Foundation\Types\Rid('1:2'));
         
-        return array(
-          new Document\Stub\Contact\Address, $linktracker
-        );
+        return new \Congow\Orient\ODM\Mapper\Hydration\Result(new Document\Stub\Contact\Address, $linktracker);
     }
     
     public function getDocumentDirectories()
@@ -53,12 +51,12 @@ class TestAdapter extends \Congow\Orient\Foundation\Protocol\Adapter\Http
     
     public function getResult()
     {
-        $record = json_decode('{
+        $record = array(json_decode('{
                     "@type": "d", "@rid": "#19:0", "@version": 2, "@class": "Address", 
                     "name": "Luca", 
                     "surname": "Garulli", 
                     "out": ["#20:1"]
-        }');
+        }'));
         
         return $record;
     }

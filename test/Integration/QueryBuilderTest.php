@@ -221,10 +221,6 @@ class QueryBuilderTest extends TestCase
         $this->assertStatusCode(self::_200, $this->query());
     }
 
-    /**
-     * @todo open a bug in the traccke of Congow\OrientDB
-     * count(*)  returns only 20 results.
-     */
     public function testCreateAnIndex()
     {
         $this->query->index('index_name_2', 'unique');

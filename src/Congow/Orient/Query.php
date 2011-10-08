@@ -217,8 +217,9 @@ class Query implements QueryInterface
     }
     
     /**
+     * Returns the internal command.
      *
-     * @todo phpdoc
+     * @return Command
      */
     public function getCommand()
     {
@@ -583,12 +584,16 @@ class Query implements QueryInterface
     }
 
     /**
-     * @todo phpdoc
+     * Changes the internal command to an PUT, setting the class to update
+     * and the values to be written.
+     *
+     * @param   string  $class
+     * @return  Command
      */
     public function put(array $values, $class, $append = true)
     {
-        $commandClass = $this->getCommandClass('update.put');
-        $this->command = new $commandClass($values, $class, $append);
+        $commandClass   = $this->getCommandClass('update.put');
+        $this->command  = new $commandClass($values, $class, $append);
 
         return $this->command;
     }
@@ -609,7 +614,10 @@ class Query implements QueryInterface
     }
 
     /**
-     * @todo phpdoc
+     * Changes the internal command to an UPDATE, setting the class to update.
+     *
+     * @param   string  $class
+     * @return  Command
      */
     public function update($class)
     {

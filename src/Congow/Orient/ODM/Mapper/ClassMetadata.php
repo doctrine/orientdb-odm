@@ -33,8 +33,10 @@ class ClassMetadata implements DoctrineMetadata
     private   $multipleAssociations = array('linklist', 'linkset', 'linkmap');
     
     /**
-     * @todo phpdoc
-     * @todo test
+     * Instantiates a new Metadata for the given $className.
+     *
+     * @param string        $className
+     * @param DataMapper    $mapper 
      */
     public function  __construct($className, DataMapper $mapper)
     {
@@ -206,12 +208,15 @@ class ClassMetadata implements DoctrineMetadata
     }
     
     /**
-     * @todo phpdoc
+     * Returns the association mapped for the given $field.
+     *
+     * @param   string $field
+     * @return  string 
      */
-    protected function getAssociation($fieldName)
+    protected function getAssociation($field)
     {
         foreach ($this->getAssociations() as $association) {
-            if ($association->name === $fieldName) {
+            if ($association->name === $field) {
                 return $association;
             }
         }
@@ -220,7 +225,9 @@ class ClassMetadata implements DoctrineMetadata
     }    
     
     /**
-     * @todo phpdoc
+     * Returns all the possible associations mapped in the introspected class.
+     *
+     * @return Array
      */
     protected function getAssociations()
     {
@@ -236,31 +243,39 @@ class ClassMetadata implements DoctrineMetadata
         
         return $associations;
     }
-    
+
     /**
-     * @todo phpdoc
+     * Returns all the possible association types.
+     * e.g. linklist, linkmap, link...
+     *
+     * @return Array 
      */
     protected function getAssociationTypes()
     {
         return array_merge($this->singleAssociations, $this->multipleAssociations);
     }
-    
+
     /**
-     * @todo phpdoc
+     * Returns the reflection property associated with the $field.
+     *
+     * @param   string $field
+     * @return  Annotations\Property
      */
-    protected function getField($fieldName)
+    protected function getField($field)
     {        
-        foreach ($this->getFields() as $field) {
-            if ($field->name === $fieldName) {
-                return $field;
+        foreach ($this->getFields() as $annotatedField) {
+            if ($annotatedField->name === $field) {
+                return $annotatedField;
             }
         }
         
         return null;
     }
-    
+
     /**
-     * @todo phpdoc
+     * Returns all the fields of the introspected class.
+     *
+     * @return Array
      */
     protected function getFields()
     {
@@ -278,11 +293,15 @@ class ClassMetadata implements DoctrineMetadata
     }
     
     /**
-     * @todo phpdoc
+     * Checks whether the $field is mapped as an association.
+     *
+     * @param   string  $field
+     * @param   array   $associationTypes
+     * @return  boolean
      */
-    protected function isValuedAssociation($fieldName, Array $associationTypes)
+    protected function isValuedAssociation($field, Array $associationTypes)
     {
-        $association = $this->getAssociation($fieldName);
+        $association = $this->getAssociation($field);
         
         if ($association) {
             return in_array($association->type, $associationTypes);

@@ -23,6 +23,7 @@ namespace Congow\Orient\ODM;
 use Congow\Orient\ODM\Manager;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\Query;
+use Congow\Orient\Exception;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 class Repository implements ObjectRepository
@@ -65,9 +66,20 @@ class Repository implements ObjectRepository
     {
         $results = array();
         
-        foreach ($this->getOrientClasses() as $mapperClass) {
-            $query      = new Query($this->getOrientClasses());
-            $results    = array_merge($results, $this->getManager()->execute($query));
+        foreach ($this->getOrientClasses() as $mappedClass) {
+            $query      = new Query(array($mappedClass));
+            $collection = $this->getManager()->execute($query);
+
+            if (!is_array($collection)) {
+                $message = <<<EOT
+Problems executing the query "{$query->getRaw()}".
+The server returned $collection, while it should be an Array.
+EOT;
+                
+                throw new Exception($message);
+            }
+            
+            $results    = array_merge($results, $collection);
         }
 
         return $results;

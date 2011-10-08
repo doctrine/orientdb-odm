@@ -242,9 +242,9 @@ class MapperTest extends TestCase
     
     public function testAJsonGetsConvertedToAnObject()
     {   
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
         
-        $this->assertInstanceOf('Test\ODM\Document\Stub\Contact\Address', $object[0]);
+        $this->assertInstanceOf('Test\ODM\Document\Stub\Contact\Address', $result->getDocument());
     }
 
     /**
@@ -265,44 +265,45 @@ class MapperTest extends TestCase
 
     public function testStringPropertiesGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
-        $this->assertEquals('Residence', $object[0]->getType());
+        $result = $this->mapper->hydrate($this->jsonRecord);
+        
+        $this->assertEquals('Residence', $result->getDocument()->getType());
     }
 
     public function testDoublePropertiesGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(122.231, $object[0]->getCapital());
+        $this->assertEquals(122.231, $result->getDocument()->getCapital());
     }
     
     public function testIntegersGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(12, $object[0]->getNumber());
+        $this->assertEquals(12, $result->getDocument()->getNumber());
     }
     
     public function testFloatGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertInternalType('float', $object[0]->getFloating());
+        $this->assertInternalType('float', $result->getDocument()->getFloating());
     }
 
     public function testShortPropertiesGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(-32000, $object[0]->getNegativeShort());
-        $this->assertEquals(32000, $object[0]->getPositiveShort());
+        $this->assertEquals(-32000, $result->getDocument()->getNegativeShort());
+        $this->assertEquals(32000, $result->getDocument()->getPositiveShort());
     }
 
     public function testShortPropertiesDontThrowAnExceptionIfOverflowsAreTolerated()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(null, $object[0]->getInvalidShort());
+        $this->assertEquals(null, $result->getDocument()->getInvalidShort());
     }
 
     /**
@@ -316,17 +317,17 @@ class MapperTest extends TestCase
 
     public function testLongPropertiesGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(-32, $object[0]->getNegativeLong());
-        $this->assertEquals(32, $object[0]->getPositiveLong());
+        $this->assertEquals(-32, $result->getDocument()->getNegativeLong());
+        $this->assertEquals(32, $result->getDocument()->getPositiveLong());
     }
 
     public function testLongPropertiesDontThrowAnExceptionIfOverflowsAreTolerated()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(null, $object[0]->getInvalidLong());
+        $this->assertEquals(null, $result->getDocument()->getInvalidLong());
     }
 
     /**
@@ -340,17 +341,17 @@ class MapperTest extends TestCase
 
     public function testBytePropertiesGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(-32, $object[0]->getNegativeByte());
-        $this->assertEquals(32, $object[0]->getPositiveByte());
+        $this->assertEquals(-32, $result->getDocument()->getNegativeByte());
+        $this->assertEquals(32, $result->getDocument()->getPositiveByte());
     }
 
     public function testBytePropertiesDontThrowAnExceptionIfOverflowsAreTolerated()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(null, $object[0]->getInvalidByte());
+        $this->assertEquals(null, $result->getDocument()->getInvalidByte());
     }
 
     /**
@@ -364,56 +365,56 @@ class MapperTest extends TestCase
     
     public function testPropertiesCanHaveDifferentNamesInCongowOrientAndPopo()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals('ok', $object[0]->getExampleProperty());
+        $this->assertEquals('ok', $result->getDocument()->getExampleProperty());
     }
     
     public function testBooleanPropertiesGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(true, $object[0]->getIsTrue());
-        $this->assertEquals(false, $object[0]->getIsFalse());
+        $this->assertEquals(true, $result->getDocument()->getIsTrue());
+        $this->assertEquals(false, $result->getDocument()->getIsFalse());
     }
     
     public function testBinaryPropertiesGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(self::BINARY_64_ENCODED, $object[0]->getImage());
+        $this->assertEquals(self::BINARY_64_ENCODED, $result->getDocument()->getImage());
     }
     
     public function testLinkedRecordsGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
-        $link = $object[0]->getLink();
-        $sonLink = $link[0]->getLink();
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $link[0]);
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $sonLink[0]);
+        $result = $this->mapper->hydrate($this->jsonLinkedRecord);
+        $link = $result->getDocument()->getLink();
+        $sonLink = $link->getDocument()->getLink();
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $link->getDocument());
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $sonLink->getDocument());
     }
     
     // public function testLazyLinkedRecordsGetsMappedInTheObject()
     // {
     //     $object = $this->mapper->hydrate($this->jsonLinkedRecord);
     //     
-    //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object[0]->getLazyLink());
+    //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getDocument()->getLazyLink());
     // 
     //     $object = $this->mapper->hydrate($this->jsonNotLazyLinkedRecord);
     // 
-    //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object[0]->getLazyLink());
+    //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $object->getDocument()->getLazyLink());
     // }
     
     // public function testLazyLinkListGetsMappedInTheObject()
     // {
     //     $object = $this->mapper->hydrate($this->jsonLinkedRecord);
-    //     $linklist = $object[0]->getLazyLinkList();
+    //     $linklist = $object->getDocument()->getLazyLinkList();
     //     
     //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
     //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[1]);
     //     
     //     $object = $this->mapper->hydrate($this->jsonNotLazyLinkedRecord);
-    //     $linklist = $object[0]->getLazyLinkList();
+    //     $linklist = $object->getDocument()->getLazyLinkList();
     // 
     //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]);
     //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[1]);
@@ -422,7 +423,7 @@ class MapperTest extends TestCase
     // public function testLazyLinkSetGetsMappedInTheObject()
     // {
     //     $object = $this->mapper->hydrate($this->jsonLinkedRecord);
-    //     $linkset = call_user_func($object[0]->lazy_linkset);
+    //     $linkset = call_user_func($object->getDocument()->lazy_linkset);
     //     
     //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[0]);
     //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[1]);
@@ -430,17 +431,17 @@ class MapperTest extends TestCase
     
     public function testLinkSetGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
-        $linkset = $object[0]->getLinkset();
+        $result = $this->mapper->hydrate($this->jsonLinkedRecord);
+        $linkset = $result->getDocument()->getLinkset();
         
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[0][0]);
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[1][0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[0]->getDocument());
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkset[1]->getDocument());
     }
     
     // public function testLazyLinkMapGetsMappedInTheObject()
     // {
     //     $object = $this->mapper->hydrate($this->jsonLinkedRecord);
-    //     $linkmap = call_user_func($object[0]->lazy_linkmap);
+    //     $linkmap = call_user_func($object->getDocument()->lazy_linkmap);
     //     
     //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap[0]);
     //     $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap[1]);
@@ -448,67 +449,67 @@ class MapperTest extends TestCase
     
     public function testLinkListGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
-        $linklist = $object[0]->getLinkList();
+        $result = $this->mapper->hydrate($this->jsonLinkedRecord);
+        $linklist = $result->getDocument()->getLinkList();
         
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0][0]);
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[1][0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[0]->getDocument());
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linklist[1]->getDocument());
     }
     
     public function testLinkMapGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonLinkedRecord);
-        $linkmap = $object[0]->getLinkMap();
+        $result = $this->mapper->hydrate($this->jsonLinkedRecord);
+        $linkmap = $result->getDocument()->getLinkMap();
         
         $keys = array_keys($linkmap);
         
         $this->assertEquals('first_key', $keys[0]);
         $this->assertEquals('second_key', $keys[1]);
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['first_key'][0]);
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['second_key'][0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['first_key']->getDocument());
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['second_key']->getDocument());
     }
      
     public function testEmbeddedMapGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonEmbeddedMapRecord);
-        $linkmap = $object[0]->getEmbeddedMap();
+        $result = $this->mapper->hydrate($this->jsonEmbeddedMapRecord);
+        $linkmap = $result->getDocument()->getEmbeddedMap();
         
         $keys = array_keys($linkmap);
         
         $this->assertEquals('first_key', $keys[0]);
         $this->assertEquals('second_key', $keys[1]);
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['first_key'][0]);
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['second_key'][0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['first_key']->getDocument());
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $linkmap['second_key']->getDocument());
     }
     
     public function testDatePropertiesGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertInstanceOf('\DateTime', $object[0]->getDate());
-        $this->assertEquals('2011-01-01', $object[0]->getDate()->format('Y-d-m'));
+        $this->assertInstanceOf('\DateTime', $result->getDocument()->getDate());
+        $this->assertEquals('2011-01-01', $result->getDocument()->getDate()->format('Y-d-m'));
     }
 
     public function testDatetimePropertiesGetsMappedInTheObject()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertInstanceOf('\DateTime', $object[0]->getDateTime());
-        $this->assertEquals('2011-01-01 21:00:00', $object[0]->getDateTime()->format('Y-d-m H:i:s'));
+        $this->assertInstanceOf('\DateTime', $result->getDocument()->getDateTime());
+        $this->assertEquals('2011-01-01 21:00:00', $result->getDocument()->getDateTime()->format('Y-d-m H:i:s'));
     }
 
     public function testAnAnnotatedPropertyNotPassedWithTheJSONIsNullByDefault()
     {
         $object = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(null, $object[0]->getAnnotatedButNotInJson());
+        $this->assertEquals(null, $object->getDocument()->getAnnotatedButNotInJson());
     }
 
     public function testPropertiesGetsMappedInTheObjectOnlyIfAnnotated()
     {
         $object = $this->mapper->hydrate($this->jsonRecord);
 
-        $this->assertEquals(null, $object[0]->getStreet());
+        $this->assertEquals(null, $object->getDocument()->getStreet());
     }
 
     public function testGettingTheDirectoriesInWhichTheMapperLooksForPOPOs()
@@ -533,39 +534,39 @@ class MapperTest extends TestCase
     public function testHidratedCollectionsContainPopo()
     {
         $collection = $this->mapper->hydrateCollection($this->jsonCollection);
-        $this->assertInstanceOf('Test\ODM\Document\Stub\Contact\Address', $collection[0][0] );
-        $this->assertInstanceOf('Test\ODM\Document\Stub\City', $collection[1][0] );
+        $this->assertInstanceOf('Test\ODM\Document\Stub\Contact\Address', $collection[0]->getDocument() );
+        $this->assertInstanceOf('Test\ODM\Document\Stub\City', $collection[1]->getDocument() );
     }
     
     public function testCongowOrientObjectsOfDifferentClassesCanBeMappedByASinglePopo()
     {
         $collection = $this->mapper->hydrateCollection($this->jsonCollection);
-        $this->assertInstanceOf('Test\ODM\Document\Stub\Contact\Address', $collection[2][0] );
+        $this->assertInstanceOf('Test\ODM\Document\Stub\Contact\Address', $collection[2]->getDocument() );
     }
     
     public function testEmbeddedRecordsGetsMappedInTheObject()
     {
         $object = $this->mapper->hydrate($this->jsonRecord);
-        $embedded = $object[0]->getEmbedded();
+        $embedded = $object->getDocument()->getEmbedded();
         
-        $this->assertInstanceOf("Test\ODM\Document\Stub\City", $embedded[0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\City", $embedded->getDocument());
     }
     
     public function testEmbeddedListedRecordsGetsMappedInTheObject()
     {
         $object     = $this->mapper->hydrate($this->jsonEmbeddedRecord);
-        $embedded   = $object[0]->getEmbeddedList();
+        $embedded   = $object->getDocument()->getEmbeddedList();
         
         $this->assertEquals(2, count($embedded));
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $embedded[0][0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $embedded[0]->getDocument());
     }
     
     public function testEmbeddedListedDataGetsMappedInTheObject()
     {
         $object             = $this->mapper->hydrate($this->jsonEmbeddedRecord);
-        $embeddedIntegers   = $object[0]->getEmbeddedIntegers();
-        $embeddedStrings    = $object[0]->getEmbeddedStrings();
-        $embeddedBooleans   = $object[0]->getEmbeddedBooleans();
+        $embeddedIntegers   = $object->getDocument()->getEmbeddedIntegers();
+        $embeddedStrings    = $object->getDocument()->getEmbeddedStrings();
+        $embeddedBooleans   = $object->getDocument()->getEmbeddedBooleans();
         
         $this->assertEquals(2, count($embeddedIntegers));
         $this->assertEquals(10, $embeddedIntegers[0]);        
@@ -578,19 +579,19 @@ class MapperTest extends TestCase
     /* embedded set */
     public function testEmbeddedSetRecordsGetsMappedInTheObject()
     {
-        $object     = $this->mapper->hydrate($this->jsonEmbeddedSetRecord);
-        $embedded   = $object[0]->getEmbeddedSet();
+        $result     = $this->mapper->hydrate($this->jsonEmbeddedSetRecord);
+        $embedded   = $result->getDocument()->getEmbeddedSet();
         
         $this->assertEquals(2, count($embedded));
-        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $embedded[0][0]);
+        $this->assertInstanceOf("Test\ODM\Document\Stub\Contact\Address", $embedded[0]->getDocument());
     }
     
     public function testEmbeddedSetDataGetsMappedInTheObject()
     {
         $object             = $this->mapper->hydrate($this->jsonEmbeddedSetRecord);
-        $embeddedIntegers   = $object[0]->getEmbeddedSetIntegers();
-        $embeddedStrings    = $object[0]->getEmbeddedSetStrings();
-        $embeddedBooleans   = $object[0]->getEmbeddedSetBooleans();
+        $embeddedIntegers   = $object->getDocument()->getEmbeddedSetIntegers();
+        $embeddedStrings    = $object->getDocument()->getEmbeddedSetStrings();
+        $embeddedBooleans   = $object->getDocument()->getEmbeddedSetBooleans();
         
         $this->assertEquals(2, count($embeddedIntegers));
         $this->assertEquals(10, $embeddedIntegers[0]);        

@@ -43,10 +43,10 @@ class TestManager extends \Congow\Orient\ODM\Manager
         
         return new Address;
     }
-    
-    public function findAll()
+
+    public function execute(\Congow\Orient\Query $q)
     {
-        return array(new Address, new Address);
+        return array(new Address);
     }
 }
 
@@ -72,12 +72,9 @@ class RepositoryTest extends TestCase
         $this->assertInternalType('null', $document);
     }
     
-    /**
-     * @todo disabled test
-     */
     public function testFindAll()
     {
-//        $documents = $this->repository->findAll();
-//        $this->assertEquals(2, count($documents));
+        $documents = $this->repository->findAll();
+        $this->assertEquals(2, count($documents));
     }
 }

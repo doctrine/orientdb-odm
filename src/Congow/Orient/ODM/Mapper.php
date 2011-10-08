@@ -25,6 +25,8 @@ namespace Congow\Orient\ODM;
 use Congow\Orient\Exception;
 use Congow\Orient\Query;
 use Congow\Orient\Foundation\Types\Rid;
+use Congow\Orient\ODM\Mapper;
+use Congow\Orient\ODM\Mapper\Hydration;
 use Congow\Orient\ODM\Mapper\LinkTracker;
 use Congow\Orient\Exception\Document\NotFound as DocumentNotFoundException;
 use Congow\Orient\Formatter\CasterInterface as CasterInterface;
@@ -162,7 +164,7 @@ class Mapper
                 $linkTracker    = new LinkTracker();
                 $document       = $this->createDocument($class, $orientObject, $linkTracker);
 
-                return array($document, $linkTracker);
+                return new Hydration\Result($document, $linkTracker);
             }
         }
         
@@ -421,7 +423,7 @@ EOT;
         $namespaces         = explode('\\', $class);
         $proxyClassName     = array_pop($namespaces);
 
-        if (!class_exists("Congow\Orient\Proxy\\" . $proxyClassName)) {
+        if (!class_exists("Congow\Orient\Proxy" . $class)) {
             $dir = $this->getDocumentProxyDirectory() . '/Congow/Orient/Proxy';
             
             foreach ($namespaces as $namespace) {
@@ -436,7 +438,7 @@ EOT;
             $this->generateProxyClass($class, $proxyClassName, $dir);
         }
 
-        return "Congow\Orient\Proxy" . $namespace . "\\" . $proxyClassName;
+        return "Congow\Orient\Proxy" . $class;
     }
 
     /**
@@ -486,7 +488,6 @@ EOT;
             $value = $this->castProperty($annotation, $value);
 
             if($value instanceOf Rid) {
-                $value = $value->getValue();
                 $linkTracker->add($property, $value);
             }
         }

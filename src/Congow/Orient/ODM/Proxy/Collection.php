@@ -20,24 +20,24 @@
  
 namespace Congow\Orient\ODM\Proxy;
 
-use Congow\Orient\ODM\Mapper;
+use Congow\Orient\ODM\Manager;
 use Congow\Orient\ODM\Proxy\AbstractProxy;
 
 class Collection extends AbstractProxy
 {   
-    protected $mapper;
+    protected $manager;
     protected $rids;
     protected $collection;
     
     /**
      * Instantiates a new Proxy collection.
      *
-     * @param Mapper $mapper
-     * @param array $rids 
+     * @param Manager   $manager
+     * @param array     $rids 
      */
-    function __construct(Mapper $mapper, Array $rids)
+    function __construct(Manager $manager, Array $rids)
     {
-        $this->mapper = $mapper;
+        $this->manager = $manager;
         $this->rids    = $rids;
     }
     
@@ -51,7 +51,11 @@ class Collection extends AbstractProxy
         if ($this->collection) {
             return $this->collection;
         } else {
-            $this->collection = $this->getMapper()->findRecords($this->getRids());
+            $rids               = array_map(function($rid) {
+                return $rid->getValue();
+            }, $this->getRids());
+            $this->collection   = $this->getManager()->findRecords($rids);
+            
             return $this->collection;
         }    
     }

@@ -22,7 +22,9 @@
 namespace Congow\Orient\ODM;
 
 use Congow\Orient\ODM\Mapper;
+use Congow\Orient\ODM\Mapper\Hydration\Result;
 use Congow\Orient\Query;
+use Congow\Orient\Foundation\Types\Rid;
 use Congow\Orient\Exception\ODM\OClass\NotFound as UnmappedClass;
 use Congow\Orient\Query\Command\Select;
 use Congow\Orient\Exception;
@@ -75,8 +77,6 @@ class Manager implements ObjectManager
      *
      * @param   Query $query
      * @return  Array 
-     * @todo test what happens when executing a find here
-     * @todo messy code
      */
     public function execute(Query $query)
     {
@@ -85,12 +85,10 @@ class Manager implements ObjectManager
         $execution  = $adapter->execute($query->getRaw(), $return);
         
         if ($execution) {
-            $results = $adapter->getResult();
-            
-            if ($results) {
+            if ($results = $adapter->getResult()) {
                 $hydrationResults = $this->getMapper()->hydrateCollection($results);
                 
-                return $this->returnACollection($hydrationResults);
+                return $this->finalizeCollection($hydrationResults);
             }
             
             return true;
@@ -110,11 +108,10 @@ class Manager implements ObjectManager
      *   $record = $lazyLoadedRecord();
      * </code>
      *
-     * @param string    $rid
-     * @param boolean   $lazy
-     * @return Proxy|object
-     * @todo throw custom exception | aware that orient gives an exception when it does not fiind the record with $rid
-     * @todo messy code
+     * @param   string    $rid
+     * @param   boolean   $lazy
+     * @return  Proxy|object
+     * @throws  UnmappedClass|Exception
      */
     public function find($rid, $lazy = false)
     {
@@ -127,24 +124,7 @@ class Manager implements ObjectManager
         
         try
         {
-            $query      = new Query(array($rid));
-            $adapter    = $this->getProtocolAdapter();
-
-            if ($adapter->execute($query->getRaw(), true) && $adapter->getResult()) {
-              $record       = is_array($adapter->getResult()) ? array_shift($adapter->getResult()) : $adapter->getResult();
-              $result       = $this->getMapper()->hydrate($record);
-              $document    = $result[0];
-              $linkTracker = $result[1];
-
-              foreach ($linkTracker->getProperties() as $property => $value) {
-                  $method = 'set' . ucfirst($property);
-                  $document->$method($this->find($value, true));
-              }
-              
-              return $document;
-            }
-            
-            return null;
+            return $this->doFind($rid);
         }
         catch (UnmappedClass $e) {
             throw $e;
@@ -154,18 +134,32 @@ class Manager implements ObjectManager
         }
     }
     
+    protected function doFind($rid)
+    {
+        $query      = new Query(array($rid));
+        $adapter    = $this->getProtocolAdapter();
+        $execution  = $adapter->execute($query->getRaw(), true);
+
+        if ($execution && $result = $adapter->getResult()) {
+          $record       = is_array($result) ? array_shift($result) : $result;
+          $result       = $this->getMapper()->hydrate($record);
+
+          return $this->finalize($result);
+        }
+
+        return null;
+    }
+    
     /**
      * Via a protocol adapter, it queries for an array of objects with the given
      * $rids.
      * If $lazy loading is used, all of this won't be executed unless the
-     * returned Proxy object is called via __invoke, e.g.:
+     * returned Proxy object is called via __invoke.
      * @see     ->find()
      * @param   string    $rid
      * @param   boolean   $lazy
      * @return  Proxy\Collection|array
-     * @todo duplicated logic to hydrate partial results (here and in find() method)
-     * @throws Congow\Orient\Exception\Query\SQL\Invalid
-     * @todo throw specific exception "You are trying to retrieve 11:0, 11:1 but some of these are out of cluster size..."
+     * @throws  Congow\Orient\Exception\Query\SQL\Invalid
      */
     public function findRecords(Array $rids, $lazy = false)
     {
@@ -177,23 +171,9 @@ class Manager implements ObjectManager
         $adapter    = $this->getProtocolAdapter();
 
         if ($adapter->execute($query->getRaw(), true) && $adapter->getResult()) {
-
             $collection = $this->getMapper()->hydrateCollection($adapter->getResult());
-
-            foreach ($collection as $key => $partialObject) {
-                $document    = $partialObject[0];
-                $linkTracker = $partialObject[1];
-
-                foreach ($linkTracker->getProperties() as $property => $value) {
-                    $method = 'set' . ucfirst($property);
-
-                    $document->$method($this->find($value, true));
-                }
-
-                $collection[$key] = $document;
-            }
-
-            return $collection;
+            
+            return $this->finalizeCollection($collection);
         }
 
         return array();
@@ -282,6 +262,39 @@ class Manager implements ObjectManager
     }
     
     /**
+     * Given an Hydration\Result, it implements lazy-loading for all its'
+     * document's related links.
+     *
+     * @param   Result $result
+     * @return  object
+     */
+    protected function finalize(Result $result)
+    {
+        foreach ($result->getLinkTracker()->getProperties() as $property => $value) {
+            $setter = 'set' . ucfirst($property);
+            $method = $value instanceof Rid\Collection ? 'findRecords' : 'find';
+            $result->getDocument()->$setter($this->$method($value->getValue(), true));
+        }
+        
+        return $result->getDocument();
+    }
+    
+    /**
+     * Given a collection of Hydration\Result, it returns an array of POPOs.
+     *
+     * @param   Array $collection
+     * @return  Array
+     */
+    protected function finalizeCollection(Array $collection)
+    {
+        foreach ($collection as $key => $hydrationResult) {
+            $collection[$key] = $this->finalize($hydrationResult);
+        }
+
+        return $collection;
+    }
+    
+    /**
      * Returns the mapper of the current object.
      *
      * @return Mapper
@@ -300,29 +313,5 @@ class Manager implements ObjectManager
     protected function getProtocolAdapter()
     {
         return $this->protocolAdapter;
-    }
-    
-    /**
-     * Given a collection of Hydration\Result, it returns an array of POPOs.
-     *
-     * @param   Array $collection
-     * @return  Array
-     * @todo find is good for retrieving links, what if $value is a set of links? 
-     */
-    protected function returnACollection(Array $collection)
-    {
-        foreach ($collection as $key => $partialObject) {
-            $document    = $partialObject[0];
-            $linkTracker = $partialObject[1];
-
-            foreach ($linkTracker->getProperties() as $property => $value) {
-                $method = 'set' . ucfirst($property);
-                $document->$method($this->find($value, true));
-            }
-
-            $collection[$key] = $document;
-        }
-
-        return $collection;
     }
 }

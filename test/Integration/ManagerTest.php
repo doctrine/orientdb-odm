@@ -36,6 +36,15 @@ class ManagerTest extends TestCase
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
     }
     
+    public function testFindingARecordWithAnExecuteReturnsAnArrayHowever()
+    {
+        $query      = new Query(array('13:0'));
+        $addresses  = $this->manager->execute($query);
+        
+        $this->assertEquals(1, count($addresses));
+        $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
+    }
+    
     public function testExecutionOfAnUpdate()
     {
         $query      = new Query(array('Address'));
@@ -69,6 +78,15 @@ class ManagerTest extends TestCase
         $address    = $this->manager->find('13:0');
         $this->assertInstanceOf("test\Integration\Document\Country", $address->getCity());
     }
+        
+    public function testGettingARelatedCollection()
+    {
+        $post       = $this->manager->find('27:0');
+        $comments   = $post->getComments();
+        
+        $this->assertEquals(3, count($comments));
+        $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
+    }
     
     /**
      * @expectedException \Congow\Orient\Exception\ODM\OClass\NotFound
@@ -97,6 +115,14 @@ class ManagerTest extends TestCase
         
         $this->assertEquals(2, count($addresses));
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
+    }
+    
+    /**
+     * @expectedException \Congow\Orient\Exception\Query\SQL\Invalid
+     */
+    public function testFindingSomeGoodAndSomeWrongRecords()
+    {
+        $this->manager->findRecords(array('13:0', '13:700000'));
     }
     
     /**

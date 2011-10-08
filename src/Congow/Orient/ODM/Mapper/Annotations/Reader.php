@@ -38,8 +38,11 @@ class Reader implements ReaderInterface
     protected $reader = null;
     
     /**
-     * @todo phpdoc
-     * @todo is there a way to avoid if else if else
+     * Instantiates a new annotation reader, optionally injecting a cache
+     * mechanism for it.
+     * This reader is basically a proxy wrapping Doctrine's one.
+     *
+     * @param Cache $cacheReader 
      */
     public function __construct(Cache $cacheReader = null)
     {
@@ -63,7 +66,7 @@ class Reader implements ReaderInterface
      */
     public function getClassAnnotations(\ReflectionClass $class)
     {
-        return $this->reader->getClassAnnotations($class);
+        return $this->getReader()->getClassAnnotations($class);
     }
 
     /**
@@ -76,7 +79,7 @@ class Reader implements ReaderInterface
      */
     public function getClassAnnotation(\ReflectionClass $class, $annotation)
     {
-        return $this->reader->getClassAnnotation($class, $annotation);
+        return $this->getReader()->getClassAnnotation($class, $annotation);
     }
     
     /**
@@ -88,7 +91,7 @@ class Reader implements ReaderInterface
      */
     public function getPropertyAnnotations(\ReflectionProperty $property)
     {
-        return $this->reader->getPropertyAnnotations($property);
+        return $this->getReader()->getPropertyAnnotations($property);
     }
     
     /**
@@ -100,7 +103,7 @@ class Reader implements ReaderInterface
      */
     public function getPropertyAnnotation(\ReflectionProperty $property, $annotation)
     {
-        return $this->reader->getPropertyAnnotation($property, $annotation);
+        return $this->getReader()->getPropertyAnnotation($property, $annotation);
     }
     
     /**
@@ -112,7 +115,7 @@ class Reader implements ReaderInterface
      */
     public function getMethodAnnotations(\ReflectionMethod $method)
     {
-        return $this->reader->getMethodAnnotations($method);
+        return $this->getReader()->getMethodAnnotations($method);
     }
     
     /**
@@ -124,6 +127,16 @@ class Reader implements ReaderInterface
      */
     public function getMethodAnnotation(\ReflectionMethod $method, $annotation)
     {
-        return $this->reader->getMethodAnnotation($method, $annotation);
+        return $this->getReader()->getMethodAnnotation($method, $annotation);
+    }
+    
+    /**
+     * Returns the cached reader associated with this reader.
+     *
+     * @return CachedReader
+     */
+    protected function getReader()
+    {
+        return $this->reader;
     }
 }
