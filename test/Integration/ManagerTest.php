@@ -74,7 +74,7 @@ class ManagerTest extends TestCase
     
     public function testFindingARecordWithAFetchPlan()
     {
-        $post       = $this->manager->find('27:0', '*:-1');
+        $post       = $this->manager->find('30:0', '*:-1');
         $this->assertInternalType('array', $post->comments);
         $this->assertFalse($post->comments instanceOf \Congow\Orient\ODM\Proxy\Collection);
     }
@@ -88,7 +88,7 @@ class ManagerTest extends TestCase
         
     public function testGettingARelatedCollection()
     {
-        $post       = $this->manager->find('27:0');
+        $post       = $this->manager->find('30:0');
         $comments   = $post->getComments();
         
         $this->assertEquals(3, count($comments));
