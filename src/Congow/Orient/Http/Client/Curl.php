@@ -36,7 +36,7 @@ class Curl implements HttpClient
      * @param   boolean $reuseHandle
      * @param   integer $timeout
      */
-    public function __construct($reuseHandle = true, $timeout = 2 )
+    public function __construct($reuseHandle = true, $timeout = 10)
     {
         $this->reuseHandle = $reuseHandle;
         $this->client = $this->createCurlHandle();

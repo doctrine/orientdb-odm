@@ -32,7 +32,7 @@ class RepositoryTest extends TestCase
     
     public function testFindingADocumentOfTheRepo()
     {
-        $post = $this->repository->find('27:0');
+        $post = $this->repository->find('30:0');
         
         $this->assertInstanceOf("test\Integration\Document\Post", $post);
     }
