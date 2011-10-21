@@ -337,7 +337,7 @@ class Mapper
                 return $class;
             }
         }
-        
+
         return null;
     }
     

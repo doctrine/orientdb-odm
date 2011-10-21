@@ -1,0 +1,23 @@
+create database remote:localhost/friends admin admin local
+create class friends
+insert into friends (name) values ("Ale")
+export database export
+drop database remote:localhost/friends admin admin
+connect remote:localhost/friends admin admin
+
+*** demo traversal
+
+dato uns et di amici, recuperare quelli collegati fino a N livelli di profondita'
+
+insert into friends (name) values ("Ale")
+insert into friends (name) values ("David")
+insert into friends (name) values ("Darek")
+insert into friends (name) values ("Dariusz")
+
+select from friends where any() traverse(0,4) ( @rid = #5:3 ) and @rid <> #5:3
+
+
+
+
+
+alter class pagelink SUPERCLASS link
