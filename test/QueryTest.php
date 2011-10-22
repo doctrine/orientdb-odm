@@ -363,7 +363,7 @@ class QueryTest extends TestCase
         $this->query->put(array('first' => array('1' => '12:0'), 'second' => array('2' => '13:0')), 'puttedClass');
 
         $sql =
-                'UPDATE puttedClass PUT first = \'1\', 12:0, second = \'2\', 13:0'
+                'UPDATE puttedClass PUT first = \'1\', #12:0, second = \'2\', #13:0'
         ;
 
         $this->assertCommandGives($sql, $this->query->getRaw());
@@ -372,7 +372,7 @@ class QueryTest extends TestCase
                 ->where('prop = ?', 'val');
 
         $sql =
-                'UPDATE class ADD first = 10:22, nano = 10:1 WHERE prop = "val"'
+                'UPDATE class ADD first = #10:22, nano = #10:1 WHERE prop = "val"'
         ;
 
         $this->assertCommandGives($sql, $this->query->getRaw());
@@ -381,7 +381,7 @@ class QueryTest extends TestCase
                 ->where('prop = ?', 'val');
 
         $sql =
-                'UPDATE class REMOVE first = 12:0, nano = 12:2 WHERE prop = "val"'
+                'UPDATE class REMOVE first = #12:0, nano = #12:2 WHERE prop = "val"'
         ;
 
         $this->assertCommandGives($sql, $this->query->getRaw());

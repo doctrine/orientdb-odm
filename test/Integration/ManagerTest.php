@@ -91,7 +91,6 @@ class ManagerTest extends TestCase
         $post       = $this->manager->find('30:0');
         $comments   = $post->getComments();
         
-        $this->assertEquals(3, count($comments));
         $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
     }
     
