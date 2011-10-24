@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace examples\Domain;
+namespace Domain;
 
 use Congow\Orient\ODM\Mapper\Annotations as ODM;
 

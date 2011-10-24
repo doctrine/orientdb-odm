@@ -32,11 +32,25 @@ class String  implements StringInterface
      * @return  string
      */
     public static function convertPathToClassName($file, $namespace = '')
-    {
-        $tokens     = array('.php','/', '.\\');
-        $replaces   = array('','\\',$namespace);
+    {   
+        $absPath    = realpath($file);
+        $namespaces = explode('/', $absPath);
+        $start      = false;
+        $i          = 0;
+        $chunk      = explode('\\', $namespace);
+        $namespace  = array_shift($chunk);
         
-        return str_replace($tokens, $replaces, $file);
+        while ($namespaces[$i] != $namespace) {
+            unset($namespaces[$i]);
+            
+            if(!array_key_exists(++$i,$namespaces)) {
+                break;
+            }
+        }
+        
+        $className = str_replace('.php', null, array_pop($namespaces));
+        
+        return '\\'. implode('\\', $namespaces) . '\\' . $className;
     }
 
     /**

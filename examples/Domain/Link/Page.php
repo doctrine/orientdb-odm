@@ -9,32 +9,32 @@
  * file that was distributed with this source code.
  */
 
-namespace examples\Domain;
+namespace Domain\Link;
 
 use Congow\Orient\ODM\Mapper\Annotations as ODM;
 
 /**
-* @ODM\Document(class="externallink")
+* @ODM\Document(class="pagelink")
 */
-class ExternalLink extends Link
+class Page extends \Domain\Link
 {
     /**
      * @ODM\Property(type="string")
      */
-    protected $url;
+    protected $page;
     
     public function getLink()
     {
-        return $this->getUrl();
+        return "/pages/" . $this->getPage();
     }
     
-    public function setUrl($url)
+    public function setPage($page)
     {
-        $this->url = $url;
+        $this->page = $page;
     }
     
-    public function getUrl()
+    public function getPage()
     {
-        return $this->url;
+        return $this->page;
     }
 }
