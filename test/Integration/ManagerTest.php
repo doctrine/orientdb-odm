@@ -138,4 +138,19 @@ class ManagerTest extends TestCase
     {
         $this->manager->findRecords(array('13:0', '13:1000'));
     }
+    
+    public function testFlushingAnObject()
+    {
+        $repo = $this->manager->getRepository('test\Integration\Document\Address');
+        $collection = $repo->findAll();
+        
+        $startCount = count($collection);
+        
+        $object = new \test\Integration\Document\Address();
+        
+        $this->manager->persist($object);
+        $this->manager->flush();
+        
+        $this->assertEquals($startCount + 1 , count($repo->findAll()));
+    }
 }

@@ -128,6 +128,28 @@ class Mapper
     }
     
     /**
+     * Returns all the annotations in the $document's properties.
+     *
+     * @param   mixed $document
+     * @return  array
+     */
+    public function getObjectPropertyAnnotations($document)
+    {
+        $refObject      = new \ReflectionObject($document);
+        $annotations    = array();
+
+        foreach ($refObject->getProperties() as $property) {
+            $annotation = $this->getPropertyAnnotation($property);
+
+            if ($annotation) {
+                $annotations[$property->getName()] = $annotation;
+            }
+        }
+
+        return $annotations;
+    }
+    
+    /**
      * Returns the annotation of a property.
      *
      * @param ReflectionProperty $property
@@ -438,28 +460,6 @@ EOT;
         }
 
         return "Congow\Orient\Proxy" . $class;
-    }
-
-    /**
-     * Returns all the annotations in the $document's properties.
-     *
-     * @param   mixed $document
-     * @return  array
-     */
-    protected function getObjectPropertyAnnotations($document)
-    {
-        $refObject      = new \ReflectionObject($document);
-        $annotations    = array();
-
-        foreach ($refObject->getProperties() as $property) {
-            $annotation = $this->getPropertyAnnotation($property);
-
-            if ($annotation) {
-                $annotations[$property->getName()] = $annotation;
-            }
-        }
-
-        return $annotations;
     }
 
     /**

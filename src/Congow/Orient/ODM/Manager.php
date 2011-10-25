@@ -169,10 +169,36 @@ class Manager implements ObjectManager
      * @todo to implement/test
      *
      * @param \stdClass $object 
+     * @todo getter for documents
      */
     public function flush()
     {
-        throw new \Exception;
+        foreach ($this->documents as $document) {
+            
+            $annotation   = $this->getMapper()->getClassAnnotation(get_class($document));
+            $orientClass  = $annotation->class;
+            
+            $propertyAnnotations = $this->getMapper()->getObjectPropertyAnnotations($document);
+            
+            $values = array();
+            
+            foreach ($propertyAnnotations as $property => $annotation) {
+                $getter = 'get' . ucfirst($property);
+                $values[$property] = $document->$getter();
+                
+            }
+            
+
+            
+            $query        = new Query();
+            $query->insert()
+                  ->into($orientClass)
+                  ->fields(array_keys($values))
+                  ->values($values);
+                  
+            $this->execute($query);
+            
+        }
     }
     
     /**
@@ -224,7 +250,7 @@ class Manager implements ObjectManager
      */
     public function persist($object)
     {
-        throw new \Exception();
+        $this->documents[spl_object_hash($object)] = $object;
     }
     
     /**

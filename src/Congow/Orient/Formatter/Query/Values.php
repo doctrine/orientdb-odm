@@ -26,7 +26,7 @@ use Congow\Orient\Contract\Formatter\Query\Token as TokenFormatter;
 class Values extends Query implements TokenFormatter
 {
     public static function format(array $values)
-    {
+    {   
         foreach ($values as $key => $value) {
             if (is_array($value)) {
                 if (count($value) > 1) {
