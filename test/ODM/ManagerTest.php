@@ -18,7 +18,7 @@ use Congow\Orient\ODM\Manager;
 
 class TestMapper extends \Congow\Orient\ODM\Mapper
 {    
-    public function hydrate($document)
+    public function hydrate(\stdClass $document)
     {
         $linktracker = new \Congow\Orient\ODM\Mapper\LinkTracker;
         $linktracker->add('capital', new \Congow\Orient\Foundation\Types\Rid('1:2'));

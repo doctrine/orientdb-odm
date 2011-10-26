@@ -25,12 +25,12 @@ class RidTest extends TestCase
     
     public function testTheValidatorAcceptsAValidRid()
     {
-        $this->assertEquals('1:1', $this->validator->check('1:1'));
+        $this->assertEquals('#1:1', $this->validator->check('1:1'));
     }
     
     public function testTheValidatorAcceptsAValidPrefixedRid()
     {
-        $this->assertEquals('1:1', $this->validator->check('#1:1'));
+        $this->assertEquals('#1:1', $this->validator->check('#1:1'));
     }
     
     /**

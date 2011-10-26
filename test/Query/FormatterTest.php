@@ -354,7 +354,7 @@ class FormatterTest extends TestCase
             '44' => '#13',
             'html' => '<a href="http://ciao.com">ciao</a>\\',
         );
-        $updates = '@rid = 12:0';
+        $updates = '@rid = #12:0';
         $formatter = new Formatter\Query\RidUpdates();
 
         $this->assertEquals($updates, $formatter::format($fields));

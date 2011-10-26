@@ -436,6 +436,7 @@ class Caster implements CasterInterface
             }
         }
         
+        return array();        
     }
     
     /**

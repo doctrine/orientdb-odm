@@ -204,7 +204,7 @@ class Manager implements ObjectManager
      */
     public function getRepository($className)
     {
-        return new Repository($className);
+        return new Repository($className, $this, $this->getMapper());
     }    
     
     /**

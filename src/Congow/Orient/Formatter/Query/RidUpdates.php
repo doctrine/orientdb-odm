@@ -31,9 +31,9 @@ class RidUpdates extends Query implements TokenFormatter
         $rids = array();
 
         foreach ($values as $key => $value) {
-            $key = String::filterNonSQLChars($key);
-            $validator = new RidValidator;
-            $rid = $validator->check($value, true);
+            $key        = String::filterNonSQLChars($key);
+            $validator  = new RidValidator;
+            $rid        = $validator->check($value, true);
 
             if ($key && $rid) {
                 $rids[$key] = "$key = " . $rid;

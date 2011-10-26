@@ -21,7 +21,7 @@ class RepositoryTest extends TestCase
     public function setup()
     {
         $mapper          = new Mapper(__DIR__ . "/../../proxies");
-        $mapper->setDocumentDirectories(array('./test/Integration/Document' => '\\'));
+        $mapper->setDocumentDirectories(array('./test/Integration/Document' => 'test'));
         $client          = new \Congow\Orient\Http\Client\Curl(false, 10);
         $binding         = new \Congow\Orient\Foundation\Binding($client, '127.0.0.1', '2480', 'admin', 'admin', 'demo');
         $protocolAdapter = new \Congow\Orient\Foundation\Protocol\Adapter\Http($binding);

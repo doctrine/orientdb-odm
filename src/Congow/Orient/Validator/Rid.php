@@ -34,7 +34,7 @@ class Rid extends Validator
             $parts  = explode(':', $rid);
 
             if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1])) {
-                return $rid;
+                return '#' . $rid;
             }   
         }
         
