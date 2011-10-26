@@ -382,7 +382,7 @@ class Binding implements Protocol\Http
      */
     protected function addFetchPlan($fetchPlan, $location)
     {
-        return $location .= '/' . $fetchPlan;
+        return $location .= '/' . urlencode($fetchPlan);
     }
 
     /**
