@@ -4,3 +4,6 @@
 [submodule "src/Doctrine"]
 	path = src/Doctrine
 	url = git://github.com/doctrine/common.git
+[submodule "src/Symfony/Component/ClassLoader"]
+	path = src/Symfony/Component/ClassLoader
+	url = git://github.com/symfony/ClassLoader.git
