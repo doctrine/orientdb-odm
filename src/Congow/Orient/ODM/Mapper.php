@@ -329,8 +329,7 @@ class Mapper
     {        
         $stringFormatter    = $stringFormatter ?: new StringFormatter;
         $finder             = new Finder;
-//        $iterator           = $finder->files()->name('*.php')->in($directory);
-        $iterator           = $iterator ?: new RegexIterator($directory, '/^.*\.php$/i');
+        $iterator           = $finder->files()->name('*.php')->in($directory);
         
         foreach ($iterator as $file) {
             $class      = $stringFormatter::convertPathToClassName($file, $namespace);
