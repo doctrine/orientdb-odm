@@ -15,6 +15,14 @@ use test\PHPUnit\TestCase;
 use Congow\Orient\Http\Client\Curl;
 use Congow\Orient\Foundation\Binding;
 
+class FakeCurl extends Curl
+{
+    public function get($location)
+    {
+        return $location;
+    }
+}
+
 class BindingTest extends TestCase
 {
     const _200 = '200';
@@ -198,5 +206,16 @@ class BindingTest extends TestCase
     public function testAnExceptionIsRaisedWhenExecutingOperationsWithNoHttpClient()
     {
         $this->driver->get('1.1.1.1');
+    }
+
+    /**
+     * @see https://github.com/Reinmar/Orient/commit/6110c61778cd7592f4c1e4f5530ea84e79c0f9cd
+     */
+    public function testYouCanSpecifyMultipleFetchPlansAndTheyGetEncodedProperlyInTheUrl()
+    {
+        $this->orient->setHttpClient(new FakeCurl());
+        $sqlSent = $this->orient->query("SELECT OMNOMNOMN", "DB", 2, "*:1 field1:3");
+        
+        $this->assertEquals("127.0.0.1:2480/query/DB/sql/SELECT+OMNOMNOMN/2/%2A%3A1+field1%3A3", $sqlSent);
     }
 }
