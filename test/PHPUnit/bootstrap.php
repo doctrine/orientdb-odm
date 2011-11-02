@@ -148,8 +148,8 @@ $classLoader->register();
 $classLoader = new SplClassLoader('Congow\Orient\Proxy', __DIR__ . "/../../proxies");
 $classLoader->register();
 
-$classLoader = new SplClassLoader('Doctrine\Common', 'lib/vendor/Doctrine/Common/lib/');
+$classLoader = new SplClassLoader('Doctrine\Common', 'src/Doctrine/lib/');
 $classLoader->register();
 
-$classLoader = new SplClassLoader('Symfony', 'lib/vendor');
+$classLoader = new SplClassLoader('Symfony', 'src');
 $classLoader->register();

@@ -205,7 +205,20 @@ class Manager implements ObjectManager
     public function getRepository($className)
     {
         return new Repository($className, $this, $this->getMapper());
-    }    
+    }
+    
+    /**
+     * Helper method to initialize a lazy loading proxy or persistent collection.
+     *
+     * This method is a no-op for other objects.
+     *
+     * @param object $obj
+     * @todo implement and test
+     */
+    function initializeObject($obj)
+    {
+        throw new \Exception();
+    }
     
     /**
      * @todo to implement/test
