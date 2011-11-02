@@ -25,7 +25,7 @@ use Congow\Orient\Contract\Http\Client as HttpClient;
 
 class Curl implements HttpClient
 {
-    public $client;
+    protected $client;
     protected $reuseHandle;
     protected $authentication;
     protected $timeout;

@@ -23,12 +23,14 @@ class CurlTest extends TestCase
     
     /**
      * @fixes https://github.com/congow/Orient/pull/97
+     * 
+     * Test coupled with a Google response
      */
     public function testYouCanExecuteAGETAfteraPOST()
     {
         $this->client->post('http://www.google.com/', array());
-        $this->client->get('http://www.google.com/');
+        $response = $this->client->get('http://www.google.com/');
         
-        $this->assertFalse(curl_getinfo($this->client->client, CURLINFO_HTTP_CODE) == 405);
+        $this->assertFalse($response->getStatusCode() == 411);
     }
 }
