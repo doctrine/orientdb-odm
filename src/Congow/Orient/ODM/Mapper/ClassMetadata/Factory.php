@@ -74,6 +74,20 @@ class Factory implements ClassMetadataFactory
     }
     
     /**
+     * Whether the class with the specified name should have its metadata loaded.
+     * This is only the case if it is either mapped directly or as a
+     * MappedSuperclass.
+     *
+     * @param string $className
+     * @return boolean
+     * @todo to implement and test
+     */
+    function isTransient($className)
+    {
+        throw new \Exception();
+    }
+    
+    /**
      * @to implement and test
      */
     public function setMetadataFor($className, $metadata)

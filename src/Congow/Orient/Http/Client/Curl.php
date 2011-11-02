@@ -111,6 +111,8 @@ class Curl implements HttpClient
      */
     public function get($location)
     {
+    	curl_setopt($this->client, CURLOPT_HTTPGET, true);
+        
         return $this->execute('GET', $location);
     }
 

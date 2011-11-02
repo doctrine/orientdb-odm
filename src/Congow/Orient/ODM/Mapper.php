@@ -42,6 +42,7 @@ use Congow\Orient\Exception\Overflow;
 use Congow\Orient\ODM\Mapper\Annotations\Reader;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Finder\Finder;
 
 class Mapper
 {
@@ -349,7 +350,8 @@ class Mapper
     )
     {        
         $stringFormatter    = $stringFormatter ?: new StringFormatter;
-        $iterator           = $iterator ?: new RegexIterator($directory, '/^.*\.php$/i');
+        $finder             = new Finder;
+        $iterator           = $finder->files()->name('*.php')->in($directory);
         
         foreach ($iterator as $file) {
             $class      = $stringFormatter::convertPathToClassName($file, $namespace);

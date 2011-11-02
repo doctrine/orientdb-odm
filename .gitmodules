@@ -1,3 +1,9 @@
-[submodule "lib/vendor/Doctrine/Common"]
-	path = lib/vendor/Doctrine/Common
+[submodule "src/Symfony/Component/Finder"]
+	path = src/Symfony/Component/Finder
+	url = git://github.com/symfony/Finder.git
+[submodule "src/Doctrine"]
+	path = src/Doctrine
 	url = git://github.com/doctrine/common.git
+[submodule "src/Symfony/Component/ClassLoader"]
+	path = src/Symfony/Component/ClassLoader
+	url = git://github.com/symfony/ClassLoader.git
