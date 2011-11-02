@@ -1,3 +1,6 @@
 [submodule "lib/vendor/Doctrine/Common"]
 	path = lib/vendor/Doctrine/Common
 	url = git://github.com/doctrine/common.git
+[submodule "lib/vendor/Symfony/Component/Finder"]
+	path = lib/vendor/Symfony/Component/Finder
+	url = git://github.com/symfony/Finder.git

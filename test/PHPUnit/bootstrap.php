@@ -119,7 +119,7 @@ class SplClassLoader
      * @return void
      */
     public function loadClass($className)
-    {
+    {        
         if (null === $this->_namespace || $this->_namespace . $this->_namespaceSeparator === substr($className, 0, strlen($this->_namespace . $this->_namespaceSeparator))) {
             $fileName = '';
             $namespace = '';
@@ -131,7 +131,7 @@ class SplClassLoader
             $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . $this->_fileExtension;
 
             $file =  ($this->_includePath !== null ? $this->_includePath . DIRECTORY_SEPARATOR : '') . $fileName;
-            
+   
             if (file_exists($file)) {
                 require $file;
             }
@@ -151,3 +151,5 @@ $classLoader->register();
 $classLoader = new SplClassLoader('Doctrine\Common', 'lib/vendor/Doctrine/Common/lib/');
 $classLoader->register();
 
+$classLoader = new SplClassLoader('Symfony', 'lib/vendor');
+$classLoader->register();
