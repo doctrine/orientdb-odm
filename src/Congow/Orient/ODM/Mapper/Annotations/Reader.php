@@ -31,6 +31,7 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Annotations\Parser;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\ApcCache;
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class Reader implements ReaderInterface
@@ -47,7 +48,7 @@ class Reader implements ReaderInterface
     public function __construct(Cache $cacheReader = null)
     {
         if (!$cacheReader) {
-            $cacheReader = new ApcCache;
+            $cacheReader = $this->createCacheProvider();
         }
         
         $this->reader = new CachedReader(new AnnotationReader, $cacheReader);
@@ -138,5 +139,15 @@ class Reader implements ReaderInterface
     protected function getReader()
     {
         return $this->reader;
+    }
+
+    /**
+     * Creates a new instance of a cache provider.
+     *
+     * @return Doctrine\Common\Cache\CacheProvider
+     */
+    protected function createCacheProvider()
+    {
+        return function_exists('apc_fetch') ? new ApcCache() : new ArrayCache();
     }
 }

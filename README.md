@@ -185,8 +185,8 @@ THE SOFTWARE
 These are the requirements in order to use the library:
 
 * PHP >= 5.3.3
-* APC
 * OrientDB 1.0.0RC6
+* APC (optional, used by the annotation reader as a cache)
 
 In order to launch the test suite PHPUnit 3.6 is required.
 
