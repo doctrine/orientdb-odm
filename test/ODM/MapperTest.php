@@ -55,7 +55,7 @@ class MapperTest extends TestCase
     public function setup()
     {
         $this->mapper = new Mapper("proxies");
-        $this->mapper->setDocumentDirectories(array('./test/ODM/Document/Stub' => 'test'));
+        $this->mapper->setDocumentDirectories(array('test/ODM/Document/Stub' => 'test'));
         
         $this->jsonRecord = json_decode('{
             "@type":          "d",

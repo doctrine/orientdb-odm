@@ -7,3 +7,5 @@ docs/coverage
 lib/*
 proxies/Congow/Orient/Proxy/*
 nbproject
+vendor/
+composer.phar
