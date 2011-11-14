@@ -18,7 +18,17 @@ Documentation: http://code.google.com/p/orient | http://www.odino.org/tags?tag=o
 
 ## After cloning
 
-Set up the submodules after you cloned the repo:
+In order to be able to run the examples or the test suite provided by Orient, you must enter the root of the
+cloned repository and download the needed dependencies using [Composer](http://packagist.org/about-composer)
+or Git submodules.
+
+If you have composer globally available on your system you can just type `composer install` in a shell.
+Alternatively you can fetch the Phar package of Composer and run it by typing:
+
+    wget http://getcomposer.org/composer.phar
+    php composer.phar install
+
+If instead you prefer to use Git submodules:
 
     git submodule init
     git submodule update
