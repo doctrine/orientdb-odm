@@ -188,7 +188,7 @@ These are the requirements in order to use the library:
 * APC
 * OrientDB 1.0.0RC6
 
-In order to launch the test suite PHPUnit 3.5 is required.
+In order to launch the test suite PHPUnit 3.6 is required.
 
 ## Tracker & software lifecycle
 

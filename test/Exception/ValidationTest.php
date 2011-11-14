@@ -25,7 +25,7 @@ use Congow\Orient\Exception\Validation;
 class ValidationTest extends TestCase
 {
     /**
-     * @expectedException \Exception
+     * @expectedException Congow\Orient\Exception\Validation
      * @expectedExceptionMessage Validation of "text" as V failed
      */
     public function testException()
@@ -34,7 +34,7 @@ class ValidationTest extends TestCase
     }
     
     /**
-     * @expectedException \Exception
+     * @expectedException Congow\Orient\Exception\Validation
      * @expectedExceptionMessage Validation of "a, b" as V failed
      */
     public function testExceptionWithArrayArgument()
