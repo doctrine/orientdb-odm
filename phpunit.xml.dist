@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <phpunit backupGlobals="true"
-         bootstrap="bootstrap.php"
+         bootstrap="test/PHPUnit/bootstrap.php"
          backupStaticAttributes="false"
          colors="true"
          convertErrorsToExceptions="true"
@@ -21,39 +21,39 @@
 
     <testsuites>
       <testsuite name="Query builder">
-          <directory >../../test/Query</directory>
-          <file >./test/QueryTest.php</file>
+          <directory >test/Query</directory>
+          <file >test/QueryTest.php</file>
       </testsuite>
       <testsuite name="Graph">
-          <file >./test/GraphTest.php</file>
+          <file >test/GraphTest.php</file>
       </testsuite>
       <testsuite name="HTTP">
-          <directory >../../test/Http</directory>
+          <directory >test/Http</directory>
       </testsuite>
       <testsuite name="ODM">
-          <directory >../../test/ODM</directory>
+          <directory >test/ODM</directory>
       </testsuite>
       <testsuite name="Formatter">
-          <directory >../../test/Formatter</directory>
+          <directory >test/Formatter</directory>
       </testsuite>
       <testsuite name="Algorithm">
-          <directory >../../test/Algorithm</directory>
+          <directory >test/Algorithm</directory>
       </testsuite>
       <testsuite name="ODM">
-          <directory >../../test/ODM</directory>
+          <directory >test/ODM</directory>
       </testsuite>
       <testsuite name="Excp">
-          <directory >../../test/Exception</directory>
+          <directory >test/Exception</directory>
       </testsuite>
       <testsuite name="Validator">
-          <directory >../../test/Validator</directory>
+          <directory >test/Validator</directory>
       </testsuite>
     </testsuites>
 
     <filter>
       <blacklist>
-        <directory suffix=".php">../../test</directory>
-        <directory suffix=".php">../../lib</directory>
+        <directory suffix=".php">test</directory>
+        <directory suffix=".php">lib</directory>
       </blacklist>
     </filter>
 </phpunit>
