@@ -1,6 +1,6 @@
 rm -rf log
 mkdir log
-phpunit --configuration=test/PHPUnit/phpunit.xml --log-junit log/phpunit.xml
+phpunit --log-junit log/phpunit.xml
 phploc --log-xml log/phploc.xml src
 phpcpd --min-lines 3 --min-tokens 10 --exclude test/ --log-pmd log/phpcpd.xml src
 phpcs --report=xml --report-file=`pwd`/log/phpcs.xml src
