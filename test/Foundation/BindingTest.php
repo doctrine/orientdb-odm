@@ -154,7 +154,7 @@ class BindingTest extends TestCase
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException Congow\Orient\Exception
      */
     public function testResolvingTheDatabase()
     {
