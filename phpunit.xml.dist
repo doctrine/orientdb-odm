@@ -56,4 +56,12 @@
         <directory suffix=".php">lib</directory>
       </blacklist>
     </filter>
+
+    <php>
+        <const name="TEST_ODB_HOST" value="127.0.0.1"/>
+        <const name="TEST_ODB_PORT" value="2480"/>
+        <const name="TEST_ODB_USER" value="admin"/>
+        <const name="TEST_ODB_PASSWORD" value="admin"/>
+        <const name="TEST_ODB_DATABASE" value="demo"/>
+    </php>
 </phpunit>

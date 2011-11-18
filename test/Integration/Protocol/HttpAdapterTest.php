@@ -19,7 +19,7 @@ class HttpAdapterTest extends TestCase
 {
     public function setup()
     {
-        $binding = new \Congow\Orient\Foundation\Binding(new Curl, '127.0.0.1', '2480','admin','admin','demo');
+        $binding = new \Congow\Orient\Foundation\Binding(new Curl, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
         $this->adapter = new HttpAdapter($binding);
     }
     
