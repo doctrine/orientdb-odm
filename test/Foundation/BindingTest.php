@@ -35,7 +35,7 @@ class BindingTest extends TestCase
 
     public function setup()
     {
-        $this->driver = new Curl(true, 5);
+        $this->driver = new Curl(false, 5);
         $this->orient = new Binding($this->driver, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD);
     }
 
@@ -165,7 +165,7 @@ class BindingTest extends TestCase
 
     public function testManagingADocument()
     {
-        $this->orient->setHttpClient(new Curl(false));
+        $this->orient->setHttpClient(new Curl(true));
         $this->orient->setDatabase(TEST_ODB_DATABASE);
         $this->orient->setAuthentication(TEST_ODB_USER, TEST_ODB_PASSWORD);
 
