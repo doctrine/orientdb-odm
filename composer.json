@@ -3,7 +3,6 @@
     "type": "library",
     "description": "A set of PHP libraries in order to use OrientDB from PHP.",
     "keywords": ["orientdb"],
-    "version": "1.0.0-dev",
     "license": "MIT",
     "authors": [
         {
