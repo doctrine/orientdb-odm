@@ -23,7 +23,7 @@ class RepositoryTest extends TestCase
         $mapper          = new Mapper(__DIR__ . "/../../proxies");
         $mapper->setDocumentDirectories(array('./test/Integration/Document' => 'test'));
         $client          = new \Congow\Orient\Http\Client\Curl(false, 10);
-        $binding         = new \Congow\Orient\Foundation\Binding($client, '127.0.0.1', '2480', 'admin', 'admin', 'demo');
+        $binding         = new \Congow\Orient\Foundation\Binding($client, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
         $protocolAdapter = new \Congow\Orient\Foundation\Protocol\Adapter\Http($binding);
         $manager         = new Manager($mapper, $protocolAdapter);
         
