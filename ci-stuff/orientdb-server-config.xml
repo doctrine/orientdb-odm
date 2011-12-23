@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<orient-server>
+    <handlers />
+    <network>
+        <protocols>
+            <protocol name="http" implementation="com.orientechnologies.orient.server.network.protocol.http.ONetworkProtocolHttpDb"/>
+        </protocols>
+        <listeners>
+            <listener ip-address="127.0.0.1" port-range="2480-2490" protocol="http"/>
+        </listeners>
+    </network>
+    <storages>
+        <storage name="temp" path="memory:temp" userName="admin" userPassword="admin" loaded-at-startup="true"/>
+    </storages>
+    <users>
+        <user name="root" password="E8C9F35F4C911DA304E7871686F8C2E3DA53FCD499C25E7E7282959387FB2BD5" resources="*"/>
+        <user name="admin" password="admin" resources="*"/>
+    </users>
+    <properties>
+        <entry name="log.console.level" value="info"/>
+    </properties>
+</orient-server>

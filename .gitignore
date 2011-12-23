@@ -7,3 +7,4 @@ docs/coverage
 lib/*
 proxies/Congow/Orient/Proxy/*
 nbproject
+ci-stuff/environment
