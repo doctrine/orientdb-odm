@@ -2,7 +2,7 @@
 
 namespace Congow\Orient;
 
-require 'test/PHPUnit/bootstrap.php';
+require __DIR__.'/../autoload.php';
 
 $client = new Http\Client\Curl();
 $binding = new Foundation\Binding($client, '127.0.0.1', 2480, 'admin', 'admin', 'friends');

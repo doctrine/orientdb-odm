@@ -1,0 +1,30 @@
+{
+    "name": "congow/orient",
+    "type": "library",
+    "description": "A set of PHP libraries in order to use OrientDB from PHP.",
+    "keywords": ["orientdb"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alessandro Nadalin",
+            "email": "alessandro.nadalin@gmail.com",
+            "homepage": "http://www.odino.org"
+        },
+        {
+            "name": "David Funaro",
+            "email": "ing.davidino@gmail.com",
+            "homepage": "http://davidfunaro.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Congow\\Orient": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.3.2",
+        "doctrine/common": "2.1.*",
+        "symfony/finder": "2.0.*",
+        "symfony/class-loader": "2.0.*"
+    }
+}
