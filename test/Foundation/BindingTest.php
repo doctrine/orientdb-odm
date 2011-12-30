@@ -36,17 +36,17 @@ class BindingTest extends TestCase
     public function setup()
     {
         $this->driver = new Curl(true, 5);
-        $this->orient = new Binding($this->driver, '127.0.0.1', '2480', 'admin', 'admin');
+        $this->orient = new Binding($this->driver, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD);
     }
 
     public function testConnectionToADatabase()
     {
         $this->orient->setAuthentication('', '');
-        $this->orient->setDatabase('demo');
+        $this->orient->setDatabase(TEST_ODB_DATABASE);
 
         $this->assertStatusCode(self::_401, $this->orient->connect('ZOMG'));
-        $this->orient->setAuthentication('admin', 'admin');
-        $this->assertStatusCode(self::_200, $this->orient->connect('demo'));
+        $this->orient->setAuthentication(TEST_ODB_USER, TEST_ODB_PASSWORD);
+        $this->assertStatusCode(self::_200, $this->orient->connect(TEST_ODB_DATABASE));
     }
 
     public function testDisconnectionFromTheServer()
@@ -56,8 +56,8 @@ class BindingTest extends TestCase
 
     public function testManagingAClass()
     {
-        $this->orient->setDatabase('demo');
-        $this->orient->setAuthentication('admin', 'admin');
+        $this->orient->setDatabase(TEST_ODB_DATABASE);
+        $this->orient->setAuthentication(TEST_ODB_USER, TEST_ODB_PASSWORD);
 
         $this->assertStatusCode(self::_500, $this->orient->getClass('OMG'), 'get a non existing class');
         $this->assertStatusCode(self::_201, $this->orient->postClass('OMG'), 'create a class');
@@ -66,8 +66,8 @@ class BindingTest extends TestCase
 
     public function testManagingACluster()
     {
-        $this->orient->setDatabase('demo');
-        $this->orient->setAuthentication('admin', 'admin');
+        $this->orient->setDatabase(TEST_ODB_DATABASE);
+        $this->orient->setAuthentication(TEST_ODB_USER, TEST_ODB_PASSWORD);
 
         $this->assertStatusCode(self::_200, $this->orient->cluster('Address'));
         $this->assertStatusCode(self::_200, $this->orient->cluster('Address', false, 1));
@@ -82,8 +82,8 @@ class BindingTest extends TestCase
 
     public function testExecutingACommand()
     {
-        $this->orient->setDatabase('demo');
-        $this->orient->setAuthentication('admin', 'admin');
+        $this->orient->setDatabase(TEST_ODB_DATABASE);
+        $this->orient->setAuthentication(TEST_ODB_USER, TEST_ODB_PASSWORD);
 
         $this->assertStatusCode(self::_200, $this->orient->command('select from Address'), 'execute a simple select');
         $this->assertStatusCode(self::_200, $this->orient->command("select from City where name = 'Rome'"), 'execute a select with WHERE condition');
@@ -94,25 +94,25 @@ class BindingTest extends TestCase
 
     public function testManagingADatabase()
     {
-        $this->orient->setAuthentication('admin', 'admin');
+        $this->orient->setAuthentication(TEST_ODB_USER, TEST_ODB_PASSWORD);
         
-        $this->assertStatusCode(self::_200, $this->orient->getDatabase('demo'), 'get informations about an existing database');
+        $this->assertStatusCode(self::_200, $this->orient->getDatabase(TEST_ODB_DATABASE), 'get informations about an existing database');
         $this->assertStatusCode(self::_500, $this->orient->getDatabase("OMGOMGOMG"), 'get informations about a non-existing database');
     }
 
     public function testRetrievingInformationsFromAServer()
     {
-        $this->orient->setDatabase('demo');
-        $this->orient->setAuthentication('admin', 'admin');
+        $this->orient->setDatabase(TEST_ODB_DATABASE);
+        $this->orient->setAuthentication(TEST_ODB_USER, TEST_ODB_PASSWORD);
         $this->assertStatusCode(self::_200, $this->orient->getServer());
     }
 
     public function testExecutingAQuery()
     {
-        $this->orient->setDatabase('demo');
-        $this->orient->setAuthentication('admin', 'admin');
+        $this->orient->setDatabase(TEST_ODB_DATABASE);
+        $this->orient->setAuthentication(TEST_ODB_USER, TEST_ODB_PASSWORD);
 
-        $this->orient->setDatabase('demo');
+        $this->orient->setDatabase(TEST_ODB_DATABASE);
         $this->assertStatusCode(self::_200, $this->orient->query('select from Address'), 'executes a SELECT');
         $this->assertStatusCode(self::_200, $this->orient->query('select from Address', null, 10), 'executes a SELECT with LIMIT');
         $this->assertStatusCode(self::_500, $this->orient->query("update Profile set online = false"), 'tries to execute an UPDATE with the query command');
@@ -120,22 +120,28 @@ class BindingTest extends TestCase
 
     public function testRetrievingAuthenticationCredentials()
     {
-        $this->orient->setDatabase('demo');
-        $this->orient->setAuthentication('admin', 'admin');
+        $user = TEST_ODB_USER;
+        $password = TEST_ODB_PASSWORD;
 
-        $this->assertEquals($this->orient->getAuthentication(), 'admin:admin', 'gets the authentication credentials');
+        $this->orient->setDatabase(TEST_ODB_DATABASE);
+        $this->orient->setAuthentication($user, $password);
+
+        $this->assertEquals($this->orient->getAuthentication(), "$user:$password", 'gets the authentication credentials');
     }
 
     public function testSettingAuthentication()
     {
         $this->driver = new Curl();
-        $this->orient = new Binding($this->driver, '127.0.0.1', '2480');
+        $this->orient = new Binding($this->driver, TEST_ODB_HOST, TEST_ODB_PORT);
         $this->orient->setAuthentication();
 
         $this->assertEquals($this->orient->getAuthentication(), false, 'sets no authentication in the current request');
 
-        $this->orient->setAuthentication('admin', 'admin');
-        $this->assertEquals($this->orient->getAuthentication(), 'admin:admin', 'sets the credentials for the current request');
+        $user = TEST_ODB_USER;
+        $password = TEST_ODB_PASSWORD;
+
+        $this->orient->setAuthentication($user, $password);
+        $this->assertEquals($this->orient->getAuthentication(), "$user:$password", 'sets the credentials for the current request');
     }
 
     public function testInjectionOfAnHttpClient()
@@ -148,7 +154,7 @@ class BindingTest extends TestCase
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException Congow\Orient\Exception
      */
     public function testResolvingTheDatabase()
     {
@@ -160,8 +166,8 @@ class BindingTest extends TestCase
     public function testManagingADocument()
     {
         $this->orient->setHttpClient(new Curl(false));
-        $this->orient->setDatabase('demo');
-        $this->orient->setAuthentication('admin', 'admin');
+        $this->orient->setDatabase(TEST_ODB_DATABASE);
+        $this->orient->setAuthentication(TEST_ODB_USER, TEST_ODB_PASSWORD);
 
         $this->assertStatusCode(self::_500, $this->orient->getDocument('991'), 'retrieves a document with an invalid RID');
         $this->assertStatusCode(self::_404, $this->orient->getDocument('9:0'), 'retrieves a non existing document');
@@ -215,7 +221,10 @@ class BindingTest extends TestCase
     {
         $this->orient->setHttpClient(new FakeCurl());
         $sqlSent = $this->orient->query("SELECT OMNOMNOMN", "DB", 2, "*:1 field1:3");
-        
-        $this->assertEquals("127.0.0.1:2480/query/DB/sql/SELECT+OMNOMNOMN/2/%2A%3A1+field1%3A3", $sqlSent);
+
+        $host = TEST_ODB_HOST;
+        $port = TEST_ODB_PORT;
+
+        $this->assertEquals("$host:$port/query/DB/sql/SELECT+OMNOMNOMN/2/%2A%3A1+field1%3A3", $sqlSent);
     }
 }

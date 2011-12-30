@@ -118,7 +118,7 @@ Orient incapsulates also a few utilities for PHP developers: on of them is an im
 In order to run the tests you only need to:
 
     cd /path/to/repo
-    phpunit --configuration=test/PHPUnit/phpunit.xml
+    phpunit
 
 This should be enough.
 For the braves, if you want to run the full test suite, which includes the integration tests, you should:
@@ -131,7 +131,7 @@ For the braves, if you want to run the full test suite, which includes the integ
 and then you can run the full test-suite:
 
     cd /path/to/repo
-    phpunit --configuration=test/PHPUnit/phpunit.xml test/
+    phpunit test/
 
 As you'll notice, tests are obviously slower (they need a direct connection through the HTTP protocol to Congow\OrientDB), so we highly discourage you from testing this way.
 They also may file the first time you launch them, because we set the curl timeout limit to 1 second, and the first connections to Congow\OrientDB require it to bootstrap lots of stuff (so during more than 1 second, making the tests fail): try to re-launch the tests, you should see the green bar.
@@ -185,8 +185,8 @@ THE SOFTWARE
 These are the requirements in order to use the library:
 
 * PHP >= 5.3.3
-* APC
 * OrientDB 1.0.0RC6
+* APC (optional, used by the annotation reader as a cache)
 
 In order to launch the test suite PHPUnit 3.6 is required.
 
