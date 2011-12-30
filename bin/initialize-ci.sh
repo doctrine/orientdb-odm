@@ -4,8 +4,7 @@ ODB_VERSION=${1:-"1.0rc6"}
 
 echo "=== Initializing CI environment ==="
 
-# Initialize submodules and fetch the stuff needed to run the CI session.
-git submodule --quiet update --init
+# Fetch the stuff needed to run the CI session.
 git clone --quiet git://gist.github.com/1370152.git ci-stuff/environment
 
 # Download and extract OrientDB
