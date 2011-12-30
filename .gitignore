@@ -8,3 +8,5 @@ lib/*
 proxies/Congow/Orient/Proxy/*
 nbproject
 ci-stuff/environment
+vendor/
+composer.phar
