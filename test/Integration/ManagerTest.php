@@ -137,6 +137,24 @@ class ManagerTest extends TestCase
     public function testFindingSomeRecordsAndSomeAreWrongThrowsAnException()
     {
         $this->manager->findRecords(array('13:0', '13:1000'));
+    }   
+    
+    public function testExecutingASelectOfASingleRecordReturnsAnArrayWithOneRecord()
+    {
+        $query = new Query(array('Address'));
+        $query->where('@rid = ?', '13:0');
+        
+        $this->assertInternalType('array', $this->manager->execute($query));
+        $this->assertEquals(1, count($this->manager->execute($query)));
+    }
+    
+    public function testExecutionWithNoOutput()
+    {
+        $query = new Query();
+        $query->update('Address')->set(array('type' => 'Residence'));
+        
+        $this->assertInternalType('bool', $this->manager->execute($query));
+        $this->assertEquals(true, $this->manager->execute($query));
     }
     
     public function testFlushingAnObject()
