@@ -35,7 +35,7 @@ class BindingTest extends TestCase
 
     public function setup()
     {
-        $this->driver = new Curl(false, 5);
+        $this->driver = new Curl(false, 10);
         $this->orient = new Binding($this->driver, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD);
     }
 
@@ -211,7 +211,8 @@ class BindingTest extends TestCase
      */
     public function testAnExceptionIsRaisedWhenExecutingOperationsWithNoHttpClient()
     {
-        $this->driver->get('1.1.1.1');
+        $driver = new Curl(false, 1);
+        $driver->get('1.1.1.1');
     }
 
     /**
