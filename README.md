@@ -18,20 +18,16 @@ Documentation: http://code.google.com/p/orient | http://www.odino.org/tags?tag=o
 
 ## After cloning
 
-In order to be able to run the examples or the test suite provided by Orient, you must enter the root of the
-cloned repository and download the needed dependencies using [Composer](http://packagist.org/about-composer)
+In order to be able to run the examples and the test suite provided by Orient, you must first enter the root
+of the cloned repository and initialize all the needed dependencies. We provide an utility script in the `bin/`
+subdirectory to ease this process and you can choose between two different methods: [Composer](http://packagist.org/about-composer)
 or Git submodules.
 
-If you have composer globally available on your system you can just type `composer install` in a shell.
-Alternatively you can fetch the Phar package of Composer and run it by typing:
+    $ ./bin/initialize-dependencies.sh composer
+    $ ./bin/initialize-dependencies.sh submodules
 
-    $ wget http://getcomposer.org/composer.phar
-    $ php composer.phar install
+If you do not specify any argument, Composer will be used by default.
 
-If instead you prefer to use Git submodules:
-
-    $ git submodule init
-    $ git submodule update
 
 ## Current status of the binding
 
