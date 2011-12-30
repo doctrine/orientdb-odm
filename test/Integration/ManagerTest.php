@@ -156,4 +156,19 @@ class ManagerTest extends TestCase
         $this->assertInternalType('bool', $this->manager->execute($query));
         $this->assertEquals(true, $this->manager->execute($query));
     }
+    
+    public function testFlushingAnObject()
+    {
+        $repo = $this->manager->getRepository('test\Integration\Document\Address');
+        $collection = $repo->findAll();
+        
+        $startCount = count($collection);
+        
+        $object = new \test\Integration\Document\Address();
+        
+        $this->manager->persist($object);
+        $this->manager->flush();
+        
+        $this->assertEquals($startCount + 1 , count($repo->findAll()));
+    }
 }
