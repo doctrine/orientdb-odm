@@ -32,7 +32,7 @@ class ManagerTest extends TestCase
         $query      = new Query(array('Address'));
         $addresses  = $this->manager->execute($query);
         
-        $this->assertEquals(165, count($addresses));
+        $this->assertTrue(count($addresses) > 0);
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
     }
     
@@ -165,6 +165,7 @@ class ManagerTest extends TestCase
         $startCount = count($collection);
         
         $object = new \test\Integration\Document\Address();
+        $object->setCity('Rome');
         
         $this->manager->persist($object);
         $this->manager->flush();
