@@ -123,8 +123,8 @@ Orient incapsulates also a few utilities for PHP developers: on of them is an im
 
 In order to run the tests you only need to:
 
-    cd /path/to/repo
-    phpunit
+    $ cd /path/to/repo
+    $ phpunit
 
 This should be enough.
 For the braves, if you want to run the full test suite, which includes the integration tests, you should:
@@ -136,8 +136,8 @@ For the braves, if you want to run the full test suite, which includes the integ
 
 and then you can run the full test-suite:
 
-    cd /path/to/repo
-    phpunit test/
+    $ cd /path/to/repo
+    $ phpunit test/
 
 As you'll notice, tests are obviously slower (they need a direct connection through the HTTP protocol to Congow\OrientDB), so we highly discourage you from testing this way.
 They also may file the first time you launch them, because we set the curl timeout limit to 1 second, and the first connections to Congow\OrientDB require it to bootstrap lots of stuff (so during more than 1 second, making the tests fail): try to re-launch the tests, you should see the green bar.
@@ -157,8 +157,7 @@ You need to install:
 
 and then run:
 
-    chmod +x report.sh
-    ./report.sh
+    $ ./bin/report.sh
 
 You'll be able to see the HTML reports in log/report/index.html.
 
