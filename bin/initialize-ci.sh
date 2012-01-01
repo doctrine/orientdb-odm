@@ -1,8 +1,11 @@
 #!/bin/sh
 
 ODB_VERSION=${1:-"1.0rc6"}
+PARENT_DIR=$(dirname $(cd "$(dirname "$0")"; pwd))
 
 echo "=== Initializing CI environment ==="
+
+cd $PARENT_DIR
 
 # Fetch the stuff needed to run the CI session.
 git clone --quiet git://gist.github.com/1370152.git ci-stuff/environment

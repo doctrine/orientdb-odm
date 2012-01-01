@@ -1,5 +1,8 @@
 #!/bin/sh
 
+PARENT_DIR=$(dirname $(cd "$(dirname "$0")"; pwd))
+
+cd $PARENT_DIR
 rm -rf composer.lock vendor/bin vendor/.composer
 
 clean_dependency () {

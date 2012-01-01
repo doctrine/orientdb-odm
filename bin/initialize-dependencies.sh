@@ -1,6 +1,9 @@
 #!/bin/sh
 
 FETCH_METHOD=${1:-"composer"}
+PARENT_DIR=$(dirname $(cd "$(dirname "$0")"; pwd))
+
+cd $PARENT_DIR
 
 clean_dependencies () {
   ./bin/clean-dependencies.sh
