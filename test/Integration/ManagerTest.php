@@ -164,12 +164,37 @@ class ManagerTest extends TestCase
         
         $startCount = count($collection);
         
-        $object = new \test\Integration\Document\Address();
-        $object->setCity('Rome');
+        $address = new \test\Integration\Document\Address();
+        //$address->setCity('Rome');
         
-        $this->manager->persist($object);
+        $this->manager->persist($address);
         $this->manager->flush();
         
         $this->assertEquals($startCount + 1 , count($repo->findAll()));
+    }
+    
+    public function testAnObjectPersisted2TimesGetsSavedWithTheLastValuesWhenFlushing()
+    {
+        throw new \Exception();
+    }
+    
+    public function testPersistingAnUpdate() 
+    {
+        throw new \Exception();
+    }
+    
+    public function testPersistingADeletion() 
+    {
+        throw new \Exception();
+    }
+    
+    public function testPersistingADeletionOnAPersistedObject() 
+    {
+        throw new \Exception();
+    }
+    
+    public function testPersistingADeletionWhichInvolvesCascadingDeletions() 
+    {
+        throw new \Exception();
     }
 }

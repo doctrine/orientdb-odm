@@ -174,30 +174,23 @@ class Manager implements ObjectManager
     public function flush()
     {
         foreach ($this->documents as $document) {
-            
-            $annotation   = $this->getMapper()->getClassAnnotation(get_class($document));
-            $orientClass  = $annotation->class;
-            
-            $propertyAnnotations = $this->getMapper()->getObjectPropertyAnnotations($document);
-            
-            $values = array();
+            $annotation             = $this->getMapper()->getClassAnnotation(get_class($document));
+            $orientClass            = $annotation->class;
+            $propertyAnnotations    = $this->getMapper()->getObjectPropertyAnnotations($document);
+            $values                 = array();
             
             foreach ($propertyAnnotations as $property => $annotation) {
                 $getter = 'get' . ucfirst($property);
                 $values[$property] = $document->$getter();
-                
             }
             
-
-            
-            $query        = new Query();
+            $query = new Query();
             $query->insert()
                   ->into($orientClass)
                   ->fields(array_keys($values))
                   ->values($values);
                   
             $this->execute($query);
-            
         }
     }
     
