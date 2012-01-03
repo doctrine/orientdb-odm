@@ -11,10 +11,7 @@ Orient includes:
 * the data mapper ( Object Graph Mapper )
 
 
-If you don't know OrientDB here are few resources:
-
-Homepage: http://www.orientechnologies.com/
-Documentation: http://code.google.com/p/orient | http://www.odino.org/tags?tag=orient
+If you don't know [OrientDB](http://www.orientechnologies.com/) take a look at its [Documentation](http://code.google.com/p/orient).
 
 ## After cloning
 
@@ -136,7 +133,6 @@ For the braves, if you want to run the full test suite, which includes the integ
 
 and then you can run the full test-suite:
 
-    $ cd /path/to/repo
     $ phpunit test/
 
 As you'll notice, tests are obviously slower (they need a direct connection through the HTTP protocol to Congow\OrientDB), so we highly discourage you from testing this way.
@@ -191,7 +187,6 @@ These are the requirements in order to use the library:
 
 * PHP >= 5.3.3
 * OrientDB 1.0.0RC6
-* APC (optional, used by the annotation reader as a cache)
 
 In order to launch the test suite PHPUnit 3.6 is required.
 

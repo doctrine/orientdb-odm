@@ -10,3 +10,4 @@ nbproject
 ci-stuff/environment
 vendor/
 composer.phar
+composer.lock
