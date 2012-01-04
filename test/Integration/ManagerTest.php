@@ -175,17 +175,48 @@ class ManagerTest extends TestCase
     
     public function testAnObjectPersisted2TimesGetsSavedWithTheLastValuesWhenFlushing()
     {
-        throw new \Exception();
+        $address = new \test\Integration\Document\Address();
+
+        $address->setCity('Rome');        
+        $this->manager->persist($address);
+        $this->manager->flush();
+        
+        $address->setCity("Milan");
+        $this->manager->persist($address);
+        $this->manager->flush();
+        
+        $rid = $address->getRid();
+        
+        $address_check = = $this->manager->find($rid);
+        $this->assertEquals($address_check->getCity(), "Milan");
+        
     }
     
     public function testPersistingAnUpdate() 
     {
-        throw new \Exception();
+        $city       = "Rome";
+        $address    = $this->manager->find('13:0');
+
+        $address->setCity($city);
+        
+        $this->manager->persist($address);
+        $this->manager->flush();
+        
+        $address_check = $this->manager->find('13:0');
+        
+        $this->assertEquals($address_check->getCity(), $city);
     }
     
     public function testPersistingADeletion() 
     {
-        throw new \Exception();
+        $address    = $this->manager->find('13:0');
+        
+        $this->manager->remove($address);
+        $this->manager->flush();
+
+        $address_check  = $this->manager->find('13:0');
+        
+        $this->assertInternalType("null", $address_check);
     }
     
     public function testPersistingADeletionOnAPersistedObject() 
