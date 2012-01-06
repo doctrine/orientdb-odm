@@ -26,7 +26,7 @@ class QueryBuilderTest extends TestCase
 
     public function setup()
     {
-        $this->driver = new Curl();
+        $this->driver = new Curl(false, TEST_ODB_TIMEOUT);
         $this->orient = new Binding($this->driver, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
         $this->query = new Query();
     }

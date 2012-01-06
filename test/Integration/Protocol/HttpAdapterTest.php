@@ -19,7 +19,8 @@ class HttpAdapterTest extends TestCase
 {
     public function setup()
     {
-        $binding = new \Congow\Orient\Foundation\Binding(new Curl, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
+        $driver = new Curl(false, TEST_ODB_TIMEOUT);
+        $binding = new \Congow\Orient\Foundation\Binding($driver, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
         $this->adapter = new HttpAdapter($binding);
     }
     
