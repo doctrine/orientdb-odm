@@ -147,7 +147,7 @@ class Select extends Command implements SelectInterface
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Projections' => "Congow\Orient\Formatter\Query\Regular",
+            'Projections' => "Congow\Orient\Formatter\Query\Select",
             'OrderBy'     => "Congow\Orient\Formatter\Query\OrderBy",
             'Limit'       => "Congow\Orient\Formatter\Query\Limit",
             'Range'       => "Congow\Orient\Formatter\Query\Range",

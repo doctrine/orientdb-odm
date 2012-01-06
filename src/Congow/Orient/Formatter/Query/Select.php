@@ -14,7 +14,7 @@
  *
  * @package     Congow\Orient
  * @subpackage  Formatter
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author      Daniele Alessandri <suppakilla@gmail.com>
  */
 
 namespace Congow\Orient\Formatter\Query;
@@ -22,10 +22,10 @@ namespace Congow\Orient\Formatter\Query;
 use Congow\Orient\Formatter\Query;
 use Congow\Orient\Contract\Formatter\Query\Token as TokenFormatter;
 
-class Regular extends Query implements TokenFormatter
+class Select extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {
-        return self::implodeRegular($values);
+        return self::implodeRegular($values, '[:punct:]|\s');
     }
 }
