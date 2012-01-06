@@ -105,8 +105,9 @@ class Caster implements CasterInterface
     public function castDate()
     {
         $dateClass = $this->getDateClass();
-        
-        return new $dateClass($this->value);
+        $value = preg_replace('/(\s\d{2}:\d{2}:\d{2}):(\d{1,6})/', '$1.$2', $this->value);
+
+        return new $dateClass($value);
     }
 
     /**
@@ -116,7 +117,7 @@ class Caster implements CasterInterface
      */
     public function castDateTime()
     {
-        return $this->castDate($this->value);
+        return $this->castDate();
     }
 
     /**
