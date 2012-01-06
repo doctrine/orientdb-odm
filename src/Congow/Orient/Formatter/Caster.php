@@ -340,14 +340,12 @@ class Caster implements CasterInterface
     protected function assignDateClass($class)
     {
         $refClass = new \ReflectionClass($class);
-        
-        if ($refClass->isSubclassOf("\DateTime"))
-        {
-            $this->dateClass = $class;
+
+        if (!($refClass->getName() === 'DateTime' || $refClass->isSubclassOf('DateTime'))) {
+            throw new \InvalidArgumentException("The class used to cast DATE and DATETIME values must be derived from DateTime.");
         }
-        else {
-            $this->dateClass = "\DateTime";
-        }
+
+        $this->dateClass = $class;
     }
     
     /**
