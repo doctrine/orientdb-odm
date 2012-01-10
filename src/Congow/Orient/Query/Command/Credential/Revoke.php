@@ -24,7 +24,11 @@ use Congow\Orient\Query\Command\Credential;
 
 class Revoke extends Credential
 {
-    const SCHEMA =
-        "REVOKE :Permission ON :Resource FROM :Role"
-    ;
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "REVOKE :Permission ON :Resource FROM :Role";
+    }
 }

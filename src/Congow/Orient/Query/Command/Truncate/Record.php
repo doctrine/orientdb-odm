@@ -23,15 +23,21 @@ use Congow\Orient\Query\Command;
 
 class Record extends Command
 {
-    const SCHEMA = "TRUNCATE RECORD :Rid";
-    
     public function __construct($rid)
     {
         parent::__construct();
         
         $this->setToken('Rid', $rid);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "TRUNCATE RECORD :Rid";
+    }
+
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(

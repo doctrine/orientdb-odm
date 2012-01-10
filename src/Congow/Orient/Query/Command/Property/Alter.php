@@ -23,8 +23,6 @@ use Congow\Orient\Query\Command\Property;
 
 class Alter extends Property
 {
-    const SCHEMA = "ALTER PROPERTY :Class.:Property :Attribute :Value";
-
     /**
      * Sets the $attribute to change and its new $value.
      *
@@ -38,6 +36,14 @@ class Alter extends Property
         $this->setToken('Value', $value);
 
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "ALTER PROPERTY :Class.:Property :Attribute :Value";
     }
 
     /**

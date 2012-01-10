@@ -25,8 +25,6 @@ use Congow\Orient\Formatter\Query\EmbeddedRid as EmbeddedRidFormatter;
 
 class Remove extends Index
 {
-    const SCHEMA = "DELETE FROM index::Name :Where";
-
     public function __construct($indexName, $key, $rid = null, TokenFormatter $ridFormatter = null)
     {
         parent::__construct();
@@ -43,6 +41,14 @@ class Remove extends Index
             $rid    = $ridFormatter::format(array($rid));
             $this->$method("rid = $rid");
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "DELETE FROM index::Name :Where";
     }
 
     /**

@@ -24,10 +24,6 @@ use Congow\Orient\Query\Command;
 
 class Link extends Command
 {
-    const SCHEMA =
-        "CREATE LINK :Name FROM :SourceClass.:SourceProperty TO :DestinationClass.:DestinationProperty :Inverse"
-    ;
-
     /**
      * Sets the source of the link, its $alias and if the link must be $reverse.
      *
@@ -47,6 +43,14 @@ class Link extends Command
         if ($inverse) {
             $this->setToken('Inverse', 'INVERSE');
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "CREATE LINK :Name FROM :SourceClass.:SourceProperty TO :DestinationClass.:DestinationProperty :Inverse";
     }
 
     /**
