@@ -56,4 +56,13 @@ class RidTest extends TestCase
     {
         $this->validator->check('##1:1');
     }
+    
+    /**
+     * @expectedException Congow\Orient\Exception\Validation
+     */
+    public function testTheValidatorDoesNotAcceptEmptyString()
+    {
+        $this->validator->check('');
+    }
+    
 }

@@ -27,5 +27,15 @@ use Congow\Orient\ODM\Mapper\Annotations as ODM;
 */
 class Country
 {
+  /**
+   * @ODM\Property(type="string")
+   */
+  public $rid;
+  
+  public function getRid()
+  {
+    return $this->rid;
+  }
+  
 }
 

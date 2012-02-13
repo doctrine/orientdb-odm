@@ -32,6 +32,11 @@ class Address
      */
     protected $city;
     
+    /**
+     * @ODM\Property(name="type", type="string")
+     */
+    public $type;
+    
     public function getCity()
     {
         return $this->city;
@@ -40,6 +45,11 @@ class Address
     public function setCity($city)
     {
         $this->city = $city;
+    }
+    
+    public function getType()
+    {
+        return $this->type;
     }
 }
 

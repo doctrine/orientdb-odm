@@ -27,6 +27,15 @@ class Values extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {   
+
+        $values = array_map(function($value) {
+          if (is_object($value)) {
+            return $value->getRid();
+          }
+          
+          return $value;
+        },$values);
+              
         foreach ($values as $key => $value) {
             if (is_array($value)) {
                 if (count($value) > 1) {

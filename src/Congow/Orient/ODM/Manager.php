@@ -21,6 +21,7 @@
 
 namespace Congow\Orient\ODM;
 
+use Congow\Orient\Exception\Document\Void as VoidDocument;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\ODM\Mapper\Hydration\Result;
 use Congow\Orient\Query;
@@ -28,6 +29,7 @@ use Congow\Orient\Foundation\Types\Rid;
 use Congow\Orient\Exception\ODM\OClass\NotFound as UnmappedClass;
 use Congow\Orient\Query\Command\Select;
 use Congow\Orient\Exception;
+use Congow\Orient\Exception\Query\SQL\Invalid as InvalidSQL;
 use Congow\Orient\Contract\Protocol\Adapter as ProtocolAdapter;
 use Congow\Orient\ODM\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
 use Congow\Orient\Validator\Rid as RidValidator;
@@ -82,7 +84,17 @@ class Manager implements ObjectManager
     {
         $adapter    = $this->getProtocolAdapter();
         $return     = $query->shouldReturn();
-        $execution  = $adapter->execute($query->getRaw(), $return);
+        
+        try{
+            
+            $execution  = $adapter->execute($query->getRaw(), $return);
+            
+        }
+        catch (InvalidSQL $e) {
+          throw new VoidDocument();
+        }
+        
+        
         $results    = $adapter->getResult();
         
         if ($execution) {
@@ -174,7 +186,13 @@ class Manager implements ObjectManager
     public function flush()
     {
         foreach ($this->documents as $document) {
+
             $annotation             = $this->getMapper()->getClassAnnotation(get_class($document));
+            
+            if (!$annotation) {
+              $annotation           = $this->getMapper()->getClassAnnotation(get_parent_class($document));
+            }
+            
             $orientClass            = $annotation->class;
             $propertyAnnotations    = $this->getMapper()->getObjectPropertyAnnotations($document);
             $values                 = array();
@@ -184,13 +202,18 @@ class Manager implements ObjectManager
                 $values[$property] = $document->$getter();
             }
             
+            $values = array_filter($values, function($value){
+                return is_null($value) ? false : true;
+            });                      
+            
             $query = new Query();
             $query->insert()
                   ->into($orientClass)
                   ->fields(array_keys($values))
                   ->values($values);
-                  
+            
             $this->execute($query);
+            
         }
     }
     

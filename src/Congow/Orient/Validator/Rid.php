@@ -27,6 +27,11 @@ class Rid extends Validator
     protected function clean($rid)
     {   
         if (is_string($rid)) {
+          
+            if (!strlen($rid)) {
+                throw new ValidationException($rid, __CLASS__);
+            }
+            
             if ($rid[0] === "#") {
               $rid = substr($rid, 1);    
             }
