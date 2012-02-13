@@ -53,6 +53,15 @@ class CasterTest extends TestCase
     {
         $this->assertTrue(is_string($this->caster->setValue('john')->castString()));
     }
+
+    public function testStringToDateTimeConversion()
+    {
+        $caster = $this->caster->setValue('2012-01-01 18:30:30:1231');
+
+        $this->assertInstanceOf('DateTime', $datetime = $caster->castDateTime());
+        $this->assertInstanceOf('DateTime', $date = $caster->castDate());
+        $this->assertEquals($datetime, $date);
+    }
     
     public function testBooleanToStringConversion()
     {

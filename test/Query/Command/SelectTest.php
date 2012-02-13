@@ -181,4 +181,44 @@ class SelectTest extends TestCase
 
         $this->assertCommandGives($sql, $this->select->getRaw());
     }
+
+    public function testAllowsFieldAliases()
+    {
+        $this->select->select(array('name AS aliased_name', 'surname AS aliased surname!'))
+                     ->from(array('profile'), false);
+
+        $sql = 'SELECT name AS aliased_name, surname AS aliased surname! FROM profile';
+
+        $this->assertCommandGives($sql, $this->select->getRaw());
+    }
+
+    public function testAllowsSQLFunctionOnFields()
+    {
+        $this->select->select(array('MIN(x) AS fn_min', 'MAX(y) AS fn_max', 'COUNT(*) AS fn_count'))
+                     ->from(array('MapPoint'), false);
+
+        $sql = 'SELECT MIN(x) AS fn_min, MAX(y) AS fn_max, COUNT(*) AS fn_count FROM MapPoint';
+
+        $this->assertCommandGives($sql, $this->select->getRaw());
+    }
+
+    public function testAllowsFilterMethodsOnFields()
+    {
+        $this->select->select(array('name.toUpperCase() AS name_uppercase', 'surname.toLowerCase() AS surname_lowercase'))
+                     ->from(array('profile'), false);
+
+        $sql = 'SELECT name.toUpperCase() AS name_uppercase, surname.toLowerCase() AS surname_lowercase FROM profile';
+
+        $this->assertCommandGives($sql, $this->select->getRaw());
+    }
+
+    public function testAllowsReferencingFieldsOfLinks()
+    {
+        $this->select->select(array('city.country.name AS country'))
+                     ->from(array('address'), false);
+
+        $sql = 'SELECT city.country.name AS country FROM address';
+
+        $this->assertCommandGives($sql, $this->select->getRaw());
+    }
 }
