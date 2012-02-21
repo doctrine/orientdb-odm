@@ -21,12 +21,13 @@
 namespace test\Integration\Document;
 
 use Congow\Orient\ODM\Mapper\Annotations as ODM;
-
+use Congow\Orient\Contract\ODM\Document;
 /**
 * @ODM\Document(class="Address")
 */
-class Address
+class Address implements Document
 {
+    protected $rid;
     /**
      * @ODM\Property(type="link")
      */
@@ -51,5 +52,17 @@ class Address
     {
         return $this->type;
     }
+    
+    public function setRid($rid)
+    {
+        $this->rid = $rid;
+    }
+    
+    public function getRid()
+    {
+        return $this->rid;
+    }
+    
+    
 }
 

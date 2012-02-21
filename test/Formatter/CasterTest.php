@@ -13,6 +13,7 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
+use Congow\Orient\Query;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\ODM\Manager;
 use Congow\Orient\Formatter\Caster;
@@ -26,7 +27,7 @@ class StubObject
 
 class MockAdapter implements \Congow\Orient\Contract\Protocol\Adapter
 {   
- public function execute($sql, $return = false)
+ public function execute(Query $sql)
  {
         
  }

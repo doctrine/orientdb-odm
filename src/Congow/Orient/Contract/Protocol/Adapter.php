@@ -20,18 +20,20 @@
 
 namespace Congow\Orient\Contract\Protocol;
 
+use Congow\Orient\Query;
+
 interface Adapter
 {
     /**
      * Executes a command against Congow\OrientDB thorugh the protocol binding, 
      * returning mixed feedback or throwing an exception in case of error.
      * 
-     * @param  string $command SQL-like command to execute
+     * @param  Congow\Orient\Query $query
      * @throws Congow\Orient\Exception\Query\SQL\Invalid
      * @throws Congow\Orient\Exception\Http\Response\Void
      * @return boolean
      */
-    public function execute($sql);
+    public function execute(Query $query);
     
     /**
      * When calling ->execute() with the $return set to true, it might happen

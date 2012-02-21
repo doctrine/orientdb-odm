@@ -48,11 +48,12 @@ class ManagerTest extends TestCase
     public function testExecutionOfAnUpdate()
     {
         $query      = new Query(array('Address'));
-        $query->update('Address')->set(array('my' => 'yours'))->where('@rid = ?', '1:10000');
-        $result     = $this->manager->execute($query);
+        $query->update('Address')->set(array('my' => 'yours'))->where('@rid = ?', '13:7');
         
-        $this->assertTrue($result);
-        $this->assertInternalType('boolean', $result);
+        $result     = $this->manager->execute($query);
+
+        $this->assertEquals(1,$result);
+
     }
     
     /**
@@ -75,6 +76,7 @@ class ManagerTest extends TestCase
     public function testFindingARecordWithAFetchPlan()
     {
         $post       = $this->manager->find('30:0', '*:-1');
+        
         $this->assertInternalType('array', $post->comments);
         $this->assertFalse($post->comments instanceOf \Congow\Orient\ODM\Proxy\Collection);
     }
@@ -148,13 +150,12 @@ class ManagerTest extends TestCase
         $this->assertEquals(1, count($this->manager->execute($query)));
     }
     
-    public function testExecutionWithNoOutput()
+    public function testExecutionWithNumericOutput()
     {
         $query = new Query();
         $query->update('Address')->set(array('type' => 'Residence'));
-        
-        $this->assertInternalType('bool', $this->manager->execute($query));
-        $this->assertEquals(true, $this->manager->execute($query));
+
+        $this->assertTrue(is_numeric($this->manager->execute($query)));
     }
     
     /**
@@ -192,22 +193,22 @@ class ManagerTest extends TestCase
     
     public function testAnObjectPersisted2TimesGetsSavedWithTheLastValuesWhenFlushing()
     {
-        $this->markTestSkipped();
+        $ts = time(true);
         
         $address = new \test\Integration\Document\Address();
-
-        $address->setCity('Rome');        
+        
+        $address->type = 'flat';        
         $this->manager->persist($address);
         $this->manager->flush();
         
-        $address->setCity("Milan");
+        $address->type = 'normal' . $ts;
         $this->manager->persist($address);
         $this->manager->flush();
         
         $rid = $address->getRid();
         
         $address_check = $this->manager->find($rid);
-        $this->assertEquals($address_check->getCity(), "Milan");
+        $this->assertEquals($address_check->getType(), 'normal' . $ts);
         
     }
     

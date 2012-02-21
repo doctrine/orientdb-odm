@@ -13,6 +13,7 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
+use Congow\Orient\Query;
 use Congow\Orient\ODM\Manager;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\ODM\Repository;
@@ -22,7 +23,7 @@ class Stubadapter extends \Congow\Orient\Foundation\Protocol\Adapter\Http
 {
     public function __construct(){}
 
-    public function execute($sql)
+    public function execute(Query $query)
     {
         return array(0,1);
     }

@@ -16,6 +16,7 @@ use test\PHPUnit\TestCase;
 use Congow\Orient\ODM\Manager;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\ODM\Mapper\Annotations\Reader as AnnotationReader;
+use Congow\Orient\Query;
 
 class Adapter implements \Congow\Orient\Contract\Protocol\Adapter
 {
@@ -34,7 +35,7 @@ class Adapter implements \Congow\Orient\Contract\Protocol\Adapter
           }');
     }
     
-    public function execute($sql)
+    public function execute(Query $query)
     {
         return true;
     }

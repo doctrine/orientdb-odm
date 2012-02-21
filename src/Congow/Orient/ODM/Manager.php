@@ -83,30 +83,30 @@ class Manager implements ObjectManager
     public function execute(Query $query)
     {
         $adapter    = $this->getProtocolAdapter();
-        $return     = $query->shouldReturn();
-        
+
+
         try{
-            
-            $execution  = $adapter->execute($query->getRaw(), $return);
-            
+            $execution  = $adapter->execute($query);
         }
         catch (InvalidSQL $e) {
           throw new VoidDocument();
         }
         
-        
         $results    = $adapter->getResult();
-        
+
         if ($execution) {
+            
             if (is_array($results)) {
                 $hydrationResults = $this->getMapper()->hydrateCollection($results);
                 
                 return $this->finalizeCollection($hydrationResults);
+            } else {
+                
+                return $results;
             }
-
-            return true;
+            
         }
-        
+
         return false;
     }
 
@@ -166,7 +166,7 @@ class Manager implements ObjectManager
         
         $query      = new Query($rids);
         $adapter    = $this->getProtocolAdapter();
-        $execution  = $adapter->execute($query->getRaw(), true, $fetchPlan);
+        $execution  = $adapter->execute($query, $fetchPlan);
         
         if ($execution && $adapter->getResult()) {
             $collection = $this->getMapper()->hydrateCollection($adapter->getResult());
@@ -212,8 +212,9 @@ class Manager implements ObjectManager
                   ->fields(array_keys($values))
                   ->values($values);
             
-            $this->execute($query);
-            
+            $rid = $this->execute($query);
+
+            $document->setRid($rid);
         }
     }
     
@@ -315,7 +316,7 @@ class Manager implements ObjectManager
     {
         $query      = new Query(array($rid));
         $adapter    = $this->getProtocolAdapter();
-        $execution  = $adapter->execute($query->getRaw(), true, $fetchPlan);
+        $execution  = $adapter->execute($query, $fetchPlan);
 
         if ($execution && $result = $adapter->getResult()) {
           $record       = is_array($result) ? array_shift($result) : $result;

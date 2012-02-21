@@ -14,6 +14,7 @@ namespace test\Integration\Protocol;
 use test\PHPUnit\TestCase;
 use Congow\Orient\Foundation\Protocol\Adapter\Http as HttpAdapter;
 use Congow\Orient\Http\Client\Curl;
+use Congow\Orient\Query;
 
 class HttpAdapterTest extends TestCase
 {
@@ -25,26 +26,33 @@ class HttpAdapterTest extends TestCase
     
     public function testFindingARecord()
     {
-        $query = 'SELECT FROM post WHERE @rid = 26:0';
-        
-        $this->assertTrue($this->adapter->execute($query, true));
+        $query = new Query();
+        $query->from(array('post'))
+              ->where('@rid = ?','26:0');
+
+        $this->assertTrue($this->adapter->execute($query));
         $this->assertInternalType('array', $this->adapter->getResult());
     }
     
     public function testFindingANonExistingRecord()
     {
-        $query = 'SELECT FROM post WHERE @rid = 26:45646156';
+
+        $query = new Query();
+        $query->from(array('post'))
+              ->where('@rid = ?','26:45646156');
         
-        $this->assertTrue($this->adapter->execute($query, true));
+        $this->assertTrue($this->adapter->execute($query));
         $this->assertInternalType('array', $this->adapter->getResult());
     }
     
     public function testExecutingAQuery()
     {
-        $query = 'SELECT FROM post WHERE @rid = 26:0';
+        $query = new Query();
+        $query->from(array('post'))
+              ->where('@rid = ?','26:0');
         
         $this->assertTrue($this->adapter->execute($query));
-        $this->assertInternalType('null', $this->adapter->getResult());
+        $this->assertInternalType('array', $this->adapter->getResult());
     }
     
     /**
@@ -52,13 +60,8 @@ class HttpAdapterTest extends TestCase
      */
     public function testExecutingAWrongQuery()
     {
-        $query = 'OMNMOMNOMNOMOMN';
+        $query = new Query(array('select from'));
         
         $this->adapter->execute($query);
     }
-    
-    // public function testFindingARecord()
-    //     {   
-    //         $this->assertInstanceOf('stdClass', $this->adapter->find('26:0'));
-    //     }
 }

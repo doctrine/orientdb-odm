@@ -20,10 +20,12 @@
 namespace Congow\Orient\Foundation\Protocol\Adapter;
 
 use Congow\Orient\Contract\Protocol\Adapter as ProtocolAdapter;
+use Congow\Orient\Query\Command\Select;
 use Congow\Orient\Contract\Http\Client;
 use Congow\Orient\Foundation\Binding;
 use Congow\Orient\Exception\Query\SQL\Invalid as InvalidSQL;
 use Congow\Orient\Exception\Http\Response\Void as VoidResponse;
+use Congow\Orient\Query;
 use Congow\Orient\Http\Response;
 
 class Http implements ProtocolAdapter
@@ -48,26 +50,42 @@ class Http implements ProtocolAdapter
     
     /**
      * Executes some SQL against Congow\OrientDB via the HTTP binding.
-     *
-     * @param   string $sql
+     * @todo    fix $result
+     * @param   Congow\Orient\Query $query
      * @return  mixed
      */
-    public function execute($sql, $return = false, $fetchPlan = null)
-    {
-        if ($return) {
-            $response = $this->getClient()->query($sql, null, -1, $fetchPlan);
+    public function execute(Query $query, $fetchPlan = null)
+    {   
+        if ($query->getCommand() instanceOf Select) {            
+            $response = $this->getClient()->query($query->getRaw(), null, -1, $fetchPlan);
         } else {
-            $response = $this->getClient()->command($sql);
+            $response = $this->getClient()->command($query->getRaw());
         }
 
         $this->checkResponse($response);
-        
-        if ($return) {
+
+        if ($query->shouldReturn()) {
+
             $body = json_decode($response->getBody());
 
-            $this->setResult($body->result);   
-        }
-        
+            if ($response->getHeader('Content-Type') == 'text/plain' ) {
+
+                //if numeric the result is provided by a update command
+                if (!is_numeric($body)) {
+                    $result = explode('#', $response->getBody());
+                    $result = explode('{', $result[1]);
+                    $result = $result[0];
+                }else{
+                    $result = $response->getBody();
+                }
+                
+                $this->setResult($result);
+
+            } else {
+                $this->setResult($body->result);
+            }
+        }   
+
         return true;
     }
     
@@ -123,9 +141,9 @@ class Http implements ProtocolAdapter
     /**
      * Sets the result of the execute() method.
      *
-     * @param Array $result 
+     * @param mixed $result 
      */
-    protected function setResult(Array $result)
+    protected function setResult($result)
     {
         $this->result = $result;
     }

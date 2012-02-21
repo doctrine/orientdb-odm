@@ -23,6 +23,7 @@ use Congow\Orient\Query\Command\Credential\Grant;
 use Congow\Orient\Query\Command\Credential\Revoke;
 use Congow\Orient\Query\Command\Insert;
 use Congow\Orient\Query\Command\Select;
+use Congow\Orient\Query\Command\Update;
 use Congow\Orient\Exception;
 use Congow\Orient\Contract\Query as QueryInterface;
 use Congow\Orient\Contract\Query\Command\Select as SelectInterface;
@@ -606,7 +607,9 @@ class Query implements QueryInterface
      */
     public function shouldReturn()
     {   
-        if ($this->getCommand() instanceOf Select) {
+        if ($this->getCommand() instanceOf Select || 
+            $this->getCommand() instanceOf Insert || 
+            $this->getCommand() instanceOf Update)  {
             return true;
         }
         
