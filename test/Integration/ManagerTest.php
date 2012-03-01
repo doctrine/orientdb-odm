@@ -231,7 +231,7 @@ class ManagerTest extends TestCase
     {
         $address = new \test\Integration\Document\Address();        
         $address->type = 'flat';
-        
+
         //create record
         $this->manager->persist($address);
         $this->manager->flush();
@@ -247,9 +247,14 @@ class ManagerTest extends TestCase
     
     public function testPersistingADeletionOnAPersistedObject() 
     {
-        $this->markTestSkipped();
+        $address = new \test\Integration\Document\Address();        
+        $address->type = 'flat';
         
-        throw new \Exception();
+        $this->manager->persist($address);
+        $this->manager->remove($address);
+        $this->manager->flush();
+        
+        $this->assertInternalType("null", $address->getRid());
     }
     
     public function testPersistingADeletionWhichInvolvesCascadingDeletions() 

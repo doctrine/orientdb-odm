@@ -211,6 +211,9 @@ class Manager implements ObjectManager
             $document->setRid($rid);
         }
 
+        //empty array
+        $this->documents = array();
+
         //deletion
         foreach ($this->scheduleForDelete as $document) {
 
@@ -308,7 +311,7 @@ class Manager implements ObjectManager
 
         if (array_key_exists($hash, $this->documents)) {
             unset($this->documents[$hash]);
-            //return true;
+            return true;
         }
 
         $this->scheduleForDelete[] = $object;
