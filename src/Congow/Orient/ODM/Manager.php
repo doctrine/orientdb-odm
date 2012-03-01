@@ -41,6 +41,7 @@ class Manager implements ObjectManager
     protected $mapper;
     protected $metadataFactory;
     protected $protocolAdapter;
+    protected $scheduleForDelete = array();
     
     /**
      * Instatiates a new Mapper, injecting the $mapper that will be used to
@@ -187,15 +188,8 @@ class Manager implements ObjectManager
     {
         foreach ($this->documents as $document) {
 
-            $annotation             = $this->getMapper()->getClassAnnotation(get_class($document));
-            
-            if (!$annotation) {
-              $annotation           = $this->getMapper()->getClassAnnotation(get_parent_class($document));
-            }
-            
-            $orientClass            = $annotation->class;
-            $propertyAnnotations    = $this->getMapper()->getObjectPropertyAnnotations($document);
-            $values                 = array();
+            $propertyAnnotations = $this->getMapper()->getObjectPropertyAnnotations($document);
+            $values              = array();
             
             foreach ($propertyAnnotations as $property => $annotation) {
                 $getter = 'get' . ucfirst($property);
@@ -208,7 +202,7 @@ class Manager implements ObjectManager
             
             $query = new Query();
             $query->insert()
-                  ->into($orientClass)
+                  ->into($this->getOrientClass($document))
                   ->fields(array_keys($values))
                   ->values($values);
             
@@ -216,6 +210,15 @@ class Manager implements ObjectManager
 
             $document->setRid($rid);
         }
+
+        //deletion
+        foreach ($this->scheduleForDelete as $document) {
+
+            $query = new Query();
+            $query->delete($this->getOrientClass($document))->where('@rid = ?', $document->getRid());
+
+            $this->execute($query);
+        }   
     }
     
     /**
@@ -227,6 +230,17 @@ class Manager implements ObjectManager
     public function getClassMetadata($class)
     {
         return $this->getMetadataFactory()->getMetadataFor($class);
+    }
+
+    protected function getOrientClass($document)
+    {
+        $annotation         = $this->getMapper()->getClassAnnotation(get_class($document));
+        
+        if (!$annotation) {
+          $annotation       = $this->getMapper()->getClassAnnotation(get_parent_class($document));
+        }
+        
+        return $annotation->class;    
     }
     
     /**
@@ -265,7 +279,6 @@ class Manager implements ObjectManager
     
     /**
      * @todo to implement/test
-     *
      * @param \stdClass $object 
      */
     public function merge($object)
@@ -290,7 +303,15 @@ class Manager implements ObjectManager
      */
     public function remove($object)
     {
-        throw new \Exception();
+
+        $hash = spl_object_hash($object);
+
+        if (array_key_exists($hash, $this->documents)) {
+            unset($this->documents[$hash]);
+            //return true;
+        }
+
+        $this->scheduleForDelete[] = $object;
     }
     
     /**

@@ -229,14 +229,18 @@ class ManagerTest extends TestCase
     
     public function testPersistingADeletion() 
     {
-        $this->markTestSkipped();
+        $address = new \test\Integration\Document\Address();        
+        $address->type = 'flat';
         
-        $address    = $this->manager->find('13:0');
+        //create record
+        $this->manager->persist($address);
+        $this->manager->flush();
         
+        //delete record just created
         $this->manager->remove($address);
         $this->manager->flush();
 
-        $address_check  = $this->manager->find('13:0');
+        $address_check  = $this->manager->find($address->getRid());
         
         $this->assertInternalType("null", $address_check);
     }
