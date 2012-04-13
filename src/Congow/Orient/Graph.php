@@ -40,12 +40,9 @@ class Graph implements GraphInterface
      */
     public function add(Vertex $vertex)
     {
-        foreach ($this->getVertices() as $oldVertex) {
-            if ($oldVertex->getId() == $vertex->getId()) {
+        if(array_key_exists($vertex->getId(), $this->getVertices())){
                 $message = 'Unable to insert multiple Vertices with the same ID in a Graph';
-                
                 throw new Exception($message);
-            }
         }
         
         $this->vertices[$vertex->getId()] = $vertex;
