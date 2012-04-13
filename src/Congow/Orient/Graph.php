@@ -24,6 +24,11 @@ use Congow\Orient\Contract\Graph as GraphInterface;
 
 class Graph implements GraphInterface
 {
+    /**
+     * All the vertices in the graph
+     * 
+     * @var array 
+     */
     protected $vertices = array();
     
     /**
