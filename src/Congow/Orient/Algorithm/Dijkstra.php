@@ -186,8 +186,9 @@ class Dijkstra implements AlgorithmInterface
         
         if ($mostAdjacentConnectionId && $mostAdjacentConnectionId != $this->getEndingVertex()->getId()) {
             $vertex = $this->getGraph()->getVertex($mostAdjacentConnectionId);
-            
-            $this->calculatePotentials($vertex);
+            if(!$vertex->isPassed()){
+                $this->calculatePotentials($vertex);
+            }
         }
         
         foreach ($this->getGraph()->getVertices() as $vertex) {
