@@ -22,17 +22,17 @@ class RidTest extends TestCase
     {
         $this->validator = new Rid();
     }
-    
+
     public function testTheValidatorAcceptsAValidRid()
     {
         $this->assertEquals('#1:1', $this->validator->check('1:1'));
     }
-    
+
     public function testTheValidatorAcceptsAValidPrefixedRid()
     {
         $this->assertEquals('#1:1', $this->validator->check('#1:1'));
     }
-    
+
     /**
      * @expectedException Congow\Orient\Exception\Validation
      */
@@ -40,7 +40,7 @@ class RidTest extends TestCase
     {
         $this->validator->check('hola');
     }
-    
+
     /**
      * @expectedException Congow\Orient\Exception\Validation
      */
@@ -48,12 +48,19 @@ class RidTest extends TestCase
     {
         $this->validator->check('11');
     }
-    
+
     /**
      * @expectedException Congow\Orient\Exception\Validation
      */
     public function testTheValidatorDoesNotAcceptsRidsWithMultiplesPrefixes()
     {
         $this->validator->check('##1:1');
+    }
+
+    /**
+     * @expectedException Congow\Orient\Exception\Validation
+     */
+    public function testEmptyRid(){
+        $this->validator->check('');
     }
 }

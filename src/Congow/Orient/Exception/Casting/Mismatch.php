@@ -10,22 +10,19 @@
  */
 
 /**
- * Class Overflow
+ * Class Mismatch
  *
  * @package     Congow\Orient
  * @subpackage  Exception
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Congow\Orient\Exception;
+namespace Congow\Orient\Exception\Casting;
 
 use Congow\Orient\Exception;
 
-class Overflow extends Exception
+class Mismatch extends Exception
 {
-    public function __construct($message)
-    {
-        $this->message = $message;
-    }
+
 }
 

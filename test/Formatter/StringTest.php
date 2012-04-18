@@ -20,14 +20,14 @@ class StringTest extends TestCase
 {
     public function setup()
     {
-        
+
     }
-    
+
     public function testConvertPathToClassName()
     {
         $file      = "./test/ODM/Document/Stub/City.php";
         $namespace = "test";
-        
+
         $className = String::convertPathToClassName($file, $namespace);
         $this->assertEquals('\test\ODM\Document\Stub\City', $className);
     }
@@ -36,7 +36,7 @@ class StringTest extends TestCase
     {
         $file      = "./test/ODM/Document/Stub/City.php";
         $namespace = "test\ODM";
-        
+
         $className = String::convertPathToClassName($file, $namespace);
         $this->assertEquals('\test\ODM\Document\Stub\City', $className);
     }

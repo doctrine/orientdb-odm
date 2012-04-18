@@ -12,8 +12,8 @@
 /**
  * Class Post
  *
- * @package     
- * @subpackage  
+ * @package
+ * @subpackage
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author      David Funaro <ing.davidino@gmail.com>
  */
@@ -31,27 +31,37 @@ class Post
      * @ODM\Property(type="link_list")
      */
     public $comments;
-    
+
     /**
      * @ODM\Property(name="@rid", type="string")
      */
     public $rid;
-    
+
+    /**
+     * @ODM\Property(name="id", type="integer")
+     */
+    public $id;
+
+    /**
+     * @ODM\Property(type="integer")
+     */
+    public $title;
+
     public function getRid()
     {
         return $this->rid;
     }
-    
+
     public function setRid($rid)
     {
         $this->rid = $rid;
     }
-    
+
     public function getComments()
     {
         return $this->comments;
     }
-    
+
     public function setComments($city)
     {
         $this->comments = $city;

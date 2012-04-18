@@ -1,7 +1,7 @@
 <?php
 
 /**
- * StringTest
+ * IntegerTest
  *
  * @package    Congow\Orient
  * @subpackage Test
@@ -27,7 +27,7 @@ use Congow\Orient\Validator\Rid as RidValidator;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;
 
-class StringTest extends TestCase
+class IntegerTest extends TestCase
 {
 
 	public function setup()
@@ -40,14 +40,18 @@ class StringTest extends TestCase
 	    $this->manager   = new Manager($mapper, $protocolAdapter);
 	}
 
-	public function testHydratingAStringProperty()
+	public function testHydrationOfAnIntegerProperty()
 	{
-		$country = $this->manager->find('#15:1');
-		$this->assertInternalType('string', $country->name);
+		$post = $this->manager->find("#30:0");
+		$this->assertInternalType('integer', $post->id);
 	}
 
-	public function testHydratingAnEmptyStringProperty()
+	public function testAnExceptionIsRaisedWhenAnIntegerPropertyIsNotAnInteger()
 	{
-		$country = new Country();
+		$post = $this->manager->find("#30:0");
+		var_dump($post->title);
+		$this->assertInternalType('integer', $post->title);
 	}
+
+
 }

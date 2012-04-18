@@ -30,6 +30,7 @@ use Congow\Orient\ODM\Mapper\Annotations\Property as PropertyAnnotation;
 use Congow\Orient\ODM\Proxy;
 use Congow\Orient\ODM\Proxy\Collection as CollectionProxy;
 use Congow\Orient\ODM\Proxy\Value as ValueProxy;
+use Congow\Orient\Exception\Casting\Mismatch;
 
 class Caster implements CasterInterface
 {
@@ -37,30 +38,31 @@ class Caster implements CasterInterface
     protected $mapper       = null;
     protected $dateClass    = null;
     protected $properties   = array();
-    
+
     const SHORT_LIMIT       = 32767;
     const LONG_LIMIT        = 9223372036854775807;
     const BYTE_MAX_VALUE    = 127;
     const BYTE_MIN_VALUE    = -128;
-    
+    const MISMATCH_MESSAGE  = "trying to cast %s as %s";
+
     /**
      * Instantiates a new Caster.
      *
      * @param Mapper    $mapper
-     * @param mixed     $value 
+     * @param mixed     $value
      * @param string    $dateClass  The class used to cast dates and datetimes
      */
     public function __construct(Mapper $mapper, $value = null, $dateClass = "\DateTime")
     {
         $this->mapper       = $mapper;
         $this->assignDateClass($dateClass);
-        
+
         if ($value) {
             $this->setValue($value);
         }
     }
-    
-    
+
+
     /**
      * Casts the given $value to boolean.
      *
@@ -70,7 +72,7 @@ class Caster implements CasterInterface
     {
         return (bool) $this->value;
     }
-    
+
     /**
      * Casts the given $value to a binary.
      *
@@ -80,7 +82,7 @@ class Caster implements CasterInterface
     {
         return 'data:;base64,' . $this->value;
     }
-    
+
     /**
      * Casts the given $value to a byte.
      *
@@ -90,13 +92,13 @@ class Caster implements CasterInterface
     {
         if ($this->value > self::BYTE_MAX_VALUE || $this->value < self::BYTE_MIN_VALUE) {
             $message = sprintf('byte out of bounds (%d of %d)', $this->value, self::SHORT_LIMIT);
-            
+
             throw new Overflow($message);
         }
-        
+
         return $this->value;
     }
-    
+
     /**
      * Casts the given $value to a DateTime object.
      *
@@ -129,7 +131,7 @@ class Caster implements CasterInterface
     {
         return floatval($this->value);
     }
-    
+
     /**
      * Given an embedded record, it uses the manager to hydrate it.
      *
@@ -139,7 +141,7 @@ class Caster implements CasterInterface
     {
         return $this->getMapper()->hydrate($this->value);
     }
-    
+
     /**
      * Casts a list of embedded entities
      *
@@ -149,7 +151,7 @@ class Caster implements CasterInterface
     {
          return $this->castEmbeddedArrays();
     }
-    
+
     /**
      * Casts a map (key-value preserved) of embedded entities
      *
@@ -158,10 +160,10 @@ class Caster implements CasterInterface
     public function castEmbeddedMap()
     {
         $this->convertJsonCollectionToArray();
-        
+
         return $this->castEmbeddedArrays();
     }
-    
+
     /**
      * Casts a set of embedded entities
      *
@@ -189,9 +191,13 @@ class Caster implements CasterInterface
      */
     public function castInteger()
     {
-        return (int) $this->value;
+        if(is_numeric($this->value)){
+            return (int) $this->value;
+        }
+
+        $this->raiseMismatch($this->value, 'integer');
     }
-    
+
     /**
      * If the link is a rid, it returns back a rid object, cause the Managar,
      * which eventually will get back the document, will know from the Mapper
@@ -216,27 +222,27 @@ class Caster implements CasterInterface
             }
         }
     }
-    
+
     /**
      * Hydrates multiple objects through a Mapper.
      *
      * @return Array
      */
     public function castLinkset()
-    {        
+    {
         return $this->castLinkCollection();
     }
-    
+
     /**
      * Hydrates multiple objects through a Mapper.
      *
      * @return Array
      */
     public function castLinklist()
-    {        
+    {
         return $this->castLinkCollection();
     }
-    
+
     /**
      * Hydrates multiple objects through a Mapper.
      * A conversion needs to be done because of the non linearity of a JSON
@@ -245,22 +251,22 @@ class Caster implements CasterInterface
      * @return Array
      */
     public function castLinkmap()
-    {   
+    {
         $this->convertJsonCollectionToArray();
-        
+
         return $this->castLinkCollection();
     }
-    
+
     /**
      * Casts the given $value to a long.
      *
      * @return mixed
-     */    
+     */
     public function castLong()
     {
         return $this->castInBuffer(self::LONG_LIMIT, 'long');
     }
-    
+
     /**
      * Casts the current value into an integer verifying it belongs to a certain
      * range ( -$limit < $value > + $limit ).
@@ -274,10 +280,10 @@ class Caster implements CasterInterface
     {
         if (abs($this->value) > $limit) {
             $message = sprintf($type . ' out of bounds (%d of %d)', $this->value, self::SHORT_LIMIT);
-            
+
             throw new Overflow($message);
         }
-        
+
         return $this->value;
     }
 
@@ -285,7 +291,7 @@ class Caster implements CasterInterface
      * Casts the value to string.
      *
      * @return string
-     */    
+     */
     public function castString()
     {
         if($this->value instanceOf \StdClass) {
@@ -293,7 +299,7 @@ class Caster implements CasterInterface
                 $this->value = null;
             }
         }
-        
+
         return (string) $this->value;
     }
 
@@ -301,12 +307,12 @@ class Caster implements CasterInterface
      * Casts the value to a short.
      *
      * @return mixed
-     */    
+     */
     public function castShort()
     {
         return $this->castInBuffer(self::SHORT_LIMIT, 'long');
     }
-    
+
     /**
      * Defines properties that can be internally used by the caster.
      *
@@ -317,25 +323,25 @@ class Caster implements CasterInterface
     {
         $this->properties[$key] = $property;
     }
-    
+
     /**
      * Sets the internal value to work with.
      *
-     * @param mixed $value 
+     * @param mixed $value
      */
     public function setValue($value)
     {
         $this->value = $value;
-        
+
         return $this;
     }
-    
+
     /**
      * Assigns the class used to cast dates and datetimes.
      * If the $class is a subclass of \DateTime, it uses it, it uses \DateTime
      * otherwise.
      *
-     * @param string $class 
+     * @param string $class
      */
     protected function assignDateClass($class)
     {
@@ -347,31 +353,31 @@ class Caster implements CasterInterface
 
         $this->dateClass = $class;
     }
-    
+
     /**
      * Given a $type, it casts each element of the value array with a method.
      *
      * @param   string $type
-     * @return  Array 
+     * @return  Array
      */
     protected function castArrayOf($type)
     {
         $method         = 'cast' . ucfirst($type);
         $results        = array();
         $innerCaster    = new self($this->getMapper());
-        
+
         if (!method_exists($innerCaster, $method)) {
             throw new Congow\Orient\Exception();
         }
-        
+
         foreach ($this->value as $key => $value) {
-            $innerCaster->setValue($value);            
+            $innerCaster->setValue($value);
             $results[$key] = $innerCaster->$method();
         }
-        
+
         return $results;
     }
-    
+
     /**
      * Casts embedded entities, given the $cast property of the internal
      * annotation.
@@ -381,20 +387,20 @@ class Caster implements CasterInterface
     public function castEmbeddedArrays()
     {
         $annotation = $this->getProperty('annotation');
-        
+
         if (!$annotation) {
             $message =  "In order to cast collections you should inject\n";
             $message .= "an annotation object into the caster.";
-            
+
             throw new Exception($message);
         }
-        
+
         $listType = $annotation->getCast();
-        
+
         if ($listType == "link") {
             return $this->getMapper()->hydrateCollection($this->value);
         }
-        
+
         try {
             return $this->castArrayOf($listType);
         }
@@ -403,11 +409,11 @@ class Caster implements CasterInterface
             $message .= "property without specifying its type.\n";
             $message .= "Please add the 'cast' (eg cast='boolean') ";
             $message .= "to the annotation.";
-            
+
             throw new Congow\Orient\Exception($message);
         }
     }
-    
+
     /**
      * Given the internl value of the caster (an array), it iterates iver each
      * element of the array and hydrates it.
@@ -416,16 +422,16 @@ class Caster implements CasterInterface
      * @return  Array|null
      */
     protected function castLinkCollection()
-    {   
+    {
         foreach ($this->value as $key => $value) {
             if (is_object($value)) {
                 return $this->getMapper()->hydrateCollection($this->value);
             }
-            
+
             try {
                 $ridCollection = new Rid\Collection(array_map(function($rid){
                     new Rid($rid);
-                    
+
                     return $rid;
                 }, $this->value));
 
@@ -434,10 +440,10 @@ class Caster implements CasterInterface
                 return null;
             }
         }
-        
-        return array();        
+
+        return array();
     }
-    
+
     /**
      * If a JSON value is converted in an object containing other objects to
      * hydrate, this method converts the main object in an array.
@@ -446,19 +452,19 @@ class Caster implements CasterInterface
     {
         if(!is_array($this->value) && is_object($this->value)) {
             $orientObjects = array();
-            
+
             $refClass = new \ReflectionObject($this->value);
-            
+
             $properties = $refClass->getProperties(\ReflectionProperty::IS_PUBLIC);
             foreach ($properties as $property) {
                 $orientObjects[$property->name] = $this->value->{$property->name};
             }
-            
+
             $this->setValue($orientObjects);
-        }    
+        }
     }
-    
-    
+
+
     /**
      * Returns the class used to cast date and datetimes.
      *
@@ -468,7 +474,7 @@ class Caster implements CasterInterface
     {
         return $this->dateClass;
     }
-    
+
     /**
      * Returns the internl manager.
      *
@@ -478,7 +484,7 @@ class Caster implements CasterInterface
     {
         return $this->mapper;
     }
-    
+
     /**
      * Returns a property of the Caster, given its $key.
      *
@@ -488,5 +494,13 @@ class Caster implements CasterInterface
     protected function getProperty($key)
     {
         return isset($this->properties[$key]) ? $this->properties[$key] : null;
+    }
+
+    /**
+     * Throws an exception whenever $value can not be casted as $expectedType.
+     */
+    protected function raiseMismatch($value, $expectedType)
+    {
+        throw new Mismatch(sprintf(self::MISMATCH_MESSAGE, $value, $expectedType));
     }
 }

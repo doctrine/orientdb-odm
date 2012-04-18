@@ -12,8 +12,8 @@
 /**
  * Class Rid
  *
- * @package     
- * @subpackage  
+ * @package
+ * @subpackage
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -25,19 +25,19 @@ use Congow\Orient\Exception\Validation as ValidationException;
 class Rid extends Validator
 {
     protected function clean($rid)
-    {   
-        if (is_string($rid)) {
+    {
+        if (is_string($rid) && strlen($rid)) {
             if ($rid[0] === "#") {
-              $rid = substr($rid, 1);    
+              $rid = substr($rid, 1);
             }
-            
+
             $parts  = explode(':', $rid);
 
             if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1])) {
                 return '#' . $rid;
-            }   
+            }
         }
-        
+
         throw new ValidationException($rid, __CLASS__);
     }
 }
