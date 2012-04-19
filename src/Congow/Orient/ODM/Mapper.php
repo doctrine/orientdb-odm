@@ -38,7 +38,7 @@ use Congow\Orient\Contract\Formatter\String as StringFormatterInterface;
 use Congow\Orient\Formatter\String as StringFormatter;
 use Congow\Orient\Contract\ODM\Mapper\Annotations\Reader as AnnotationreaderInterface;
 use Congow\Orient\Exception\ODM\OClass\NotFound as ClassNotFoundException;
-use Congow\Orient\Exception\Overflow;
+use Congow\Orient\Exception\Casting\Mismatch;
 use Congow\Orient\ODM\Mapper\Annotations\Reader;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -47,7 +47,7 @@ use Symfony\Component\Finder\Finder;
 class Mapper
 {
     protected $documentDirectories          = array();
-    protected $enableOverflows              = false;
+    protected $enableMismatchesTolerance    = false;
     protected $annotationReader;
     protected $inflector;
     protected $documentProxiesDirectory;
@@ -78,12 +78,12 @@ class Mapper
     /**
      * Enable or disable overflows' tolerance.
      *
-     * @see   toleratesOverflow()
+     * @see   toleratesMismatches()
      * @param boolean $value
      */
-    public function enableOverflows($value = true)
+    public function enableMismatchesTolerance($value = true)
     {
-        $this->enableOverflows = (bool) $value;
+        $this->enableMismatchesTolerance = (bool) $value;
     }
 
     /**
@@ -239,19 +239,9 @@ class Mapper
         $method     = 'cast' . $this->inflector->camelize($annotation->type);
         $caster->setValue($propertyValue);
         $caster->setProperty('annotation', $annotation);
+        $this->verifyCastingSupport($caster, $method, $annotation->type);
 
-        try {
-            $this->verifyCastingSupport($caster, $method, $annotation->type);
-
-            return $caster->$method();
-        }
-        catch (Overflow $e) {
-            if ($this->toleratesOverflows()) {
-                return $propertyValue;
-            }
-
-            throw $e;
-        }
+        return $caster->$method();
     }
 
     /**
@@ -430,6 +420,7 @@ EOT;
             foreach ($namespaces as $namespace) {
                 $dir = $dir . '/' . $namespace;
                 if (!is_dir($dir)) {
+                    var_dump($dir);
                     mkdir($dir);
                 }
             }
@@ -519,13 +510,13 @@ EOT;
 
     /**
      * Checks whether the Mapper throws exceptions or not when encountering an
-     * overflow error during hydration.
+     * mismatch error during hydration.
      *
      * @return bool
      */
-    protected function toleratesOverflows()
+    public function toleratesMismatches()
     {
-        return (bool) !$this->enableOverflows;
+        return (bool) $this->enableMismatchesTolerance;
     }
 
     /**

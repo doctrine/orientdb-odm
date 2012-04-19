@@ -20,7 +20,6 @@
 namespace Congow\Orient\Formatter;
 
 use Congow\Orient\Contract\Formatter\Caster as CasterInterface;
-use Congow\Orient\Exception\Overflow;
 use Congow\Orient\Exception;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\Foundation\Types\Rid;
@@ -85,18 +84,20 @@ class Caster implements CasterInterface
 
     /**
      * Casts the given $value to a byte.
-     *
+     * @throws Congow\Orient\Exception\Casting\Mismatch
      * @return mixed
      */
     public function castByte()
     {
-        if ($this->value > self::BYTE_MAX_VALUE || $this->value < self::BYTE_MIN_VALUE) {
-            $message = sprintf('byte out of bounds (%d of %d)', $this->value, self::SHORT_LIMIT);
+        $castFunction = function($value){
+            return $value;
+        };
 
-            throw new Overflow($message);
+        if ($this->value > self::BYTE_MIN_VALUE || $this->value < self::BYTE_MAX_VALUE){
+            return $castFunction($this->value);
+        } else {
+            return $this->handleMismatch($castFunction, 'byte');
         }
-
-        return $this->value;
     }
 
     /**
@@ -129,7 +130,15 @@ class Caster implements CasterInterface
      */
     public function castDouble()
     {
-        return floatval($this->value);
+        $castFunction = function($value){
+            return floatval($value);
+        };
+
+        if (is_numeric($this->value)){
+            return $castFunction($this->value);
+        } else {
+            return $this->handleMismatch($castFunction, 'double');
+        }
     }
 
     /**
@@ -191,11 +200,15 @@ class Caster implements CasterInterface
      */
     public function castInteger()
     {
-        if(is_numeric($this->value)){
-            return (int) $this->value;
-        }
+        $castFunction = function($value){
+            return (int) $value;
+        };
 
-        $this->raiseMismatch($this->value, 'integer');
+        if (is_numeric($this->value)){
+            return $castFunction($this->value);
+        } else {
+            return $this->handleMismatch($castFunction, 'integer');
+        }
     }
 
     /**
@@ -274,17 +287,20 @@ class Caster implements CasterInterface
      * @param integer   $limit
      * @param string    $type
      * @return integer
-     * @throws Congow\Orient\Exception\Overflow
+     * @throws Congow\Orient\Exception\Casting\Mismatch
      */
     public function castInBuffer($limit, $type)
     {
-        if (abs($this->value) > $limit) {
-            $message = sprintf($type . ' out of bounds (%d of %d)', $this->value, self::SHORT_LIMIT);
+        $castFunction = function($value){
+            return $value;
+        };
 
-            throw new Overflow($message);
+        if (abs($this->value) < $limit) {
+            return $castFunction($this->value);
+        } else {
+            return $this->handleMismatch($castFunction, $type);
         }
 
-        return $this->value;
     }
 
     /**
@@ -294,13 +310,15 @@ class Caster implements CasterInterface
      */
     public function castString()
     {
-        if($this->value instanceOf \StdClass) {
-            if (!method_exists($this->value, '__toString')) {
-                $this->value = null;
-            }
-        }
+        $castFunction = function($value){
+            return (string) $value;
+        };
 
-        return (string) $this->value;
+        if (is_string($this->value)) {
+            return $castFunction($this->value);
+        } else {
+            return $this->handleMismatch($castFunction, 'string');
+        }
     }
 
     /**
@@ -310,7 +328,7 @@ class Caster implements CasterInterface
      */
     public function castShort()
     {
-        return $this->castInBuffer(self::SHORT_LIMIT, 'long');
+        return $this->castInBuffer(self::SHORT_LIMIT, 'short');
     }
 
     /**
@@ -497,10 +515,22 @@ class Caster implements CasterInterface
     }
 
     /**
+     * @todo phpdoc
+     */
+    protected function handleMismatch(\Closure $castFunction, $expectedType)
+    {
+        if ($this->mapper->toleratesMismatches()) {
+            return $castFunction($this->value);
+        }
+
+        $this->raiseMismatch($expectedType);
+    }
+
+    /**
      * Throws an exception whenever $value can not be casted as $expectedType.
      */
-    protected function raiseMismatch($value, $expectedType)
+    protected function raiseMismatch($expectedType)
     {
-        throw new Mismatch(sprintf(self::MISMATCH_MESSAGE, $value, $expectedType));
+        throw new Mismatch(sprintf(self::MISMATCH_MESSAGE, $this->value, $expectedType));
     }
 }

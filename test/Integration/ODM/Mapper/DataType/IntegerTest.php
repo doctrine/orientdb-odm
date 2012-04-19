@@ -32,7 +32,7 @@ class IntegerTest extends TestCase
 
 	public function setup()
 	{
-	    $mapper          = new Mapper(__DIR__ . "/../../proxies");
+	    $mapper          = new Mapper(__DIR__ . "/../../../../../proxies");
 	    $mapper->setDocumentDirectories(array('./test/Integration/Document' => 'test'));
 	    $client          = new \Congow\Orient\Http\Client\Curl(false, TEST_ODB_TIMEOUT);
 	    $binding         = new \Congow\Orient\Foundation\Binding($client, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
@@ -42,14 +42,40 @@ class IntegerTest extends TestCase
 
 	public function testHydrationOfAnIntegerProperty()
 	{
+	    $mapper          = new Mapper(__DIR__ . "/../../proxies");
+
+	    $mapper->enableMismatchesTolerance();
+
+	    $mapper->setDocumentDirectories(array('./test/Integration/Document' => 'test'));
+	    $client          = new \Congow\Orient\Http\Client\Curl(false, TEST_ODB_TIMEOUT);
+	    $binding         = new \Congow\Orient\Foundation\Binding($client, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
+	    $protocolAdapter = new \Congow\Orient\Foundation\Protocol\Adapter\Http($binding);
+	    $this->manager   = new Manager($mapper, $protocolAdapter);
+
 		$post = $this->manager->find("#30:0");
 		$this->assertInternalType('integer', $post->id);
 	}
 
+	/**
+	 * @expectedException Congow\Orient\Exception\Casting\Mismatch
+	 */
 	public function testAnExceptionIsRaisedWhenAnIntegerPropertyIsNotAnInteger()
 	{
 		$post = $this->manager->find("#30:0");
-		var_dump($post->title);
+	}
+
+	public function testMismatchedAttributesAreConvertedIfTheMapperToleratesMismatches(){
+	    $mapper          = new Mapper(__DIR__ . "/../../proxies");
+
+	    $mapper->enableMismatchesTolerance();
+
+	    $mapper->setDocumentDirectories(array('./test/Integration/Document' => 'test'));
+	    $client          = new \Congow\Orient\Http\Client\Curl(false, TEST_ODB_TIMEOUT);
+	    $binding         = new \Congow\Orient\Foundation\Binding($client, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
+	    $protocolAdapter = new \Congow\Orient\Foundation\Protocol\Adapter\Http($binding);
+	    $this->manager   = new Manager($mapper, $protocolAdapter);
+
+		$post = $this->manager->find("#30:0");
 		$this->assertInternalType('integer', $post->title);
 	}
 

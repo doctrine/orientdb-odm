@@ -74,6 +74,8 @@ class ManagerTest extends TestCase
 
     public function testFindingARecordWithAFetchPlan()
     {
+        $this->manager   = $this->getTolerantManager();
+
         $post       = $this->manager->find('30:0', '*:-1');
         $this->assertInternalType('array', $post->comments);
         $this->assertFalse($post->comments instanceOf \Congow\Orient\ODM\Proxy\Collection);
@@ -88,6 +90,8 @@ class ManagerTest extends TestCase
 
     public function testGettingARelatedCollection()
     {
+        $this->manager   = $this->getTolerantManager();
+
         $post       = $this->manager->find('30:0');
         $comments   = $post->getComments();
 
@@ -155,5 +159,20 @@ class ManagerTest extends TestCase
 
         $this->assertInternalType('bool', $this->manager->execute($query));
         $this->assertEquals(true, $this->manager->execute($query));
+    }
+
+    protected function getTolerantManager()
+    {
+        $mapper          = new Mapper(__DIR__ . "/../../proxies");
+        $mapper->setDocumentDirectories(array('./test/Integration/Document' => 'test'));
+
+        $mapper->enableMismatchesTolerance();
+
+        $client          = new \Congow\Orient\Http\Client\Curl(false, TEST_ODB_TIMEOUT);
+        $binding         = new \Congow\Orient\Foundation\Binding($client, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
+        $protocolAdapter = new \Congow\Orient\Foundation\Protocol\Adapter\Http($binding);
+        $this->manager   = new Manager($mapper, $protocolAdapter);
+
+        return $this->manager;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * StringTest
+ * LongTest
  *
  * @package    Congow\Orient
  * @subpackage Test
@@ -27,9 +27,8 @@ use Congow\Orient\Validator\Rid as RidValidator;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;
 
-class StringTest extends TestCase
+class LongTest extends TestCase
 {
-
 	public function setup()
 	{
 	    $mapper          = new Mapper(__DIR__ . "/../../../../../proxies");
@@ -40,9 +39,17 @@ class StringTest extends TestCase
 	    $this->manager   = new Manager($mapper, $protocolAdapter);
 	}
 
-	public function testHydratingAStringProperty()
+	public function testHydrationOfALongProperty()
 	{
-		$country = $this->manager->find('#15:1');
-		$this->assertInternalType('string', $country->name);
+		$query = new Query();
+		$query->update('Profile')
+			->set(array('hash' => '2937480'))
+			->where('@rid = ?', '#10:0');
+
+		$this->manager->execute($query);
+
+		$neoProfile = $this->manager->find("#10:0");
+		$this->assertInternalType('integer', $neoProfile->hash);
 	}
+
 }

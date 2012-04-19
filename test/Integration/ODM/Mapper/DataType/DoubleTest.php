@@ -1,7 +1,7 @@
 <?php
 
 /**
- * StringTest
+ * DoubleTest
  *
  * @package    Congow\Orient
  * @subpackage Test
@@ -27,9 +27,8 @@ use Congow\Orient\Validator\Rid as RidValidator;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;
 
-class StringTest extends TestCase
+class DoubleTest extends TestCase
 {
-
 	public function setup()
 	{
 	    $mapper          = new Mapper(__DIR__ . "/../../../../../proxies");
@@ -40,9 +39,10 @@ class StringTest extends TestCase
 	    $this->manager   = new Manager($mapper, $protocolAdapter);
 	}
 
-	public function testHydratingAStringProperty()
+	public function testHydrationOfADoubleProperty()
 	{
-		$country = $this->manager->find('#15:1');
-		$this->assertInternalType('string', $country->name);
+		$point = $this->manager->find("#27:1");
+		$this->assertInternalType('float', $point->y);
 	}
+
 }
