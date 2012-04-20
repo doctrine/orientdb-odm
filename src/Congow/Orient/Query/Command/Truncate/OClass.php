@@ -23,6 +23,12 @@ use Congow\Orient\Query\Command\Truncate;
 
 class OClass extends Truncate
 {
-    const SCHEMA = "TRUNCATE CLASS :Name";
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "TRUNCATE CLASS :Name";
+    }
 }
 

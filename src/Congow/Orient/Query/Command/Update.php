@@ -24,10 +24,6 @@ use Congow\Orient\Contract\Query\Command\Update as UpdateInterface;
 
 class Update extends Command implements UpdateInterface
 {
-    const SCHEMA =
-        "UPDATE :Class SET :Updates :Where"
-    ;
-
     /**
      * Builds a new statement, setting the $class.
      *
@@ -38,6 +34,14 @@ class Update extends Command implements UpdateInterface
         parent::__construct();
 
         $this->setToken('Class', $class);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "UPDATE :Class SET :Updates :Where";
     }
 
     /**

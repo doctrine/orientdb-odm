@@ -26,10 +26,6 @@ use Congow\Orient\Contract\Query\Command\Select as SelectInterface;
 
 class Select extends Command implements SelectInterface
 {
-    const SCHEMA =
-        "SELECT :Projections FROM :Target :Where :Between :OrderBy :Limit :Range"
-    ;
-
     /**
      * Builds a Select object injecting the $target into the FROM clause.
      *
@@ -42,6 +38,14 @@ class Select extends Command implements SelectInterface
         if ($target) {
             $this->setTokenValues('Target', $target);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "SELECT :Projections FROM :Target :Where :Between :OrderBy :Limit :Range";
     }
 
     /**

@@ -24,8 +24,6 @@ use \Congow\Orient\Contract\Query\Formatter;
 
 interface Command
 {
-    const SCHEMA = null;
-
     /**
      * Sets a where token using the AND operator.
      * If the $condition contains a "?", it will be replaced by the $value.
@@ -61,7 +59,7 @@ interface Command
      *
      * @return   array
      */
-    public static function getTokens();
+    public function getTokens();
 
     /**
      * Returns the value of the given $token.

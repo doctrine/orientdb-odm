@@ -24,8 +24,6 @@ use Congow\Orient\Query\Command;
 
 class Lookup extends Index
 {
-    const SCHEMA = "SELECT FROM index::Index :Where";
-
     /**
      * Builds a new statement, setting the $index to lookup.
      *
@@ -36,6 +34,14 @@ class Lookup extends Index
         parent::__construct();
 
         $this->setToken('Index', $index);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "SELECT FROM index::Index :Where";
     }
 
     /**

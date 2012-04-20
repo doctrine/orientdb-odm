@@ -23,8 +23,6 @@ use Congow\Orient\Query\Command\OClass;
 
 class Alter extends OClass
 {
-    const SCHEMA = "ALTER CLASS :Class :Attribute :Value";
-
     /**
      * Sets the $class to alter, setting the $attribute to its new $value.
      *
@@ -38,6 +36,14 @@ class Alter extends OClass
 
         $this->setToken('Attribute', $attribute);
         $this->setToken('Value', $value);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "ALTER CLASS :Class :Attribute :Value";
     }
 
     /**

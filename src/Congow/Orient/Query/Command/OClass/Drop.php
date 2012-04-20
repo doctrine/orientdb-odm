@@ -24,5 +24,11 @@ use Congow\Orient\Query\Command\OClass;
 
 class Drop extends OClass implements OClassInterface
 {
-    const SCHEMA = "DROP CLASS :Class";
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "DROP CLASS :Class";
+    }
 }

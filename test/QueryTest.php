@@ -484,7 +484,8 @@ class QueryTest extends TestCase
 
     public function testTokens()
     {
-        $this->assertCommandGives(Select::getTokens(), $this->query->getTokens());
+        $select = new Select();
+        $this->assertCommandGives($select->getTokens(), $this->query->getTokens());
     }
     
     public function testTruncatingAClass()
