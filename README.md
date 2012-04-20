@@ -1,8 +1,8 @@
 # OrientDB PHP Library
 
-![project status](http://stillmaintained.com/odino/Orient.png)#
+![project status](http://stillmaintained.com/odino/Orient.png)
 
-![Build Status](https://secure.travis-ci.org/congow/Orient.png?branch=master)(http://travis-ci.org/congow/Orient)
+![Build Status](https://secure.travis-ci.org/congow/Orient.png?branch=master)
 
 ## What's Orient?
 
