@@ -53,16 +53,6 @@ class Curl implements HttpClient
     }
 
     /**
-     * Returns the underlying cURL handle.
-     *
-     * @return resource
-     */
-    public function getResource()
-    {
-        return $this->curl;
-    }
-
-    /**
      * Sets a timeout for the current cURL handler's requests.
      *
      * @param integer $timeout
