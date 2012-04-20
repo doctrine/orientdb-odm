@@ -212,7 +212,7 @@ class BindingTest extends TestCase
     public function testAnExceptionIsRaisedWhenExecutingOperationsWithNoHttpClient()
     {
         $driver = new Curl(false, 1);
-        $driver->get('1.1.1.1');
+        $res = $driver->get('1.1.1.1');
     }
 
     /**

@@ -17,74 +17,128 @@ use Congow\Orient\ODM\Mapper;
 use Congow\Orient\ODM\Manager;
 use Congow\Orient\Formatter\Caster;
 
-class StubObject
-{
-    public function __toString(){
-        return 'a';
-    }
-}
-
-class MockAdapter implements \Congow\Orient\Contract\Protocol\Adapter
-{
- public function execute($sql, $return = false)
- {
-
- }
- public function getResult()
- {
-
- }
-}
 
 class CasterTest extends TestCase
 {
     public function setup()
     {
-        $this->caster = new Caster(new Mapper('/'));
+        $this->mapper = new Mapper('/');
+        $this->caster = new Caster($this->mapper);
     }
+    
+    /**
+     * @dataProvider getBooleans
+     */
+    public function testBooleanCasting($expected, $input)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($input)->castBoolean());
+    }
+    
+    public function getBooleans()
+    {
+        return array(
+          array(true, true),
+          array(true, 1),
+          array(true, 'true'),
+          array(true, '1'),
+          array(false, '0'),
+          array(false, 'false'),
+          array(false, false),
+          array(false, 0),
+        );
+    }
+    
+    /**
+     * @dataProvider getForcedBooleans
+     */
+    public function testForcedBooleanCasting($expected, $input)
+    {
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($input)->castBoolean());
+    }
+    
+    /**
+     * @dataProvider getForcedBooleans
+     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     */
+    public function testForcedBooleanCastingRaisesAnException($expected, $input)
+    {
+        $this->caster->setValue($input)->castBoolean();
+    }
+    
+    public function getForcedBooleans()
+    {
+        return array(
+          array(true, 'ciao'),
+          array(true, 1111),
+          array(false, ''),
+          array(false, null),
+          array(true, ' '),
+          array(true, 'off'),
+          array(true, 12.12),
+          array(true, (float) 12.12),
+          array(true, '12,12'),
+          array(true, -50),
+        );
+    }
+    
+    /**
+     * @dataProvider getBytes
+     */
+    public function testBytesCasting($byte)
+    {
+        $this->assertEquals($byte, $this->caster->setValue($byte)->castByte());
+    }
+    
+    public function getBytes()
+    {
+        return array(
+          array(0),
+          array(1),
+          array(100),
+          array(127),
+          array(-127),
+          array(-128),
+          array(-1),
+        );
+    }    
+    
+    /**
+     * @dataProvider getForcedBytes
+     */
+    public function testForcedBytesCasting($expected, $byte)
+    {
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($byte)->castByte());
+    }
+    
+    /**
+     * @dataProvider getForcedBytes
+     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     */
+    public function testForcedBytesCastingRaisesAnException($expected, $byte)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($byte)->castByte());
+    }
+    
+    public function getForcedBytes()
+    {
+        return array(
+          array(Caster::BYTE_MAX_VALUE, '129'),
+          array(Caster::BYTE_MIN_VALUE, '-129'),
+          array(Caster::BYTE_MAX_VALUE, '2000'),
+          array(Caster::BYTE_MIN_VALUE, '-2000'),
+          array(Caster::BYTE_MIN_VALUE, (float) -500.12),
+          array(Caster::BYTE_MAX_VALUE, (float) 500.12),
+          array(Caster::BYTE_MIN_VALUE, '-1500/3'),
+          array(Caster::BYTE_MAX_VALUE, '1500/3'),
+          array(127, 'ciao'),
+        );
+    }    
 
     public function testInjectingTheValueInTheConstructor()
     {
         $this->caster = new Caster(new Mapper('/'),'v');
         $this->assertEquals('v', $this->caster->castString());
-    }
-
-    public function testStringToStringConversion()
-    {
-        $this->assertTrue(is_string($this->caster->setValue('john')->castString()));
-    }
-
-    public function testStringToDateTimeConversion()
-    {
-        $caster = $this->caster->setValue('2012-01-01 18:30:30:1231');
-
-        $this->assertInstanceOf('DateTime', $datetime = $caster->castDateTime());
-        $this->assertInstanceOf('DateTime', $date = $caster->castDate());
-        $this->assertEquals($datetime, $date);
-    }
-
-    public function testBooleanToBooleanConversion()
-    {
-        $this->assertTrue(is_bool($this->caster->setValue(true)->castBoolean()));
-        $this->assertEquals(true, $this->caster->setValue(true)->castBoolean());
-    }
-
-    public function testStringToBooleanConversion()
-    {
-        $this->assertTrue(is_bool($this->caster->setValue('john')->castBoolean()));
-        $this->assertEquals(true, $this->caster->setValue('john')->castBoolean());
-        $this->assertEquals(false, $this->caster->setValue('0')->castBoolean());
-    }
-
-    public function testObjectToBooleanConversion()
-    {
-        $this->assertTrue(is_bool($this->caster->setValue(new StubObject())->castBoolean()));
-        $this->assertEquals(true, $this->caster->setValue(new StubObject())->castBoolean());
-    }
-
-    public function testNullIsReturnedWhenCastingToRidAnInvalidRid()
-    {
-        $this->caster = new Caster(new Mapper('/'),'v');
-        $this->assertEquals(null, $this->caster->castLink());
     }
 }

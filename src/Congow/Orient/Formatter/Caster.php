@@ -33,10 +33,12 @@ use Congow\Orient\Exception\Casting\Mismatch;
 
 class Caster implements CasterInterface
 {
-    protected $value        = null;
-    protected $mapper       = null;
-    protected $dateClass    = null;
+    protected $value;
+    protected $mapper;
+    protected $dateClass;
     protected $properties   = array();
+    protected $trueValues   = array(1, '1', 'true');        
+    protected $falseValues  = array(0, '0', 'false');
 
     const SHORT_LIMIT       = 32767;
     const LONG_LIMIT        = 9223372036854775807;
@@ -61,15 +63,36 @@ class Caster implements CasterInterface
         }
     }
 
-
     /**
-     * Casts the given $value to boolean.
+     * Casts the given $value to boolean or tries to guess if it's an implicit
+     * boolean value, like the string 'true'.
      *
+     * @todo duplicated for truevalues and falsevalues
      * @return boolean
      */
     public function castBoolean()
-    {
-        return (bool) $this->value;
+    {            
+        if (is_bool($this->value)) {
+            return $this->value;
+        }
+        
+        foreach ($this->trueValues as $true) {
+            if ($this->value === $true) {
+                return true;
+            }
+        }
+        
+        foreach ($this->falseValues as $false) {
+            if ($this->value === $false) {
+                return false;
+            }
+        }
+        
+        $castFunction = function($value) {
+            return (bool) $value;
+        };
+        
+        return $this->handleMismatch($castFunction, 'boolean');
     }
 
     /**
@@ -89,12 +112,19 @@ class Caster implements CasterInterface
      */
     public function castByte()
     {
-        $castFunction = function($value){
-            return $value;
+        $min = self::BYTE_MIN_VALUE;
+        $max = self::BYTE_MAX_VALUE;
+        
+        $castFunction = function($value) use ($min, $max){
+            if ($value < 0) {
+                return $min;
+            }
+            
+            return $max;
         };
 
-        if ($this->value > self::BYTE_MIN_VALUE || $this->value < self::BYTE_MAX_VALUE){
-            return $castFunction($this->value);
+        if (is_numeric($this->value) && $this->value >= $min && $this->value <= $max){
+            return $this->value;
         } else {
             return $this->handleMismatch($castFunction, 'byte');
         }
