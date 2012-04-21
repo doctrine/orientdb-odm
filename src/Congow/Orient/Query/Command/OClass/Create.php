@@ -24,5 +24,11 @@ use Congow\Orient\Query\Command\OClass;
 
 class Create extends OClass implements OClassInterface
 {
-    const SCHEMA = "CREATE CLASS :Class";
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "CREATE CLASS :Class";
+    }
 }

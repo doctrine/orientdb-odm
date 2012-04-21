@@ -16,7 +16,10 @@ use Congow\Orient\Query\Command\Credential;
 
 class CredentialStub extends Credential
 {
-    const SCHEMA = "STUB :Permission ON :Resource TO :Role";
+    protected function getSchema()
+    {
+        return "STUB :Permission ON :Resource TO :Role";
+    }
 }
 
 class CredentialTest extends TestCase

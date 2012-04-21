@@ -24,10 +24,6 @@ use Congow\Orient\Query\Command\Update;
 
 class Add extends Update
 {
-    const SCHEMA =
-        "UPDATE :Class ADD :RidUpdates :Where"
-    ;
-
     /**
      * Builds a new statement setting the $values in the given $class.
      * You can $append the values.
@@ -41,6 +37,14 @@ class Add extends Update
         parent::__construct($class);
 
         $this->setTokenValues('RidUpdates', $values, $append);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "UPDATE :Class ADD :RidUpdates :Where";
     }
 
     /**

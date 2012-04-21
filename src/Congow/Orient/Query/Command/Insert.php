@@ -24,10 +24,6 @@ use Congow\Orient\Query\Command;
 
 class Insert extends Command implements InsertInterface
 {
-    const SCHEMA =
-        "INSERT INTO :Target (:Fields) VALUES (:Values)"
-    ;
-
     /**
      * Sets the fields to insert within the query.
      *
@@ -40,6 +36,14 @@ class Insert extends Command implements InsertInterface
         $this->setTokenValues('Fields', $fields, $append);
 
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "INSERT INTO :Target (:Fields) VALUES (:Values)";
     }
 
     /**

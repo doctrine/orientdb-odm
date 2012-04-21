@@ -23,6 +23,12 @@ use Congow\Orient\Query\Command\Truncate;
 
 class Cluster extends Truncate
 {
-    const SCHEMA = "TRUNCATE CLUSTER :Name";
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "TRUNCATE CLUSTER :Name";
+    }
 }
 

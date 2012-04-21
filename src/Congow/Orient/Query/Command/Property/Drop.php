@@ -24,5 +24,11 @@ use Congow\Orient\Query\Command\Property;
 
 class Drop extends Property
 {
-    const SCHEMA = "DROP PROPERTY :Class.:Property";
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "DROP PROPERTY :Class.:Property";
+    }
 }
