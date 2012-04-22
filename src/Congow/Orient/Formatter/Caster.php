@@ -160,15 +160,7 @@ class Caster implements CasterInterface
      */
     public function castDouble()
     {
-        $castFunction = function($value){
-            return floatval($value);
-        };
-
-        if (is_numeric($this->value)){
-            return $castFunction($this->value);
-        } else {
-            return $this->handleMismatch($castFunction, 'double');
-        }
+        return $this->castFloat();
     }
 
     /**
@@ -220,7 +212,15 @@ class Caster implements CasterInterface
      */
     public function castFloat()
     {
-        return (float) $this->value;
+        $castFunction = function($value){
+            return (float) $value;
+        };
+        
+        if (is_numeric($this->value)){
+            return $castFunction($this->value);
+        } else {
+            return $this->handleMismatch($castFunction, 'double');
+        }
     }
 
     /**

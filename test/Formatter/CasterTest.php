@@ -181,6 +181,81 @@ class CasterTest extends TestCase
         );
     }    
     
+    
+    /**
+     * @dataProvider getDoubles
+     */
+    public function testDoublesCasting($expected, $double)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($double)->castDouble());
+    }
+    
+    public function getDoubles()
+    {
+        return array(
+          array(0.2, '0.2'),
+          array(11, 11),
+          array(0, '00.00000000000000'),
+          array(-4, -4),
+          array(-4, '-4'),
+        );
+    }    
+    
+    /**
+     * @dataProvider getForcedDoubles
+     */
+    public function testForcedDoublesCasting($expected, $double)
+    {
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($double)->castDouble());
+    }
+    
+    /**
+     * @dataProvider getForcedDoubles
+     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     */
+    public function testForcedDoublesCastingRaisesAnException($expected, $ddouble)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($ddouble)->castDouble());
+    }
+    
+    public function getForcedDoubles()
+    {
+        return array(
+          array(0, ''),
+          array(0, null),
+          array(0, 'one'),
+          array('15', '15/3'),
+          array(15.2, '15.2.2'),
+        );
+    }    
+    
+    /**
+     * @dataProvider getDoubles
+     */
+    public function testFloatsCasting($expected, $float)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($float)->castFloat());
+    }
+    
+    /**
+     * @dataProvider getForcedDoubles
+     */
+    public function testForcedFloatsCasting($expected, $float)
+    {
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($float)->castFloat());
+    }
+    
+    /**
+     * @dataProvider getForcedDoubles
+     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     */
+    public function testForcedFloatsCastingRaisesAnException($expected, $float)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($float)->castFloat());
+    }
+    
     /**
      * @dataProvider getStrings
      */
