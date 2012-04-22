@@ -325,11 +325,11 @@ class Caster implements CasterInterface
      */
     public function castInBuffer($limit, $type)
     {
-        $castFunction = function($value){
-            return $value;
+        $castFunction = function($value) use ($limit) {
+            return abs($value) < $limit ? $value : $limit;
         };
 
-        if (abs($this->value) < $limit) {
+        if (is_numeric($this->value) && abs($this->value) < $limit) {
             return $castFunction($this->value);
         } else {
             return $this->handleMismatch($castFunction, $type);

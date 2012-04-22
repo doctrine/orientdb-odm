@@ -137,6 +137,61 @@ class CasterTest extends TestCase
     }
     
     /**
+     * @dataProvider getLongs
+     */
+    public function testLongsCasting($long)
+    {
+        $this->assertEquals($long, $this->caster->setValue($long)->castLong());
+    }
+    
+    public function getLongs()
+    {
+        return array(
+          array(0),
+          array(1),
+          array(100),
+          array(127),
+          array(1273825789),
+          array(-127),
+          array(-12735355),
+          array(-128),
+          array(-1),
+        );
+    }    
+    
+    /**
+     * @dataProvider getForcedLongs
+     */
+    public function testForcedLongsCasting($expected, $long)
+    {
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($long)->castLong());
+    }
+    
+    /**
+     * @dataProvider getForcedLongs
+     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     */
+    public function testForcedLongsCastingRaisesAnException($expected, $long)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($long)->castLong());
+    }
+    
+    public function getForcedLongs()
+    {
+        return array(
+          array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + '129'),
+          array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT - '129'),
+          array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + '2000'),
+          array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT -'2000'),
+          array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT -(float) 500.12),
+          array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + (float) 500.12),
+          array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT - '1500/3'),
+          array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + '1500/3'),
+        );
+    }
+    
+    /**
      * @dataProvider getIntegers
      */
     public function testIntegersCasting($expected, $integer)
