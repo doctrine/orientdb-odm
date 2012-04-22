@@ -323,10 +323,13 @@ class Mapper
 
         foreach ($iterator as $file) {
             $class      = $stringFormatter::convertPathToClassName($file, $namespace);
-            $annotation = $this->getClassAnnotation($class);
+            
+            if (class_exists($class)) {
+                $annotation = $this->getClassAnnotation($class);
 
-            if($annotation && $annotation->hasMatchingClass($OClass)){
-                return $class;
+                if($annotation && $annotation->hasMatchingClass($OClass)){
+                    return $class;
+                }                
             }
         }
 
