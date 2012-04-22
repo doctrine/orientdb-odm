@@ -167,8 +167,11 @@ class Dijkstra implements AlgorithmInterface
      * @param Vertex $vertex 
      */
     protected function calculatePotentials(Vertex $vertex)
-    {                
-        foreach ($vertex->getConnections() as $id => $distance) {
+    {
+        $connections = $vertex->getConnections();
+        $sorted = array_flip($connections);
+        krsort($sorted);
+        foreach ($connections as $id => $distance) {
             $v = $this->getGraph()->getVertex($id);
             $v->setPotential($vertex->getPotential() + $distance, $vertex);
             
@@ -182,17 +185,12 @@ class Dijkstra implements AlgorithmInterface
         }
         
         $vertex->markPassed();
-        $mostAdjacentConnectionId = $vertex->getMostAdjacentConnectionId();
         
-        if ($mostAdjacentConnectionId && $mostAdjacentConnectionId != $this->getEndingVertex()->getId()) {
-            $vertex = $this->getGraph()->getVertex($mostAdjacentConnectionId);
+        // get loop through the current node's nearest connections 
+        // to calculate their potentials
+        foreach($sorted as $id){
+            $vertex = $this->getGraph()->getVertex($id);
             if(!$vertex->isPassed()){
-                $this->calculatePotentials($vertex);
-            }
-        }
-        
-        foreach ($this->getGraph()->getVertices() as $vertex) {
-            if (!$vertex->isPassed()) {
                 $this->calculatePotentials($vertex);
             }
         }
