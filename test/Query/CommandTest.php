@@ -31,6 +31,11 @@ class StubExceptionedCommand extends Query\Command
     }
 }
 
+class NullCommand extends Query\Command
+{
+    
+}
+
 class Command extends TestCase
 {
     public function setup()
@@ -38,6 +43,12 @@ class Command extends TestCase
         $this->command = new StubCommand();
     }
 
+    public function testSchema()
+    {
+        $command = new NullCommand;
+        $this->assertEmpty($command->getRaw());
+    }
+    
     /**
      * @expectedException Congow\Orient\Exception
      */
