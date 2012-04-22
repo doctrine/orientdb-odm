@@ -24,8 +24,6 @@ use Congow\Orient\Query\Command;
 
 class Count extends Index
 {
-    const SCHEMA = "SELECT count(*) AS size from index::Name";
-
     /**
      * Sets the $property to index.
      * Optionally, you can specify the property $class and the $type of the
@@ -40,6 +38,14 @@ class Count extends Index
         parent::__construct();
 
         $this->setToken('Name', $indexName);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "SELECT count(*) AS size from index::Name";
     }
 
     /**

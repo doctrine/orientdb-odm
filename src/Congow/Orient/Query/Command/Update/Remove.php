@@ -23,10 +23,6 @@ use Congow\Orient\Query\Command\Update;
 
 class Remove extends Update
 {
-    const SCHEMA =
-        "UPDATE :Class REMOVE :RidUpdates :Where"
-    ;
-
     /**
      * Builds a new statement setting the $values to remove in the given $class.
      * The values to remove can be appended with the $append parameter.
@@ -41,7 +37,15 @@ class Remove extends Update
 
         $this->setTokenValues('RidUpdates', $values, $append);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "UPDATE :Class REMOVE :RidUpdates :Where";
+    }
+
     /**
      * Returns the formatters for this query tokens
      *

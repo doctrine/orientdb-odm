@@ -23,8 +23,6 @@ use Congow\Orient\Query\Command\Property;
 
 class Create extends Property
 {
-    const SCHEMA = "CREATE PROPERTY :Class.:Property :Type :Linked";
-
     /**
      * Generates a valid SQL statements to add $property of type $type
      * linked to $linked.
@@ -45,7 +43,15 @@ class Create extends Property
             $this->setLinked($linked);
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "CREATE PROPERTY :Class.:Property :Type :Linked";
+    }
+
     public function setLinked($linked)
     {
         $this->setToken('Linked', $linked);

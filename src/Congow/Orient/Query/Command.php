@@ -32,7 +32,6 @@ abstract class Command implements CommandContract
 {
     protected $tokens       = array();
     protected $formatters   = array();
-    protected $statement    = null;
     protected $formatter    = null;
 
     /**
@@ -41,9 +40,15 @@ abstract class Command implements CommandContract
      */
     public function __construct()
     {
-        $class              = get_called_class();
-        $this->statement    = $class::SCHEMA;
-        $this->tokens       = $this->getTokens();
+        $this->tokens = $this->getTokens();
+    }
+
+    /**
+     * Returns the schema template for the command.
+     */
+    protected function getSchema()
+    {
+        return null;
     }
 
     /**
@@ -88,11 +93,10 @@ abstract class Command implements CommandContract
      *
      * @return array
      */
-    public static function getTokens()
+    public function getTokens()
     {
-        $class  = get_called_class();
         $tokens = array();
-        preg_match_all("/(\:\w+)/", $class::SCHEMA, $matches);
+        preg_match_all("/(\:\w+)/", $this->getSchema(), $matches);
 
         foreach ($matches[0] as $match) {
             $tokens[$match] = array();
@@ -335,7 +339,8 @@ abstract class Command implements CommandContract
      */
     protected function getValidStatement()
     {
-        $statement = $this->replaceTokens($this->statement);
+        $schema = $this->getSchema();
+        $statement = $this->replaceTokens($schema);
         $statement = preg_replace('/( ){2,}/', ' ', $statement);
 
         return trim($statement);

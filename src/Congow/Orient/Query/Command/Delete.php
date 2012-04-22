@@ -24,8 +24,6 @@ use Congow\Orient\Query\Command;
 
 class Delete extends Command
 {
-    const SCHEMA = "DELETE FROM :Class :Where";
-
     /**
      * Builds a new statement, setting the class in which the records are gonna
      * be deleted.
@@ -37,6 +35,14 @@ class Delete extends Command
         parent::__construct();
 
         $this->setClass($from);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "DELETE FROM :Class :Where";
     }
 
     /**

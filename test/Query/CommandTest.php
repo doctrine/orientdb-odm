@@ -17,12 +17,18 @@ use Congow\Orient\Formatter\Query as Formatter;
 
 class StubCommand extends Query\Command
 {
-    const SCHEMA = ":Target :Where";
+    protected function getSchema()
+    {
+        return ":Target :Where";
+    }
 }
 
 class StubExceptionedCommand extends Query\Command
 {
-    const SCHEMA = ":NotFoundToken";
+    protected function getSchema()
+    {
+        return ":NotFoundToken";
+    }
 }
 
 class Command extends TestCase
@@ -76,7 +82,8 @@ class Command extends TestCase
 
     public function testTheCommandTokensAreValid()
     {
-        $this->assertTokens(array(':Target' => array(), ':Where' => array()), StubCommand::getTokens());
+        $command = new StubCommand();
+        $this->assertTokens(array(':Target' => array(), ':Where' => array()), $command->getTokens());
     }
 
     public function testYouCanResetAllTheWheresOfACommand()

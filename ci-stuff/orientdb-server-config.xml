@@ -6,7 +6,7 @@
             <protocol name="http" implementation="com.orientechnologies.orient.server.network.protocol.http.ONetworkProtocolHttpDb"/>
         </protocols>
         <listeners>
-            <listener ip-address="127.0.0.1" port-range="2480-2490" protocol="http"/>
+            <listener ip-address="127.0.0.1" port-range="2480" protocol="http"/>
         </listeners>
     </network>
     <storages>
