@@ -44,7 +44,7 @@ class Caster implements CasterInterface
     const LONG_LIMIT        = 9223372036854775807;
     const BYTE_MAX_VALUE    = 127;
     const BYTE_MIN_VALUE    = -128;
-    const MISMATCH_MESSAGE  = "trying to cast %s as %s";
+    const MISMATCH_MESSAGE  = "trying to cast \"%s\" as %s";
 
     /**
      * Instantiates a new Caster.
@@ -231,6 +231,10 @@ class Caster implements CasterInterface
     public function castInteger()
     {
         $castFunction = function($value){
+            if (is_object($value)) {
+                return 1;
+            }
+            
             return (int) $value;
         };
 
@@ -561,6 +565,14 @@ class Caster implements CasterInterface
      */
     protected function raiseMismatch($expectedType)
     {
-        throw new Mismatch(sprintf(self::MISMATCH_MESSAGE, $this->value, $expectedType));
+        $value = $this->value;
+        
+        if (is_object($value)) {
+            $value = get_class($value);
+        } elseif (is_array($value)) {
+            $value = implode(',', $value);
+        }
+        
+        throw new Mismatch(sprintf(self::MISMATCH_MESSAGE, $value, $expectedType));
     }
 }

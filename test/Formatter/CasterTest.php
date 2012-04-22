@@ -134,6 +134,96 @@ class CasterTest extends TestCase
           array(Caster::BYTE_MAX_VALUE, '1500/3'),
           array(127, 'ciao'),
         );
+    }
+    
+    /**
+     * @dataProvider getIntegers
+     */
+    public function testIntegersCasting($expected, $integer)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($integer)->castInteger());
+    }
+    
+    public function getIntegers()
+    {
+        return array(
+          array(0, '0'),
+          array(1, 1),
+          array(100, '100'),
+          array(-4, '-4'),
+        );
+    }    
+    
+    /**
+     * @dataProvider getForcedIntegers
+     */
+    public function testForcedIntegerCasting($expected, $integer)
+    {
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($integer)->castInteger());
+    }
+    
+    /**
+     * @dataProvider getForcedIntegers
+     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     */
+    public function testForcedIntegersCastingRaisesAnException($expected, $integer)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($integer)->castInteger());
+    }
+    
+    public function getForcedIntegers()
+    {
+        return array(
+          array(0, 'ciao'),
+          array(0, null),
+          array(1, new \stdClass()),
+        );
+    }    
+    
+    /**
+     * @dataProvider getStrings
+     */
+    public function testStringCasting($expected, $string)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($string)->castString());
+    }
+    
+    public function getStrings()
+    {
+        return array(
+          array('0', '0'),
+          array('hello', 'hello'),
+          array('', ''),
+        );
+    }    
+    
+    /**
+     * @dataProvider getForcedStrings
+     */
+    public function testForcedStringsCasting($expected, $string)
+    {
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($string)->castString());
+    }
+    
+    /**
+     * @dataProvider getForcedStrings
+     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     */
+    public function testForcedStringsCastingRaisesAnException($expected, $integer)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($integer)->castString());
+    }
+    
+    public function getForcedStrings()
+    {
+        return array(
+          array('12', 12),
+          array('-12', -12),
+          array('', null),
+          array('Array', array(1,2,3)),
+        );
     }    
 
     public function testInjectingTheValueInTheConstructor()
