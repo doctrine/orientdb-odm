@@ -3,27 +3,32 @@
 FETCH_METHOD=${1:-"composer"}
 PARENT_DIR=$(dirname $(cd "$(dirname "$0")"; pwd))
 
-cd $PARENT_DIR
+cd "$PARENT_DIR"
 
-clean_dependencies () {
-  ./bin/clean-dependencies.sh
+. "$PARENT_DIR/bin/odb-shared.sh"
+
+odb_clean_dependencies () {
+  . "$PARENT_DIR/bin/clean-dependencies.sh"
 }
 
-initialize_composer () {
-  wget -ncv http://getcomposer.org/composer.phar
+odb_initialize_composer () {
+  if [ ! -f "composer.phar" ]; then
+    echo "Could not find composer.phar, downloading it now..."
+    odb_download "http://getcomposer.org/composer.phar"
+  fi
   /usr/bin/env php composer.phar install
 }
 
-initialize_submodules () {
+odb_initialize_submodules () {
   git submodule --quiet update --init
 }
 
 if [ "$FETCH_METHOD" = "composer" ] ; then
-  clean_dependencies
-  initialize_composer
+  odb_clean_dependencies
+  odb_initialize_composer
 elif [ "$FETCH_METHOD" = "submodules" ] ; then
-  clean_dependencies
-  initialize_submodules
+  odb_clean_dependencies
+  odb_initialize_submodules
 else
   echo "Invalid option: $FETCH_METHOD"
 fi
