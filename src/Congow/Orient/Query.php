@@ -607,13 +607,16 @@ class Query implements QueryInterface
      */
     public function shouldReturn()
     {   
-        if ($this->getCommand() instanceOf Select || 
-            $this->getCommand() instanceOf Insert || 
+        if ($this->getCommand() instanceOf Insert || 
             $this->getCommand() instanceOf Update)  {
-            return true;
+            return 1;
         }
         
-        return false;
+        if ($this->getCommand() instanceOf Select)  {
+            return 2;
+        }
+        
+        return 0;
     }
 
     /**

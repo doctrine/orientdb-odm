@@ -24,8 +24,6 @@ use Congow\Orient\Query\Command;
 
 class Create extends Index
 {
-    const SCHEMA = "CREATE INDEX :IndexClass:Property :Type";
-
     /**
      * Sets the $property to index.
      * Optionally, you can specify the property $class and the $type of the
@@ -45,6 +43,14 @@ class Create extends Index
 
         $this->type($type);        
         $this->setToken('Property', $property);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "CREATE INDEX :IndexClass:Property :Type";
     }
 
     /**

@@ -24,10 +24,6 @@ use Congow\Orient\Query\Command\Update;
 
 class Put extends Update
 {
-    const SCHEMA =
-        "UPDATE :Class PUT :Updates :Where"
-    ;
-
     /**
      * Creates a new statement assigning the $values to update in the given
      * $class.
@@ -43,7 +39,15 @@ class Put extends Update
 
         $this->setTokenValues('Updates', $values, $append);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "UPDATE :Class PUT :Updates :Where";
+    }
+
     /**
      * Returns the formatters for this query tokens
      *

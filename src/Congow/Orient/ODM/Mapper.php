@@ -38,7 +38,7 @@ use Congow\Orient\Contract\Formatter\String as StringFormatterInterface;
 use Congow\Orient\Formatter\String as StringFormatter;
 use Congow\Orient\Contract\ODM\Mapper\Annotations\Reader as AnnotationreaderInterface;
 use Congow\Orient\Exception\ODM\OClass\NotFound as ClassNotFoundException;
-use Congow\Orient\Exception\Overflow;
+use Congow\Orient\Exception\Casting\Mismatch;
 use Congow\Orient\ODM\Mapper\Annotations\Reader;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -47,11 +47,11 @@ use Symfony\Component\Finder\Finder;
 class Mapper
 {
     protected $documentDirectories          = array();
-    protected $enableOverflows              = false;
+    protected $enableMismatchesTolerance    = false;
     protected $annotationReader;
     protected $inflector;
     protected $documentProxiesDirectory;
-    
+
     const ANNOTATION_PROPERTY_CLASS = 'Congow\Orient\ODM\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Congow\Orient\ODM\Mapper\Annotations\Document';
     const ORIENT_PROPERTY_CLASS     = '@class';
@@ -64,9 +64,9 @@ class Mapper
      * @param Inflector                 $inflector
      */
     public function __construct(
-        $documentProxyDirectory, 
-        AnnotationReaderInterface 
-        $annotationReader = null, 
+        $documentProxyDirectory,
+        AnnotationReaderInterface
+        $annotationReader = null,
         Inflector $inflector = null
     )
     {
@@ -78,14 +78,14 @@ class Mapper
     /**
      * Enable or disable overflows' tolerance.
      *
-     * @see   toleratesOverflow()
-     * @param boolean $value 
+     * @see   toleratesMismatches()
+     * @param boolean $value
      */
-    public function enableOverflows($value = true)
+    public function enableMismatchesTolerance($value = true)
     {
-        $this->enableOverflows = (bool) $value;
+        $this->enableMismatchesTolerance = (bool) $value;
     }
-    
+
     /**
      * Returns the internal object used to parse annotations.
      *
@@ -95,7 +95,7 @@ class Mapper
     {
         return $this->annotationReader;
     }
-    
+
     /**
      * Returns the annotation of a class.
      *
@@ -116,7 +116,7 @@ class Mapper
 
         return null;
     }
-    
+
     /**
      * Returns the directories in which the mapper is going to look for
      * classes mapped for the Congow\Orient ODM.
@@ -127,7 +127,7 @@ class Mapper
     {
         return $this->documentDirectories;
     }
-    
+
     /**
      * Returns all the annotations in the $document's properties.
      *
@@ -180,7 +180,7 @@ class Mapper
         if (property_exists($orientObject, $classProperty))
         {
             $orientClass  = $orientObject->$classProperty;
-            
+
             if ($orientClass) {
                 $class          = $this->findClassMappingInDirectories($orientClass);
                 $linkTracker    = new LinkTracker();
@@ -189,27 +189,27 @@ class Mapper
                 return new Hydration\Result($document, $linkTracker);
             }
         }
-        
+
         throw new DocumentNotFoundException();
     }
-    
+
     /**
      * Hydrates an array of documents.
-     * 
+     *
      * @param   Array $json
      * @return  Array
      */
     public function hydrateCollection(array $collection)
     {
         $records = array();
-        
+
         foreach ($collection as $key => $record) {
             $records[$key] = $this->hydrate($record);
         }
-        
-        return $records; 
+
+        return $records;
     }
-    
+
     /**
      * Sets the directories in which the mapper is going to look for
      * classes mapped for the Congow\Orient ODM.
@@ -237,14 +237,14 @@ class Mapper
      */
     protected function createDocument(
         $class,
-        \stdClass $orientObject, 
+        \stdClass $orientObject,
         LinkTracker $linkTracker
      )
     {
         $proxyClass = $this->getProxyClass($class);
         $document   = new $proxyClass();
         $this->fill($document, $orientObject, $linkTracker);
-        
+
         return $document;
     }
 
@@ -261,19 +261,9 @@ class Mapper
         $method     = 'cast' . $this->inflector->camelize($annotation->type);
         $caster->setValue($propertyValue);
         $caster->setProperty('annotation', $annotation);
-        
-        try {
-            $this->verifyCastingSupport($caster, $method, $annotation->type);
-            
-            return $caster->$method();
-        }
-        catch (Overflow $e) {
-            if ($this->toleratesOverflows()) {
-                return null;
-            }
-            
-            throw $e;
-        }
+        $this->verifyCastingSupport($caster, $method, $annotation->type);
+
+        return $caster->$method();
     }
 
     /**
@@ -292,7 +282,7 @@ class Mapper
         foreach ($propertyAnnotations as $property => $annotation)
         {
             $documentProperty = $property;
-            
+
             if ($annotation->name) {
                 $property = $annotation->name;
             }
@@ -314,13 +304,13 @@ class Mapper
     /**
      * Tries to find the PHP class mapping Congow\OrientDB's $OClass in each of the
      * directories where the documents are stored.
-     * 
+     *
      * @param   string $OClass
      * @return  string
      * @throws  Congow\Orient\Exception\ODM\OClass\NotFound
      */
     protected function findClassMappingInDirectories($OClass)
-    {      
+    {
         foreach ($this->getDocumentDirectories() as $dir => $namespace) {
             if ($class = $this->findClassMappingInDirectory($OClass, $dir, $namespace)) {
                 return $class;
@@ -329,9 +319,9 @@ class Mapper
 
         throw new ClassNotFoundException($OClass);
     }
-    
+
     /**
-     * Searches a PHP class mapping Congow\OrientDB's $OClass in $directory, 
+     * Searches a PHP class mapping Congow\OrientDB's $OClass in $directory,
      * which uses the given $namespace.
      *
      * @param   string                      $OClass
@@ -342,29 +332,32 @@ class Mapper
      * @return  string|null
      */
     protected function findClassMappingInDirectory(
-            $OClass, 
-            $directory, 
-            $namespace, 
-            StringFormatterInterface $stringFormatter = null, 
+            $OClass,
+            $directory,
+            $namespace,
+            StringFormatterInterface $stringFormatter = null,
             \Iterator $iterator = null
     )
-    {        
+    {
         $stringFormatter    = $stringFormatter ?: new StringFormatter;
         $finder             = new Finder;
         $iterator           = $finder->files()->name('*.php')->in($directory);
-        
+
         foreach ($iterator as $file) {
             $class      = $stringFormatter::convertPathToClassName($file, $namespace);
-            $annotation = $this->getClassAnnotation($class);
+            
+            if (class_exists($class)) {
+                $annotation = $this->getClassAnnotation($class);
 
-            if($annotation && $annotation->hasMatchingClass($OClass)){
-                return $class;
+                if($annotation && $annotation->hasMatchingClass($OClass)){
+                    return $class;
+                }                
             }
         }
 
         return null;
     }
-    
+
     /**
      * Generate a proxy class for the given $class, writing it in the
      * filesystem.
@@ -373,7 +366,7 @@ class Mapper
      *
      * @param type $class
      * @param type $proxyClassName
-     * @param type $dir 
+     * @param type $dir
      * @see   http://congoworient.readthedocs.org/en/latest/implementation-of-lazy-loading.html
      */
     protected function generateProxyClass($class, $proxyClassName, $dir)
@@ -396,7 +389,7 @@ class Mapper
     public function {$refMethod->getName()}($parametersAsString) {
         \$parent = parent::{$refMethod->getName()}($parametersAsString);
 
-        if (!is_null(\$parent)) { 
+        if (!is_null(\$parent)) {
             if (\$parent instanceOf \Congow\Orient\ODM\Proxy\AbstractProxy) {
                 return \$parent();
             }
@@ -408,21 +401,21 @@ class Mapper
 EOT;
                 }
             }
-            
+
             $proxy = <<<EOT
 <?php
-            
+
 namespace Congow\Orient\Proxy$namespace;
-    
+
 class $proxyClassName extends $class
 {
-  $methods    
+  $methods
 }
 EOT;
-        
+
         $f = file_put_contents($dir . '/' . $proxyClassName . ".php", $proxy);
     }
-    
+
     /**
      * Returns the directory in which all the documents' proxy classes are
      * stored.
@@ -433,7 +426,7 @@ EOT;
     {
         return $this->documentProxyDirectory;
     }
-    
+
     /**
      * Retrieves the proxy class for the given $class.
      * If the proxy does not exists, it will be generated here at run-time.
@@ -442,20 +435,21 @@ EOT;
      * @return string
      */
     protected function getProxyClass($class)
-    { 
+    {
         $namespaces         = explode('\\', $class);
         $proxyClassName     = array_pop($namespaces);
 
         if (!class_exists("Congow\Orient\Proxy" . $class)) {
             $dir = $this->getDocumentProxyDirectory() . '/Congow/Orient/Proxy';
-            
+
             foreach ($namespaces as $namespace) {
                 $dir = $dir . '/' . $namespace;
                 if (!is_dir($dir)) {
+                    var_dump($dir);
                     mkdir($dir);
                 }
             }
-            
+
             $namespace = implode('\\', $namespaces);
 
             $this->generateProxyClass($class, $proxyClassName, $dir);
@@ -472,7 +466,7 @@ EOT;
      * so it is used only to keep track of properties that the mapper simply
      * can't handle (a typical example is a @rid, which requires an extra query
      * to retrieve the linked entity).
-     * 
+     *
      * Generally the LinkTracker is used by a Manager after he call the
      * ->hydrate() method of its mapper, to verify that the object is ready to
      * be used in the userland application.
@@ -494,19 +488,19 @@ EOT;
         }
 
         $setter     = 'set' . $this->inflector->camelize($property);
-        
+
         if (method_exists($document, $setter)) {
             $document->$setter($value);
-        } 
+        }
         else {
             $refClass     = new \ReflectionObject($document);
             $refProperty  = $refClass->getProperty($property);
-            
+
             if ($refProperty->isPublic()) {
                 $document->$property = $value;
             } else {
                 $message = "%s has not method %s: you have to added the setter in order to correctly let Congow\Orient hydrate your object ?";
-                
+
                 throw new Exception(
                         sprintf($message,
                         get_class($document),
@@ -515,26 +509,26 @@ EOT;
             }
         }
     }
-    
-    
+
+
     /**
      * Checks whether the Mapper throws exceptions or not when encountering an
-     * overflow error during hydration.
+     * mismatch error during hydration.
      *
      * @return bool
      */
-    protected function toleratesOverflows()
+    public function toleratesMismatches()
     {
-        return (bool) !$this->enableOverflows;
+        return (bool) $this->enableMismatchesTolerance;
     }
-    
+
     /**
      * Verifies if the given $caster supports casting with $method.
      * If not, an exception is raised.
      *
      * @param   Caster $caster
      * @param   string $method
-     * @param   string $annotationType 
+     * @param   string $annotationType
      * @throws  Congow\Orient\Exception
      */
     protected function verifyCastingSupport(Caster $caster, $method, $annotationType)
@@ -545,7 +539,7 @@ EOT;
                 $type,
                 get_class($caster)
             );
-            
+
             throw new Exception($message);
         }
     }

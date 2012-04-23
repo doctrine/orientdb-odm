@@ -23,8 +23,6 @@ use Congow\Orient\Query\Command\Index;
 
 class Drop extends Index
 {
-    const SCHEMA = "DROP INDEX :IndexClass:Property";
-
     /**
      * Creates a new statements to manage indexes on the $property of the given
      * $class.
@@ -41,5 +39,13 @@ class Drop extends Index
         }
 
         $this->setToken('Property', $property);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "DROP INDEX :IndexClass:Property";
     }
 }

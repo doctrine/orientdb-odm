@@ -44,7 +44,7 @@ class TestAdapter extends \Congow\Orient\Foundation\Protocol\Adapter\Http
 
     }
     
-    public function execute(Query $query)
+    public function execute($query)
     {
         return 'query';
     }

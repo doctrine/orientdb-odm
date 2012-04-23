@@ -33,4 +33,12 @@ class CurlTest extends TestCase
         
         $this->assertFalse($response->getStatusCode() == 411);
     }
+    
+    /**
+     * @expectedException Congow\Orient\Exception\Http\Response\Void
+     */
+    public function testRetrievingAnEmptyResponseRaisesAnException()
+    {
+        $this->client->execute('GET', '');
+    }
 }

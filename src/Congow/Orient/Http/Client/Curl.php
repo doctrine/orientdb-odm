@@ -25,40 +25,55 @@ use Congow\Orient\Contract\Http\Client as HttpClient;
 
 class Curl implements HttpClient
 {
-    protected $client;
-    protected $reuseHandle;
+    protected $curl;
+    protected $restart;
+    protected $cookies;
     protected $authentication;
-    protected $timeout;
 
     /**
-     * Creates a new Curl instance.
-     * 
-     * @param   boolean $reuseHandle
-     * @param   integer $timeout
+     * Creates a new HTTP client based on cURL.
+     *
+     * @param boolean $restart
+     * @param integer $timeout
      */
-    public function __construct($reuseHandle = true, $timeout = 10)
+    public function __construct($restart = false, $timeout = 10)
     {
-        $this->reuseHandle = $reuseHandle;
-        $this->client = $this->createCurlHandle();
+        $this->restart = $restart;
+        $this->cookies = array();
+        $this->curl = $this->createCurlHandle();
         $this->setTimeout($timeout);
     }
-    
+
     /**
      * Closes the underlying cURL handle.
      */
     public function __destruct()
     {
-        curl_close($this->client);
+        curl_close($this->curl);
     }
-    
+
     /**
      * Sets a timeout for the current cURL handler's requests.
-     * 
+     *
      * @param integer $timeout
      */
     public function setTimeout($timeout)
     {
-      curl_setopt($this->client, CURLOPT_TIMEOUT,$timeout);
+        curl_setopt($this->curl, CURLOPT_TIMEOUT, $timeout);
+    }
+
+    /**
+     * Returns a string with the list of cookies for the Cookie header.
+     *
+     * @return string
+     */
+    protected function getRequestCookies() {
+        $pairs = array();
+        foreach ($this->cookies as $k => $v) {
+            $pairs[] = "$k=$v";
+        }
+
+        return join($pairs, ';');
     }
 
     /**
@@ -71,19 +86,24 @@ class Curl implements HttpClient
      */
     public function execute($method, $location)
     {
-        curl_setopt($this->client, CURLOPT_URL, $location);
+        curl_setopt_array($this->curl, array(
+            CURLOPT_URL => $location,
+            CURLOPT_COOKIE => $this->getRequestCookies(),
+        ));
 
-        $response = curl_exec($this->client);
-
-        if (!$this->reuseHandle) {
+        if (!$response = curl_exec($this->curl)) {
             $this->restart();
-        }
-
-        if (!$response) {
             throw new VoidResponse(__CLASS__, $location);
         }
 
-        return new Response($response);
+        $response = new Response($response);
+        $this->cookies = array_merge($this->cookies, $response->getCookies());
+
+        if ($this->restart == true) {
+            $this->restart();
+        }
+
+        return $response;
     }
 
     /**
@@ -94,10 +114,10 @@ class Curl implements HttpClient
      */
     public function delete($location, $body = null)
     {
-        curl_setopt($this->client, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "DELETE");
 
         if ($body) {
-            curl_setopt($this->client, CURLOPT_POSTFIELDS, $body);
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
         }
 
         return $this->execute('DELETE', $location);
@@ -111,8 +131,8 @@ class Curl implements HttpClient
      */
     public function get($location)
     {
-    	curl_setopt($this->client, CURLOPT_HTTPGET, true);
-        
+        curl_setopt($this->curl, CURLOPT_HTTPGET, true);
+
         return $this->execute('GET', $location);
     }
 
@@ -125,8 +145,8 @@ class Curl implements HttpClient
      */
     public function post($location, $body)
     {
-        curl_setopt($this->client, CURLOPT_POST, 1);
-        curl_setopt($this->client, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($this->curl, CURLOPT_POST, 1);
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
 
         return $this->execute('POST', $location);
     }
@@ -140,8 +160,8 @@ class Curl implements HttpClient
      */
     public function put($location, $body)
     {
-        curl_setopt($this->client, CURLOPT_CUSTOMREQUEST, "PUT");
-        curl_setopt($this->client, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
 
         return $this->execute('POST', $location);
     }
@@ -150,66 +170,64 @@ class Curl implements HttpClient
      * Sets the authentication string for the next HTTP requests.
      *
      * @param String $credential
-     * @return String
      */
     public function setAuthentication($credential)
     {
         $this->authentication = $credential;
-        curl_setopt($this->client, CURLOPT_USERPWD, $this->authentication);
-
-        return $this->authentication;
+        curl_setopt($this->curl, CURLOPT_USERPWD, $credential);
     }
-    
+
     /**
      * Sets an HTTP header to send within the request.
      *
      * @param type $header
-     * @param type $value 
+     * @param type $value
      */
     public function setHeader($header, $value)
     {
-      curl_setopt($this->client, CURLOPT_HTTPHEADER, array("$header: $value")); 
-    }
-    
-    /**
-     * Restarts the current cURL client
-     */
-    protected function restart()
-    {
-        curl_close($this->client);
-        $this->client = $this->createCurlHandle();
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array("$header: $value"));
     }
 
     /**
-     * Sets whether to reuse the underlying cURL handle or use
-     * a new one for each HTTP request.
-     *
-     * @param bool $value
+     * Reinitializes the client for a completely new session.
      */
-    public function reuseHandle($value)
+    public function restart()
     {
-        $this->reuseHandle = $value;
+        curl_close($this->curl);
+
+        $this->cookies = array();
+        $this->curl = $this->createCurlHandle();
     }
-    
+
     /**
-     * Create and initialize the underlying cURL handle.
+     * Returns an array with a set of default options for cURL.
+     *
+     * @return array
+     */
+    protected function getDefaultCurlOptions()
+    {
+        return array(
+            CURLOPT_HEADER => true,
+            CURLOPT_RETURNTRANSFER => true,
+        );
+    }
+
+    /**
+     * Creates and initializes the underlying cURL handle.
      *
      * @return resource
      */
     protected function createCurlHandle()
     {
-        $client = curl_init();
+        $options = $this->getDefaultCurlOptions();
 
-        $options = array(
-            CURLOPT_HEADER => true,
-            CURLOPT_RETURNTRANSFER => true,
-        );
-        if ($this->authentication) {
+        if (isset($this->authentication)) {
             $options[CURLOPT_USERPWD] = $this->authentication;
         }
-        
-        curl_setopt_array($client, $options);
 
-        return $client;
+        $curl = curl_init();
+        curl_setopt_array($curl, $options);
+
+        return $curl;
     }
 }

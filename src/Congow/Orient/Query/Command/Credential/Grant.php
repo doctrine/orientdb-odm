@@ -24,7 +24,11 @@ use Congow\Orient\Query\Command\Credential;
 
 class Grant extends Credential implements CredentialInterface
 {
-    const SCHEMA =
-        "GRANT :Permission ON :Resource TO :Role"
-    ;
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "GRANT :Permission ON :Resource TO :Role";
+    }
 }

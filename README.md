@@ -1,4 +1,8 @@
-# OrientDB PHP Library![project status](http://stillmaintained.com/odino/Orient.png)#
+# OrientDB PHP Library
+
+![project status](http://stillmaintained.com/odino/Orient.png)
+
+![Build Status](https://secure.travis-ci.org/congow/Orient.png?branch=master)
 
 ## What's Orient?
 
@@ -11,17 +15,20 @@ Orient includes:
 * the data mapper ( Object Graph Mapper )
 
 
-If you don't know OrientDB here are few resources:
-
-Homepage: http://www.orientechnologies.com/
-Documentation: http://code.google.com/p/orient | http://www.odino.org/tags?tag=orient
+If you don't know [OrientDB](http://www.orientechnologies.com/) take a look at its [Documentation](http://code.google.com/p/orient).
 
 ## After cloning
 
-Set up the submodules after you cloned the repo:
+In order to be able to run the examples and the test suite provided by Orient, you must first enter the root
+of the cloned repository and initialize all the needed dependencies. We provide an utility script in the `bin/`
+subdirectory to ease this process and you can choose between two different methods: [Composer](http://packagist.org/about-composer)
+or Git submodules.
 
-    git submodule init
-    git submodule update
+    $ ./bin/initialize-dependencies.sh composer
+    $ ./bin/initialize-dependencies.sh submodules
+
+If you do not specify any argument, Composer will be used by default.
+
 
 ## Current status of the binding
 
@@ -117,8 +124,8 @@ Orient incapsulates also a few utilities for PHP developers: on of them is an im
 
 In order to run the tests you only need to:
 
-    cd /path/to/repo
-    phpunit
+    $ cd /path/to/repo
+    $ phpunit
 
 This should be enough.
 For the braves, if you want to run the full test suite, which includes the integration tests, you should:
@@ -130,8 +137,7 @@ For the braves, if you want to run the full test suite, which includes the integ
 
 and then you can run the full test-suite:
 
-    cd /path/to/repo
-    phpunit test/
+    $ phpunit test/
 
 As you'll notice, tests are obviously slower (they need a direct connection through the HTTP protocol to Congow\OrientDB), so we highly discourage you from testing this way.
 They also may file the first time you launch them, because we set the curl timeout limit to 1 second, and the first connections to Congow\OrientDB require it to bootstrap lots of stuff (so during more than 1 second, making the tests fail): try to re-launch the tests, you should see the green bar.
@@ -151,8 +157,7 @@ You need to install:
 
 and then run:
 
-    chmod +x report.sh
-    ./report.sh
+    $ ./bin/report.sh
 
 You'll be able to see the HTML reports in log/report/index.html.
 
@@ -186,7 +191,6 @@ These are the requirements in order to use the library:
 
 * PHP >= 5.3.3
 * OrientDB 1.0.0RC6
-* APC (optional, used by the annotation reader as a cache)
 
 In order to launch the test suite PHPUnit 3.6 is required.
 

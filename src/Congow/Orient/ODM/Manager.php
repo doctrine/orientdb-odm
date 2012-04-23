@@ -30,6 +30,7 @@ use Congow\Orient\Exception\ODM\OClass\NotFound as UnmappedClass;
 use Congow\Orient\Query\Command\Select;
 use Congow\Orient\Exception;
 use Congow\Orient\Exception\Query\SQL\Invalid as InvalidSQL;
+use Congow\Orient\Exception\Casting\Mismatch;
 use Congow\Orient\Contract\Protocol\Adapter as ProtocolAdapter;
 use Congow\Orient\ODM\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
 use Congow\Orient\Validator\Rid as RidValidator;
@@ -46,32 +47,32 @@ class Manager implements ObjectManager
     /**
      * Instatiates a new Mapper, injecting the $mapper that will be used to
      * hydrate record retrieved through the $protocolAdapter.
-     * 
+     *
      * @param   Mapper          $mapper
      * @param   ProtocolAdapter $protocolAdapter
      * @param   MetadataFactory $metadataFactory
      */
     public function __construct(
-        Mapper $mapper, 
-        ProtocolAdapter $protocolAdapter, 
+        Mapper $mapper,
+        ProtocolAdapter $protocolAdapter,
         MetadataFactory $metadataFactory = null
     )
     {
         $this->mapper           = $mapper;
         $this->protocolAdapter  = $protocolAdapter;
         $this->metadataFactory  = $metadataFactory ?: new ClassMetadataFactory($this->getMapper());
-    }    
-    
+    }
+
     /**
      * @todo to implement/test
      *
-     * @param \stdClass $object 
+     * @param \stdClass $object
      */
     public function detach($object)
     {
         throw new \Exception();
     }
-    
+
     /**
      * Executes a $query against OrientDB.
      * This method should be used to executes query which should not return a
@@ -79,27 +80,20 @@ class Manager implements ObjectManager
      * single record look at ->find*() methods.
      *
      * @param   Query $query
-     * @return  Array 
+     * @return  Array
      */
     public function execute(Query $query)
     {
         $adapter    = $this->getProtocolAdapter();
-
-
-        try{
-            $execution  = $adapter->execute($query);
-        }
-        catch (InvalidSQL $e) {
-          throw new VoidDocument();
-        }
-        
+        $return     = $query->shouldReturn();
+        $execution  = $adapter->execute($query->getRaw(), $return);
         $results    = $adapter->getResult();
 
         if ($execution) {
             
             if (is_array($results)) {
                 $hydrationResults = $this->getMapper()->hydrateCollection($results);
-                
+
                 return $this->finalizeCollection($hydrationResults);
             } else {
                 
@@ -115,27 +109,27 @@ class Manager implements ObjectManager
      * Via a protocol adapter, it queries for an object with the given $rid.
      * If $lazy loading is used, all of this won't be executed unless the
      * returned Proxy object is called via __invoke, e.g.:
-     * 
+     *
      * <code>
      *   $lazyLoadedRecord = $manager->find('1:1', true);
-     * 
+     *
      *   $record = $lazyLoadedRecord();
      * </code>
      *
      * @param   string    $rid
      * @param   string    $fetchPlan
      * @return  Proxy|object
-     * @throws  UnmappedClass|Exception
+     * @throws  UnmappedClass|Mismatch|Exception
      */
     public function find($rid, $fetchPlan = null)
     {
         $validator  = new RidValidator;
         $rid        = $validator->check($rid);
-        
+
         if ($fetchPlan === false) {
             return new Proxy($this, $rid);
         }
-            
+
         try
         {
             return $this->doFind($rid, $fetchPlan);
@@ -143,11 +137,15 @@ class Manager implements ObjectManager
         catch (UnmappedClass $e) {
             throw $e;
         }
+        catch (Mismatch $e) {
+            throw $e;
+        }
         catch (Exception $e) {
             return null;
         }
+
     }
-    
+
     /**
      * Via a protocol adapter, it queries for an array of objects with the given
      * $rids.
@@ -164,25 +162,23 @@ class Manager implements ObjectManager
         if ($fetchPlan === false) {
             return new Proxy\Collection($this, $rids);
         }
-        
+
         $query      = new Query($rids);
         $adapter    = $this->getProtocolAdapter();
-        $execution  = $adapter->execute($query, $fetchPlan);
-        
+        $execution  = $adapter->execute($query->getRaw(), $query->shouldReturn(), $fetchPlan);
+
         if ($execution && $adapter->getResult()) {
             $collection = $this->getMapper()->hydrateCollection($adapter->getResult());
-            
+
             return $this->finalizeCollection($collection);
         }
 
         return array();
     }
-    
+
     /**
      * @todo to implement/test
      *
-     * @param \stdClass $object 
-     * @todo getter for documents
      */
     public function flush()
     {
@@ -223,7 +219,7 @@ class Manager implements ObjectManager
             $this->execute($query);
         }   
     }
-    
+
     /**
      * Gets the $class Metadata.
      *
@@ -255,7 +251,7 @@ class Manager implements ObjectManager
     {
         return $this->metadataFactory;
     }
-    
+
     /**
      * Returns the Repository class associated with the $class.
      *
@@ -266,7 +262,7 @@ class Manager implements ObjectManager
     {
         return new Repository($className, $this, $this->getMapper());
     }
-    
+
     /**
      * Helper method to initialize a lazy loading proxy or persistent collection.
      *
@@ -279,30 +275,31 @@ class Manager implements ObjectManager
     {
         throw new \Exception();
     }
-    
+
     /**
      * @todo to implement/test
-     * @param \stdClass $object 
+     *
+     * @param \stdClass $object
      */
     public function merge($object)
     {
         throw new \Exception();
     }
-    
+
     /**
      * @todo to implement/test
      *
-     * @param \stdClass $object 
+     * @param \stdClass $object
      */
     public function persist($object)
     {
         $this->documents[spl_object_hash($object)] = $object;
     }
-    
+
     /**
      * @todo to implement/test
      *
-     * @param \stdClass $object 
+     * @param \stdClass $object
      */
     public function remove($object)
     {
@@ -316,17 +313,17 @@ class Manager implements ObjectManager
 
         $this->scheduleForDelete[] = $object;
     }
-    
+
     /**
      * @todo to implement/test
      *
-     * @param \stdClass $object 
+     * @param \stdClass $object
      */
     public function refresh($object)
     {
         throw new \Exception();
     }
-    
+
     /**
      * Executes a query against OrientDB, via the protocolAdapter, specifying
      * a $fetchPlan (which is optional) and a $rid to look for.
@@ -334,13 +331,13 @@ class Manager implements ObjectManager
      *
      * @param   type        $rid
      * @param   mixed       $fetchPlan
-     * @return  object|null 
+     * @return  object|null
      */
     protected function doFind($rid, $fetchPlan = null)
     {
         $query      = new Query(array($rid));
         $adapter    = $this->getProtocolAdapter();
-        $execution  = $adapter->execute($query, $fetchPlan);
+        $execution  = $adapter->execute($query->getRaw(), $query->shouldReturn(), $fetchPlan);
 
         if ($execution && $result = $adapter->getResult()) {
           $record       = is_array($result) ? array_shift($result) : $result;
@@ -351,7 +348,7 @@ class Manager implements ObjectManager
 
         return null;
     }
-    
+
     /**
      * Given an Hydration\Result, it implements lazy-loading for all its'
      * document's related links.
@@ -366,10 +363,10 @@ class Manager implements ObjectManager
             $method = $value instanceof Rid\Collection ? 'findRecords' : 'find';
             $result->getDocument()->$setter($this->$method($value->getValue(), false));
         }
-        
+
         return $result->getDocument();
     }
-    
+
     /**
      * Given a collection of Hydration\Result, it returns an array of POPOs.
      *
@@ -384,7 +381,7 @@ class Manager implements ObjectManager
 
         return $collection;
     }
-    
+
     /**
      * Returns the mapper of the current object.
      *
@@ -394,7 +391,7 @@ class Manager implements ObjectManager
     {
         return $this->mapper;
     }
-    
+
     /**
      * Returns the protocol adapter used to communicate with a OrientDB
      * binding.

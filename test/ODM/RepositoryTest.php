@@ -23,7 +23,7 @@ class Stubadapter extends \Congow\Orient\Foundation\Protocol\Adapter\Http
 {
     public function __construct(){}
 
-    public function execute(Query $query)
+    public function execute($query)
     {
         return array(0,1);
     }

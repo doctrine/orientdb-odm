@@ -33,7 +33,7 @@ interface Adapter
      * @throws Congow\Orient\Exception\Http\Response\Void
      * @return boolean
      */
-    public function execute(Query $query);
+    public function execute($query);
     
     /**
      * When calling ->execute() with the $return set to true, it might happen

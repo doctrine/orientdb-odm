@@ -1,3 +1,8 @@
+#!/bin/sh
+
+PARENT_DIR=$(dirname $(cd "$(dirname "$0")"; pwd))
+cd $PARENT_DIR
+
 rm -rf log
 mkdir log
 phpunit --log-junit log/phpunit.xml

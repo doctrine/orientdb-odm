@@ -24,8 +24,6 @@ use Congow\Orient\Query\Command;
 
 class Put extends Index
 {
-    const SCHEMA = "INSERT INTO index::Name (key,rid) values (\":Key\", :Value)";
-
     /**
      * Creates a new instance of this command setting the index to insert into,
      * the key of the new entry and its value, which is a RID.
@@ -41,6 +39,14 @@ class Put extends Index
         $this->setToken('Name', $indexName);
         $this->setToken('Key', $key);
         $this->setToken('Value', $rid);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "INSERT INTO index::Name (key,rid) values (\":Key\", :Value)";
     }
 
     /**

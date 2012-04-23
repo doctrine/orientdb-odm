@@ -79,6 +79,25 @@ class Response
     }
 
     /**
+     * Returns the cookies set in the current response.
+     *
+     * @return array
+     */
+    public function getCookies()
+    {
+        $jar = array();
+        $headers = $this->getRawHeaders();
+        if (preg_match_all('/Set-Cookie: (.*)\b/', $headers, $cookies)) {
+            foreach ($cookies[1] as $cookie) {
+                list($cookie,) = explode(';', $cookie, 2);
+                list($name, $value) = explode('=', $cookie, 2);
+                $jar[$name] = $value;
+            }
+        }
+        return $jar;
+    }
+
+    /**
      * Returns the whole response.
      *
      * @return String

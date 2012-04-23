@@ -48,24 +48,17 @@ class Http implements ProtocolAdapter
         $this->client = $binding;
     }
     
-    /**
-     * Executes some SQL against Congow\OrientDB via the HTTP binding.
-     * @todo    fix $result
-     * @param   Congow\Orient\Query $query
-     * @return  mixed
-     */
-    public function execute(Query $query, $fetchPlan = null)
-    {   
-        if ($query->getCommand() instanceOf Select) {            
-            $response = $this->getClient()->query($query->getRaw(), null, -1, $fetchPlan);
+    public function execute($sql, $return = false, $fetchPlan = null)
+    {
+        if ($return === 2) {
+            $response = $this->getClient()->query($sql, null, -1, $fetchPlan);
         } else {
-            $response = $this->getClient()->command($query->getRaw());
+            $response = $this->getClient()->command($sql);
         }
 
         $this->checkResponse($response);
-
-        if ($query->shouldReturn()) {
-
+        
+        if ($return) {            
             $body = json_decode($response->getBody());
 
             if ($response->getHeader('Content-Type') == 'text/plain' ) {
@@ -84,11 +77,11 @@ class Http implements ProtocolAdapter
             } else {
                 $this->setResult($body->result);
             }
-        }   
-
+        }
+        
         return true;
     }
-    
+
     /**
      * Returns OrientDB's response to an HTTP request.
      * 

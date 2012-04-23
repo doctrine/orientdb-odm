@@ -25,8 +25,6 @@ use Congow\Orient\Query\Command;
 
 class Find extends Command implements FindInterface
 {
-    const SCHEMA = "FIND REFERENCES :Rid :ClassList";
-
     /**
      * Creates a new object, setting the $rid to lookup.
      *
@@ -37,6 +35,14 @@ class Find extends Command implements FindInterface
         parent::__construct();
 
         $this->setRid($rid);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSchema()
+    {
+        return "FIND REFERENCES :Rid :ClassList";
     }
 
     /**
