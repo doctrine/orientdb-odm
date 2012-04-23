@@ -48,11 +48,10 @@ class ManagerTest extends TestCase
     public function testExecutionOfAnUpdate()
     {
         $query      = new Query(array('Address'));
-        $query->update('Address')->set(array('my' => 'yours'))->where('@rid = ?', '1:10000');
+        $query->update('Address')->set(array('my' => 'yours'))->where('@rid = ?', '13:7');
         $result  = $this->manager->execute($query);
 
-        $this->assertTrue($result);
-        $this->assertInternalType('boolean', $result);
+        $this->assertEquals(1, $result);
     }
 
     /**
