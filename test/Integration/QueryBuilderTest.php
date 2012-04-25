@@ -3,76 +3,44 @@
 /**
  * QueryBuilderTest class
  *
- * @package    
- * @subpackage 
+ * @package    Congow\Orient
+ * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     Daniele Alessandri <daniele.alessandri@gmail.com>
  */
 
 namespace test\Integration;
 
 use test\PHPUnit\TestCase;
 use Congow\Orient\Query;
-use Congow\Orient\Http\Client\Curl;
-use Congow\Orient\Foundation\Binding;
+use Congow\Orient\Binding\HttpBinding;
+use Congow\Orient\Contract\Binding\HttpBindingResultInterface;
 
 class QueryBuilderTest extends TestCase
 {
-    const _200 = '200';
-    const _201 = '201';
-    const _204 = '204';
-    const _401 = '401';
-    const _404 = '404';
-    const _500 = '500';
-
     public function setup()
     {
-        $this->driver = new Curl(false, TEST_ODB_TIMEOUT);
-        $this->orient = new Binding($this->driver, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
-        $this->query = new Query();
+        $this->binding = $this->createHttpBinding();
     }
 
-    public function assertFirstRid($rid, $response)
+    public function testSelect()
     {
-        $res = json_decode($response->getBody());
-        $message = 'The first RID of the results is ' . $rid;
-        $property = '@rid';
+        $query = new Query();
 
-        $this->assertEquals('#' . $rid, $res->result[0]->$property, $message);
+        $this->assertHttpStatus(200, $this->doQuery($query->from(array('address'))));
+        $this->assertHttpStatus(200, $this->doQuery($query->select(array('@version', 'street'))));
     }
 
-    public function testASimpleSelect()
+    public function testSelectRange()
     {
-        $this->query->from(array('address'));
+        $query = new Query();
 
-        $this->assertStatusCode(self::_200, $this->query());
+        $this->assertHttpStatus(200, $this->doQuery($query->from(array('Address'))->range('13:0')));
+        $this->assertHttpStatus(200, $this->doQuery($query->range(null, '12')));
+        $this->assertHttpStatus(200, $this->doQuery($query->range('10.0')));
+        $this->assertHttpStatus(200, $this->doQuery($query->range('10.1', false)));
+        $this->assertHttpStatus(200, $this->doQuery($query->range('13:0', '13:2')));
 
-        $this->query->select(array('@version', 'street'));
-
-        $this->assertStatusCode(self::_200, $this->query());
-    }
-
-    public function testTheRangeOfASelect()
-    {
-        $this->query->from(array('Address'))->range('13:0');
-        
-        $this->assertStatusCode(self::_200, $this->query());
-
-        $this->query->range(null, '12');
-
-        $this->assertStatusCode(self::_200, $this->query());
-
-        $this->query->range('10.0');
-
-        $this->assertStatusCode(self::_200, $this->query());
-
-        $this->query->range('10.1', false);
-
-        $this->assertStatusCode(self::_200, $this->query());
-
-        $this->query->range('13:0', '13:2');
-
-        $this->assertStatusCode(self::_200, $this->query());
-        
         /**
          * @todo what? there should be 2 records:
          * @see http://code.google.com/p/orient/issues/detail?id=574&thanks=574&ts=1318783142
@@ -80,455 +48,489 @@ class QueryBuilderTest extends TestCase
         //$this->assertEquals(165, $this->countResults($this->query()));
     }
 
-    public function testLimitingASelect()
+    public function testSelectLimit()
     {
-        $this->query->from(array('Address'))->limit(20);
+        $query = new Query();
 
-        $this->assertStatusCode(self::_200, $this->query());
-        $this->assertEquals(20, $this->countResults($this->query()));
+        $result = $this->doQuery($query->from(array('Address'))->limit(20));
+        $this->assertHttpStatus(200, $result);
+        $this->assertSame(20, $this->getResultCount($result));
 
-        $this->query->from(array('Address'))->limit(30);
-        $this->query->from(array('Address'))->limit(20);
+        $query->from(array('Address'))->limit(30);
+        $query->from(array('Address'))->limit(20);
 
-        $this->assertStatusCode(self::_200, $this->query());
-        $this->assertEquals(20, $this->countResults($this->query()));
+        $result = $this->doQuery($query);
+        $this->assertHttpStatus(200, $result);
+        $this->assertSame(20, $this->getResultCount($result));
 
-        $this->query->from(array('Address'))->limit('a');
-
-        $this->assertStatusCode(self::_200, $this->query());
-        $this->assertTrue((bool) ($this->countResults($this->query()) > 21));
+        $result = $this->doQuery($query->from(array('Address'))->limit('a'));
+        $this->assertHttpStatus(200, $result);
+        $this->assertGreaterThan(21, $this->getResultCount($result));
     }
 
-    public function testSelectingByRIDs()
+    public function testSelectByRID()
     {
-        $this->query->from(array('13:100'));
+        $query = new Query();
+        $query->from(array('13:100'));
 
-        $this->assertStatusCode(self::_200, $this->query());
-        $this->assertFirstRid('13:100', $this->query());
+        $result = $this->doQuery($query);
+        $this->assertHttpStatus(200, $result);
+        $this->assertFirstRid('13:100', $result);
     }
 
-    public function testOrderingTheQuery()
+    public function testSelectOrderBy()
     {
-        $this->query->from(array('13:100', '13:101'))->orderBy('rid ASC')->orderBy('street DESC');
+        $query = new Query();
+        $query->from(array('13:100', '13:101'))
+              ->orderBy('rid ASC')
+              ->orderBy('street DESC');
 
-        $this->assertStatusCode(self::_200, $this->query());
-        $this->assertFirstRid('13:100', $this->query());
+        $result = $this->doQuery($query);
+        $this->assertHttpStatus(200, $result);
+        $this->assertFirstRid('13:100', $result);
 
-        $this->query->orderBy('rid DESC', false);
+        $query->orderBy('rid DESC', false);
 
-        $this->assertStatusCode(self::_200, $this->query());
-        $this->assertFirstRid('13:101', $this->query());
+        $result = $this->doQuery($query);
+        $this->assertHttpStatus(200, $result);
+        $this->assertFirstRid('13:101', $result);
     }
 
-    public function testDoingAComplexSelect()
+    public function testSelectComplex()
     {
-        $this->query->limit(10);
-        $this->query->limit(20);
-        $this->query->from(array('13:2', '13:4'), false);
-        $this->query->select(array('rid', 'street'));
-        $this->query->select(array('type'));
-        $this->query->range('13:2');
-        $this->query->range(null, '13:4');
-        $this->query->orderBy('street ASC');
+        $query = new Query();
+        $query->limit(10)
+              ->limit(20)
+              ->from(array('13:2', '13:4'), false)
+              ->select(array('rid', 'street'))
+              ->select(array('type'))
+              ->range('13:2')
+              ->range(null, '13:4')
+              ->orderBy('street ASC');
 
-        $this->assertStatusCode(self::_200, $this->query());
+        $this->assertHttpStatus(200, $this->doQuery($query));
     }
 
-    public function testInsertARecord()
+    public function testInsertRecord()
     {
-        $countQuery = $this->orient->command('SELECT FROM Address');
-        $count = $this->countResults($countQuery);
+        $binding = $this->createHttpBinding();
 
-        $this->query->insert()
-                ->fields(array('street', 'type', 'city'))
-                ->values(array('5th avenue', 'villetta', '#13:0'))
-                ->into('Address');
+        $before = $this->getResultCount($binding->command('SELECT count(*) FROM Address'));
 
-        $this->assertStatusCode(self::_200, $this->query());
-        $recount = $this->countResults($this->orient->command('SELECT FROM Address'));
-        $this->assertEquals($count + 1, $recount);
-    }
+        $query = new Query();
+        $query->insert()
+              ->fields(array('street', 'type', 'city'))
+              ->values(array('5th avenue', 'villetta', '#13:0'))
+              ->into('Address');
 
-    /**
-     * @depends testInsertARecord
-     */
-    public function testADelete()
-    {
-        $countQuery = $this->orient->command('SELECT FROM Address');
-        $count = $this->countResults($countQuery);
+        $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $this->query->delete('Address')
-                ->where('street = ?', '5th avenue')
-                ->orWhere('type = "villetta"');
-
-        $this->assertStatusCode(self::_200, $this->query());
-        $recount = $this->countResults($this->orient->command('SELECT FROM Address'));
-        $this->assertEquals($count - 1, $recount);
-    }
-
-    public function testInsertAnotherRecord()
-    {
-        $countQuery = $this->orient->command('SELECT FROM Address');
-        $count = $this->countResults($countQuery);
-
-        $this->query->insert()
-                ->fields(array('street', 'type', 'city'))
-                ->values(array('5th avenue', 'villetta', '#13:0'))
-                ->into('Address');
-
-        $this->assertStatusCode(self::_200, $this->query());
-        $recount = $this->countResults($this->orient->command('SELECT FROM Address'));
-        $this->assertEquals($count + 1, $recount);
+        $after = $this->getResultCount($binding->command('SELECT count(*) FROM Address'));
+        $this->assertSame($after, $before + 1);
     }
 
     /**
-     * @depends testInsertAnotherRecord
+     * @depends testInsertRecord
      */
-    public function testTruncatingARecord()
+    public function testDeleteRecord()
     {
-        $countQuery = $this->orient->command('SELECT FROM Address');
-        $count = $this->countResults($countQuery);
+        $binding = $this->createHttpBinding();
 
-        $this->query
-                ->from(array('Address'))
-                ->where('street = ?', '5th avenue')
-                ->orWhere('type = "villetta"');
-        
-        $res = json_decode($this->query()->getBody());
-        
-        $this->query->truncate(substr($res->result[0]->{"@rid"}, 1));
-        $this->assertStatusCode(self::_200, $this->query());
-        $recount = $this->countResults($this->orient->command('SELECT FROM Address'));
-        $this->assertEquals($count - 1, $recount);
+        $before = $this->getResultCount($binding->command('SELECT count(*) FROM Address'));
+
+        $query = new Query();
+        $query->delete('Address')
+              ->where('street = ?', '5th avenue')
+              ->orWhere('type = "villetta"');
+
+        $this->assertHttpStatus(200, $this->doQuery($query, $binding));
+
+        $after = $this->getResultCount($binding->command('SELECT count(*) FROM Address'));
+        $this->assertSame($after, $before - 1);
     }
 
-    public function testGrantingACredential()
+    /**
+     * @todo Ugly as hell...
+     */
+    public function testInsertRecordAgain()
     {
-        $this->query->grant('READ')
-                ->to('reader')
-                ->on('Address');
-
-        $this->assertStatusCode(self::_200, $this->query());
+        $this->testInsertRecord();
     }
 
-    public function testRevokingACredential()
+    /**
+     * @depends testInsertRecordAgain
+     */
+    public function testTruncateRecord()
     {
-        $this->query->revoke('READ')
-                ->to('reader')
-                ->on('Address');
+        $binding = $this->createHttpBinding();
+        $before = $this->getResultCount($binding->command('SELECT count(*) FROM Address'));
+        $query = new Query();
 
-        $this->assertStatusCode(self::_200, $this->query());
+        $query->from(array('Address'))
+              ->where('street = ?', '5th avenue')
+              ->orWhere('type = "villetta"');
+
+        $result = $this->doQuery($query, $binding)->getResult();
+
+        $query->truncate(substr($result[0]->{"@rid"}, 1));
+        $this->assertHttpStatus(200, $this->doQuery($query, $binding));
+
+        $after = $this->getResultCount($binding->command('SELECT count(*) FROM Address'));
+        $this->assertSame($after, $before - 1);
     }
 
-    public function testCreateAnIndex()
+    public function testGrantCredentials()
     {
-        $this->query->index('index_name_2', 'unique');
+        $query = new Query();
 
-        $this->assertStatusCode(self::_200, $this->query());
-        $this->assertEquals(0, $this->query()->getBody());
+        $query->grant('READ')
+              ->to('reader')
+              ->on('Address');
 
-        $this->query = new Query();
-        $this->query->index('in', 'unique', 'OGraphEdge');
-
-        $this->assertStatusCode(self::_200, $this->query());
-        $countQuery = $this->orient->command('SELECT FROM OGraphEdge');
-        $count = $this->countResults($countQuery);
-        $this->assertEquals($count, $this->query()->getBody());
+        $this->assertHttpStatus(200, $this->doQuery($query));
     }
 
-    public function testCountingAnIndexSize()
+    public function testRevokeCredentials()
     {
-        $this->query->indexCount('index_name_2');
+        $query = new Query();
+        $query->revoke('READ')
+              ->to('reader')
+              ->on('Address');
 
-        $this->assertStatusCode(self::_200, $this->query());
+        $this->assertHttpStatus(200, $this->doQuery($query));
+    }
+
+    public function testIndexCreate()
+    {
+        $binding = $this->createHttpBinding();
+        $query = new Query();
+
+        $query->index('index_name_2', 'unique');
+        $result = $this->doQuery($query, $binding);
+        $this->assertHttpStatus(200, $result);
+        $this->assertSame('0', $result->getInnerResponse()->getBody());
+
+        $count = $this->getResultCount($binding->query('SELECT FROM OGraphEdge'));
+
+        $query = new Query();
+        $query->index('in', 'unique', 'OGraphEdge');
+
+        $result = $this->doQuery($query, $binding);
+        $this->assertHttpStatus(200, $result);
+        $this->assertEquals($result->getInnerResponse()->getBody(), $count);
+    }
+
+    public function testIndexCount()
+    {
+        $query = new Query();
+
+        $query->indexCount('index_name_2');
+        $this->assertHttpStatus(200, $this->doQuery($query));
     }
 
     public function testExecutingAIndexLookup()
     {
-        $this->query->lookup('index_name_2');
+        $query = new Query();
 
-        $this->assertStatusCode(self::_200, $this->query());
+        $query->lookup('index_name_2');
+        $this->assertHttpStatus(200, $this->doQuery($query));
 
-        $this->query->where('fakekey = ?', 2);
+        $query->where('fakekey = ?', 2);
+        $this->assertHttpStatus(500, $this->doQuery($query));
 
-        $this->assertStatusCode(self::_500, $this->query());
+        $query = new Query();
+        $query->from(array('index:index_name_2'))
+              ->between('key', '10.0', '10.1');
 
-        $this->query = new Query();
-        $this->query->from(array('index:index_name_2'))->between('key', '10.0', '10.1');
-        $this->assertStatusCode(self::_200, $this->query());
+        $this->assertHttpStatus(200, $this->doQuery($query));
     }
 
-    public function testAddingAnEntryToAnIndex()
+    public function testAddEntryToIndex()
     {
-        $this->query->indexCount('index_name_2');
-        $count = $this->countResults($this->query());
-        $this->query->indexPut('index_name_2', 'k', '13:100');
+        $query = new Query();
 
-        $this->assertStatusCode(self::_204, $this->query());
-        
-        $this->query->indexCount('index_name_2');
-        $recount = $this->countResults($this->query());
-        $this->assertEquals($count + 1, $recount);
+        $query->indexCount('index_name_2');
+        $before = $this->getResultCount($this->doQuery($query));
+
+        $query->indexPut('index_name_2', 'k', '13:100');
+        $this->assertHttpStatus(204, $this->doQuery($query));
+
+        $query->indexCount('index_name_2');
+        $after = $this->getResultCount($this->doQuery($query));
+        $this->assertEquals($after, $before + 1);
     }
 
-    public function testRemovingAnEntryToAnIndex()
+    public function testRemoveEntryFromIndex()
     {
-        $this->query->indexCount('index_name_2');
-        $count = $this->countResults($this->query());
-        $this->query->indexRemove('index_name_2', 'k');
+        $query = new Query();
 
-        $this->assertStatusCode(self::_200, $this->query());
-        $this->query->indexCount('index_name_2');
-        $recount = $this->countResults($this->query());
-        $this->assertEquals($count - 1, $recount);
+        $query->indexCount('index_name_2');
+        $before = $this->getResultCount($this->doQuery($query));
+
+        $query->indexRemove('index_name_2', 'k');
+        $this->assertHttpStatus(200, $this->doQuery($query));
+
+        $query->indexCount('index_name_2');
+        $after = $this->getResultCount($this->doQuery($query));
+        $this->assertEquals($after, $before - 1);
     }
 
-    public function testDroppingAnIndex()
+    public function tetIndexDrop()
     {
-        $this->query->indexCount('index_name_2');
-        $this->assertStatusCode(self::_200, $this->query());
-        $this->query->unindex('index_name_2');
+        $query = new Query();
 
-        $this->assertStatusCode(self::_204, $this->query());
-        $this->query->indexCount('index_name_2');
-        $this->assertStatusCode(self::_500, $this->query());
+        $query->indexCount('index_name_2');
+        $this->assertHttpStatus(200, $this->doQuery($query));
 
-        $this->query->unindex('in', 'OGraphEdge');
+        $query->unindex('index_name_2');
+        $this->assertHttpStatus(204, $this->doQuery($query));
 
-        $this->assertStatusCode(self::_204, $this->query());
+        $query->indexCount('index_name_2');
+        $this->assertHttpStatus(500, $this->doQuery($query));
+
+        $query->unindex('in', 'OGraphEdge');
+        $this->assertHttpStatus(204, $this->doQuery($query));
     }
 
-    public function testFindingAReference()
+    public function testFindReferences()
     {
-        $this->query->findReferences('13:0');
+        $query = new Query();
 
-        $this->assertStatusCode(self::_200, $this->query());
+        $query->findReferences('13:0');
+        $this->assertHttpStatus(200, $this->doQuery($query));
     }
 
-    public function testCreatingAClass()
+    public function testClassCreate()
     {
-        $this->time = microtime();
-        $class = 'MyCustomTestClass' . $this->time;
-        $this->query->create($class);
+        $class = 'MyCustomTestClass' . microtime();
+        $query = new Query();
 
-        $this->assertStatusCode(self::_200, $this->query());
-
-        return $class;
-    }
-    
-    /**
-     * @depends testCreatingAClass
-     */
-    public function testTruncatingAClass($class)
-    {
-        $this->query->truncate($class);
-
-        $this->assertStatusCode(self::_200, $this->query());
-    }
-    
-    /**
-     * @depends testCreatingAClass
-     */
-    public function testTruncatingACluster($class)
-    {
-        $this->query->truncate($class, true);
-
-        $this->assertStatusCode(self::_200, $this->query());
-    }
-
-    /**
-     * @depends testCreatingAClass
-     */
-    public function testAlteringAClass($class)
-    {
-        $this->query->alter($class, 'SUPERCLASS', 'OUser');
-
-        $this->assertStatusCode(self::_204, $this->query());
+        $query->create($class);
+        $this->assertHttpStatus(200, $this->doQuery($query));
 
         return $class;
     }
 
     /**
-     * @depends testAlteringAClass
+     * @depends testClassCreate
      */
-    public function testCreatingAProperty($class)
+    public function testTruncateClass($class)
     {
-        $this->query->create($class, 'customTestProperty', 'string');
+        $query = new Query();
+        $query->truncate($class);
 
-        $this->assertStatusCode(self::_200, $this->query());
+        $this->assertHttpStatus(200, $this->doQuery($query));
+    }
+
+    /**
+     * @depends testClassCreate
+     */
+    public function testTruncateCluster($class)
+    {
+        $query = new Query();
+
+        $query->truncate($class, true);
+        $this->assertHttpStatus(200, $this->doQuery($query));
+    }
+
+    /**
+     * @depends testClassCreate
+     */
+    public function testAlterClass($class)
+    {
+        $query = new Query();
+
+        $query->alter($class, 'SUPERCLASS', 'OUser');
+        $this->assertHttpStatus(204, $this->doQuery($query));
 
         return $class;
     }
 
     /**
-     * @depends testCreatingAProperty
+     * @depends testAlterClass
      */
-    public function testAlteringAProperty($class)
+    public function testCreateProperty($class)
     {
-        $this->query->alterProperty($class, 'customTestProperty', 'notnull', 'false');
+        $query = new Query();
 
-        $this->assertStatusCode(self::_204, $this->query());
-
-        $this->query->alterProperty($class, 'customTestProperty', 'notnull', 'true');
-
-        $this->assertStatusCode(self::_204, $this->query());
+        $query->create($class, 'customTestProperty', 'string');
+        $this->assertHttpStatus(200, $this->doQuery($query));
 
         return $class;
     }
 
     /**
-     * @depends testAlteringAProperty
+     * @depends testCreateProperty
      */
-    public function testDroppingAProperty($class)
+    public function testAlterProperty($class)
     {
-        $this->query->drop($class, 'customTestProperty');
+        $query = new Query();
 
-        $this->assertStatusCode(self::_204, $this->query());
+        $query->alterProperty($class, 'customTestProperty', 'notnull', 'false');
+        $this->assertHttpStatus(204, $this->doQuery($query));
+
+        $query->alterProperty($class, 'customTestProperty', 'notnull', 'true');
+        $this->assertHttpStatus(204, $this->doQuery($query));
 
         return $class;
     }
 
     /**
-     * @depends testAlteringAClass
+     * @depends testAlterProperty
      */
-    public function testDroppingClass($class)
+    public function testDropProperty($class)
     {
-        $this->query->drop($class);
+        $query = new Query();
 
-        $this->assertStatusCode(self::_204, $this->query());
+        $query->drop($class, 'customTestProperty');
+        $this->assertHttpStatus(204, $this->doQuery($query));
 
         return $class;
     }
 
-    public function testLinkingTwoObjects()
+    /**
+     * @depends testAlterClass
+     */
+    public function testDropClass($class)
     {
-        $this->query->link('Company', 'id', 'in', true)->with('ORole', 'id');
+        $query = new Query();
 
-        $this->assertStatusCode(self::_200, $this->query());
+        $query->drop($class);
+        $this->assertHttpStatus(204, $this->doQuery($query));
+
+        return $class;
     }
 
-    public function testUpdating()
-    {        
-        $this->query->update('Address')->set(array('nick' => 'Luca'));
-        $this->query->orWhere('@rid = ?', '13:101');
-        
-        $this->assertStatusCode(self::_200, $this->query());
-        
-        $res = json_decode($this->orient->command('SELECT FROM Address WHERE @rid = #13:101')->getBody());
-        $document = $res->result[0];
-        
-        $this->assertEquals('Luca', $document->nick);
-        
-        $this->query->update('Address')->set(array('nick' => 'Luca2'));
-        $this->query->orWhere('@rid = ?', '13:101');
-        
-        $this->assertStatusCode(self::_200, $this->query());
-        
-        $res = json_decode($this->orient->command('SELECT FROM Address WHERE @rid = #13:101')->getBody());
-        $document = $res->result[0];
-        
-        $this->assertEquals('Luca2', $document->nick);
+    public function testLinkObjects()
+    {
+        $query = new Query();
+
+        $query->link('Company', 'id', 'in', true)->with('ORole', 'id');
+        $this->assertHttpStatus(200, $this->doQuery($query));
     }
 
-    public function testAddingALink()
+    public function testUpdate()
     {
-        $res        = json_decode($this->orient->command('SELECT FROM 30:1')->getBody());
-        $document   = $res->result[0];
-        $count      = count($document->comments);
-        
-        $this->query->add(array('comments' => '31:0'), 'post');
-        $this->query->where('@rid = ?', '30:1');
+        $query = new Query();
+        $binding = $this->createHttpBinding();
 
-        $this->assertStatusCode(self::_200, $this->query());
-        
-        $res = json_decode($this->orient->command('SELECT FROM 30:1')->getBody());
-        $document = $res->result[0];
+        $query->update('Address')->set(array('nick' => 'Luca'))
+              ->orWhere('@rid = ?', '13:101');
+        $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $res = json_decode($this->orient->command('SELECT FROM 30:1')->getBody());
-        $document = $res->result[0];
-        $recount = count($document->comments);
-        
-        $this->assertEquals($count + 1, $recount);
+        $records = $binding->command('SELECT FROM Address WHERE @rid = #13:101')->getResult();
+        $this->assertSame('Luca', $records[0]->nick);
+
+        $query->update('Address')->set(array('nick' => 'Luca2'))
+              ->orWhere('@rid = ?', '13:101');
+        $this->assertHttpStatus(200, $this->doQuery($query, $binding));
+
+        $records = $binding->command('SELECT FROM Address WHERE @rid = #13:101')->getResult();
+        $this->assertSame('Luca2', $records[0]->nick);
+    }
+
+    public function testAddLink()
+    {
+        $query = new Query();
+        $binding = $this->createHttpBinding();
+
+        $records = $binding->command('SELECT FROM 30:1')->getResult();
+        $before = count($records[0]->comments);
+
+        $query->add(array('comments' => '31:0'), 'post')
+              ->where('@rid = ?', '30:1');
+        $this->assertHttpStatus(200, $this->doQuery($query, $binding));
+
+        $records = $binding->command('SELECT FROM 30:1')->getResult();
+        $after = count($records[0]->comments);
+
+        $this->assertSame($after, $before + 1);
     }
 
     /**
-     * @depends testAddingALink
+     * @depends testAddLink
      */
-    public function testRemovingALink()
+    public function testRemoveLink()
     {
-        $res = json_decode($this->orient->command('SELECT FROM 30:1')->getBody());
-        $document = $res->result[0];
-        $count = count($document->comments);
-        
-        $this->query->remove(array('comments' => '31:0'), 'post');
-        $this->query->where('@rid = ?', '30:1');
+        $query = new Query();
+        $binding = $this->createHttpBinding();
 
-        $this->assertStatusCode(self::_200, $this->query());
-        
-        $res = json_decode($this->orient->command('SELECT FROM 30:1')->getBody());
-        $document = $res->result[0];
-        $recount = count($document->comments);
-        
-        $this->assertEquals($count - 1, $recount);
+        $records = $binding->command('SELECT FROM 30:1')->getResult();
+        $before = count($records[0]->comments);
+
+        $query->remove(array('comments' => '31:0'), 'post')
+              ->where('@rid = ?', '30:1');
+        $this->assertHttpStatus(200, $this->doQuery($query, $binding));
+
+        $records = $binding->command('SELECT FROM 30:1')->getResult();
+        $after = count($records[0]->comments);
+
+        $this->assertSame($after, $before - 1);
     }
 
-    public function testPuttingALink()
+    public function testPutLink()
     {
-        $this->orient->command('update profile remove followers');
-        
-        $this->query->put(array('followers' => array('Johnny' => '10:2')), 'profile');
-        $this->query->where('@rid = ?', '10:1');
+        $query = new Query();
+        $binding = $this->createHttpBinding();
 
-        $this->assertStatusCode(self::_200, $this->query());
+        $binding->command('UPDATE profile REMOVE followers');
 
-        $res = json_decode($this->orient->command('SELECT FROM 10:1')->getBody());
+        $query->put(array('followers' => array('Johnny' => '10:2')), 'profile')
+              ->where('@rid = ?', '10:1');
 
-        $document = $res->result[0];
-        $this->assertInstanceOf('\stdClass', $document->followers);
-        $this->assertEquals('#10:2', $document->followers->Johnny);
-    }
-    
-    public function testTruncatingNonExistingClass()
-    {
-        $this->query->truncate('OMNOMNOMOMNOMNOMNO');
+        $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $this->assertStatusCode(self::_500, $this->query());
-    }
-    
-    public function testTruncatingNonExistingCluster()
-    {
-        $this->query->truncate('OMNOMOMNOMNOMNOM', true);
-
-        $this->assertStatusCode(self::_500, $this->query());
+        $records = $binding->command('SELECT FROM 10:1')->getResult();
+        $this->assertInstanceOf('\stdClass', $records[0]->followers);
+        $this->assertSame('#10:2', $records[0]->followers->Johnny);
     }
 
-    protected function countResults(\Congow\Orient\Http\Response $response)
+    public function testTruncateNonExistingClass()
     {
-        $response = json_decode($response->getBody());
-        $property = 'count(*)';
+        $query = new Query();
 
-        if (array_key_exists(0, $response->result) && property_exists($response->result[0], $property))
-        {
-            return $response->result[0]->$property;
+        $query->truncate('NON_EXISTING_CLASS');
+        $this->assertHttpStatus(500, $this->doQuery($query));
+    }
+
+    public function testTruncateNonExistingCluster()
+    {
+        $query = new Query();
+
+        $query->truncate('NON_EXISTING_CLUSTER', true);
+        $this->assertHttpStatus(500, $this->doQuery($query));
+    }
+
+    protected function doQuery($query, HttpBinding $binding = null)
+    {
+        $binding = $binding ?: $this->binding;
+        $result = $binding->command($query->getRaw());
+
+        return $result;
+    }
+
+    protected function assertFirstRid($rid, HttpBindingResultInterface $result)
+    {
+        $records = $result->getResult();
+        $this->assertSame("#$rid", $records[0]->{'@rid'}, "The first RID of the results is $rid");
+    }
+
+    protected function getResultCount(HttpBindingResultInterface $result)
+    {
+        $response = json_decode($result->getInnerResponse()->getBody());
+
+        if (array_key_exists(0, $response->result) && property_exists($response->result[0], 'count')) {
+            return $response->result[0]->count;
         }
-        elseif (array_key_exists(0, $response->result) && property_exists($response->result[0], 'size'))
-        {
+
+        if (array_key_exists(0, $response->result) && property_exists($response->result[0], 'size')) {
             return $response->result[0]->size;
         }
-        else
-        {
-            if (property_exists($response, 'result'))
-            {
-                return count($response->result);
-            }
+
+        if (property_exists($response, 'result')) {
+            return count($response->result);
         }
 
         throw new \Exception('Unable to retrieve a count from the given response.');
     }
-
-    protected function query()
-    {
-        return $this->orient->command($this->query->getRaw());
-    }
-
 }

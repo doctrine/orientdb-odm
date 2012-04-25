@@ -10,58 +10,54 @@
  */
 
 /**
- * Binding class
- *
- * This class is the foundation of the library : it's the low-level binding
- * connecting to Congow\Orient.
- * It's also responsible of incapsulating a proper client which makes HTTP
- * requests to Congow\OrientDB.
+ * Standard HTTP binding class used by Orient.
  *
  * @package    Congow\Orient
- * @subpackage Foundation
- * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @subpackage Binding
+ * @author     Daniele Alessandri <suppakilla@gmail.com>
  */
 
-namespace Congow\Orient\Foundation;
+namespace Congow\Orient\Binding;
 
-use Congow\Orient\Contract\Protocol;
-use Congow\Orient\Contract\Http;
-use Congow\Orient\Exception;
+use Congow\Orient\Contract\Binding\BindingInterface;
+use Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface;
+use Congow\Orient\Client\Http\CurlClient;
+use Congow\Orient\Binding\Adapter\CurlClientAdapter;
+use Congow\Orient\Exception as OrientException;
 
-class Binding implements Protocol\Http
+class HttpBinding implements BindingInterface
 {
+    protected $adapter;
     protected $server;
-    protected $client;
-    protected $username;
-    protected $password;
-    protected $authentication;
 
     /**
      * Instantiates a new binding.
      *
      * @api
-     * @param Http\Client $client
      * @param string $host
      * @param string $port
      * @param string $username
      * @param string $password
      * @param string $database
      */
-    public function __construct(Http\Client $client, $host = '127.0.0.1', $port = 2480, $username = null, $password = null, $database = null)
+    public function __construct($host = '127.0.0.1', $port = 2480, $username = null, $password = null, $database = null)
     {
-        $this->client = $client;
         $this->server = $host . ($port ? sprintf(':%s', $port) : false);
         $this->database = $database;
-        $this->setAuthentication($username, $password);
+
+        $client = new CurlClient();
+
+        $this->adapter = new CurlClientAdapter($client);
+        $this->adapter->setAuthentication($username, $password);
     }
 
     /**
      * Creates a relative URL for the specified OrientDB method call.
      *
-     * @param   string $method
-     * @param   string $database
-     * @param   array  $arguments
-     * @return  string
+     * @param string $method
+     * @param string $database
+     * @param array $arguments
+     * @return string
      */
     protected function getLocation($method, $database = null, array $arguments = null)
     {
@@ -80,10 +76,10 @@ class Binding implements Protocol\Http
     /**
      * Returns the URL for the execution of a SQL query.
      *
-     * @param   string $sql
-     * @param   int    $limit
-     * @param   string $fetchPlan
-     * @return  string
+     * @param string $sql
+     * @param int $limit
+     * @param string $fetchPlan
+     * @return string
      */
     protected function getQueryLocation($sql, $limit = null, $fetchPlan = null)
     {
@@ -102,8 +98,9 @@ class Binding implements Protocol\Http
     /**
      * Returns the URL to fetch a document.
      *
-     * @param   string $class
-     * @return  string
+     * @param string $rid
+     * @param string $fetchPlan
+     * @return string
      */
     protected function getDocumentLocation($rid = null, $fetchPlan = null)
     {
@@ -119,8 +116,8 @@ class Binding implements Protocol\Http
     /**
      * Returns the URL to fetch a class.
      *
-     * @param   string $class
-     * @return  string
+     * @param string $class
+     * @return string
      */
     protected function getClassLocation($class)
     {
@@ -130,9 +127,9 @@ class Binding implements Protocol\Http
     /**
      * Returns the URL to fetch a cluster.
      *
-     * @param   string $cluster
-     * @param   int    $limit
-     * @return  string
+     * @param string $cluster
+     * @param int $limit
+     * @return string
      */
     protected function getClusterLocation($cluster, $limit = null)
     {
@@ -142,8 +139,8 @@ class Binding implements Protocol\Http
     /**
      * Returns the URL to fetch a database.
      *
-     * @param   string $database
-     * @return  string
+     * @param string $database
+     * @return string
      */
     protected function getDatabaseLocation($database)
     {
@@ -153,16 +150,16 @@ class Binding implements Protocol\Http
      * Deletes a class.
      *
      * @api
-     * @param   string $class
-     * @param   string $database
-     * @return  Congow\Orient\Http\Response
+     * @param string $class
+     * @param string $database
+     * @return BindingResultInterface
      */
     public function deleteClass($class, $database = false)
     {
         $this->resolveDatabase($database);
 
         $location = $this->getClassLocation($class);
-        $response = $this->getHttpClient()->delete($location);
+        $response = $this->adapter->request('DELETE', $location);
 
         return $response;
     }
@@ -171,16 +168,16 @@ class Binding implements Protocol\Http
      * Gets a class and its records.
      *
      * @api
-     * @param   string $class
-     * @param   string $database
-     * @return  Congow\Orient\Http\Response
+     * @param string $class
+     * @param string $database
+     * @return BindingResultInterface
      */
     public function getClass($class, $database = false)
     {
         $this->resolveDatabase($database);
 
         $location = $this->getClassLocation($class);
-        $response = $this->getHttpClient()->get($location);
+        $response = $this->adapter->request('GET', $location);
 
         return $response;
     }
@@ -189,17 +186,17 @@ class Binding implements Protocol\Http
      * Creates a new class.
      *
      * @api
-     * @param   string $class
-     * @param   string $database
-     * @param   string $body
-     * @return  Congow\Orient\Http\Response
+     * @param string $class
+     * @param string $database
+     * @param string $body
+     * @return BindingResultInterface
      */
     public function postClass($class, $database = false, $body = null)
     {
         $this->resolveDatabase($database);
 
         $location = $this->getClassLocation($class);
-        $response = $this->getHttpClient()->post($location, $body);
+        $response = $this->adapter->request('POST', $location, null, $body);
 
         return $response;
     }
@@ -208,16 +205,16 @@ class Binding implements Protocol\Http
      * Gets informations about a cluster.
      *
      * @api
-     * @param   string $cluster
-     * @param   boolean $database
-     * @return  Congow\Orient\Http\Response
+     * @param string $cluster
+     * @param boolean $database
+     * @return BindingResultInterface
      */
     public function cluster($cluster, $database = false, $limit = null)
     {
         $this->resolveDatabase($database);
 
         $location = $this->getClusterLocation($cluster, $limit);
-        $response = $this->getHttpClient()->get($location);
+        $response = $this->adapter->request('GET', $location);
 
         return $response;
     }
@@ -226,13 +223,13 @@ class Binding implements Protocol\Http
      * Connects the instance to a DB.
      *
      * @api
-     * @param   string $database
-     * @return  Congow\Orient\Http\Response
+     * @param string $database
+     * @return BindingResultInterface
      */
     public function connect($database)
     {
         $location = $this->getDatabaseLocation($database);
-        $response = $this->getHttpClient()->get($location);
+        $response = $this->adapter->request('GET', $location);
 
         return $response;
     }
@@ -241,26 +238,26 @@ class Binding implements Protocol\Http
      * Disconnect this instance from the server.
      *
      * @api
-     * @return Congow\Orient\Http\Response
+     * @return BindingResultInterface
      */
     public function disconnect()
     {
         $location = $this->getLocation('disconnect');
-        $response = $this->getHttpClient()->get($location);
+        $response = $this->adapter->request('GET', $location);
 
         return $response;
     }
 
     /**
-     * Gets the current server
+     * Gets the current server.
      *
      * @api
-     * @return Congow\Orient\Http\Response
+     * @return BindingResultInterface
      */
     public function getServer()
     {
         $location = $this->getLocation('server');
-        $response = $this->getHttpClient()->get($location);
+        $response = $this->adapter->request('GET', $location);
 
         return $response;
     }
@@ -269,33 +266,49 @@ class Binding implements Protocol\Http
      * Gets informations about a DB.
      *
      * @api
-     * @param   string $database
-     * @return  Congow\Orient\Http\Response
+     * @param string $database
+     * @return BindingResultInterface
      */
     public function getDatabase($database = null)
     {
         $this->resolveDatabase($database);
 
         $location = $this->getDatabaseLocation($this->database);
-        $response = $this->getHttpclient()->get($location);
+        $response = $this->adapter->request('GET', $location);
 
         return $response;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function execute($sql, $return = false)
+    {
+        if (is_string($return)) {
+            return $this->query($sql, null, -1, $return);
+        }
+
+        if ($return == true) {
+            return $this->query($sql, null, -1);
+        }
+
+        return $this->command($sql, $this->database);
     }
 
     /**
      * Executes a raw SQL query on the given DB.
      *
      * @api
-     * @param   string $sql
-     * @param   string $database
-     * @return  Congow\Orient\Http\Response
+     * @param string $sql
+     * @param string $database
+     * @return BindingResultInterface
      */
     public function command($sql, $database = null)
     {
         $this->resolveDatabase($database);
 
         $location = $this->getLocation('command', $this->database, array('sql', $sql));
-        $response = $this->getHttpClient()->post($location, null);
+        $response = $this->adapter->request('POST', $location);
 
         return $response;
     }
@@ -306,18 +319,18 @@ class Binding implements Protocol\Http
      * It differs from the command because Congow\Orient defines a query as a SELECT only.
      *
      * @api
-     * @param   string $sql           The query
-     * @param   string $database
-     * @param   int $limit            Results limit, default 20
-     * @param   string $fetchPlan
-     * @return  Congow\Orient\Http\Response
+     * @param string $sql SQL query.
+     * @param string $database
+     * @param int $limit Maximum number of records (default is 20).
+     * @param string $fetchPlan
+     * @return BindingResultInterface
      */
     public function query($sql, $database = null, $limit = null, $fetchPlan = null)
     {
         $this->resolveDatabase($database);
 
         $location = $this->getQueryLocation($sql, $limit, $fetchPlan);
-        $response = $this->getHttpClient()->get($location);
+        $response = $this->adapter->request('GET', $location);
 
         return $response;
     }
@@ -326,17 +339,17 @@ class Binding implements Protocol\Http
      * Retrieves a record.
      *
      * @api
-     * @param   string $rid
-     * @param   string $database
-     * @param   string $fetchPlan
-     * @return  Congow\Orient\Http\Response
+     * @param string $rid
+     * @param string $database
+     * @param string $fetchPlan
+     * @return BindingResultInterface
      */
     public function getDocument($rid, $database = null, $fetchPlan = null)
     {
         $this->resolveDatabase($database);
 
         $location = $this->getDocumentLocation($rid, $fetchPlan);
-        $response = $this->getHttpClient()->get($location);
+        $response = $this->adapter->request('GET', $location);
 
         return $response;
     }
@@ -345,16 +358,16 @@ class Binding implements Protocol\Http
      * Creates a new record.
      *
      * @api
-     * @param   string $document
-     * @param   string $database
-     * @return  Congow\Orient\Http\Response
+     * @param string $document
+     * @param string $database
+     * @return BindingResultInterface
      */
     public function postDocument($document, $database = null)
     {
         $this->resolveDatabase($database);
 
         $location = $this->getDocumentLocation();
-        $response = $this->getHttpClient()->post($location, $document);
+        $response = $this->adapter->request('POST', $location, null, $document);
 
         return $response;
     }
@@ -363,17 +376,17 @@ class Binding implements Protocol\Http
      * Updates an existing record.
      *
      * @api
-     * @param   string $rid
-     * @param   string $document
-     * @param   string $database
-     * @return  Congow\Orient\Http\Response
+     * @param string $rid
+     * @param string $document
+     * @param string $database
+     * @return BindingResultInterface
      */
     public function putDocument($rid, $document, $database = null)
     {
         $this->resolveDatabase($database);
 
         $location = $this->getDocumentLocation($rid);
-        $response = $this->getHttpClient()->put($location, $document);
+        $response = $this->adapter->request('PUT', $location, null, $document);
 
         return $response;
     }
@@ -382,20 +395,22 @@ class Binding implements Protocol\Http
      * Deletes a document.
      *
      * @api
-     * @param   string $rid
-     * @param   string $database
-     * @return  Congow\Orient\Http\Response
+     * @param string $rid
+     * @param string $database
+     * @return BindingResultInterface
      */
     public function deleteDocument($rid, $version = null, $database = null)
     {
+        $headers = null;
+
         $this->resolveDatabase($database);
 
         if ($version) {
-            $this->getHttpClient()->setHeader('If-Match', $version);
+            $headers = array('If-Match' => $version);
         }
 
         $location = $this->getDocumentLocation($rid);
-        $response = $this->getHttpClient()->delete($location);
+        $response = $this->adapter->request('DELETE', $location, $headers);
 
         return $response;
     }
@@ -414,7 +429,7 @@ class Binding implements Protocol\Http
      * Checks wheter the current object is able to perform a request on a DB.
      *
      * @return true
-     * @throws Exception
+     * @throws OrientException
      */
     protected function checkDatabase()
     {
@@ -422,7 +437,7 @@ class Binding implements Protocol\Http
             return true;
         }
 
-        throw new Exception(sprintf('In order to perform the operation you must specify a database'));
+        throw new OrientException('In order to perform the operation you must specify a database');
     }
 
     /**
@@ -437,55 +452,33 @@ class Binding implements Protocol\Http
     }
 
     /**
-     * Gets the authentication token.
+     * Sets the username and password used to authenticate to the server.
      *
-     * @return string
-     */
-    public function getAuthentication()
-    {
-        return $this->authentication;
-    }
-
-    /**
-     * Assigns the authentication string if, at least, one among username or
-     * password are valid.
-     * The authentication attribute is in HTTP header style.
-     *
-     * @param   string $username
-     * @param   string $password
-     * @return  bool
+     * @param string $username
+     * @param string $password
      */
     public function setAuthentication($username = null, $password = null)
     {
-        $this->username = $username ? : $this->username;
-        $this->password = $password ? : $this->password;
-
-        $this->authentication = sprintf('%s:%s', $this->username, $this->password);
-
-        if ($this->authentication === ':') {
-            $this->authentication = false;
-        }
-
-        return $this->getHttpclient()->setAuthentication($this->authentication);
+        $this->adapter->setAuthentication($username, $password);
     }
 
     /**
-     * Injects the HttpClient instance inside the binding.
+     * Sets the underlying HTTP client adapter.
      *
-     * @param Http\Client $client
+     * @param HttpClientAdapterInterface $client
      */
-    public function setHttpClient(Http\Client $client)
+    public function setAdapter(HttpClientAdapterInterface $adapter)
     {
-        $this->client = $client;
+        $this->adapter = $adapter;
     }
 
     /**
-     * Returns the Httpclient of the binding.
+     * Sets the underlying HTTP client adapter.
      *
-     * @return Http\Client
+     * @return HttpClientAdapterInterface
      */
-    public function getHttpClient()
+    public function getAdapter()
     {
-        return $this->client;
+        return $this->adapter;
     }
 }

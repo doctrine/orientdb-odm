@@ -18,24 +18,23 @@ use Congow\Orient\ODM\Repository;
 
 class RepositoryTest extends TestCase
 {
-    public function setup()
+    protected function createRepository($class)
     {
-        $mapper          = new Mapper(__DIR__ . "/../../proxies");
-        $mapper->setDocumentDirectories(array('./test/Integration/Document' => 'test'));
-        $mapper->enableMismatchesTolerance();
-        $client          = new \Congow\Orient\Http\Client\Curl(false, TEST_ODB_TIMEOUT);
-        $binding         = new \Congow\Orient\Foundation\Binding($client, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
-        $protocolAdapter = new \Congow\Orient\Foundation\Protocol\Adapter\Http($binding);
-        $manager         = new Manager($mapper, $protocolAdapter);
+        $manager = $this->createManager(array(
+            'mismatches_tolerance' => true,
+        ));
 
-        $this->repository = new Repository("test\Integration\Document\Post", $manager, $mapper);
+        $repository = $manager->getRepository($class);
+
+        return $repository;
     }
 
     public function testFindingADocumentOfTheRepo()
     {
-        $post = $this->repository->find('30:0');
+        $class = 'test\Integration\Document\Post';
+        $repository = $this->createRepository($class);
 
-        $this->assertInstanceOf("test\Integration\Document\Post", $post);
+        $this->assertInstanceOf($class, $repository->find('30:0'));
     }
 
     /**
@@ -43,66 +42,59 @@ class RepositoryTest extends TestCase
      */
     public function testFindingADocumentOfAnotherRepoRaisesAnException()
     {
-        $post = $this->repository->find('13:0');
-
-        $this->assertInstanceOf("test\Integration\Document\Post", $post);
+        $repository = $this->createRepository('test\Integration\Document\Post');
+        $repository->find('13:0');
     }
 
     public function testFindingANonExistingDocument()
     {
-        $post = $this->repository->find('27:985023989');
+        $repository = $this->createRepository('test\Integration\Document\Post');
 
-        $this->assertInternalType('null', $post);
+        $this->assertNull($repository->find('27:985023989'));
     }
 
     public function testRetrievingAllTheRepo()
     {
-        $posts = $this->repository->findAll();
+        $repository = $this->createRepository('test\Integration\Document\Post');
+
+        $posts = $repository->findAll();
 
         $this->assertEquals(2, count($posts));
     }
 
     public function testRetrievingByCriteria()
     {
-        $criteria = array(
-          'title' => 'aaaa'
-        );
-        $posts = $this->repository->findBy($criteria, array('@rid' => 'DESC'));
+        $repository = $this->createRepository('test\Integration\Document\Post');
 
-        $this->assertEquals(0, count($posts));
+        $posts = $repository->findBy(array('title' => 'aaaa'), array('@rid' => 'DESC'));
+        $this->assertCount(0, $posts);
 
-        $posts = $this->repository->findBy(array(), array('@rid' => 'DESC'));
-
+        $posts = $repository->findBy(array(), array('@rid' => 'DESC'));
+        $this->assertCount(2, $posts);
         $this->assertTrue($posts[0]->getRid() > $posts[1]->getRid());
 
-        $posts = $this->repository->findBy(array(), array('@rid' => 'ASC'));
-
+        $posts = $repository->findBy(array(), array('@rid' => 'ASC'));
+        $this->assertCount(2, $posts);
         $this->assertTrue($posts[0]->getRid() < $posts[1]->getRid());
 
-        $posts = $this->repository->findBy(array(), array('@rid' => 'ASC'), 1);
-
-        $this->assertEquals(1, count($posts));
+        $posts = $repository->findBy(array(), array('@rid' => 'ASC'), 1);
+        $this->assertCount(1, $posts);
     }
 
     public function testRetrievingARecordByCriteria()
     {
-        $criteria = array(
-          'title' => 'aaaa'
-        );
-        $post = $this->repository->findOneBy($criteria, array('@rid' => 'DESC'));
+        $repository = $this->createRepository('test\Integration\Document\Post');
 
-        $this->assertEquals(null, $post);
+        $post = $repository->findOneBy(array('title' => 'aaaa'), array('@rid' => 'DESC'));
+        $this->assertNull(null, $post);
 
-        $post = $this->repository->findOneBy(array());
-
+        $post = $repository->findOneBy(array());
         $this->assertInstanceOf("test\Integration\Document\Post", $post);
 
-        $post = $this->repository->findOneBy(array());
-
+        $post = $repository->findOneBy(array());
         $this->assertInstanceOf("test\Integration\Document\Post", $post);
 
-        $post = $this->repository->findOneBy(array());
-
+        $post = $repository->findOneBy(array());
         $this->assertInstanceOf("test\Integration\Document\Post", $post);
     }
 }
