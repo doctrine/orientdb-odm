@@ -4,7 +4,7 @@ PARENT_DIR=$(dirname $(cd "$(dirname "$0")"; pwd))
 
 cd $PARENT_DIR
 
-rm -rf composer.lock vendor/bin vendor/.composer
+rm -rf composer.lock vendor/bin vendor/.composer vendor/composer
 rm -rf vendor/installed.json vendor/autoload*.php vendor/ClassLoader.php
 
 odb_clean_dependency () {
