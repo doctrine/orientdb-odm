@@ -423,7 +423,6 @@ EOT;
             foreach ($namespaces as $namespace) {
                 $dir = $dir . '/' . $namespace;
                 if (!is_dir($dir)) {
-                    var_dump($dir);
                     mkdir($dir);
                 }
             }
