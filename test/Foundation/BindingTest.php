@@ -226,6 +226,6 @@ class BindingTest extends TestCase
         $host = TEST_ODB_HOST;
         $port = TEST_ODB_PORT;
 
-        $this->assertEquals("$host:$port/query/DB/sql/SELECT+OMNOMNOMN/2/%2A%3A1+field1%3A3", $sqlSent);
+        $this->assertEquals("http://$host:$port/query/DB/sql/SELECT%20OMNOMNOMN/2/%2A%3A1%20field1%3A3", $sqlSent);
     }
 }

@@ -41,22 +41,114 @@ class Binding implements Protocol\Http
      *
      * @api
      * @param Http\Client $client
-     * @param String $host
-     * @param String $port
-     * @param String $username
-     * @param String $password
+     * @param string $host
+     * @param string $port
+     * @param string $username
+     * @param string $password
+     * @param string $database
      */
     public function __construct(Http\Client $client, $host = '127.0.0.1', $port = 2480, $username = null, $password = null, $database = null)
     {
-        $this->server = $host . ($port ? sprintf(':%s', $port) : false);
-        $this->username = $username;
-        $this->password = $password;
-        $this->database = $database;
         $this->client = $client;
-
+        $this->server = $host . ($port ? sprintf(':%s', $port) : false);
+        $this->database = $database;
         $this->setAuthentication($username, $password);
     }
 
+    /**
+     * Creates a relative URL for the specified OrientDB method call.
+     *
+     * @param   string $method
+     * @param   string $database
+     * @param   array  $arguments
+     * @return  string
+     */
+    protected function getLocation($method, $database = null, array $arguments = null)
+    {
+        $location = "http://{$this->server}/$method";
+
+        if ($database) {
+            $location .= '/' . rawurlencode($database);
+        }
+        if ($arguments) {
+            $location .= '/' . implode('/', array_map('rawurlencode', $arguments));
+        }
+
+        return $location;
+    }
+
+    /**
+     * Returns the URL for the execution of a SQL query.
+     *
+     * @param   string $sql
+     * @param   int    $limit
+     * @param   string $fetchPlan
+     * @return  string
+     */
+    protected function getQueryLocation($sql, $limit = null, $fetchPlan = null)
+    {
+        $arguments = array('sql', $sql);
+
+        if (isset($limit)) {
+            $arguments[] = $limit;
+        }
+        if (isset($fetchPlan)) {
+            $arguments[] = $fetchPlan;
+        }
+
+        return $this->getLocation('query', $this->database, $arguments);
+    }
+
+    /**
+     * Returns the URL to fetch a document.
+     *
+     * @param   string $class
+     * @return  string
+     */
+    protected function getDocumentLocation($rid = null, $fetchPlan = null)
+    {
+        $arguments = array($rid);
+
+        if ($fetchPlan) {
+            $arguments[] = $fetchPlan;
+        }
+
+        return $this->getLocation('document', $this->database, $arguments);
+    }
+
+    /**
+     * Returns the URL to fetch a class.
+     *
+     * @param   string $class
+     * @return  string
+     */
+    protected function getClassLocation($class)
+    {
+        return $this->getLocation('class', $this->database, array($class));
+    }
+
+    /**
+     * Returns the URL to fetch a cluster.
+     *
+     * @param   string $cluster
+     * @param   int    $limit
+     * @return  string
+     */
+    protected function getClusterLocation($cluster, $limit = null)
+    {
+        return $this->getLocation('cluster', $this->database, array($cluster, $limit));
+    }
+
+    /**
+     * Returns the URL to fetch a database.
+     *
+     * @param   string $database
+     * @return  string
+     */
+    protected function getDatabaseLocation($database)
+    {
+        return $this->getLocation('database', $database);
+    }
     /**
      * Deletes a class.
      *
@@ -68,9 +160,11 @@ class Binding implements Protocol\Http
     public function deleteClass($class, $database = false)
     {
         $this->resolveDatabase($database);
-        $location = $this->getClassLocation($class);
 
-        return $this->getHttpClient()->delete($location);
+        $location = $this->getClassLocation($class);
+        $response = $this->getHttpClient()->delete($location);
+
+        return $response;
     }
 
     /**
@@ -84,9 +178,11 @@ class Binding implements Protocol\Http
     public function getClass($class, $database = false)
     {
         $this->resolveDatabase($database);
-        $location = $this->getClassLocation($class);
 
-        return $this->getHttpClient()->get($location);
+        $location = $this->getClassLocation($class);
+        $response = $this->getHttpClient()->get($location);
+
+        return $response;
     }
 
     /**
@@ -101,9 +197,11 @@ class Binding implements Protocol\Http
     public function postClass($class, $database = false, $body = null)
     {
         $this->resolveDatabase($database);
-        $location = $this->getClassLocation($class);
 
-        return $this->getHttpClient()->post($location, $body);
+        $location = $this->getClassLocation($class);
+        $response = $this->getHttpClient()->post($location, $body);
+
+        return $response;
     }
 
     /**
@@ -117,9 +215,11 @@ class Binding implements Protocol\Http
     public function cluster($cluster, $database = false, $limit = null)
     {
         $this->resolveDatabase($database);
-        $location = $this->getClusterLocation($cluster, $limit);
 
-        return $this->getHttpClient()->get($location);
+        $location = $this->getClusterLocation($cluster, $limit);
+        $response = $this->getHttpClient()->get($location);
+
+        return $response;
     }
 
     /**
@@ -132,8 +232,9 @@ class Binding implements Protocol\Http
     public function connect($database)
     {
         $location = $this->getDatabaseLocation($database);
+        $response = $this->getHttpClient()->get($location);
 
-        return $this->getHttpClient()->get($location);
+        return $response;
     }
 
     /**
@@ -144,7 +245,10 @@ class Binding implements Protocol\Http
      */
     public function disconnect()
     {
-        return $this->getHttpClient()->get($this->server . '/disconnect');
+        $location = $this->getLocation('disconnect');
+        $response = $this->getHttpClient()->get($location);
+
+        return $response;
     }
 
     /**
@@ -155,7 +259,27 @@ class Binding implements Protocol\Http
      */
     public function getServer()
     {
-        return $this->getHttpClient()->get($this->server . '/server');
+        $location = $this->getLocation('server');
+        $response = $this->getHttpClient()->get($location);
+
+        return $response;
+    }
+
+    /**
+     * Gets informations about a DB.
+     *
+     * @api
+     * @param   string $database
+     * @return  Congow\Orient\Http\Response
+     */
+    public function getDatabase($database = null)
+    {
+        $this->resolveDatabase($database);
+
+        $location = $this->getDatabaseLocation($this->database);
+        $response = $this->getHttpclient()->get($location);
+
+        return $response;
     }
 
     /**
@@ -169,53 +293,37 @@ class Binding implements Protocol\Http
     public function command($sql, $database = null)
     {
         $this->resolveDatabase($database);
-        $location = $this->server . '/command/' . $this->database . '/sql/' . urlencode($sql);
 
-        return $this->getHttpClient()->post($location, null);
+        $location = $this->getLocation('command', $this->database, array('sql', $sql));
+        $response = $this->getHttpClient()->post($location, null);
+
+        return $response;
     }
 
     /**
-     * Gets informations about a DB.
+     * Executes a raw SQL query.
      *
-     * @api
-     * @param   string $database
-     * @return  Congow\Orient\Http\Response
-     */
-    public function getDatabase($database = null)
-    {
-        $this->resolveDatabase($database);
-        $location = $this->getDatabaseLocation($this->database);
-
-        return $this->getHttpclient()->get($location);
-    }
-
-    /**
-     * Executes a raw query. It differs from the command because Congow\Orient defines
-     * a query as a SELECT only.
+     * It differs from the command because Congow\Orient defines a query as a SELECT only.
      *
      * @api
      * @param   string $sql           The query
      * @param   string $database
-     * @param   Int $limit            Results limit, default 20
+     * @param   int $limit            Results limit, default 20
      * @param   string $fetchPlan
      * @return  Congow\Orient\Http\Response
      */
     public function query($sql, $database = null, $limit = null, $fetchPlan = null)
     {
         $this->resolveDatabase($database);
-        $location = $this->server . '/query/' . $this->database . '/sql/' . urlencode($sql);
 
-        if ($limit) {
-            $location .= '/' . (int) $limit;
+        $location = $this->getQueryLocation($sql, $limit, $fetchPlan);
+        $response = $this->getHttpClient()->get($location);
 
-            $location = $this->addFetchPlan($fetchPlan, $location);
-        }
-
-        return $this->getHttpClient()->get($location);
+        return $response;
     }
 
     /**
-     * Retrieves a record
+     * Retrieves a record.
      *
      * @api
      * @param   string $rid
@@ -226,10 +334,11 @@ class Binding implements Protocol\Http
     public function getDocument($rid, $database = null, $fetchPlan = null)
     {
         $this->resolveDatabase($database);
-        $location = $this->server . '/document/' . $this->database . '/' . $rid;
-        $location = $this->addFetchPlan($fetchPlan, $location);
 
-        return $this->getHttpClient()->get($location);
+        $location = $this->getDocumentLocation($rid, $fetchPlan);
+        $response = $this->getHttpClient()->get($location);
+
+        return $response;
     }
 
     /**
@@ -243,9 +352,11 @@ class Binding implements Protocol\Http
     public function postDocument($document, $database = null)
     {
         $this->resolveDatabase($database);
-        $location = $this->server . '/document/' . $this->database;
 
-        return $this->getHttpClient()->post($location, $document);
+        $location = $this->getDocumentLocation();
+        $response = $this->getHttpClient()->post($location, $document);
+
+        return $response;
     }
 
     /**
@@ -260,13 +371,15 @@ class Binding implements Protocol\Http
     public function putDocument($rid, $document, $database = null)
     {
         $this->resolveDatabase($database);
-        $location = $this->server . '/document/' . $this->database . '/' . $rid;
 
-        return $this->getHttpClient()->put($location, $document);
+        $location = $this->getDocumentLocation($rid);
+        $response = $this->getHttpClient()->put($location, $document);
+
+        return $response;
     }
 
     /**
-     * Deletes a document
+     * Deletes a document.
      *
      * @api
      * @param   string $rid
@@ -276,19 +389,46 @@ class Binding implements Protocol\Http
     public function deleteDocument($rid, $version = null, $database = null)
     {
         $this->resolveDatabase($database);
-        $location = $this->server . '/document/' . $this->database . '/' . $rid;
-        
+
         if ($version) {
-          $this->getHttpClient()->setHeader('If-Match', $version);
+            $this->getHttpClient()->setHeader('If-Match', $version);
         }
 
-        return $this->getHttpClient()->delete($location);
+        $location = $this->getDocumentLocation($rid);
+        $response = $this->getHttpClient()->delete($location);
+
+        return $response;
+    }
+
+    /**
+     * Sets the database for the current instance.
+     *
+     * @param string $database
+     */
+    public function setDatabase($database)
+    {
+        $this->database = $database;
+    }
+
+    /**
+     * Checks wheter the current object is able to perform a request on a DB.
+     *
+     * @return true
+     * @throws Exception
+     */
+    protected function checkDatabase()
+    {
+        if (!is_null($this->database)) {
+            return true;
+        }
+
+        throw new Exception(sprintf('In order to perform the operation you must specify a database'));
     }
 
     /**
      * Assigns a database to the current instance.
      *
-     * @param String $database
+     * @param string $database
      */
     protected function resolveDatabase($database = false)
     {
@@ -299,7 +439,7 @@ class Binding implements Protocol\Http
     /**
      * Gets the authentication token.
      *
-     * @return String
+     * @return string
      */
     public function getAuthentication()
     {
@@ -319,6 +459,7 @@ class Binding implements Protocol\Http
     {
         $this->username = $username ? : $this->username;
         $this->password = $password ? : $this->password;
+
         $this->authentication = sprintf('%s:%s', $this->username, $this->password);
 
         if ($this->authentication === ':') {
@@ -329,19 +470,9 @@ class Binding implements Protocol\Http
     }
 
     /**
-     * Sets the database for the current instance.
-     *
-     * @param String $database
-     */
-    public function setDatabase($database)
-    {
-        $this->database = $database;
-    }
-
-    /**
      * Injects the HttpClient instance inside the binding.
      *
-     * @param Contract\Httpclient $client
+     * @param Http\Client $client
      */
     public function setHttpClient(Http\Client $client)
     {
@@ -351,71 +482,10 @@ class Binding implements Protocol\Http
     /**
      * Returns the Httpclient of the binding.
      *
-     * @return Contract\Httpclient
+     * @return Http\Client
      */
     public function getHttpClient()
     {
         return $this->client;
-    }
-
-    /**
-     * Checks wheter the current object is able to perform a request on a DB.
-     *
-     * @return true
-     * @throws Exception
-     */
-    protected function checkDatabase()
-    {
-        if (!is_null($this->database)) {
-            return true;
-        }
-
-        throw new Exception(sprintf('In order to perform the operation you must specify a database'));
-    }
-
-    /**
-     * Appends the fetchPlan to the location.
-     *
-     * @param   string $fetchPlan
-     * @param   string $location
-     * @return  String
-     */
-    protected function addFetchPlan($fetchPlan, $location)
-    {
-        return $location .= '/' . urlencode($fetchPlan);
-    }
-
-    /**
-     * Returns the location of a Class.
-     *
-     * @param   string $class
-     * @return  String
-     */
-    final protected function getClassLocation($class)
-    {
-        return $this->server . '/class/' . $this->database . '/' . $class;
-    }
-
-    /**
-     * Returns the location of a Cluster.
-     *
-     * @param   string  $cluster
-     * @param   Integer $limit
-     * @return  String
-     */
-    final protected function getClusterLocation($cluster, $limit = null)
-    {
-        return $this->server . '/cluster/' . $this->database . '/' . $cluster . ($limit ? '/' . $limit : '');
-    }
-
-    /**
-     * Returns the location of a Database.
-     *
-     * @param   string $database
-     * @return  String
-     */
-    final protected function getDatabaseLocation($database)
-    {
-        return $this->server . '/database/' . $database;
     }
 }
