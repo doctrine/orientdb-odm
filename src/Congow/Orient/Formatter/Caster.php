@@ -345,7 +345,7 @@ class Caster implements CasterInterface
     public function castString()
     {
         $castFunction = function($value){
-            return (string) $value;
+            return is_array($value) ? 'Array' : (string) $value;
         };
 
         if (is_string($this->value)) {
