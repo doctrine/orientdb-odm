@@ -1,7 +1,7 @@
 <?php
 
 /**
- * BindingTest
+ * HttpBindingTest
  *
  * @package    Congow\Orient
  * @subpackage Test
@@ -14,6 +14,7 @@ namespace test\Binding;
 
 use test\PHPUnit\TestCase;
 use Congow\Orient\Binding\HttpBinding;
+use Congow\Orient\Binding\BindingParameters;
 use Congow\Orient\Binding\Adapter\CurlClientAdapter;
 use Congow\Orient\Client\Http\CurlClient;
 
@@ -117,7 +118,8 @@ class BindingTest extends TestCase
                 ->method('setAuthentication')
                 ->with(TEST_ODB_USER, TEST_ODB_PASSWORD);
 
-        $binding = new HttpBinding();
+        $parameters = new BindingParameters();
+        $binding = new HttpBinding($parameters);
         $binding->setAdapter($adapter);
 
         $binding->setAuthentication();
@@ -128,7 +130,8 @@ class BindingTest extends TestCase
     {
         $adapter = $this->getMock('Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
 
-        $binding = new HttpBinding();
+        $parameters = new BindingParameters();
+        $binding = new HttpBinding($parameters);
         $binding->setAdapter($adapter);
 
         $this->assertSame($adapter, $binding->getAdapter());
@@ -141,7 +144,8 @@ class BindingTest extends TestCase
     {
         $adapter = $this->getMock('Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
 
-        $binding = new HttpBinding();
+        $parameters = new BindingParameters();
+        $binding = new HttpBinding($parameters);
         $binding->setAdapter($adapter);
 
         $binding->deleteClass('MyClass');
@@ -195,7 +199,8 @@ class BindingTest extends TestCase
                 ->method('request')
                 ->with('GET', "http://$host:$port/query/DB/sql/SELECT%20OMNOMNOMN/2/%2A%3A1%20field1%3A3", null, null);
 
-        $binding = new HttpBinding();
+        $parameters = new BindingParameters();
+        $binding = new HttpBinding($parameters);
         $binding->setAdapter($adapter);
 
         $binding->query("SELECT OMNOMNOMN", 2, "*:1 field1:3", "DB");
@@ -218,7 +223,8 @@ class BindingTest extends TestCase
                 ->method('request')
                 ->with('POST', "http://$host:$port/command/$database/sql/SELECT%203", null, null);
 
-        $binding = new HttpBinding(TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
+        $parameters = new BindingParameters(TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
+        $binding = new HttpBinding($parameters);
         $binding->setAdapter($adapter);
 
         $binding->command('SELECT 1');

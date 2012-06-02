@@ -29,26 +29,22 @@ class HttpBinding implements BindingInterface
 {
     protected $adapter;
     protected $server;
+    protected $database;
 
     /**
      * Instantiates a new binding.
      *
-     * @api
-     * @param string $host
-     * @param string $port
-     * @param string $username
-     * @param string $password
-     * @param string $database
+     * @param BindingParameters $parameters
      */
-    public function __construct($host = '127.0.0.1', $port = 2480, $username = null, $password = null, $database = null)
+    public function __construct(BindingParameters $parameters)
     {
-        $this->server = $host . ($port ? sprintf(':%s', $port) : false);
-        $this->database = $database;
+        $this->server = "{$parameters->getHost()}:{$parameters->getPort()}";
+        $this->database = $parameters->getDatabase();
 
         $client = new CurlClient();
 
         $this->adapter = new CurlClientAdapter($client);
-        $this->adapter->setAuthentication($username, $password);
+        $this->adapter->setAuthentication($parameters->getUsername(), $parameters->getPassword());
     }
 
     /**

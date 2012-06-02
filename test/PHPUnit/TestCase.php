@@ -12,12 +12,26 @@ namespace test\PHPUnit;
 use Congow\Orient\ODM\Manager;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\Binding\HttpBinding;
+use Congow\Orient\Binding\BindingParameters;
 use Congow\Orient\Contract\Binding\HttpBindingResultInterface;
 use Congow\Orient\Client\Http\CurlClient;
 use Congow\Orient\Binding\Adapter\CurlClientAdapter;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
+    protected function getBindingParameters($options)
+    {
+        $parameters = array();
+
+        array_walk($options, function($value, $key) use (&$parameters) {
+            if (0 === $pos = strpos($key, 'odb.')) {
+                $parameters[substr($key, strpos($key, '.') + 1)] = $value;
+            }
+        });
+
+        return BindingParameters::fromArray($parameters);
+    }
+
     protected function createHttpBinding(Array $opts = array())
     {
         $opts = array_merge(array(
@@ -36,7 +50,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $opts['adapter'] = new CurlClientAdapter($client);
         }
 
-        $binding = new HttpBinding($opts['odb.host'], $opts['odb.port'], null, null, $opts['odb.database']);
+        $parameters = $this->getBindingParameters($opts);
+        $binding = new HttpBinding($parameters);
 
         $opts['adapter']->setAuthentication($opts['odb.username'], $opts['odb.password']);
         $binding->setAdapter($opts['adapter']);
@@ -59,7 +74,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $mapper->enableMismatchesTolerance();
         }
 
-        $binding = new HttpBinding(TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
+        $parameters = new BindingParameters(TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
+        $binding = new HttpBinding($parameters);
         $manager = new Manager($mapper, $binding);
 
         return $manager;
