@@ -62,12 +62,12 @@ class BindingTest extends TestCase
         $binding = $this->createHttpBinding();
 
         $this->assertHttpStatus(200, $binding->cluster('Address'));
-        $this->assertHttpStatus(200, $binding->cluster('Address', false, 1));
+        $this->assertHttpStatus(200, $binding->cluster('Address', 1));
 
-        $result = json_decode($binding->cluster('Address', false, 1)->getInnerResponse()->getBody(), true);
+        $result = json_decode($binding->cluster('Address', 1)->getInnerResponse()->getBody(), true);
         $this->assertSame('Address', $result['schema']['name'], 'The cluster is wrong');
 
-        $result = json_decode($binding->cluster('Country', false, 10)->getInnerResponse()->getBody(), true);
+        $result = json_decode($binding->cluster('Country', 10)->getInnerResponse()->getBody(), true);
         $this->assertSame('Country', $result['schema']['name'], 'The cluster is wrong');
         $this->assertCount(10, $result['result'], 'The limit is wrong');
     }
@@ -198,6 +198,31 @@ class BindingTest extends TestCase
         $binding = new HttpBinding();
         $binding->setAdapter($adapter);
 
-        $binding->query("SELECT OMNOMNOMN", "DB", 2, "*:1 field1:3");
+        $binding->query("SELECT OMNOMNOMN", 2, "*:1 field1:3", "DB");
+    }
+
+    public function testOptionalDatabaseArgumentDoesNotSwitchCurrentDatabase()
+    {
+        $host = TEST_ODB_HOST;
+        $port = TEST_ODB_PORT;
+        $database = TEST_ODB_DATABASE;
+
+        $adapter = $this->getMock('Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
+        $adapter->expects($this->at(0))
+                ->method('request')
+                ->with('POST', "http://$host:$port/command/$database/sql/SELECT%201", null, null);
+        $adapter->expects($this->at(1))
+                ->method('request')
+                ->with('POST', "http://$host:$port/command/HIJACKED/sql/SELECT%202", null, null);
+        $adapter->expects($this->at(2))
+                ->method('request')
+                ->with('POST', "http://$host:$port/command/$database/sql/SELECT%203", null, null);
+
+        $binding = new HttpBinding(TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
+        $binding->setAdapter($adapter);
+
+        $binding->command('SELECT 1');
+        $binding->command('SELECT 2', "HIJACKED");
+        $binding->command('SELECT 3');
     }
 }
