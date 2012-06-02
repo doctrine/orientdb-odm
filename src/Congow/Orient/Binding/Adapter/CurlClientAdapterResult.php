@@ -20,6 +20,7 @@
 namespace Congow\Orient\Binding\Adapter;
 
 use Congow\Orient\Contract\Binding\HttpBindingResultInterface;
+use Congow\Orient\Client\Http\CurlClientResponse;
 use Congow\Orient\Exception\Query\SQL\Invalid as InvalidSQL;
 
 class CurlClientAdapterResult implements HttpBindingResultInterface
@@ -29,7 +30,7 @@ class CurlClientAdapterResult implements HttpBindingResultInterface
     /**
      * @param mixed $response Response object.
      */
-    public function __construct($response)
+    public function __construct(CurlClientResponse $response)
     {
         $this->response = $response;
     }
