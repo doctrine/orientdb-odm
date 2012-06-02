@@ -51,10 +51,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         $parameters = $this->getBindingParameters($opts);
-        $binding = new HttpBinding($parameters);
-
-        $opts['adapter']->setAuthentication($opts['odb.username'], $opts['odb.password']);
-        $binding->setAdapter($opts['adapter']);
+        $binding = new HttpBinding($parameters, $opts['adapter']);
 
         return $binding;
     }

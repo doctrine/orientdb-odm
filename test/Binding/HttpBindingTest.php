@@ -111,16 +111,15 @@ class BindingTest extends TestCase
     public function testSettingAuthentication()
     {
         $adapter = $this->getMock('Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
-        $adapter->expects($this->at(0))
+        $adapter->expects($this->at(1))
                 ->method('setAuthentication')
                 ->with(null, null);
-        $adapter->expects($this->at(1))
+        $adapter->expects($this->at(2))
                 ->method('setAuthentication')
                 ->with(TEST_ODB_USER, TEST_ODB_PASSWORD);
 
         $parameters = new BindingParameters();
-        $binding = new HttpBinding($parameters);
-        $binding->setAdapter($adapter);
+        $binding = new HttpBinding($parameters, $adapter);
 
         $binding->setAuthentication();
         $binding->setAuthentication(TEST_ODB_USER, TEST_ODB_PASSWORD);
@@ -131,8 +130,7 @@ class BindingTest extends TestCase
         $adapter = $this->getMock('Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
 
         $parameters = new BindingParameters();
-        $binding = new HttpBinding($parameters);
-        $binding->setAdapter($adapter);
+        $binding = new HttpBinding($parameters, $adapter);
 
         $this->assertSame($adapter, $binding->getAdapter());
     }
@@ -145,8 +143,7 @@ class BindingTest extends TestCase
         $adapter = $this->getMock('Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
 
         $parameters = new BindingParameters();
-        $binding = new HttpBinding($parameters);
-        $binding->setAdapter($adapter);
+        $binding = new HttpBinding($parameters, $adapter);
 
         $binding->deleteClass('MyClass');
     }
@@ -200,8 +197,7 @@ class BindingTest extends TestCase
                 ->with('GET', "http://$host:$port/query/DB/sql/SELECT%20OMNOMNOMN/2/%2A%3A1%20field1%3A3", null, null);
 
         $parameters = new BindingParameters();
-        $binding = new HttpBinding($parameters);
-        $binding->setAdapter($adapter);
+        $binding = new HttpBinding($parameters, $adapter);
 
         $binding->query("SELECT OMNOMNOMN", 2, "*:1 field1:3", "DB");
     }

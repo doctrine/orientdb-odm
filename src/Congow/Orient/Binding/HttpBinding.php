@@ -27,24 +27,23 @@ use Congow\Orient\Exception as OrientException;
 
 class HttpBinding implements BindingInterface
 {
-    protected $adapter;
     protected $server;
     protected $database;
+    protected $adapter;
 
     /**
      * Instantiates a new binding.
      *
      * @param BindingParameters $parameters
+     * @param HttpClientAdapterInterface $adapter
      */
-    public function __construct(BindingParameters $parameters)
+    public function __construct(BindingParameters $parameters, HttpClientAdapterInterface $adapter = null)
     {
         $this->server = "{$parameters->getHost()}:{$parameters->getPort()}";
         $this->database = $parameters->getDatabase();
+        $this->adapter = $adapter ?: new CurlClientAdapter(new CurlClient());
 
-        $client = new CurlClient();
-
-        $this->adapter = new CurlClientAdapter($client);
-        $this->adapter->setAuthentication($parameters->getUsername(), $parameters->getPassword());
+        $this->setAuthentication($parameters->getUsername(), $parameters->getPassword());
     }
 
     /**
