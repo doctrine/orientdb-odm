@@ -15,11 +15,19 @@ namespace test;
 use test\PHPUnit\TestCase;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\ODM\Manager;
+use Congow\Orient\Foundation\Types\Rid;
+use Congow\Orient\Foundation\Types\Rid\Collection;
 use Congow\Orient\Formatter\Caster;
 
+class StubProperty extends \Congow\Orient\ODM\Mapper\Annotations\Property
+{
+}
 
 class CasterTest extends TestCase
 {
+    private $mapper;
+    private $caster;
+
     public function setup()
     {
         $this->mapper = new Mapper('/');
@@ -341,9 +349,9 @@ class CasterTest extends TestCase
      * @dataProvider getForcedStrings
      * @expectedException Congow\Orient\Exception\Casting\Mismatch
      */
-    public function testForcedStringsCastingRaisesAnException($expected, $integer)
+    public function testForcedStringsCastingRaisesAnException($expected, $string)
     {
-        $this->assertEquals($expected, $this->caster->setValue($integer)->castString());
+        $this->assertEquals($expected, $this->caster->setValue($string)->castString());
     }
     
     public function getForcedStrings()
@@ -360,5 +368,257 @@ class CasterTest extends TestCase
     {
         $this->caster = new Caster(new Mapper('/'),'v');
         $this->assertEquals('v', $this->caster->castString());
+    }
+
+    /**
+     * @dataProvider getShorts
+     */
+    public function testShortsCasting($short)
+    {
+        $this->assertEquals($short, $this->caster->setValue($short)->castShort());
+    }
+
+    public function getShorts()
+    {
+        return array(
+            array(0),
+            array(1),
+            array(100),
+            array(127),
+            array(32766),
+            array(-127),
+            array(-32766),
+            array(-128),
+            array(-1),
+        );
+    }
+
+    /**
+     * @dataProvider getForcedShorts
+     */
+    public function testForcedShortsCasting($expected, $short)
+    {
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($short)->castShort());
+    }
+
+    /**
+     * @dataProvider getForcedShorts
+     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     */
+    public function testForcedShortsCastingRaisesAnException($expected, $short)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($short)->castShort());
+    }
+
+    public function getForcedShorts()
+    {
+        return array(
+            array(32767, 32767),
+            array(32767, -32767),
+            array('bella', 'bella'),
+            array(true, true),
+            array(array(),array()),
+        );
+    }
+    
+    /**
+     * @dataProvider getDateTimes
+     */
+    public function testDateTimesCasting($expected, $datetimes)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($datetimes)->castDateTime());
+    }
+    
+    public function getDateTimes()
+    {
+        return array(
+          array(new \DateTime('2011-01-01 11:11:11'), '2011-01-01 11:11:11'),
+        );
+    }
+
+    /**
+     * @dataProvider getDates
+     */
+    public function testDatesCasting($expected,$date)
+    {
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($date)->castDate());
+    }
+
+    public function getDates()
+    {
+        return array(
+            array(new \DateTime('2012-12-30'),'2012-12-30'),
+        );
+    }
+    
+    /**
+     * @dataProvider getBinaries
+     */
+    public function testBinaryCasting($binary)
+    {
+        $this->assertEquals('data:;base64,' . $binary, $this->caster->setValue($binary)->castBinary());
+    }
+    
+    public function getBinaries()
+    {
+        return array(
+          array('2011-01-01 11:11:11'),
+          array(array()),
+          array(12),
+          array(-12),
+        );
+    }
+    
+    /**
+     * @dataProvider getForcedBinaries
+     */
+    public function testForcedBinaryCasting($binary)
+    {
+        $this->assertEquals('data:;base64,' . $binary, $this->caster->setValue($binary)->castBinary());
+    }
+    
+    public function getForcedBinaries()
+    {
+        return array(
+            array(new \Congow\Orient\Client\Http\CurlClientResponse("1\r\n\r\n2")),
+        );
+    }
+
+    /**
+     * @dataProvider getLinks
+     */
+    public function testLinksCasting($expected,$link)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+
+        $this->assertEquals($expected, $this->caster->setValue($link)->castLink());
+    }
+
+    public function getLinks()
+    {
+        $orientDocument = new \stdClass();
+        $orientDocument->{"@class"} = 'Address';
+
+        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+
+        return array(
+            array(new \Congow\Orient\ODM\Proxy\Value($result), $orientDocument),
+            array(new Rid('#10:3'), '#10:3'),
+            array(null, 'pete')
+        );
+    }
+
+    /**
+     * @dataProvider getLinkCollections
+     */
+    public function testLinkListCasting($expected,$linkCollection)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+
+        $this->assertEquals($expected, $this->caster->setValue($linkCollection)->castLinkList());
+    }
+
+    /**
+     * @dataProvider getLinkCollections
+     */
+    public function testLinkSetCasting($expected,$linkCollection)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+
+        $this->assertEquals($expected, $this->caster->setValue($linkCollection)->castLinkSet());
+    }
+
+    /**
+     * @dataProvider getLinkCollections
+     */
+    public function testLinkMapCasting($expected,$linkCollection)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+
+        $this->assertEquals($expected, $this->caster->setValue($linkCollection)->castLinkMap());
+    }
+
+    public function getLinkCollections()
+    {
+        $orientDocument = new \stdClass();
+        $orientDocument->{"@class"} = 'Address';
+
+        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+
+        $collection = new Collection(array('hello' => '#10:4'));
+        return array(
+            array($collection, array('hello' => '#10:4')),
+            array(array('hello' => $result), array('hello' => $orientDocument)),
+        );
+    }
+
+    /**
+     * @dataProvider getEmbedded
+     */
+    public function testEmbeddedCasting($expected,$embedded)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+
+        $this->assertEquals($expected, $this->caster->setValue($embedded)->castEmbedded());
+    }
+
+    public function getEmbedded()
+    {
+        $orientDocument = new \stdClass();
+        $orientDocument->{"@class"} = 'Address';
+
+        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+
+        return array(
+            array($result, $orientDocument),
+        );
+    }
+
+    /**
+     * @dataProvider getEmbeddedSet
+     */
+    public function testEmbeddedSetCasting($expected,$embeddedSet)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+        $this->caster->setProperty('annotation', new StubProperty(array('cast' => 'embedded')));
+        $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedSet());
+    }
+
+    /**
+     * @dataProvider getEmbeddedSet
+     */
+    public function testEmbeddedMapCasting($expected,$embeddedSet)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+        $this->caster->setProperty('annotation', new StubProperty(array('cast' => 'embedded')));
+        $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedMap());
+    }
+
+    /**
+     * @dataProvider getEmbeddedSet
+     */
+    public function testEmbeddedListCasting($expected,$embeddedSet)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+        $this->caster->setProperty('annotation', new StubProperty(array('cast' => 'embedded')));
+        $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedList());
+    }
+
+    public function getEmbeddedSet()
+    {
+        $orientDocument = new \stdClass();
+        $orientDocument->{"@class"} = 'Address';
+
+        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+
+        return array(
+            array(array('hello' => $result), array('hello' => $orientDocument)),
+        );
     }
 }
