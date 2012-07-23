@@ -29,7 +29,7 @@ use Congow\Orient\Exception\ODM\OClass\NotFound as UnmappedClass;
 use Congow\Orient\Query\Command\Select;
 use Congow\Orient\Exception;
 use Congow\Orient\Exception\Casting\Mismatch;
-use Congow\Orient\Contract\Protocol\Adapter as ProtocolAdapter;
+use Congow\Orient\Contract\Binding\BindingInterface;
 use Congow\Orient\ODM\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
 use Congow\Orient\Validator\Rid as RidValidator;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -38,26 +38,22 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;
 class Manager implements ObjectManager
 {
     protected $mapper;
+    protected $binding;
     protected $metadataFactory;
-    protected $protocolAdapter;
 
     /**
      * Instatiates a new Mapper, injecting the $mapper that will be used to
-     * hydrate record retrieved through the $protocolAdapter.
+     * hydrate record retrieved through the $binding.
      *
-     * @param   Mapper          $mapper
-     * @param   ProtocolAdapter $protocolAdapter
-     * @param   MetadataFactory $metadataFactory
+     * @param   Mapper           $mapper
+     * @param   BindingInterface $binding
+     * @param   MetadataFactory  $metadataFactory
      */
-    public function __construct(
-        Mapper $mapper,
-        ProtocolAdapter $protocolAdapter,
-        MetadataFactory $metadataFactory = null
-    )
+    public function __construct(Mapper $mapper, BindingInterface $binding, MetadataFactory $metadataFactory = null)
     {
-        $this->mapper           = $mapper;
-        $this->protocolAdapter  = $protocolAdapter;
-        $this->metadataFactory  = $metadataFactory ?: new ClassMetadataFactory($this->getMapper());
+        $this->mapper = $mapper;
+        $this->binding = $binding;
+        $this->metadataFactory = $metadataFactory ?: new ClassMetadataFactory($mapper);
     }
 
     /**
@@ -72,6 +68,7 @@ class Manager implements ObjectManager
 
     /**
      * Executes a $query against OrientDB.
+     *
      * This method should be used to executes query which should not return a
      * result (UPDATE, INSERT) or to retrieve multiple objects: to retrieve a
      * single record look at ->find*() methods.
@@ -81,26 +78,22 @@ class Manager implements ObjectManager
      */
     public function execute(Query $query)
     {
-        $adapter    = $this->getProtocolAdapter();
-        $return     = $query->shouldReturn();
-        $execution  = $adapter->execute($query->getRaw(), $return);
-        $results    = $adapter->getResult();
+        $binding = $this->getBinding();
+        $results = $binding->execute($query->getRaw(), $query->shouldReturn())->getResult();
 
-        if ($execution) {
-            if (is_array($results)) {
-                $hydrationResults = $this->getMapper()->hydrateCollection($results);
+        if (is_array($results)) {
+            $collection = $this->getMapper()->hydrateCollection($results);
+            $collection = $this->finalizeCollection($collection);
 
-                return $this->finalizeCollection($hydrationResults);
-            }
-
-            return true;
+            return $collection;
         }
 
-        return false;
+        return true;
     }
 
     /**
-     * Via a protocol adapter, it queries for an object with the given $rid.
+     * Queries for an object with the given $rid.
+     *
      * If $lazy loading is used, all of this won't be executed unless the
      * returned Proxy object is called via __invoke, e.g.:
      *
@@ -137,14 +130,14 @@ class Manager implements ObjectManager
         catch (Exception $e) {
             return null;
         }
-
     }
 
     /**
-     * Via a protocol adapter, it queries for an array of objects with the given
-     * $rids.
+     * Queries for an array of objects with the given $rids.
+     *
      * If $lazy loading is used, all of this won't be executed unless the
      * returned Proxy object is called via __invoke.
+     *
      * @see     ->find()
      * @param   string      $rid
      * @param   mixed       $fetchPlan
@@ -157,14 +150,15 @@ class Manager implements ObjectManager
             return new Proxy\Collection($this, $rids);
         }
 
-        $query      = new Query($rids);
-        $adapter    = $this->getProtocolAdapter();
-        $execution  = $adapter->execute($query->getRaw(), true, $fetchPlan);
+        $query = new Query($rids);
+        $binding = $this->getBinding();
+        $results = $binding->execute($query->getRaw(), $fetchPlan)->getResult();
 
-        if ($execution && $adapter->getResult()) {
-            $collection = $this->getMapper()->hydrateCollection($adapter->getResult());
+        if (is_array($results)) {
+            $collection = $this->getMapper()->hydrateCollection($results);
+            $collection = $this->finalizeCollection($collection);
 
-            return $this->finalizeCollection($collection);
+            return $collection;
         }
 
         return array();
@@ -266,9 +260,10 @@ class Manager implements ObjectManager
     }
 
     /**
-     * Executes a query against OrientDB, via the protocolAdapter, specifying
-     * a $fetchPlan (which is optional) and a $rid to look for.
-     * Then, it finalizes the hydration result.
+     * Executes a query against OrientDB to find the specified RID and finalizes the
+     * hydration result.
+     *
+     * Optionally the query can be executed using the specified fetch plan.
      *
      * @param   type        $rid
      * @param   mixed       $fetchPlan
@@ -276,15 +271,15 @@ class Manager implements ObjectManager
      */
     protected function doFind($rid, $fetchPlan = null)
     {
-        $query      = new Query(array($rid));
-        $adapter    = $this->getProtocolAdapter();
-        $execution  = $adapter->execute($query->getRaw(), true, $fetchPlan);
+        $query = new Query(array($rid));
+        $binding = $this->getBinding();
+        $results = $binding->execute($query->getRaw(), $fetchPlan)->getResult();
 
-        if ($execution && $result = $adapter->getResult()) {
-          $record       = is_array($result) ? array_shift($result) : $result;
-          $result       = $this->getMapper()->hydrate($record);
+        if (isset($results)) {
+          $record = is_array($results) ? array_shift($results) : $results;
+          $results = $this->getMapper()->hydrate($record);
 
-          return $this->finalize($result);
+          return $this->finalize($results);
         }
 
         return null;
@@ -334,13 +329,12 @@ class Manager implements ObjectManager
     }
 
     /**
-     * Returns the protocol adapter used to communicate with a OrientDB
-     * binding.
+     * Returns the binding instance used to communicate OrientDB.
      *
-     * @return Adapter
+     * @return BindingInterface
      */
-    protected function getProtocolAdapter()
+    protected function getBinding()
     {
-        return $this->protocolAdapter;
+        return $this->binding;
     }
 }

@@ -137,8 +137,8 @@ class Caster implements CasterInterface
      */
     public function castDate()
     {
-        $dateClass = $this->getDateClass();
-        $value = preg_replace('/(\s\d{2}:\d{2}:\d{2}):(\d{1,6})/', '$1.$2', $this->value);
+        $dateClass  = $this->getDateClass();
+        $value      = preg_replace('/(\s\d{2}:\d{2}:\d{2}):(\d{1,6})/', '$1.$2', $this->value);
 
         return new $dateClass($value);
     }
@@ -259,7 +259,6 @@ class Caster implements CasterInterface
     public function castLink()
     {
         if ($this->value instanceOf \stdClass) {
-
             return new ValueProxy($this->getMapper()->hydrate($this->value));
         } else {
             try {
@@ -419,7 +418,8 @@ class Caster implements CasterInterface
         $innerCaster    = new self($this->getMapper());
 
         if (!method_exists($innerCaster, $method)) {
-            throw new Congow\Orient\Exception();
+
+            throw new Exception('');
         }
 
         foreach ($this->value as $key => $value) {
@@ -456,18 +456,18 @@ class Caster implements CasterInterface
         try {
             return $this->castArrayOf($listType);
         }
-        catch (Congow\Orient\Exception $e) {
+        catch (Exception $e) {
             $message  = "Seems like you are trying to hydrate an embedded ";
             $message .= "property without specifying its type.\n";
             $message .= "Please add the 'cast' (eg cast='boolean') ";
             $message .= "to the annotation.";
 
-            throw new Congow\Orient\Exception($message);
+            throw new Exception($message);
         }
     }
 
     /**
-     * Given the internl value of the caster (an array), it iterates iver each
+     * Given the internl value of the caster (an array), it iterates over each
      * element of the array and hydrates it.
      *
      * @see     Caster::castLink for more insights

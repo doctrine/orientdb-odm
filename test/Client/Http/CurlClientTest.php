@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CurlTest
+ * CurlClientTest
  *
  * @package    Congow\Orient
  * @subpackage Test
@@ -9,36 +9,33 @@
  * @version
  */
 
-namespace test\Http\Client;
-
 use test\PHPUnit\TestCase;
-use Congow\Orient\Http\Client\Curl;
+use Congow\Orient\Client\Http\CurlClient;
 
-class CurlTest extends TestCase
+class CurlClientTest extends TestCase
 {
-    public function setup()
-    {
-        $this->client = new Curl();
-    }
-    
     /**
      * @fixes https://github.com/congow/Orient/pull/97
-     * 
+     *
      * Test coupled with a Google response
      */
     public function testYouCanExecuteAGETAfteraPOST()
     {
-        $this->client->post('http://www.google.com/', array());
-        $response = $this->client->get('http://www.google.com/');
-        
+        $client = new CurlClient();
+
+        $client->post('http://www.google.com/', array());
+        $response = $client->get('http://www.google.com/');
+
         $this->assertFalse($response->getStatusCode() == 411);
     }
-    
+
     /**
      * @expectedException Congow\Orient\Exception\Http\Response\Void
      */
     public function testRetrievingAnEmptyResponseRaisesAnException()
     {
-        $this->client->execute('GET', '');
+        $client = new CurlClient();
+
+        $client->execute('GET', '');
     }
 }

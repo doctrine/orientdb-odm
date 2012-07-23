@@ -2,16 +2,17 @@
 
 namespace Congow\Orient;
 
+use Congow\Orient\Binding\HttpBinding;
+use Congow\Orient\Binding\BindingParameters;
+
 require __DIR__.'/../autoload.php';
 
-$client = new Http\Client\Curl();
-$binding = new Foundation\Binding($client, '127.0.0.1', 2480, 'admin', 'admin', 'friends');
+$parameters = BindingParameters::create('http://admin:admin@127.0.0.1:2480/friends');
+$binding = new HttpBinding($parameters);
 
-$httpResponse = $binding->query('select from friends where any() traverse(0,1) ( @rid = #5:3 ) and @rid <> #5:3');
+$response = $binding->query('select from friends where any() traverse(0,1) ( @rid = #5:3 ) and @rid <> #5:3');
+$friends = $response->getResult();
 
-$friends = json_decode($httpResponse->getBody())->result;
-
-foreach ($friends as $friend)
-{
-    echo $friend->name . "\n";
+foreach ($friends as $friend) {
+    echo $friend->name, "\n";
 }

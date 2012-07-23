@@ -36,14 +36,12 @@ The binding is complete: it is an HTTP client wrapper with some methods bound to
 
 Its usage is straightforward:
 
-    $driver   = new Congow\Orient\Http\Client\Curl();
-    $orient   = new Congow\Orient\Foundation\Binding($driver, '127.0.0.1', '2480', 'admin', 'admin', 'demo');
-    $response = $orient->query("SELECT FROM Address");
-    $output   = json_decode($response->getBody());
+    $parameters = Congow\Orient\Binding\BindingParameters::create('http://admin:admin@127.0.0.1:2480/demo');
+    $orient = new Congow\Orient\Binding\HttpBinding($parameters);
+    $output = $orient->query("SELECT FROM Address");
 
-    foreach ($output->result as $address)
-    {
-      var_dump($address->street);
+    foreach ($output->getResult() as $address) {
+        var_dump($address->street);
     }
 
 Use the PHP5.3 standard autoloader (https://gist.github.com/221634).
