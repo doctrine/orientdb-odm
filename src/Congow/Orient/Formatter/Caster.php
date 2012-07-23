@@ -466,7 +466,7 @@ class Caster implements CasterInterface
     }
 
     /**
-     * Given the internl value of the caster (an array), it iterates iver each
+     * Given the internl value of the caster (an array), it iterates over each
      * element of the array and hydrates it.
      *
      * @see     Caster::castLink for more insights
