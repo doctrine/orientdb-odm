@@ -361,4 +361,58 @@ class CasterTest extends TestCase
         $this->caster = new Caster(new Mapper('/'),'v');
         $this->assertEquals('v', $this->caster->castString());
     }
+
+    /**
+     * @dataProvider getShorts
+     */
+    public function testShortsCasting($short)
+    {
+        $this->assertEquals($short, $this->caster->setValue($short)->castShort());
+    }
+
+    public function getShorts()
+    {
+        return array(
+            array(0),
+            array(1),
+            array(100),
+            array(127),
+            array(32766),
+            array(-127),
+            array(-32766),
+            array(-128),
+            array(-1),
+        );
+    }
+
+    /**
+     * @dataProvider getForcedShorts
+     */
+    public function testForcedShortsCasting($expected, $short)
+    {
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($short)->castShort());
+    }
+
+    /**
+     * @dataProvider getForcedShorts
+     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     */
+    public function testForcedShortsCastingRaisesAnException($expected, $short)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($short)->castShort());
+    }
+
+    public function getForcedShorts()
+    {
+        return array(
+            array(32767, 32767),
+            array(32767, -32767),
+            array('bella', 'bella'),
+            array(true, true),
+            array(array(),array()),
+        );
+    }
+
+
 }
