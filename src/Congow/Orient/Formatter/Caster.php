@@ -418,7 +418,8 @@ class Caster implements CasterInterface
         $innerCaster    = new self($this->getMapper());
 
         if (!method_exists($innerCaster, $method)) {
-            throw new Congow\Orient\Exception();
+
+            throw new Exception('');
         }
 
         foreach ($this->value as $key => $value) {
@@ -455,13 +456,13 @@ class Caster implements CasterInterface
         try {
             return $this->castArrayOf($listType);
         }
-        catch (Congow\Orient\Exception $e) {
+        catch (Exception $e) {
             $message  = "Seems like you are trying to hydrate an embedded ";
             $message .= "property without specifying its type.\n";
             $message .= "Please add the 'cast' (eg cast='boolean') ";
             $message .= "to the annotation.";
 
-            throw new Congow\Orient\Exception($message);
+            throw new Exception($message);
         }
     }
 

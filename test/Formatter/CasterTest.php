@@ -19,9 +19,15 @@ use Congow\Orient\Foundation\Types\Rid;
 use Congow\Orient\Foundation\Types\Rid\Collection;
 use Congow\Orient\Formatter\Caster;
 
+class StubProperty extends \Congow\Orient\ODM\Mapper\Annotations\Property
+{
+}
 
 class CasterTest extends TestCase
 {
+    private $mapper;
+    private $caster;
+
     public function setup()
     {
         $this->mapper = new Mapper('/');
@@ -546,6 +552,72 @@ class CasterTest extends TestCase
         $collection = new Collection(array('hello' => '#10:4'));
         return array(
             array($collection, array('hello' => '#10:4')),
+            array(array('hello' => $result), array('hello' => $orientDocument)),
+        );
+    }
+
+    /**
+     * @dataProvider getEmbedded
+     */
+    public function testEmbeddedCasting($expected,$embedded)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+
+        $this->assertEquals($expected, $this->caster->setValue($embedded)->castEmbedded());
+    }
+
+    public function getEmbedded()
+    {
+        $orientDocument = new \stdClass();
+        $orientDocument->{"@class"} = 'Address';
+
+        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+
+        return array(
+            array($result, $orientDocument),
+        );
+    }
+
+    /**
+     * @dataProvider getEmbeddedSet
+     */
+    public function testEmbeddedSetCasting($expected,$embeddedSet)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+        $this->caster->setProperty('annotation', new StubProperty(array('cast' => 'embedded')));
+        $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedSet());
+    }
+
+    /**
+     * @dataProvider getEmbeddedSet
+     */
+    public function testEmbeddedMapCasting($expected,$embeddedSet)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+        $this->caster->setProperty('annotation', new StubProperty(array('cast' => 'embedded')));
+        $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedMap());
+    }
+
+    /**
+     * @dataProvider getEmbeddedSet
+     */
+    public function testEmbeddedListCasting($expected,$embeddedSet)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+        $this->caster->setProperty('annotation', new StubProperty(array('cast' => 'embedded')));
+        $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedList());
+    }
+
+    public function getEmbeddedSet()
+    {
+        $orientDocument = new \stdClass();
+        $orientDocument->{"@class"} = 'Address';
+
+        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+
+        return array(
             array(array('hello' => $result), array('hello' => $orientDocument)),
         );
     }
