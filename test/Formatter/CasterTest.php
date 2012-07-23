@@ -341,9 +341,9 @@ class CasterTest extends TestCase
      * @dataProvider getForcedStrings
      * @expectedException Congow\Orient\Exception\Casting\Mismatch
      */
-    public function testForcedStringsCastingRaisesAnException($expected, $integer)
+    public function testForcedStringsCastingRaisesAnException($expected, $string)
     {
-        $this->assertEquals($expected, $this->caster->setValue($integer)->castString());
+        $this->assertEquals($expected, $this->caster->setValue($string)->castString());
     }
     
     public function getForcedStrings()
@@ -413,6 +413,19 @@ class CasterTest extends TestCase
             array(array(),array()),
         );
     }
-
-
+    
+    /**
+     * @dataProvider getDateTimes
+     */
+    public function testDateTimesCasting($expected, $datetimes)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($datetimes)->castDateTime());
+    }
+    
+    public function getDateTimes()
+    {
+        return array(
+          array(new \DateTime('2011-01-01 11:11:11'), '2011-01-01 11:11:11'),
+        );
+    }
 }

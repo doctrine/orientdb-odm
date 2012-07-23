@@ -137,8 +137,8 @@ class Caster implements CasterInterface
      */
     public function castDate()
     {
-        $dateClass = $this->getDateClass();
-        $value = preg_replace('/(\s\d{2}:\d{2}:\d{2}):(\d{1,6})/', '$1.$2', $this->value);
+        $dateClass  = $this->getDateClass();
+        $value      = preg_replace('/(\s\d{2}:\d{2}:\d{2}):(\d{1,6})/', '$1.$2', $this->value);
 
         return new $dateClass($value);
     }
