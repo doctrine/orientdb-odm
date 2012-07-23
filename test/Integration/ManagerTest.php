@@ -12,25 +12,15 @@ namespace test\Integration;
 
 use test\PHPUnit\TestCase;
 use Congow\Orient\Query;
-use Congow\Orient\ODM\Manager;
-use Congow\Orient\ODM\Mapper;
 
 class ManagerTest extends TestCase
 {
-    public function setup()
-    {
-        $mapper          = new Mapper(__DIR__ . "/../../proxies");
-        $mapper->setDocumentDirectories(array('./test/Integration/Document' => 'test'));
-        $client          = new \Congow\Orient\Http\Client\Curl(false, TEST_ODB_TIMEOUT);
-        $binding         = new \Congow\Orient\Foundation\Binding($client, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
-        $protocolAdapter = new \Congow\Orient\Foundation\Protocol\Adapter\Http($binding);
-        $this->manager   = new Manager($mapper, $protocolAdapter);
-    }
-
     public function testExecutionOfASelect()
     {
-        $query      = new Query(array('Address'));
-        $addresses  = $this->manager->execute($query);
+        $manager = $this->createManager();
+
+        $query = new Query(array('Address'));
+        $addresses = $manager->execute($query);
 
         $this->assertEquals(165, count($addresses));
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
@@ -38,8 +28,10 @@ class ManagerTest extends TestCase
 
     public function testFindingARecordWithAnExecuteReturnsAnArrayHowever()
     {
-        $query      = new Query(array('13:0'));
-        $addresses  = $this->manager->execute($query);
+        $manager = $this->createManager();
+
+        $query = new Query(array('13:0'));
+        $addresses = $manager->execute($query);
 
         $this->assertEquals(1, count($addresses));
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
@@ -47,12 +39,14 @@ class ManagerTest extends TestCase
 
     public function testExecutionOfAnUpdate()
     {
-        $query      = new Query(array('Address'));
-        $query->update('Address')->set(array('my' => 'yours'))->where('@rid = ?', '1:10000');
-        $result  = $this->manager->execute($query);
+        $manager = $this->createManager();
 
-        $this->assertTrue($result);
+        $query = new Query(array('Address'));
+        $query->update('Address')->set(array('my' => 'yours'))->where('@rid = ?', '1:10000');
+        $result = $manager->execute($query);
+
         $this->assertInternalType('boolean', $result);
+        $this->assertTrue($result);
     }
 
     /**
@@ -60,23 +54,30 @@ class ManagerTest extends TestCase
      */
     public function testAnExceptionGetsRaisedWhenExecutingAWrongQuery()
     {
-        $query      = new Query(array('Address'));
+        $manager = $this->createManager();
+
+        $query = new Query(array('Address'));
         $query->update('Address')->set(array())->where('@rid = ?', '1:10000');
-        $result  = $this->manager->execute($query);
+
+        $manager->execute($query);
     }
 
     public function testFindingARecord()
     {
-        $address    = $this->manager->find('13:0');
+        $manager = $this->createManager();
+        $address = $manager->find('13:0');
 
         $this->assertInstanceOf("test\Integration\Document\Address", $address);
     }
 
     public function testFindingARecordWithAFetchPlan()
     {
-        $this->manager   = $this->getTolerantManager();
+        $manager = $this->createManager(array(
+            'mismatches_tolerance' => true,
+        ));
 
-        $post       = $this->manager->find('30:0', '*:-1');
+        $post = $manager->find('30:0', '*:-1');
+
         $this->assertInternalType('array', $post->comments);
         $this->assertFalse($post->comments instanceOf \Congow\Orient\ODM\Proxy\Collection);
     }
@@ -84,16 +85,20 @@ class ManagerTest extends TestCase
 
     public function testGettingARelatedRecord()
     {
-        $address    = $this->manager->find('13:0');
+        $manager = $this->createManager();
+        $address = $manager->find('13:0');
+
         $this->assertInstanceOf("test\Integration\Document\Country", $address->getCity());
     }
 
     public function testGettingARelatedCollection()
     {
-        $this->manager   = $this->getTolerantManager();
+        $manager = $this->createManager(array(
+            'mismatches_tolerance' => true,
+        ));
 
-        $post       = $this->manager->find('30:0');
-        $comments   = $post->getComments();
+        $post = $manager->find('30:0');
+        $comments = $post->getComments();
 
         $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
     }
@@ -103,25 +108,27 @@ class ManagerTest extends TestCase
      */
     public function testLookingForANonMappedTypeRaisesAnException()
     {
-        $mapper          = new Mapper(__DIR__ . "/../../proxies");
-        $mapper->setDocumentDirectories(array('./docs' => '\\'));
-        $client          = new \Congow\Orient\Http\Client\Curl(false, TEST_ODB_TIMEOUT);
-        $binding         = new \Congow\Orient\Foundation\Binding($client, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
-        $protocolAdapter = new \Congow\Orient\Foundation\Protocol\Adapter\Http($binding);
-        $this->manager   = new Manager($mapper, $protocolAdapter);
-        $address = $this->manager->find('13:0');
+        $manager = $this->createManager(array(
+            'document_dir' => array('./docs' => '\\'),
+        ));
+
+        $manager->find('13:0');
     }
 
     public function testFindingANonExistingRecord()
     {
-        $address    = $this->manager->find('13:2000');
+        $manager = $this->createManager();
+
+        $address = $manager->find('13:2000');
 
         $this->assertInternalType("null", $address);
     }
 
     public function testFindingSomeRecords()
     {
-        $addresses    = $this->manager->findRecords(array('13:0', '13:1'));
+        $manager = $this->createManager();
+
+        $addresses = $manager->findRecords(array('13:0', '13:1'));
 
         $this->assertEquals(2, count($addresses));
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
@@ -132,7 +139,9 @@ class ManagerTest extends TestCase
      */
     public function testFindingSomeGoodAndSomeWrongRecords()
     {
-        $this->manager->findRecords(array('13:0', '13:700000'));
+        $manager = $this->createManager();
+
+        $manager->findRecords(array('13:0', '13:700000'));
     }
 
     /**
@@ -140,39 +149,33 @@ class ManagerTest extends TestCase
      */
     public function testFindingSomeRecordsAndSomeAreWrongThrowsAnException()
     {
-        $this->manager->findRecords(array('13:0', '13:1000'));
+        $manager = $this->createManager();
+        $manager->findRecords(array('13:0', '13:1000'));
     }
 
     public function testExecutingASelectOfASingleRecordReturnsAnArrayWithOneRecord()
     {
+        $manager = $this->createManager();
+
         $query = new Query(array('Address'));
         $query->where('@rid = ?', '13:0');
 
-        $this->assertInternalType('array', $this->manager->execute($query));
-        $this->assertEquals(1, count($this->manager->execute($query)));
+        $results = $manager->execute($query);
+
+        $this->assertInternalType('array', $results);
+        $this->assertSame(1, count($results));
     }
 
     public function testExecutionWithNoOutput()
     {
+        $manager = $this->createManager();
+
         $query = new Query();
         $query->update('Address')->set(array('type' => 'Residence'));
 
-        $this->assertInternalType('bool', $this->manager->execute($query));
-        $this->assertEquals(true, $this->manager->execute($query));
-    }
+        $results = $manager->execute($query);
 
-    protected function getTolerantManager()
-    {
-        $mapper          = new Mapper(__DIR__ . "/../../proxies");
-        $mapper->setDocumentDirectories(array('./test/Integration/Document' => 'test'));
-
-        $mapper->enableMismatchesTolerance();
-
-        $client          = new \Congow\Orient\Http\Client\Curl(false, TEST_ODB_TIMEOUT);
-        $binding         = new \Congow\Orient\Foundation\Binding($client, TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
-        $protocolAdapter = new \Congow\Orient\Foundation\Protocol\Adapter\Http($binding);
-        $this->manager   = new Manager($mapper, $protocolAdapter);
-
-        return $this->manager;
+        $this->assertInternalType('bool', $results);
+        $this->assertTrue($results);
     }
 }

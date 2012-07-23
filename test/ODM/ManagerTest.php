@@ -7,6 +7,7 @@
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
+ * @author     Daniele Alessandri <suppakilla@gmail.com>
  * @version
  */
 
@@ -15,78 +16,70 @@ namespace test\ODM;
 use test\PHPUnit\TestCase;
 use Congow\Orient\Query;
 use Congow\Orient\ODM\Manager;
-
-class TestMapper extends \Congow\Orient\ODM\Mapper
-{    
-    public function hydrate(\stdClass $document)
-    {
-        $linktracker = new \Congow\Orient\ODM\Mapper\LinkTracker;
-        $linktracker->add('capital', new \Congow\Orient\Foundation\Types\Rid('1:2'));
-        
-        return new \Congow\Orient\ODM\Mapper\Hydration\Result(new Document\Stub\Contact\Address, $linktracker);
-    }
-    
-    public function getDocumentDirectories()
-    {
-        return 'dir';
-    }
-    
-    protected function findClassMappingInDirectories($OClass)
-    {
-        return "Document\Stub\Contact\Address";
-    }
-}
-
-class TestAdapter extends \Congow\Orient\Foundation\Protocol\Adapter\Http
-{
-    public function __construct()
-    {
-
-    }
-    
-    public function execute($sql)
-    {
-        return 'query';
-    }
-    
-    public function getResult()
-    {
-        $record = array(json_decode('{
-                    "@type": "d", "@rid": "#19:0", "@version": 2, "@class": "Address", 
-                    "name": "Luca", 
-                    "surname": "Garulli", 
-                    "out": ["#20:1"]
-        }'));
-        
-        return $record;
-    }
-}
+use Congow\Orient\ODM\Mapper\LinkTracker;
+use Congow\Orient\Foundation\Types\Rid;
+use Congow\Orient\ODM\Mapper\Hydration\Result as HydrationResult;
 
 class ManagerTest extends TestCase
 {
-    public function setup()
+    protected function createTestManager()
     {
-        $this->manager = new Manager(new TestMapper(__DIR__ . "/../../proxies"), new TestAdapter());
+        $rawResult = json_decode('[{
+            "@type": "d", "@rid": "#19:0", "@version": 2, "@class": "Address",
+            "name": "Luca",
+            "surname": "Garulli",
+            "out": ["#20:1"]
+        }]');
+
+        $result = $this->getMock('Congow\Orient\Contract\Binding\BindingResultInterface');
+        $result->expects($this->any())
+               ->method('getResult')
+               ->will($this->returnValue($rawResult));
+
+        $binding = $this->getMock('Congow\Orient\Contract\Binding\BindingInterface');
+        $binding->expects($this->any())
+                ->method('execute')
+                ->will($this->returnValue($result));
+
+        $hydrationResultCallback = function($document) {
+            $linktracker = new LinkTracker();
+            $linktracker->add('capital', new Rid('1:2'));
+
+            return new HydrationResult(new Document\Stub\Contact\Address, $linktracker);
+        };
+
+        $mapper = $this->getMock('Congow\Orient\ODM\Mapper', array('hydrate'), array(__DIR__ . '/../../proxies'));
+        $mapper->expects($this->any())
+               ->method('hydrate')
+               ->will($this->returnCallback($hydrationResultCallback));
+
+        $manager = new Manager($mapper, $binding);
+
+        return $manager;
     }
-    
+
     public function testMethodUsedToTryTheManager()
     {
-        $metadata = $this->manager->getClassMetadata("test\ODM\Document\Stub\Contact\Address");
-        $this->assertInstanceOf('\Congow\Orient\ODM\Mapper\ClassMetadata', $metadata);
+        $manager = $this->createTestManager();
+        $metadata = $manager->getClassMetadata('test\ODM\Document\Stub\Contact\Address');
+
+        $this->assertInstanceOf('Congow\Orient\ODM\Mapper\ClassMetadata', $metadata);
     }
-    
-    public function managerActsAsAProxyForDocumentDirectories()
+
+    public function testManagerActsAsAProxyForExecutingQueries()
     {
-        $this->assertInstanceOf('dir', $this->manager->getDocumentDirectories());
+        $query = new Query(array('Address'));
+        $manager = $this->createTestManager();
+        $results = $manager->execute($query);
+
+        $this->assertInternalType('array', $results);
+        $this->assertInstanceOf('test\ODM\Document\Stub\Contact\Address', $results[0]);
     }
-    
-    public function managerActsAsAProxyForExecutingQueries()
-    {
-        $this->assertInstanceOf('query', $this->manager->execute(new Query));
-    }
-    
+
     public function testFindingADocument()
     {
-        $this->assertInstanceOf("test\ODM\Document\Stub\Contact\Address", $this->manager->find('1:1'));
+        $manager = $this->createTestManager();
+
+        $this->assertInstanceOf('test\ODM\Document\Stub\Contact\Address', $manager->find('1:1'));
     }
 }
