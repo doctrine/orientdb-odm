@@ -482,7 +482,7 @@ class CasterTest extends TestCase
     public function getForcedBinaries()
     {
         return array(
-            array(new \Congow\Orient\Http\Response('a')),
+            array(new \Congow\Orient\Client\Http\CurlClientResponse("1\r\n\r\n2")),
         );
     }
 
