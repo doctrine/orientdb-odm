@@ -477,4 +477,30 @@ class CasterTest extends TestCase
             array(new \Congow\Orient\Http\Response('a')),
         );
     }
+
+    /**
+     * @dataProvider getLinks
+     */
+    public function testLinksCasting($expected,$link)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($link)->castLink());
+    }
+
+    public function getLinks()
+    {
+        $orientDocument = new \stdClass();
+        $orientDocument->{"@class"} = 'Address';
+
+        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+
+        return array(
+            array(new \Congow\Orient\ODM\Proxy\Value($result), $orientDocument),
+            array(new \Congow\Orient\Foundation\Types\Rid('#10:3'), '#10:3'),
+            array(null, 'pete')
+        );
+    }
 }
