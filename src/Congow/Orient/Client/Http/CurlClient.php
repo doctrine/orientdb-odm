@@ -13,17 +13,16 @@
  * This class represents an HTTP client based on Curl.
  *
  * @package    Congow\Orient
- * @subpackage Http
+ * @subpackage Client
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     Daniele Alessandri <suppakilla@gmail.com>
  */
 
-namespace Congow\Orient\Http\Client;
+namespace Congow\Orient\Client\Http;
 
-use Congow\Orient\Http\Response;
 use Congow\Orient\Exception\Http\Response\Void as VoidResponse;
-use Congow\Orient\Contract\Http\Client as HttpClient;
 
-class Curl implements HttpClient
+class CurlClient
 {
     protected $curl;
     protected $restart;
@@ -41,6 +40,7 @@ class Curl implements HttpClient
         $this->restart = $restart;
         $this->cookies = array();
         $this->curl = $this->createCurlHandle();
+
         $this->setTimeout($timeout);
     }
 
@@ -69,6 +69,7 @@ class Curl implements HttpClient
      */
     protected function getRequestCookies() {
         $pairs = array();
+
         foreach ($this->cookies as $k => $v) {
             $pairs[] = "$k=$v";
         }
@@ -81,7 +82,7 @@ class Curl implements HttpClient
      *
      * @param   String $method
      * @param   String $location
-     * @return  Response
+     * @return  CurlClientResponse
      * @throws  Inconsistent
      */
     public function execute($method, $location)
@@ -96,7 +97,7 @@ class Curl implements HttpClient
             throw new VoidResponse(__CLASS__, $location);
         }
 
-        $response = new Response($response);
+        $response = new CurlClientResponse($response);
         $this->cookies = array_merge($this->cookies, $response->getCookies());
 
         if ($this->restart == true) {
@@ -110,7 +111,7 @@ class Curl implements HttpClient
      * Executes a DELETE on a resource.
      *
      * @param  String $location
-     * @return Response
+     * @return CurlClientResponse
      */
     public function delete($location, $body = null)
     {
@@ -127,7 +128,7 @@ class Curl implements HttpClient
      * GETs a resource.
      *
      * @param   String $location
-     * @return  Response
+     * @return  CurlClientResponse
      */
     public function get($location)
     {
@@ -141,7 +142,7 @@ class Curl implements HttpClient
      *
      * @param   String $location
      * @param   String $body
-     * @return  Response
+     * @return  CurlClientResponse
      */
     public function post($location, $body)
     {
@@ -156,7 +157,7 @@ class Curl implements HttpClient
      *
      * @param   String $location
      * @param   String $body
-     * @return  Response
+     * @return  CurlClientResponse
      */
     public function put($location, $body)
     {
@@ -169,12 +170,12 @@ class Curl implements HttpClient
     /**
      * Sets the authentication string for the next HTTP requests.
      *
-     * @param String $credential
+     * @param String $credentials
      */
-    public function setAuthentication($credential)
+    public function setAuthentication($credentials)
     {
-        $this->authentication = $credential;
-        curl_setopt($this->curl, CURLOPT_USERPWD, $credential);
+        $this->authentication = $credentials;
+        curl_setopt($this->curl, CURLOPT_USERPWD, $credentials);
     }
 
     /**

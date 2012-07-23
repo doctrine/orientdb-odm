@@ -20,12 +20,21 @@
 namespace Congow\Orient\Exception\Query\SQL;
 
 use Congow\Orient\Exception;
-use Congow\Orient\Http\Response;
+use Congow\Orient\Contract\Binding\BindingResultInterface;
 
 class Invalid extends Exception
 {
-    public function __construct(Response $response)
+    protected $result;
+
+    public function __construct($message, BindingResultInterface $result)
     {
-        $this->message = $response->getBody();
+        $this->result = $result;
+
+        parent::__construct($message);
+    }
+
+    public function getBindingResult()
+    {
+        return $this->result;
     }
 }

@@ -3,6 +3,8 @@
 namespace Congow\Orient;
 
 use Symfony\Component\ClassLoader\UniversalClassLoader;
+use Congow\Orient\Binding\HttpBinding;
+use Congow\Orient\Binding\BindingParameters;
 
 require __DIR__.'/../autoload.php';
 
@@ -10,22 +12,19 @@ $loader = new UniversalClassLoader();
 $loader->registerNamespaces(array('Domain' => __DIR__.'/../examples/'));
 $loader->register();
 
+$parameters = BindingParameters::create('http://admin:admin@127.0.0.1:2480/menu');
+$binding = new HttpBinding($parameters);
 
-$client             = new Http\Client\Curl();
-$binding            = new Foundation\Binding($client, '127.0.0.1', 2480, 'admin', 'admin', 'menu');
-$protocolAdapter    = new Foundation\Protocol\Adapter\Http($binding);
-$mapper             = new ODM\Mapper(__DIR__ . '/../proxies');
+$mapper = new ODM\Mapper(__DIR__ . '/../proxies');
 $mapper->setDocumentDirectories(array(__DIR__.'/../examples/' => 'Domain'));
-$manager            = new ODM\Manager($mapper, $protocolAdapter);
 
+$manager = new ODM\Manager($mapper, $binding);
 $menus = $manager->getRepository('Domain\Menu');
 
-foreach ($menus->findAll() as $menu)
-{
-    echo "Menu: " . $menu->getTitle() . "\n";
+foreach ($menus->findAll() as $menu) {
+    echo "Menu: ", $menu->getTitle(), "\n";
 
-    foreach ($menu->getLinks() as $link) // object inheriting from Link
-    {
+    foreach ($menu->getLinks() as $link) { // object inheriting from Link
         echo "Link \"{$link->getTitle()}\" ====>>> {$link->getLink()}\n";
     }
 }

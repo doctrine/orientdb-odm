@@ -10,24 +10,24 @@
  */
 
 /**
- * This class wraps an HTTP response to easily manage some HTTP headers and
- * the body.
+ * This class wraps an HTTP response returned by the Curl client.
  *
- * @package    
- * @subpackage 
+ * @package    Congow\Orient
+ * @subpackage Client
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     Daniele Alessandri <suppakilla@gmail.com>
  */
 
-namespace Congow\Orient\Http;
+namespace Congow\Orient\Client\Http;
 
-class Response
+class CurlClientResponse
 {
     protected $headers;
-    protected $raw_headers;
-    protected $status_code;
+    protected $rawHeaders;
+    protected $statusCode;
     protected $body;
     protected $protocol;
-    
+
     const STATUS_OK                             = 200;
     const STATUS_CREATED                        = 201;
     const STATUS_ACCEPTED                       = 202;
@@ -43,9 +43,9 @@ class Response
      */
     public function __construct($response)
     {
-        @list($this->raw_headers, $this->body) = explode("\r\n\r\n", $response, 2);
+        @list($this->rawHeaders, $this->body) = explode("\r\n\r\n", $response, 2);
 
-        $this->buildHeaders($this->raw_headers);
+        $this->buildHeaders($this->rawHeaders);
     }
 
     public function __toString()
@@ -62,20 +62,16 @@ class Response
     {
         return $this->body;
     }
-    
+
+    /**
+     * Returns the value of the specified header.
+     *
+     * @param string $header Header name.
+     * @return string
+     */
     public function getHeader($header)
     {
         return isset($this->headers[$header]) ? $this->headers[$header] : null;
-    }
-    
-    /**
-     * Returns the protocol used to communicate with the client.
-     *
-     * @return string
-     */
-    public function getProtocol()
-    {
-        return $this->protocol;
     }
 
     /**
@@ -108,15 +104,11 @@ class Response
     }
 
     /**
-     * Returns the status code of the response.
+     * Returns an array for the HTTP status codes that
+     * are considered as valid responses.
      *
      * @return String
      */
-    public function getStatusCode()
-    {
-        return $this->status_code;
-    }
-    
     public function getValidStatusCodes()
     {
         return array(
@@ -132,32 +124,30 @@ class Response
     /**
      * Builds headers array from a well-formatted string.
      *
-     * @param String $headers
+     * @param string $headers
      */
     protected function buildHeaders($headers)
     {
-        $parts              = explode("\r\n", $headers);
-        $status             = array_shift($parts);
-        $statusParts        = explode(" ", $status);
-        
+        $parts = explode("\r\n", $headers);
+        $status = array_shift($parts);
+        $statusParts = explode(' ', $status);
+
         if (array_key_exists(0, $statusParts)) {
             $this->setProtocol($statusParts[0]);
         }
-        
+
         if (array_key_exists(1, $statusParts)) {
-            $this->setStatusCode($statusParts[1]);   
-        }        
+            $this->setStatusCode($statusParts[1]);
+        }
 
         foreach ($parts as $header) {
             list($header, $value)   = explode(':', $header, 2);
             $header                 = trim($header, ' ');
-            
-            if (isset($this->headers[$header]))
-            {
+
+            if (isset($this->headers[$header])) {
                 $this->headers[$header] .= "," . $value;
             }
-            else
-            {
+            else {
                 $this->headers[$header] = trim($value, ' ');
             }
         }
@@ -166,30 +156,50 @@ class Response
     /**
      * Returns all the headers as a string.
      *
-     * @return String
+     * @return string
      */
     protected function getRawHeaders()
     {
-        return $this->raw_headers;
+        return $this->rawHeaders;
     }
-    
+
     /**
      * Sets the protocol used for the communication with the client.
      *
-     * @param string $protocol 
+     * @param string $protocol
      */
     protected function setProtocol($protocol)
     {
         $this->protocol = $protocol;
     }
-    
+
+    /**
+     * Returns the protocol used to communicate with the client.
+     *
+     * @return string
+     */
+    public function getProtocol()
+    {
+        return $this->protocol;
+    }
+
     /**
      * Sets the status code of the response.
      *
-     * @param integer $code 
+     * @param integer $code
      */
     protected function setStatusCode($code)
     {
-        $this->status_code = (int) $code;
+        $this->statusCode = (int) $code;
+    }
+
+    /**
+     * Returns the status code of the response.
+     *
+     * @return String
+     */
+    public function getStatusCode()
+    {
+        return $this->statusCode;
     }
 }
