@@ -444,4 +444,37 @@ class CasterTest extends TestCase
             array(new \DateTime('2012-12-30'),'2012-12-30'),
         );
     }
+    
+    /**
+     * @dataProvider getBinaries
+     */
+    public function testBinaryCasting($binary)
+    {
+        $this->assertEquals('data:;base64,' . $binary, $this->caster->setValue($binary)->castBinary());
+    }
+    
+    public function getBinaries()
+    {
+        return array(
+          array('2011-01-01 11:11:11'),
+          array(array()),
+          array(12),
+          array(-12),
+        );
+    }
+    
+    /**
+     * @dataProvider getForcedBinaries
+     */
+    public function testForcedBinaryCasting($binary)
+    {
+        $this->assertEquals('data:;base64,' . $binary, $this->caster->setValue($binary)->castBinary());
+    }
+    
+    public function getForcedBinaries()
+    {
+        return array(
+            array(new \Congow\Orient\Http\Response('a')),
+        );
+    }
 }
