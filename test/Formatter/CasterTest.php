@@ -15,6 +15,8 @@ namespace test;
 use test\PHPUnit\TestCase;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\ODM\Manager;
+use Congow\Orient\Foundation\Types\Rid;
+use Congow\Orient\Foundation\Types\Rid\Collection;
 use Congow\Orient\Formatter\Caster;
 
 
@@ -485,7 +487,6 @@ class CasterTest extends TestCase
     {
         $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
 
-        $this->mapper->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($link)->castLink());
     }
 
@@ -499,8 +500,53 @@ class CasterTest extends TestCase
 
         return array(
             array(new \Congow\Orient\ODM\Proxy\Value($result), $orientDocument),
-            array(new \Congow\Orient\Foundation\Types\Rid('#10:3'), '#10:3'),
+            array(new Rid('#10:3'), '#10:3'),
             array(null, 'pete')
+        );
+    }
+
+    /**
+     * @dataProvider getLinkCollections
+     */
+    public function testLinkListCasting($expected,$linkCollection)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+
+        $this->assertEquals($expected, $this->caster->setValue($linkCollection)->castLinkList());
+    }
+
+    /**
+     * @dataProvider getLinkCollections
+     */
+    public function testLinkSetCasting($expected,$linkCollection)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+
+        $this->assertEquals($expected, $this->caster->setValue($linkCollection)->castLinkSet());
+    }
+
+    /**
+     * @dataProvider getLinkCollections
+     */
+    public function testLinkMapCasting($expected,$linkCollection)
+    {
+        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
+
+        $this->assertEquals($expected, $this->caster->setValue($linkCollection)->castLinkMap());
+    }
+
+    public function getLinkCollections()
+    {
+        $orientDocument = new \stdClass();
+        $orientDocument->{"@class"} = 'Address';
+
+        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+
+        $collection = new Collection(array('hello' => '#10:4'));
+        return array(
+            array($collection, array('hello' => '#10:4')),
+            array(array('hello' => $result), array('hello' => $orientDocument)),
         );
     }
 }
