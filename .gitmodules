@@ -1,9 +1,0 @@
-[submodule "vendor/doctrine/common"]
-	path = vendor/doctrine/common
-	url = git://github.com/doctrine/common.git
-[submodule "vendor/symfony/finder/Symfony/Component/Finder"]
-	path = vendor/symfony/finder/Symfony/Component/Finder
-	url = git://github.com/symfony/Finder.git
-[submodule "vendor/symfony/class-loader/Symfony/Component/ClassLoader"]
-	path = vendor/symfony/class-loader/Symfony/Component/ClassLoader
-	url = git://github.com/symfony/ClassLoader.git
