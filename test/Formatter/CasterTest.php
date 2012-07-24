@@ -33,7 +33,7 @@ class CasterTest extends TestCase
         $this->mapper = new Mapper('/');
         $this->caster = new Caster($this->mapper);
     }
-    
+
     /**
      * @dataProvider getBooleans
      */
@@ -41,7 +41,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($input)->castBoolean());
     }
-    
+
     public function getBooleans()
     {
         return array(
@@ -55,7 +55,7 @@ class CasterTest extends TestCase
           array(false, 0),
         );
     }
-    
+
     /**
      * @dataProvider getForcedBooleans
      */
@@ -64,7 +64,7 @@ class CasterTest extends TestCase
         $this->mapper->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($input)->castBoolean());
     }
-    
+
     /**
      * @dataProvider getForcedBooleans
      * @expectedException Congow\Orient\Exception\Casting\Mismatch
@@ -73,7 +73,7 @@ class CasterTest extends TestCase
     {
         $this->caster->setValue($input)->castBoolean();
     }
-    
+
     public function getForcedBooleans()
     {
         return array(
@@ -89,7 +89,7 @@ class CasterTest extends TestCase
           array(true, -50),
         );
     }
-    
+
     /**
      * @dataProvider getBytes
      */
@@ -97,7 +97,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($byte, $this->caster->setValue($byte)->castByte());
     }
-    
+
     public function getBytes()
     {
         return array(
@@ -109,8 +109,8 @@ class CasterTest extends TestCase
           array(-128),
           array(-1),
         );
-    }    
-    
+    }
+
     /**
      * @dataProvider getForcedBytes
      */
@@ -119,7 +119,7 @@ class CasterTest extends TestCase
         $this->mapper->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($byte)->castByte());
     }
-    
+
     /**
      * @dataProvider getForcedBytes
      * @expectedException Congow\Orient\Exception\Casting\Mismatch
@@ -128,7 +128,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($byte)->castByte());
     }
-    
+
     public function getForcedBytes()
     {
         return array(
@@ -143,7 +143,7 @@ class CasterTest extends TestCase
           array(127, 'ciao'),
         );
     }
-    
+
     /**
      * @dataProvider getLongs
      */
@@ -151,7 +151,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($long, $this->caster->setValue($long)->castLong());
     }
-    
+
     public function getLongs()
     {
         return array(
@@ -165,8 +165,8 @@ class CasterTest extends TestCase
           array(-128),
           array(-1),
         );
-    }    
-    
+    }
+
     /**
      * @dataProvider getForcedLongs
      */
@@ -175,7 +175,7 @@ class CasterTest extends TestCase
         $this->mapper->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($long)->castLong());
     }
-    
+
     /**
      * @dataProvider getForcedLongs
      * @expectedException Congow\Orient\Exception\Casting\Mismatch
@@ -184,7 +184,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($long)->castLong());
     }
-    
+
     public function getForcedLongs()
     {
         return array(
@@ -198,7 +198,7 @@ class CasterTest extends TestCase
           array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + '1500/3'),
         );
     }
-    
+
     /**
      * @dataProvider getIntegers
      */
@@ -206,7 +206,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($integer)->castInteger());
     }
-    
+
     public function getIntegers()
     {
         return array(
@@ -215,8 +215,8 @@ class CasterTest extends TestCase
           array(100, '100'),
           array(-4, '-4'),
         );
-    }    
-    
+    }
+
     /**
      * @dataProvider getForcedIntegers
      */
@@ -225,7 +225,7 @@ class CasterTest extends TestCase
         $this->mapper->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($integer)->castInteger());
     }
-    
+
     /**
      * @dataProvider getForcedIntegers
      * @expectedException Congow\Orient\Exception\Casting\Mismatch
@@ -234,7 +234,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($integer)->castInteger());
     }
-    
+
     public function getForcedIntegers()
     {
         return array(
@@ -242,9 +242,9 @@ class CasterTest extends TestCase
           array(0, null),
           array(1, new \stdClass()),
         );
-    }    
-    
-    
+    }
+
+
     /**
      * @dataProvider getDoubles
      */
@@ -252,7 +252,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($double)->castDouble());
     }
-    
+
     public function getDoubles()
     {
         return array(
@@ -262,8 +262,8 @@ class CasterTest extends TestCase
           array(-4, -4),
           array(-4, '-4'),
         );
-    }    
-    
+    }
+
     /**
      * @dataProvider getForcedDoubles
      */
@@ -272,7 +272,7 @@ class CasterTest extends TestCase
         $this->mapper->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($double)->castDouble());
     }
-    
+
     /**
      * @dataProvider getForcedDoubles
      * @expectedException Congow\Orient\Exception\Casting\Mismatch
@@ -281,7 +281,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($ddouble)->castDouble());
     }
-    
+
     public function getForcedDoubles()
     {
         return array(
@@ -291,8 +291,8 @@ class CasterTest extends TestCase
           array('15', '15/3'),
           array(15.2, '15.2.2'),
         );
-    }    
-    
+    }
+
     /**
      * @dataProvider getDoubles
      */
@@ -300,7 +300,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($float)->castFloat());
     }
-    
+
     /**
      * @dataProvider getForcedDoubles
      */
@@ -309,7 +309,7 @@ class CasterTest extends TestCase
         $this->mapper->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($float)->castFloat());
     }
-    
+
     /**
      * @dataProvider getForcedDoubles
      * @expectedException Congow\Orient\Exception\Casting\Mismatch
@@ -318,7 +318,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($float)->castFloat());
     }
-    
+
     /**
      * @dataProvider getStrings
      */
@@ -326,7 +326,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($string)->castString());
     }
-    
+
     public function getStrings()
     {
         return array(
@@ -334,8 +334,8 @@ class CasterTest extends TestCase
           array('hello', 'hello'),
           array('', ''),
         );
-    }    
-    
+    }
+
     /**
      * @dataProvider getForcedStrings
      */
@@ -344,7 +344,7 @@ class CasterTest extends TestCase
         $this->mapper->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($string)->castString());
     }
-    
+
     /**
      * @dataProvider getForcedStrings
      * @expectedException Congow\Orient\Exception\Casting\Mismatch
@@ -353,7 +353,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($string)->castString());
     }
-    
+
     public function getForcedStrings()
     {
         return array(
@@ -362,7 +362,7 @@ class CasterTest extends TestCase
           array('', null),
           array('Array', array(1,2,3)),
         );
-    }    
+    }
 
     public function testInjectingTheValueInTheConstructor()
     {
@@ -421,7 +421,7 @@ class CasterTest extends TestCase
             array(array(),array()),
         );
     }
-    
+
     /**
      * @dataProvider getDateTimes
      */
@@ -429,7 +429,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals($expected, $this->caster->setValue($datetimes)->castDateTime());
     }
-    
+
     public function getDateTimes()
     {
         return array(
@@ -452,7 +452,7 @@ class CasterTest extends TestCase
             array(new \DateTime('2012-12-30'),'2012-12-30'),
         );
     }
-    
+
     /**
      * @dataProvider getBinaries
      */
@@ -460,7 +460,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals('data:;base64,' . $binary, $this->caster->setValue($binary)->castBinary());
     }
-    
+
     public function getBinaries()
     {
         return array(
@@ -470,7 +470,7 @@ class CasterTest extends TestCase
           array(-12),
         );
     }
-    
+
     /**
      * @dataProvider getForcedBinaries
      */
@@ -478,7 +478,7 @@ class CasterTest extends TestCase
     {
         $this->assertEquals('data:;base64,' . $binary, $this->caster->setValue($binary)->castBinary());
     }
-    
+
     public function getForcedBinaries()
     {
         return array(

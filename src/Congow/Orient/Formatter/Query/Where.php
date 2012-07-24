@@ -26,8 +26,6 @@ class Where extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {
-        $values = implode(' ', $values);
-
-        return $values;
+        return implode(' ', $values);
     }
 }

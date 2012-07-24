@@ -24,10 +24,9 @@ use Congow\Orient\Contract\ODM\Proxy as ProxyInterface;
 abstract class AbstractProxy implements ProxyInterface
 {
     protected $manager;
-    
+
     protected function getManager()
     {
         return $this->manager;
     }
 }
-

@@ -160,27 +160,23 @@ abstract class Command implements CommandContract
      * @param string  $clause
      */
     public function where($condition, $value = null, $append = false, $clause = "WHERE")
-    {       
+    {
         $validator = new EscapeValidator;
-        
-        if (is_array($value))
-        {
+
+        if (is_array($value)) {
             $condition = $this->formatWhereConditionWithMultipleTokens($condition, $value, $validator);
-        }
-        else
-        {        
+        } else {
             $ridValidator = new RidValidator();
-        
+
             try {
-                $value    = $ridValidator->check($value);
-            }
-            catch (Exception $e) {
-                $value    =  '"' . $validator->check($value, 1) . '"';
+                $value = $ridValidator->check($value);
+            } catch (Exception $e) {
+                $value = '"' . $validator->check($value, 1) . '"';
             }
 
             $condition = str_replace("?", $value, $condition);
-        } 
-        
+        }
+
         $this->setTokenValues('Where', array("{$clause} " . $condition), $append, false, false);
 
         return $this;
@@ -243,11 +239,11 @@ abstract class Command implements CommandContract
      */
     protected function checkToken($token)
     {
-        if (array_key_exists($token, $this->tokens)) {
-            return $this->tokens[$token];
+        if (!array_key_exists($token, $this->tokens)) {
+            throw new CommandException\TokenNotFound($token, get_called_class());
         }
 
-        throw new CommandException\TokenNotFound($token, get_called_class());
+        return $this->tokens[$token];
     }
 
     /**
@@ -281,15 +277,15 @@ abstract class Command implements CommandContract
     protected function getTokenFormatters()
     {
         return array(
-            'Target'    => "Congow\Orient\Formatter\Query\Target",      
-            'Where'     => "Congow\Orient\Formatter\Query\Where",  
+            'Target'    => "Congow\Orient\Formatter\Query\Target",
+            'Where'     => "Congow\Orient\Formatter\Query\Where",
             'Class'     => "Congow\Orient\Formatter\Query\Regular",
             'Property'  => "Congow\Orient\Formatter\Query\Regular",
             'Type'      => "Congow\Orient\Formatter\Query\Regular",
             'Rid'       => "Congow\Orient\Formatter\Query\Rid",
         );
     }
-    
+
     /**
      * Returns the formatter for a particular token.
      *
@@ -300,15 +296,14 @@ abstract class Command implements CommandContract
     protected function getTokenFormatter($token)
     {
         $formatters = $this->getTokenFormatters();
-        
-        if (!array_key_exists($token, $formatters))
-        {
+
+        if (!array_key_exists($token, $formatters)) {
             $message = "The class %s does not know how to format the %s token\n";
             $message .= "Have you added it in the getTokenFormatters() method?";
 
             throw new Exception(sprintf($message, get_called_class(), $token));
         }
-        
+
         return $formatters[$token];
     }
 
@@ -345,7 +340,7 @@ abstract class Command implements CommandContract
 
         return trim($statement);
     }
-    
+
     /**
      * Substitutes multiple tokens ($values) in the WHERE $condition.
      *
@@ -355,23 +350,19 @@ abstract class Command implements CommandContract
      * @throws  \LogicException
      */
     protected function formatWhereConditionWithMultipleTokens(
-        $condition, 
-        Array $values, 
+        $condition,
+        Array $values,
         EscapeValidator $validator
-    )
-    {            
-        if (count($values) == substr_count($condition, '?')) {
-              foreach ($values as $replacement) {
-                  $condition =  preg_replace("/\?/", '"' . $validator->check($replacement, 1) . '"', $condition, 1);
-              }
-              
-              return $condition;
+    ) {
+        if (count($values) !== substr_count($condition, '?')) {
+            throw new Exception\Logic("Number of given parameters does not match number of tokens");
         }
-        else {
-            $message = "Number of given parameters does not match number of tokens";
 
-            throw new Exception\Logic($message);
+        foreach ($values as $replacement) {
+            $condition = preg_replace("/\?/", '"' . $validator->check($replacement, 1) . '"', $condition, 1);
         }
+
+        return $condition;
     }
 
     /**
@@ -389,12 +380,12 @@ abstract class Command implements CommandContract
     }
 
     /**
-     * Sets a single value for a token, 
+     * Sets a single value for a token,
      *
      * @param   string  $token
      * @param   string  $tokenValue
      * @param   boolean $append
-     * @param   boolean $first 
+     * @param   boolean $first
      * @return  true
      */
     public function setToken($token, $tokenValue, $append = false, $first = false)

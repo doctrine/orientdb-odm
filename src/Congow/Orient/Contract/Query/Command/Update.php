@@ -22,4 +22,3 @@ interface Update
      */
     public function set(array $values, $append);
 }
-

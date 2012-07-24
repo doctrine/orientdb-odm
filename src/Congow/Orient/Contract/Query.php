@@ -338,4 +338,3 @@ interface Query
      */
     public function where($condition, $value = null);
 }
-

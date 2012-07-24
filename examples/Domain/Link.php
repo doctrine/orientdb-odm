@@ -22,14 +22,14 @@ abstract class Link
      * @ODM\Property(type="string")
      */
     protected $title;
-    
+
     abstract public function getLink();
-    
+
     public function setTitle($title)
     {
         $this->title = $title;
     }
-    
+
     public function getTitle()
     {
         return $this->title;

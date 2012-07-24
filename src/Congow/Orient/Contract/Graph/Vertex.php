@@ -12,7 +12,7 @@
 /**
  * Interface Vertex
  *
- * @package     Orient
+ * @package     Congow\Orient
  * @subpackage  Contract
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
@@ -26,7 +26,7 @@ interface Vertex
      * A $distance, to balance the connection, can be specified.
      *
      * @param Vertex $vertex
-     * @param integer $distance 
+     * @param integer $distance
      */
     public function connect(Vertex $vertex, $distance = 1);
 
@@ -36,14 +36,14 @@ interface Vertex
      * @return Array
      */
     public function getConnections();
-    
+
     /**
      * Returns the identifier of this vertex.
      *
      * @return mixed
      */
     public function getId();
-    
+
     /**
      * Returns the most adjacent connection's ID of the current vertex,
      * null if the vertex has no connections.
@@ -51,42 +51,41 @@ interface Vertex
      * @return mixed
      */
     public function getMostAdjacentConnectionId();
-    
+
     /**
      * Returns vertex's potential.
      *
      * @return integer
      */
     public function getPotential();
-    
+
     /**
      * Returns the vertex which gave to the current vertex its potential.
      *
      * @return Vertex
      */
     public function getPotentialFrom();
-    
+
     /**
      * Returns whether the vertex has passed or not.
      *
      * @return boolean
      */
     public function isPassed();
-    
+
     /**
      * Marks this vertex as passed, meaning that, in the scope of a graph, he
      * has already been processed in order to calculate its potential.
      */
     public function markPassed();
-    
+
     /**
      * Sets the potential for the vertex, if the vertex has no potential or the
      * one it has is higher than the new one.
      *
      * @param   integer $potential
-     * @param   Vertex $from 
+     * @param   Vertex $from
      * @return  boolean
      */
     public function setPotential($potential, Vertex $from);
 }
-

@@ -28,4 +28,3 @@ class Overflow extends Exception
         $this->message = $message;
     }
 }
-

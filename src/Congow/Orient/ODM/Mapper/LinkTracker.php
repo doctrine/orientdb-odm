@@ -23,12 +23,12 @@ namespace Congow\Orient\ODM\Mapper;
 class LinkTracker
 {
     protected $properties = array();
-    
+
     public function add($property, $value)
     {
         $this->properties[$property] = $value;
     }
-    
+
     public function getProperties()
     {
         return $this->properties;

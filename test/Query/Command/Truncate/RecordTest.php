@@ -22,7 +22,7 @@ class RecordTest extends TestCase
 
         $this->assertCommandGives("TRUNCATE RECORD", $truncate->getRaw());
     }
-    
+
     public function testTheNameArgumentIsFiltered()
     {
         $truncate = new TruncateRecord('10:2');

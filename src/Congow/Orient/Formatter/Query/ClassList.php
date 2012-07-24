@@ -27,7 +27,7 @@ class ClassList extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {
-        if (count($values)) {
+        if ($values) {
             return "[" . self::implodeRegular($values) . "]";
         }
 

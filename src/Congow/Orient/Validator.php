@@ -23,7 +23,7 @@ use Congow\Orient\Contract\Validator as ValidatorInterface;
 use Congow\Orient\Exception\Validation as ValidationException;
 
 abstract class Validator implements ValidatorInterface
-{   
+{
     /**
      * Cleans and returns the $value.
      * If it is invalid, the validator fails.
@@ -37,34 +37,30 @@ abstract class Validator implements ValidatorInterface
         try {
             return $this->clean($value);
         }
-        catch (ValidationException $e) { 
+        catch (ValidationException $e) {
             return $this->fail($e, $value, $silent);
         }
     }
-    
+
     /**
      * Internallly cleans and return the $value.
-     * 
+     *
      * @param   mixed $value
      */
     abstract protected function clean($value);
-    
+
     /**
      * Makes the validator fail: if silent, null is returned, otherwise an
      * exception is raised.
      *
      * @param   mixed $value
      * @param   boolean $silent
-     * @return  null
      * @throws  Congow\Orient\Exception\Validation
      */
     protected function fail(ValidationException $e, $value, $silent = false)
     {
-        if ($silent) {
-            return null;
+        if (!$silent) {
+            throw $e;
         }
-        
-        throw $e;
     }
 }
-

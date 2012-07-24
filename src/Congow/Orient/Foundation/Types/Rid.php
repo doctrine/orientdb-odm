@@ -25,7 +25,7 @@ use Congow\Orient\Exception\Validation as ValidationException;
 class Rid
 {
     protected $rid;
-    
+
     /**
      * Instantiates a new object, injecting the $rid;
      *
@@ -37,7 +37,7 @@ class Rid
         $validator->check($rid);
         $this->rid = $rid;
     }
-    
+
     /**
      * Returns the rid associated with the current object.
      *

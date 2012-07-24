@@ -27,7 +27,7 @@ class IndexClass extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {
-        if (count($values)) {
+        if ($values) {
             return String::filterNonSQLChars(array_shift($values)) . ".";
         }
 

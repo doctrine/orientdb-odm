@@ -37,7 +37,7 @@ class Caster implements CasterInterface
     protected $mapper;
     protected $dateClass;
     protected $properties   = array();
-    protected $trueValues   = array(1, '1', 'true');        
+    protected $trueValues   = array(1, '1', 'true');
     protected $falseValues  = array(0, '0', 'false');
 
     const SHORT_LIMIT       = 32767;
@@ -71,27 +71,27 @@ class Caster implements CasterInterface
      * @return boolean
      */
     public function castBoolean()
-    {            
+    {
         if (is_bool($this->value)) {
             return $this->value;
         }
-        
+
         foreach ($this->trueValues as $true) {
             if ($this->value === $true) {
                 return true;
             }
         }
-        
+
         foreach ($this->falseValues as $false) {
             if ($this->value === $false) {
                 return false;
             }
         }
-        
+
         $castFunction = function($value) {
             return (bool) $value;
         };
-        
+
         return $this->handleMismatch($castFunction, 'boolean');
     }
 
@@ -114,12 +114,12 @@ class Caster implements CasterInterface
     {
         $min = self::BYTE_MIN_VALUE;
         $max = self::BYTE_MAX_VALUE;
-        
+
         $castFunction = function($value) use ($min, $max){
             if ($value < 0) {
                 return $min;
             }
-            
+
             return $max;
         };
 
@@ -215,7 +215,7 @@ class Caster implements CasterInterface
         $castFunction = function($value){
             return (float) $value;
         };
-        
+
         if (is_numeric($this->value)){
             return $castFunction($this->value);
         } else {
@@ -234,7 +234,7 @@ class Caster implements CasterInterface
             if (is_object($value)) {
                 return 1;
             }
-            
+
             return (int) $value;
         };
 
@@ -418,7 +418,6 @@ class Caster implements CasterInterface
         $innerCaster    = new self($this->getMapper());
 
         if (!method_exists($innerCaster, $method)) {
-
             throw new Exception('');
         }
 
@@ -566,13 +565,13 @@ class Caster implements CasterInterface
     protected function raiseMismatch($expectedType)
     {
         $value = $this->value;
-        
+
         if (is_object($value)) {
             $value = get_class($value);
         } elseif (is_array($value)) {
             $value = implode(',', $value);
         }
-        
+
         throw new Mismatch(sprintf(self::MISMATCH_MESSAGE, $value, $expectedType));
     }
 }

@@ -68,11 +68,10 @@ class Mapper
         AnnotationReaderInterface
         $annotationReader = null,
         Inflector $inflector = null
-    )
-    {
-        $this->annotationReader             = $annotationReader ?: new Reader;
-        $this->inflector                    = $inflector ?: new DoctrineInflector;
-        $this->documentProxyDirectory       = $documentProxyDirectory;
+    ) {
+        $this->annotationReader       = $annotationReader ?: new Reader;
+        $this->inflector              = $inflector ?: new DoctrineInflector;
+        $this->documentProxyDirectory = $documentProxyDirectory;
     }
 
     /**
@@ -104,9 +103,9 @@ class Mapper
      */
     public function getClassAnnotation($class)
     {
-        $reader                 = $this->getAnnotationReader();
-        $reflClass              = new \ReflectionClass($class);
-        $mappedDocumentClass    = self::ANNOTATION_CLASS_CLASS;
+        $reader              = $this->getAnnotationReader();
+        $reflClass           = new \ReflectionClass($class);
+        $mappedDocumentClass = self::ANNOTATION_CLASS_CLASS;
 
         foreach ($reader->getClassAnnotations($reflClass) as $annotation) {
             if ($annotation instanceOf $mappedDocumentClass) {
@@ -137,7 +136,7 @@ class Mapper
     public function getPropertyAnnotation(\ReflectionProperty $property)
     {
         return $this->annotationReader->getPropertyAnnotation(
-                $property, self::ANNOTATION_PROPERTY_CLASS
+            $property, self::ANNOTATION_PROPERTY_CLASS
         );
     }
 
@@ -155,14 +154,13 @@ class Mapper
     {
         $classProperty = self::ORIENT_PROPERTY_CLASS;
 
-        if (property_exists($orientObject, $classProperty))
-        {
+        if (property_exists($orientObject, $classProperty)) {
             $orientClass  = $orientObject->$classProperty;
 
             if ($orientClass) {
-                $class          = $this->findClassMappingInDirectories($orientClass);
-                $linkTracker    = new LinkTracker();
-                $document       = $this->createDocument($class, $orientObject, $linkTracker);
+                $class       = $this->findClassMappingInDirectories($orientClass);
+                $linkTracker = new LinkTracker();
+                $document    = $this->createDocument($class, $orientObject, $linkTracker);
 
                 return new Hydration\Result($document, $linkTracker);
             }
@@ -197,8 +195,8 @@ class Mapper
     public function setDocumentDirectories(array $directories)
     {
         $this->documentDirectories = array_merge(
-                $this->documentDirectories,
-                $directories
+            $this->documentDirectories,
+            $directories
         );
     }
 
@@ -217,8 +215,7 @@ class Mapper
         $class,
         \stdClass $orientObject,
         LinkTracker $linkTracker
-     )
-    {
+    ) {
         $proxyClass = $this->getProxyClass($class);
         $document   = new $proxyClass();
         $this->fill($document, $orientObject, $linkTracker);
@@ -236,7 +233,7 @@ class Mapper
     protected function castProperty($annotation, $propertyValue)
     {
         $caster = new Caster($this);
-        $method     = 'cast' . $this->inflector->camelize($annotation->type);
+        $method = 'cast' . $this->inflector->camelize($annotation->type);
         $caster->setValue($propertyValue);
         $caster->setProperty('annotation', $annotation);
         $this->verifyCastingSupport($caster, $method, $annotation->type);
@@ -257,8 +254,7 @@ class Mapper
     {
         $propertyAnnotations = $this->getObjectPropertyAnnotations($document);
 
-        foreach ($propertyAnnotations as $property => $annotation)
-        {
+        foreach ($propertyAnnotations as $property => $annotation) {
             $documentProperty = $property;
 
             if ($annotation->name) {
@@ -267,11 +263,11 @@ class Mapper
 
             if (property_exists($object, $property)) {
                 $this->mapProperty(
-                        $document,
-                        $documentProperty,
-                        $object->$property,
-                        $annotation,
-                        $linkTracker
+                    $document,
+                    $documentProperty,
+                    $object->$property,
+                    $annotation,
+                    $linkTracker
                 );
             }
         }
@@ -310,26 +306,25 @@ class Mapper
      * @return  string|null
      */
     protected function findClassMappingInDirectory(
-            $OClass,
-            $directory,
-            $namespace,
-            StringFormatterInterface $stringFormatter = null,
-            \Iterator $iterator = null
-    )
-    {
-        $stringFormatter    = $stringFormatter ?: new StringFormatter;
-        $finder             = new Finder;
-        $iterator           = $finder->files()->name('*.php')->in($directory);
+        $OClass,
+        $directory,
+        $namespace,
+        StringFormatterInterface $stringFormatter = null,
+        \Iterator $iterator = null
+    ) {
+        $stringFormatter = $stringFormatter ?: new StringFormatter;
+        $finder          = new Finder;
+        $iterator        = $finder->files()->name('*.php')->in($directory);
 
         foreach ($iterator as $file) {
-            $class      = $stringFormatter::convertPathToClassName($file, $namespace);
-            
+            $class = $stringFormatter::convertPathToClassName($file, $namespace);
+
             if (class_exists($class)) {
                 $annotation = $this->getClassAnnotation($class);
 
-                if($annotation && $annotation->hasMatchingClass($OClass)){
+                if ($annotation && $annotation->hasMatchingClass($OClass)){
                     return $class;
-                }                
+                }
             }
         }
 
@@ -414,14 +409,15 @@ EOT;
      */
     protected function getProxyClass($class)
     {
-        $namespaces         = explode('\\', $class);
-        $proxyClassName     = array_pop($namespaces);
+        $namespaces     = explode('\\', $class);
+        $proxyClassName = array_pop($namespaces);
 
         if (!class_exists("Congow\Orient\Proxy" . $class)) {
             $dir = $this->getDocumentProxyDirectory() . '/Congow/Orient/Proxy';
 
             foreach ($namespaces as $namespace) {
                 $dir = $dir . '/' . $namespace;
+
                 if (!is_dir($dir)) {
                     mkdir($dir);
                 }
@@ -443,8 +439,8 @@ EOT;
      */
     protected function getObjectPropertyAnnotations($document)
     {
-        $refObject      = new \ReflectionObject($document);
-        $annotations    = array();
+        $refObject   = new \ReflectionObject($document);
+        $annotations = array();
 
         foreach ($refObject->getProperties() as $property) {
             $annotation = $this->getPropertyAnnotation($property);
@@ -481,7 +477,7 @@ EOT;
         if ($annotation->type) {
             $value = $this->castProperty($annotation, $value);
 
-            if($value instanceOf Rid) {
+            if ($value instanceOf Rid) {
                 $linkTracker->add($property, $value);
             }
         }
@@ -492,8 +488,8 @@ EOT;
             $document->$setter($value);
         }
         else {
-            $refClass     = new \ReflectionObject($document);
-            $refProperty  = $refClass->getProperty($property);
+            $refClass    = new \ReflectionObject($document);
+            $refProperty = $refClass->getProperty($property);
 
             if ($refProperty->isPublic()) {
                 $document->$property = $value;
@@ -501,9 +497,9 @@ EOT;
                 $message = "%s has not method %s: you have to added the setter in order to correctly let Congow\Orient hydrate your object ?";
 
                 throw new Exception(
-                        sprintf($message,
-                        get_class($document),
-                        $setter)
+                    sprintf($message,
+                    get_class($document),
+                    $setter)
                 );
             }
         }

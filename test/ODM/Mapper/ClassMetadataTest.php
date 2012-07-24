@@ -26,12 +26,12 @@ class Mapped
      * @ODM\Property(name="field",type="string")
      */
     protected $field;
-    
+
     /**
      * @ODM\Property(name="assoc",type="link")
      */
     protected $assoc;
-    
+
     /**
      * @ODM\Property(name="multiassoc",type="linkset")
      */
@@ -53,12 +53,12 @@ class ClassMetadataTest extends TestCase
     {
         $this->metadata = new ClassMetadata('test\ODM\Mapper\Mapped', new TestMapper);
     }
-    
+
     function testGetName()
     {
         $this->assertEquals('test\ODM\Mapper\Mapped', $this->metadata->getName());
     }
-    
+
     function testGetIdentifier()
     {
         $this->assertEquals(array('@rid'), $this->metadata->getIdentifier());
@@ -90,30 +90,30 @@ class ClassMetadataTest extends TestCase
     function testIsSingleValuedAssociation()
     {
         $this->assertEquals(true, $this->metadata->isSingleValuedAssociation('assoc'));
-        $this->assertEquals(false, $this->metadata->isSingleValuedAssociation('multiassoc')); 
+        $this->assertEquals(false, $this->metadata->isSingleValuedAssociation('multiassoc'));
     }
 
     function testIsCollectionValuedAssociation()
     {
         $this->assertEquals(false, $this->metadata->isCollectionValuedAssociation('assoc'));
-        $this->assertEquals(true, $this->metadata->isCollectionValuedAssociation('multiassoc'));       
+        $this->assertEquals(true, $this->metadata->isCollectionValuedAssociation('multiassoc'));
     }
-    
+
     function testGetFieldNames()
     {
         $this->assertEquals(array('field'), $this->metadata->getFieldNames());
     }
-    
+
     function testgetAssociationNames()
     {
         $this->assertEquals(array('assoc', 'multiassoc'), $this->metadata->getAssociationNames());
     }
-    
+
     function testgetTypeOfField()
     {
         $this->assertEquals('string', $this->metadata->getTypeOfField('field'));
     }
-    
+
     function testgetAssociationTargetClass()
     {
         $this->assertEquals(null, $this->metadata->getAssociationTargetClass('OMNOMNOMNOMN'));

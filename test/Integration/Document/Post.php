@@ -67,4 +67,3 @@ class Post
         $this->comments = $city;
     }
 }
-

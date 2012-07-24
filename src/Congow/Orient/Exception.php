@@ -26,4 +26,3 @@ class Exception extends \Exception
         $this->message = $message;
     }
 }
-

@@ -12,8 +12,8 @@
 /**
  * Interface Algorithm
  *
- * @package     
- * @subpackage  
+ * @package     Congow\Orient
+ * @subpackage  Contract
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -23,9 +23,8 @@ interface Algorithm
 {
     /**
      * Solves the algorithm and returns all possible results.
-     * 
+     *
      * @return mixed
      */
     public function solve();
 }
-

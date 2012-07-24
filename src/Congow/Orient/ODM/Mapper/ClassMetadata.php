@@ -31,32 +31,32 @@ class ClassMetadata implements DoctrineMetadata
     protected $mapper;
     private   $singleAssociations   = array('link');
     private   $multipleAssociations = array('linklist', 'linkset', 'linkmap');
-    
+
     /**
      * Instantiates a new Metadata for the given $className.
      *
      * @param string        $className
-     * @param DataMapper    $mapper 
+     * @param DataMapper    $mapper
      */
     public function  __construct($className, DataMapper $mapper)
     {
         $this->class  = $className;
         $this->mapper = $mapper;
     }
-    
+
     /**
      * Get fully-qualified class name of this persistent class.
-     * 
+     *
      * @return string
      */
     public function  getName()
     {
         return $this->class;
     }
-    
+
     /**
      * Gets the mapped identifier field name.
-     * 
+     *
      * The returned structure is an array of the identifier field names.
      *
      * @return array
@@ -76,7 +76,7 @@ class ClassMetadata implements DoctrineMetadata
         if (!$this->refClass) {
             $this->refClass = new \ReflectionClass($this->getName());
         }
-        
+
         return $this->refClass;
     }
 
@@ -94,7 +94,7 @@ class ClassMetadata implements DoctrineMetadata
     /**
      * Checks if the given field is a mapped property for this class.
      *
-     * @param string $fieldName 
+     * @param string $fieldName
      * @return boolean
      */
     public function  hasField($fieldName)
@@ -134,12 +134,12 @@ class ClassMetadata implements DoctrineMetadata
     {
         return $this->isValuedAssociation($fieldName, $this->multipleAssociations);
     }
-    
+
     /**
      * A numerically indexed list of field names of this persistent class.
-     * 
+     *
      * This array includes identifier fields if present on this class.
-     * 
+     *
      * @return Array
      */
     public function  getFieldNames()
@@ -149,15 +149,15 @@ class ClassMetadata implements DoctrineMetadata
         foreach ($this->getFields() as $field) {
             $names[] = $field->name;
         }
-        
+
         return $names;
     }
-    
+
     /**
      * A numerically indexed list of association names of this persistent class.
-     * 
+     *
      * This array includes identifier associations if present on this class.
-     * 
+     *
      * @return Array
      */
     public function  getAssociationNames()
@@ -167,16 +167,16 @@ class ClassMetadata implements DoctrineMetadata
         foreach ($this->getAssociations() as $field) {
             $names[] = $field->name;
         }
-        
+
         return $names;
     }
-    
+
     /**
      * Returns a type name of this field.
-     * 
+     *
      * This type names can be implementation specific but should at least include the php types:
      * integer, string, boolean, float/double, datetime.
-     * 
+     *
      * @param   string $fieldName
      * @return  string
      */
@@ -185,13 +185,13 @@ class ClassMetadata implements DoctrineMetadata
         if ($field = $this->getField($fieldName)) {
             return $field->type;
         }
-        
+
         return null;
     }
-    
+
     /**
      * Returns the target class name of the given association.
-     * 
+     *
      * @param   string $assocName
      * @return  string
      */
@@ -199,12 +199,12 @@ class ClassMetadata implements DoctrineMetadata
     {
         return null;
     }
-    
+
     /**
      * Returns the association mapped for the given $field.
      *
      * @param   string $field
-     * @return  string 
+     * @return  string
      */
     protected function getAssociation($field)
     {
@@ -213,10 +213,10 @@ class ClassMetadata implements DoctrineMetadata
                 return $association;
             }
         }
-        
+
         return null;
-    }    
-    
+    }
+
     /**
      * Returns all the possible associations mapped in the introspected class.
      *
@@ -225,7 +225,7 @@ class ClassMetadata implements DoctrineMetadata
     protected function getAssociations()
     {
         $associations = array();
-        
+
         foreach ($this->getReflectionClass()->getProperties() as $refProperty) {
             $association = $this->getMapper()->getPropertyAnnotation($refProperty);
 
@@ -233,7 +233,7 @@ class ClassMetadata implements DoctrineMetadata
                 $associations[] = $association;
             }
         }
-        
+
         return $associations;
     }
 
@@ -241,7 +241,7 @@ class ClassMetadata implements DoctrineMetadata
      * Returns all the possible association types.
      * e.g. linklist, linkmap, link...
      *
-     * @return Array 
+     * @return Array
      */
     protected function getAssociationTypes()
     {
@@ -255,13 +255,13 @@ class ClassMetadata implements DoctrineMetadata
      * @return  Annotations\Property
      */
     protected function getField($field)
-    {        
+    {
         foreach ($this->getFields() as $annotatedField) {
             if ($annotatedField->name === $field) {
                 return $annotatedField;
             }
         }
-        
+
         return null;
     }
 
@@ -276,7 +276,7 @@ class ClassMetadata implements DoctrineMetadata
 
         foreach ($this->getReflectionClass()->getProperties() as $refProperty) {
             $field = $this->getMapper()->getPropertyAnnotation($refProperty);
-         
+
             if ($field && !in_array($field->type, $this->getAssociationTypes())) {
                  $fields[] = $field;
             }
@@ -284,7 +284,7 @@ class ClassMetadata implements DoctrineMetadata
 
          return $fields;
     }
-    
+
     /**
      * Checks whether the $field is mapped as an association.
      *
@@ -295,12 +295,12 @@ class ClassMetadata implements DoctrineMetadata
     protected function isValuedAssociation($field, Array $associationTypes)
     {
         $association = $this->getAssociation($field);
-        
+
         if ($association) {
             return in_array($association->type, $associationTypes);
         }
     }
-    
+
     /**
      * Returns the mapper associated with this Metadata.
      *
@@ -311,4 +311,3 @@ class ClassMetadata implements DoctrineMetadata
         return $this->mapper;
     }
 }
-

@@ -31,13 +31,13 @@ class Repository implements ObjectRepository
     protected $manager;
     protected $mapper;
     protected $className;
-    
+
     /**
      * Instantiates a new repository.
      *
      * @param type $className
      * @param Manager $manager
-     * @param Mapper $mapper 
+     * @param Mapper $mapper
      */
     public function __construct($className, Manager $manager, Mapper $mapper)
     {
@@ -45,7 +45,7 @@ class Repository implements ObjectRepository
         $this->className = $className;
         $this->mapper    = $mapper;
     }
-    
+
     /**
      * Finds an object by its primary key / identifier.
      *
@@ -55,18 +55,18 @@ class Repository implements ObjectRepository
     public function find($rid)
     {
         $document   = $this->getManager()->find($rid);
-        
+
         if ($document) {
             if ($this->contains($document)) {
                 return $document;
             }
-            
+
             $message = "You are asking to find record $rid through the repository ";
             $message .= "{$this->getClassName()} but the document belongs to another repository (" . get_class($document) . ")";
-            
+
             throw new Exception($message);
         }
-        
+
         return null;
     }
 
@@ -96,18 +96,18 @@ class Repository implements ObjectRepository
     public function findBy(array $criteria, array $orderBy = array(), $limit = null, $offset = null)
     {
         $results = array();
-        
+
         foreach ($this->getOrientClasses() as $mappedClass) {
             $query      = new Query(array($mappedClass));
-            
+
             foreach ($criteria as $key => $value) {
                 $query->where("$key = ?", $value);
             }
-            
+
             foreach ($orderBy as $key => $order) {
                 $query->orderBy("$key $order");
             }
-            
+
             if ($limit) {
                 $query->limit($limit);
             }
@@ -119,10 +119,10 @@ class Repository implements ObjectRepository
 Problems executing the query "{$query->getRaw()}".
 The server returned $collection, while it should be an Array.
 EOT;
-              
+
                 throw new Exception($message);
             }
-            
+
             $results = array_merge($results, $collection);
         }
 
@@ -138,14 +138,14 @@ EOT;
     public function findOneBy(array $criteria)
     {
         $documents = $this->findBy($criteria, array(), 1);
-        
+
         if (is_array($documents) && count($documents)) {
             return array_shift($documents);
         }
-        
+
         return null;
     }
-    
+
     /**
      * Verifies if the $document should belog to this repository.
      *
@@ -156,7 +156,7 @@ EOT;
     {
         return in_array($this->getClassName(), class_parents(get_class($document)));
     }
-    
+
     /**
      * Returns the POPO class associated with this repository.
      *
@@ -166,7 +166,7 @@ EOT;
     {
         return $this->className;
     }
-    
+
     /**
      * Returns the manager associated with this repository.
      *
@@ -176,7 +176,7 @@ EOT;
     {
         return $this->manager;
     }
-    
+
     /**
      * Returns the mapper associated with this repository.
      *
@@ -186,17 +186,17 @@ EOT;
     {
         return $this->mapper;
     }
-    
+
     /**
      * Returns the OrientDB classes which are mapper by the
      * Repository's $className.
      *
-     * @return Array 
+     * @return Array
      */
     protected function getOrientClasses()
     {
         $classAnnotation = $this->getMapper()->getClassAnnotation($this->getClassName());
-        
+
         return explode(',', $classAnnotation->class);
     }
 }

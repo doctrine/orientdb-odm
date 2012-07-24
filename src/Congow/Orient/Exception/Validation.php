@@ -28,8 +28,7 @@ class Validation extends Exception
         if (is_array($value)) {
             $value = implode(', ', $value);
         }
-        
+
         $this->message = sprintf('Validation of "%s" as %s failed', $value, $class);
     }
 }
-

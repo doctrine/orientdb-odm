@@ -26,22 +26,22 @@ class Menu
      * @ODM\Property(type="string")
      */
     protected $title;
-    
+
     public function setTitle($title)
     {
         $this->title = $title;
     }
-    
+
     public function getTitle()
     {
         return $this->title;
     }
-    
+
     public function getLinks()
     {
         return $this->links;
     }
-    
+
     public function setLinks($links)
     {
         $this->links = $links;

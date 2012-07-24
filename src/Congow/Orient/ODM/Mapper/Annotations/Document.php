@@ -25,25 +25,23 @@ namespace Congow\Orient\ODM\Mapper\Annotations;
 class Document extends \Doctrine\Common\Annotations\Annotation
 {
     public $class;
-    
-    
+
     /**
      * Given a $Congow\OrientClass, checks wheter this annotation matches it.
-     * 
+     *
      * @param  string   $Congow\OrientClass
      * @return boolean
      */
     public function hasMatchingClass($orientClass)
-    {   
+    {
         $classes = explode(',', $this->class);
-        
+
         foreach ($classes as $class) {
-            
             if ($class === $orientClass ) {
                 return true;
             }
         }
-        
+
         return false;
     }
 }
