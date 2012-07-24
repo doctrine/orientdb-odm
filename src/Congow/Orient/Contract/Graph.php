@@ -12,7 +12,7 @@
 /**
  * Interface Graph
  *
- * @package     Orient
+ * @package     Congow\Orient
  * @subpackage  Contract
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
@@ -22,16 +22,16 @@ namespace Congow\Orient\Contract;
 use Congow\Orient\Graph\Vertex;
 
 interface Graph
-{    
+{
     /**
      * Adds a new vertex to the current graph.
      *
-     * @param   Graph\Vertex $vertex 
+     * @param   Graph\Vertex $vertex
      * @return  Congow\Orient\Graph
      * @throws  Congow\Orient\Exception
      */
     public function add(Vertex $vertex);
-    
+
     /**
      * Returns the vertex identified with the $id associated to this graph.
      *
@@ -40,7 +40,7 @@ interface Graph
      * @throws  Congow\Orient\Exception
      */
     public function getVertex($id);
-    
+
     /**
      * Returns all the vertices that belong to this graph.
      *

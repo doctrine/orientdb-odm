@@ -12,8 +12,8 @@
 /**
  * Class Comment
  *
- * @package     
- * @subpackage  
+ * @package
+ * @subpackage
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author      David Funaro <ing.davidino@gmail.com>
  */
@@ -28,4 +28,3 @@ use Congow\Orient\ODM\Mapper\Annotations as ODM;
 class Comment
 {
 }
-

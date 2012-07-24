@@ -12,8 +12,8 @@
 /**
  * Class Value
  *
- * @package     
- * @subpackage  
+ * @package
+ * @subpackage
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -25,17 +25,17 @@ use Congow\Orient\ODM\Proxy\AbstractProxy;
 class Value extends AbstractProxy
 {
     protected $value;
-    
+
     /**
      * Sets the value of the proxy.
      *
-     * @param mixed $value 
+     * @param mixed $value
      */
     public function __construct($value)
     {
         $this->value = $value;
     }
-    
+
     /**
      * Returns the value associated with this proxy.
      *
@@ -46,4 +46,3 @@ class Value extends AbstractProxy
         return $this->value;
     }
 }
-

@@ -26,11 +26,17 @@ class HttpBindingResult implements HttpBindingResultInterface
 {
     protected $response;
 
+    /**
+     * @param mixed $response Original response object
+     */
     public function __construct($response)
     {
         $this->response = $response;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getResult()
     {
         if (!$this->isValid()) {
@@ -44,11 +50,17 @@ class HttpBindingResult implements HttpBindingResultInterface
         return isset($json->result) ? $json->result : null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isValid()
     {
         return in_array($this->response->getStatusCode(), $this->response->getValidStatusCodes());
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getInnerResponse()
     {
         return $this->response;

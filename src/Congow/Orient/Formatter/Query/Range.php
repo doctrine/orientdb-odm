@@ -30,9 +30,7 @@ class Range extends Query implements TokenFormatter
         $range = array();
 
         foreach ($values as $rid) {
-            $value = Rid::format(array($rid));
-
-            if ($value) {
+            if ($value = Rid::format(array($rid))) {
                 $range[] = $value;
             }
         }

@@ -12,8 +12,8 @@
 /**
  * Class Rid
  *
- * @package
- * @subpackage
+ * @package     Congow\Orient
+ * @subpackage  Validator
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -28,7 +28,7 @@ class Rid extends Validator
     {
         if (is_string($rid) && strlen($rid)) {
             if ($rid[0] === "#") {
-              $rid = substr($rid, 1);
+                $rid = substr($rid, 1);
             }
 
             $parts  = explode(':', $rid);
@@ -41,4 +41,3 @@ class Rid extends Validator
         throw new ValidationException($rid, __CLASS__);
     }
 }
-

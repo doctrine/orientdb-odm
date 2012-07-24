@@ -23,4 +23,3 @@ class Inflector
 {
   public static function camelize($string);
 }
-

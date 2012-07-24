@@ -12,8 +12,8 @@
 /**
  * Class Command
  *
- * @package     
- * @subpackage  
+ * @package
+ * @subpackage
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author      David Funaro <ing.davidino@gmail.com>
  */
@@ -27,28 +27,28 @@ class Command
 {
     protected $time;
     protected $elapsed;
-    
+
     public function run()
     {
         $this->startTime();
         for ($x = 0; $x < 100000; $x++) {
             new \Congow\Orient\Query\Command\Credential\Grant('OMN');
         }
-        
+
         $this->stop();
         $this->output();
     }
-    
+
     protected function startTime()
     {
         $this->time = microtime(true);
     }
-    
+
     protected function stop()
     {
         $this->elapsed = microtime(true) - $this->time;
     }
-    
+
     protected function output()
     {
         echo "Elapsed: \n{$this->elapsed}\n";
@@ -58,4 +58,3 @@ class Command
 $benchmark = new Command();
 
 $benchmark->run();
-

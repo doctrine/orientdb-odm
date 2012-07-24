@@ -29,11 +29,11 @@ class Vertex implements VertexInterface
     protected $potential        = null;
     protected $potentialFrom    = null;
     protected $passed           = false;
-    
+
     /**
      * Instantiates a new vertex, requiring a ID to avoid collisions.
      *
-     * @param mixed $id 
+     * @param mixed $id
      */
     public function __construct($id)
     {
@@ -45,7 +45,7 @@ class Vertex implements VertexInterface
      * A $distance, to balance the connection, can be specified.
      *
      * @param Vertex $vertex
-     * @param integer $distance 
+     * @param integer $distance
      */
     public function connect(VertexInterface $vertex, $distance = 1)
     {
@@ -61,7 +61,7 @@ class Vertex implements VertexInterface
     {
         return $this->connections;
     }
-    
+
     /**
      * Returns the identifier of this vertex.
      *
@@ -71,7 +71,7 @@ class Vertex implements VertexInterface
     {
         return $this->id;
     }
-    
+
     /**
      * Returns the most adjacent connection's ID of the current vertex,
      * null if the vertex has no connections.
@@ -82,10 +82,10 @@ class Vertex implements VertexInterface
     {
         $connections = array_flip($this->getConnections());
         sort($connections);
-        
+
         return count($connections) ? array_shift($connections) : null;
     }
-    
+
     /**
      * Returns vertex's potential.
      *
@@ -95,7 +95,7 @@ class Vertex implements VertexInterface
     {
         return $this->potential;
     }
-    
+
     /**
      * Returns the vertex which gave to the current vertex its potential.
      *
@@ -105,7 +105,7 @@ class Vertex implements VertexInterface
     {
         return $this->potentialFrom;
     }
-    
+
     /**
      * Returns whether the vertex has passed or not.
      *
@@ -115,7 +115,7 @@ class Vertex implements VertexInterface
     {
         return $this->passed;
     }
-    
+
     /**
      * Marks this vertex as passed, meaning that, in the scope of a graph, he
      * has already been processed in order to calculate its potential.
@@ -124,26 +124,26 @@ class Vertex implements VertexInterface
     {
         $this->passed = true;
     }
-    
+
     /**
      * Sets the potential for the vertex, if the vertex has no potential or the
      * one it has is higher than the new one.
      *
      * @param   integer $potential
-     * @param   Vertex $from 
+     * @param   Vertex $from
      * @return  boolean
      */
     public function setPotential($potential, VertexInterface $from)
     {
         $potential = (int) $potential;
-        
+
         if (!$this->getPotential() || $potential < $this->getPotential()) {
             $this->potential        = $potential;
             $this->potentialFrom    = $from;
-            
+
             return true;
         }
-        
+
         return false;
     }
 }

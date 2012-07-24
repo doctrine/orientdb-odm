@@ -12,8 +12,8 @@
 /**
  * Class Invalid
  *
- * @package     Orient
- * @subpackage  Foundation
+ * @package     Congow\Orient
+ * @subpackage  Exception
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 

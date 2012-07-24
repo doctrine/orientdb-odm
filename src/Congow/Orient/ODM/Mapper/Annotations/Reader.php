@@ -37,22 +37,22 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 class Reader implements ReaderInterface
 {
     protected $reader = null;
-    
+
     /**
      * Instantiates a new annotation reader, optionally injecting a cache
      * mechanism for it.
      * This reader is basically a proxy wrapping Doctrine's one.
      *
-     * @param Cache $cacheReader 
+     * @param Cache $cacheReader
      */
     public function __construct(Cache $cacheReader = null)
     {
         if (!$cacheReader) {
             $cacheReader = $this->createCacheProvider();
         }
-        
+
         $this->reader = new CachedReader(new AnnotationReader, $cacheReader);
-        
+
         AnnotationRegistry::registerAutoloadNamespace("Congow\Orient");
         AnnotationRegistry::registerFile( __DIR__ . '/Document.php');
         AnnotationRegistry::registerFile( __DIR__ . '/Property.php');
@@ -60,7 +60,7 @@ class Reader implements ReaderInterface
 
     /**
      * Gets the annotations applied to a class.
-     * 
+     *
      * @param ReflectionClass $class The ReflectionClass of the class from which
      * the class annotations should be read.
      * @return array An array of Annotations.
@@ -72,7 +72,7 @@ class Reader implements ReaderInterface
 
     /**
      * Gets a class annotation.
-     * 
+     *
      * @param ReflectionClass $class The ReflectionClass of the class from which
      * the class annotations should be read.
      * @param string $annotation The name of the annotation.
@@ -82,10 +82,10 @@ class Reader implements ReaderInterface
     {
         return $this->getReader()->getClassAnnotation($class, $annotation);
     }
-    
+
     /**
      * Gets the annotations applied to a property.
-     * 
+     *
      * @param string|ReflectionProperty $property The name or ReflectionProperty of the property
      * from which the annotations should be read.
      * @return array An array of Annotations.
@@ -94,10 +94,10 @@ class Reader implements ReaderInterface
     {
         return $this->getReader()->getPropertyAnnotations($property);
     }
-    
+
     /**
      * Gets a property annotation.
-     * 
+     *
      * @param ReflectionProperty $property
      * @param string $annotation The name of the annotation.
      * @return The Annotation or null, if the requested annotation does not exist.
@@ -106,10 +106,10 @@ class Reader implements ReaderInterface
     {
         return $this->getReader()->getPropertyAnnotation($property, $annotation);
     }
-    
+
     /**
      * Gets the annotations applied to a method.
-     * 
+     *
      * @param ReflectionMethod $property The name or ReflectionMethod of the method from which
      * the annotations should be read.
      * @return array An array of Annotations.
@@ -118,10 +118,10 @@ class Reader implements ReaderInterface
     {
         return $this->getReader()->getMethodAnnotations($method);
     }
-    
+
     /**
      * Gets a method annotation.
-     * 
+     *
      * @param ReflectionMethod $method
      * @param string $annotation The name of the annotation.
      * @return The Annotation or null, if the requested annotation does not exist.
@@ -130,7 +130,7 @@ class Reader implements ReaderInterface
     {
         return $this->getReader()->getMethodAnnotation($method, $annotation);
     }
-    
+
     /**
      * Returns the cached reader associated with this reader.
      *

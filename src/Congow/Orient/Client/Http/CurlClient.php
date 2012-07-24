@@ -67,7 +67,8 @@ class CurlClient
      *
      * @return string
      */
-    protected function getRequestCookies() {
+    protected function getRequestCookies()
+    {
         $pairs = array();
 
         foreach ($this->cookies as $k => $v) {

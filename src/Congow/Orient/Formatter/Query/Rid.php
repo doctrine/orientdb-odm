@@ -29,7 +29,7 @@ class Rid extends Query implements TokenFormatter
     public static function format(array $values)
     {
         $validator = new RidValidator();
-        
+
         $values = array_filter($values, function ($arr) use ($validator) {
             return $validator->check($arr, true);
         });

@@ -33,7 +33,6 @@ class StubExceptionedCommand extends Query\Command
 
 class NullCommand extends Query\Command
 {
-    
 }
 
 class Command extends TestCase
@@ -48,7 +47,7 @@ class Command extends TestCase
         $command = new NullCommand;
         $this->assertEmpty($command->getRaw());
     }
-    
+
     /**
      * @expectedException Congow\Orient\Exception
      */
@@ -127,7 +126,7 @@ class Command extends TestCase
         $statement = 'WHERE i loves "ME, AND YOU"';
 
         $this->assertCommandGives($statement, $this->command->getRaw());
-        
+
         $this->command->where("i loves ?", "ME, OR YOU");
         $statement = 'WHERE i loves "ME, OR YOU"';
 

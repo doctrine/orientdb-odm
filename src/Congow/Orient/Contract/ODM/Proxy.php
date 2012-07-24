@@ -12,7 +12,7 @@
 /**
  * Interface Proxy
  *
- * @package     Orient
+ * @package     Congow\Orient
  * @subpackage  Contract
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
@@ -23,12 +23,12 @@ interface Proxy
 {
     /**
      * Method used to serve proxies to POPOs.
-     * 
+     *
      * POPO implement lazy loading by calling:
-     * 
+     *
      * <code>
      *   $popo->getLazy()
-     * 
+     *
      *   function getLazy()
      *   {
      *     return call_user_func($this->lazy); // fires __invoke
@@ -37,4 +37,3 @@ interface Proxy
      */
     public function __invoke();
 }
-

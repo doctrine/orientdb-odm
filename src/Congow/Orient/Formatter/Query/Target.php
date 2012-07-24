@@ -27,9 +27,8 @@ class Target extends Query implements TokenFormatter
     public static function format(array $values)
     {
         $values = self::filterRegularChars($values);
-        $count = count($values);
 
-        if ($count) {
+        if ($count = count($values)) {
             if ($count > 1) {
                 return "[" . self::implode($values) . "]";
             }

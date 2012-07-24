@@ -32,17 +32,17 @@ class Dijkstra implements AlgorithmInterface
     protected $graph            = null;
     protected $paths            = array();
     protected $solution         = false;
-    
+
     /**
      * Instantiates a new algorithm, requiring a graph to work with.
      *
-     * @param Graph $graph 
+     * @param Graph $graph
      */
     public function __construct(Graph $graph)
     {
-        $this->graph  = $graph;
+        $this->graph = $graph;
     }
-    
+
     /**
      * Returns the distance between the starting and the ending point.
      *
@@ -53,13 +53,13 @@ class Dijkstra implements AlgorithmInterface
         if (!$this->isSolved()) {
             $message = "Cannot calculate the distance of a non-solved algorithm:\n";
             $message .= "Did you forget to call ->solve() ?";
-            
+
             throw new Exception\Logic($message);
         }
-        
+
         return $this->getEndingVertex()->getPotential();
     }
-    
+
     /**
      * Gets the vertex which we are pointing to.
      *
@@ -69,25 +69,24 @@ class Dijkstra implements AlgorithmInterface
     {
         return $this->endingVertex;
     }
-    
+
     /**
      * Returns the solution in a human-readable style.
-     * 
+     *
      * @return string
      */
     public function getLiteralShortestPath()
     {
         $path = $this->solve();
-        
         $literal = '';
-        
+
         foreach ($path as $p) {
             $literal .= "{$p->getId()} - ";
         }
-        
+
         return substr($literal, 0, count($literal) - 4);
     }
-    
+
     /**
      * Reverse-calculates the shortest path of the graph thanks the potentials
      * stored in the vertices.
@@ -95,43 +94,43 @@ class Dijkstra implements AlgorithmInterface
      * @return Array
      */
     public function getShortestPath()
-    {   
+    {
         $path   = array();
         $vertex = $this->getEndingVertex();
-        
+
         while ($vertex->getId() != $this->getStartingVertex()->getId()) {
             $path[] = $vertex;
             $vertex = $vertex->getPotentialFrom();
         }
-        
+
         $path[] = $this->getStartingVertex();
-        
+
         return array_reverse($path);
     }
-    
+
     /**
      * Retrieves the vertex which we are starting from to calculate the shortest path.
      *
      * @return Vertex
      */
     public function getStartingVertex()
-    {        
+    {
         return $this->startingVertex;
     }
-    
+
     /**
      * Sets the vertex which we are pointing to.
-     * 
+     *
      * @param Vertex $vertex
      */
     public function setEndingVertex(Vertex $vertex)
     {
         $this->endingVertex = $vertex;
     }
-    
+
     /**
      * Sets the vertex which we are starting from to calculate the shortest path.
-     * 
+     *
      * @param Vertex $vertex
      */
     public function setStartingVertex(Vertex $vertex)
@@ -139,7 +138,7 @@ class Dijkstra implements AlgorithmInterface
         $this->paths[] = array($vertex);
         $this->startingVertex = $vertex;
     }
-    
+
     /**
      * Solves the algorithm and returns the shortest path as an array.
      *
@@ -149,54 +148,54 @@ class Dijkstra implements AlgorithmInterface
     {
         if (!$this->getStartingVertex() || !$this->getEndingVertex()) {
             $message = "Cannot solve the algorithm without both starting and ending vertices";
-            
+
             throw new Exception\Logic($message);
         }
-        
+
         $this->calculatePotentials($this->getStartingVertex());
         $this->solution = $this->getShortestPath();
-        
+
         return $this->solution;
     }
-    
+
     /**
      * Recursively calculates the potentials of the graph, from the
      * starting point you specify with ->setStartingVertex(), traversing
      * the graph due to Vertex's $connections attribute.
      *
-     * @param Vertex $vertex 
+     * @param Vertex $vertex
      */
     protected function calculatePotentials(Vertex $vertex)
-    {                
+    {
         foreach ($vertex->getConnections() as $id => $distance) {
             $v = $this->getGraph()->getVertex($id);
             $v->setPotential($vertex->getPotential() + $distance, $vertex);
-            
+
             foreach ($this->getPaths() as $path) {
                 $count = count($path);
-                
+
                 if ($path[$count - 1]->getId() == $vertex->getId()) {
                     $this->paths[] = array_merge($path, array($v));
                 }
             }
         }
-        
+
         $vertex->markPassed();
         $mostAdjacentConnectionId = $vertex->getMostAdjacentConnectionId();
-        
+
         if ($mostAdjacentConnectionId && $mostAdjacentConnectionId != $this->getEndingVertex()->getId()) {
             $vertex = $this->getGraph()->getVertex($mostAdjacentConnectionId);
-            
+
             $this->calculatePotentials($vertex);
         }
-        
+
         foreach ($this->getGraph()->getVertices() as $vertex) {
             if (!$vertex->isPassed()) {
                 $this->calculatePotentials($vertex);
             }
         }
     }
-    
+
     /**
      * Returns the graph associated with this algorithm instance.
      *
@@ -206,7 +205,7 @@ class Dijkstra implements AlgorithmInterface
     {
         return $this->graph;
     }
-    
+
     /**
      * Returns the possible paths registered in the graph.
      *
@@ -216,7 +215,7 @@ class Dijkstra implements AlgorithmInterface
     {
         return $this->paths;
     }
-    
+
     /**
      * Checks wheter the current algorithm has been solved or not.
      *
@@ -227,4 +226,3 @@ class Dijkstra implements AlgorithmInterface
         return (bool) $this->solution;
     }
 }
-
