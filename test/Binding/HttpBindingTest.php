@@ -18,7 +18,7 @@ use Congow\Orient\Binding\BindingParameters;
 use Congow\Orient\Binding\Adapter\CurlClientAdapter;
 use Congow\Orient\Client\Http\CurlClient;
 
-class BindingTest extends TestCase
+class HttpBindingTest extends TestCase
 {
     public function testConnectToDatabase()
     {
