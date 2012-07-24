@@ -45,14 +45,6 @@ interface Vertex
     public function getId();
     
     /**
-     * Returns the most adjacent connection's ID of the current vertex,
-     * null if the vertex has no connections.
-     *
-     * @return mixed
-     */
-    public function getMostAdjacentConnectionId();
-    
-    /**
      * Returns vertex's potential.
      *
      * @return integer
