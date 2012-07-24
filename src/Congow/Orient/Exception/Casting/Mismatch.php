@@ -23,6 +23,4 @@ use Congow\Orient\Exception;
 
 class Mismatch extends Exception
 {
-
 }
-

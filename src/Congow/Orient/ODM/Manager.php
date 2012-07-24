@@ -110,24 +110,20 @@ class Manager implements ObjectManager
      */
     public function find($rid, $fetchPlan = null)
     {
-        $validator  = new RidValidator;
-        $rid        = $validator->check($rid);
+        $validator = new RidValidator;
+        $rid       = $validator->check($rid);
 
         if ($fetchPlan === false) {
             return new Proxy($this, $rid);
         }
 
-        try
-        {
+        try {
             return $this->doFind($rid, $fetchPlan);
-        }
-        catch (UnmappedClass $e) {
+        } catch (UnmappedClass $e) {
             throw $e;
-        }
-        catch (Mismatch $e) {
+        } catch (Mismatch $e) {
             throw $e;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }

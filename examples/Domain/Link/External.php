@@ -22,17 +22,17 @@ class External extends \Domain\Link
      * @ODM\Property(type="string")
      */
     protected $url;
-    
+
     public function getLink()
     {
         return $this->getUrl();
     }
-    
+
     public function setUrl($url)
     {
         $this->url = $url;
     }
-    
+
     public function getUrl()
     {
         return $this->url;

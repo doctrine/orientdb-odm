@@ -12,8 +12,8 @@
 /**
  * Class Logic
  *
- * @package     
- * @subpackage  
+ * @package     Congow\Orient
+ * @subpackage  Exception
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 namespace Congow\Orient\Exception;

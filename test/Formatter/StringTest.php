@@ -18,11 +18,6 @@ use Congow\Orient\Formatter\String;
 
 class StringTest extends TestCase
 {
-    public function setup()
-    {
-
-    }
-
     public function testConvertPathToClassName()
     {
         $file      = "./test/ODM/Document/Stub/City.php";
@@ -40,5 +35,4 @@ class StringTest extends TestCase
         $className = String::convertPathToClassName($file, $namespace);
         $this->assertEquals('\test\ODM\Document\Stub\City', $className);
     }
-
 }

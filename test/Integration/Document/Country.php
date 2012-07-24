@@ -32,4 +32,3 @@ class Country
 	 */
 	public $name;
 }
-

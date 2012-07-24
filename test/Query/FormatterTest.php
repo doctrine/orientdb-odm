@@ -3,8 +3,8 @@
 /**
  * FormatterTest class
  *
- * @package    
- * @subpackage 
+ * @package
+ * @subpackage
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -18,7 +18,7 @@ class FormatterTest extends TestCase
     public function testTokenizingAString()
     {
         $formatter = new Formatter\Query();
-        
+
         $this->assertEquals(':Clue', $formatter::tokenize('Clue'));
         $this->assertEquals('::Clue', $formatter::tokenize(':Clue'));
     }
@@ -26,7 +26,7 @@ class FormatterTest extends TestCase
     public function testUntokenizingAString()
     {
         $formatter = new Formatter\Query();
-        
+
         $this->assertEquals('Clue', $formatter::untokenize(':Clue'));
         $this->assertEquals(':Clue', $formatter::untokenize('::Clue'));
     }
@@ -37,7 +37,7 @@ class FormatterTest extends TestCase
             'a;', 'b--', 'c"'
         );
         $formatter = new Formatter\Query\Regular();
-        
+
         $this->assertEquals('a, b, c', $formatter::format($projections));
         $this->assertEquals('a', $formatter::format(array('a')));
         $this->assertEquals('', $formatter::format(array()));
@@ -50,7 +50,7 @@ class FormatterTest extends TestCase
             'a;', 'b--', 'c"'
         );
         $formatter = new Formatter\Query\Regular();
-        
+
         $this->assertEquals('a, b, c', $formatter::format($property));
         $this->assertEquals('a', $formatter::format(array('a')));
         $this->assertEquals('', $formatter::format(array()));
@@ -151,7 +151,7 @@ class FormatterTest extends TestCase
             'a;', 'b--', 'c"'
         );
         $formatter = new Formatter\Query\Regular();
-        
+
         $this->assertEquals('a, b, c', $formatter::format($inverse));
         $this->assertEquals('a', $formatter::format(array('a')));
         $this->assertEquals('', $formatter::format(array()));

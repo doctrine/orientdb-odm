@@ -30,20 +30,20 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 class Factory implements ClassMetadataFactory
 {
     protected $mapper;
-    
+
     /**
      * Instantiates a new Metadata factory, injecting a Mapper which is used to
      * istantiate new Metadatas.
      *
-     * @param Mapper $mapper 
+     * @param Mapper $mapper
      */
     public function  __construct(Mapper $mapper)
     {
         $this->mapper = $mapper;
     }
-    
+
     protected $metadata = array();
-    
+
     /**
      * @to implement and test
      */
@@ -51,7 +51,7 @@ class Factory implements ClassMetadataFactory
     {
         return $this->metadata;
     }
-    
+
     /**
      * @to implement and test
      */
@@ -61,10 +61,10 @@ class Factory implements ClassMetadataFactory
             $metadata = new ClassMetadata($className, $this->getMapper());
             $this->setMetadataFor($className, $metadata);
         }
-        
+
         return $this->metadata[$className];
     }
-    
+
     /**
      * @to implement and test
      */
@@ -72,7 +72,7 @@ class Factory implements ClassMetadataFactory
     {
         return isset($this->metadata[$className]);
     }
-    
+
     /**
      * Whether the class with the specified name should have its metadata loaded.
      * This is only the case if it is either mapped directly or as a
@@ -86,7 +86,7 @@ class Factory implements ClassMetadataFactory
     {
         throw new \Exception();
     }
-    
+
     /**
      * @to implement and test
      */
@@ -94,8 +94,8 @@ class Factory implements ClassMetadataFactory
     {
         $this->metadata[$className] = $metadata;
     }
-    
-    
+
+
     /**
      * Returns the mapper associated with this Factory.
      *
@@ -106,4 +106,3 @@ class Factory implements ClassMetadataFactory
         return $this->mapper;
     }
 }
-

@@ -20,23 +20,23 @@ class Binary implements Contract\Protocol\Adapter
         $this->orient->connect('admin', 'admin');
         $this->orient->DBOpen('demo', 'admin', 'admin');
     }
-    
+
     public function execute($sql)
     {
         $result = $this->orient->select($sql);
-        
+
         $results = array();
-        
+
         foreach ($result as $record) {
             $record->parse();
             $results[] = (object) array('@class' => $record->className, 'street' => $record->data->street);
         }
-        
+
         $this->result = $results;
 
         return $results;
     }
-    
+
     public function getResult()
     {
         return $this->result;
@@ -44,11 +44,11 @@ class Binary implements Contract\Protocol\Adapter
 }
 
 
-$client             = new Http\Client\Curl();
-$protocolAdapter    = new Binary();
-$mapper             = new ODM\Mapper(__DIR__ . '/../proxies');
+$client          = new Http\Client\Curl();
+$protocolAdapter = new Binary();
+$mapper          = new ODM\Mapper(__DIR__ . '/../proxies');
 $mapper->setDocumentDirectories(array(__DIR__.'/../examples/' => 'Domain'));
-$manager            = new ODM\Manager($mapper, $protocolAdapter);
+$manager         = new ODM\Manager($mapper, $protocolAdapter);
 
 $addresses = $manager->getRepository('Domain\Address');
 
@@ -59,9 +59,9 @@ foreach ($addresses->findAll() as $address)
 
 
 /**
- * 
  *
-odino@brigitta:~/projects/Orient$ php examples/binary.php 
+ *
+odino@brigitta:~/projects/Orient$ php examples/binary.php
 Address: Piazza Navona, 1
 Address: Piazza Navona, 1
 Address: Piazza Navona, 1

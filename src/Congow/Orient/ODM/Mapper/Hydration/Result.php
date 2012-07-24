@@ -27,19 +27,19 @@ class Result
 {
     protected $document;
     protected $linkTracker;
-    
+
     /**
      * Instantiates a new hydration result.
      *
      * @param Proxy         $document
-     * @param LinkTracker   $linkTracker 
+     * @param LinkTracker   $linkTracker
      */
     public function __construct($document, LinkTracker $linkTracker)
     {
-      $this->document       = $document;
-      $this->linkTracker    = $linkTracker;
+      $this->document    = $document;
+      $this->linkTracker = $linkTracker;
     }
-    
+
     /**
      * Returns the document associated with this result.
      *
@@ -49,7 +49,7 @@ class Result
     {
         return $this->document;
     }
-    
+
     /**
      * Returns the LinkTracker associated with this result.
      *
@@ -60,4 +60,3 @@ class Result
         return $this->linkTracker;
     }
 }
-

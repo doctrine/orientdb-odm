@@ -31,4 +31,3 @@ interface Find
    */
   public function in(array $classes, $append);
 }
-

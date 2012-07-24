@@ -25,11 +25,11 @@ use Congow\Orient\Contract\Graph as GraphInterface;
 class Graph implements GraphInterface
 {
     protected $vertices = array();
-    
+
     /**
      * Adds a new vertex to the current graph.
      *
-     * @param   Graph\Vertex $vertex 
+     * @param   Graph\Vertex $vertex
      * @return  Congow\Orient\Graph
      * @throws  Congow\Orient\Exception
      */
@@ -38,16 +38,16 @@ class Graph implements GraphInterface
         foreach ($this->getVertices() as $oldVertex) {
             if ($oldVertex->getId() == $vertex->getId()) {
                 $message = 'Unable to insert multiple Vertices with the same ID in a Graph';
-                
+
                 throw new Exception($message);
             }
         }
-        
+
         $this->vertices[$vertex->getId()] = $vertex;
-        
+
         return $this;
     }
-    
+
     /**
      * Returns the vertex identified with the $id associated to this graph.
      *
@@ -58,16 +58,14 @@ class Graph implements GraphInterface
     public function getVertex($id)
     {
         $vertices = $this->getVertices();
-        
-        if (array_key_exists($id, $vertices)) {
-            return $vertices[$id];
+
+        if (!array_key_exists($id, $vertices)) {
+            throw new Exception("Unable to find $id in the Graph");
         }
-        
-        $message = sprintf('Unable to find %s in the Graph', $id);
-        
-        throw new Exception($message);
+
+        return $vertices[$id];
     }
-    
+
     /**
      * Returns all the vertices that belong to this graph.
      *
@@ -78,4 +76,3 @@ class Graph implements GraphInterface
         return $this->vertices;
     }
 }
-

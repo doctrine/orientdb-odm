@@ -23,11 +23,10 @@ interface Validator
 {
     /**
      * Cleans ad returns the polished $value.
-     * 
+     *
      * @param   mixed $value
      * @return  mixed
      * @throws  Congow\Orient\Exception\validation
      */
     public function check($value);
 }
-

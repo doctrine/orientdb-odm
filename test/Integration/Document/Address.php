@@ -12,8 +12,8 @@
 /**
  * Class Address
  *
- * @package     
- * @subpackage  
+ * @package
+ * @subpackage
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author      David Funaro <ing.davidino@gmail.com>
  */
@@ -31,15 +31,14 @@ class Address
      * @ODM\Property(type="link")
      */
     protected $city;
-    
+
     public function getCity()
     {
         return $this->city;
     }
-    
+
     public function setCity($city)
     {
         $this->city = $city;
     }
 }
-

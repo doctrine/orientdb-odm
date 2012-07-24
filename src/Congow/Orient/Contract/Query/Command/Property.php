@@ -14,7 +14,7 @@
  * to manipulate.
  *
  * @package    Congow\Orient
- * @subpackage Query
+ * @subpackage Contract
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 

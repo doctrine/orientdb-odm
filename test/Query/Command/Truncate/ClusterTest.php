@@ -22,7 +22,7 @@ class ClusterTest extends TestCase
 
         $this->assertCommandGives("TRUNCATE CLUSTER myClass", $truncate->getRaw());
     }
-    
+
     public function testTheNameArgumentIsFiltered()
     {
         $truncate = new TruncateCluster('myClass 54..');

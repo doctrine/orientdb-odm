@@ -146,8 +146,7 @@ class CurlClientResponse
 
             if (isset($this->headers[$header])) {
                 $this->headers[$header] .= "," . $value;
-            }
-            else {
+            } else {
                 $this->headers[$header] = trim($value, ' ');
             }
         }

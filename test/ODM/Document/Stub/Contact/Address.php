@@ -33,168 +33,168 @@ class Address
      * @ODM\Property(name="is_false", type="boolean")
      */
     protected $is__false;
-    
+
     /**
      * @ODM\Property(name="sample")
      */
     protected $example_property;
-    
+
     /**
      * @ODM\Property(name="capital", type="double")
      */
     protected $capital;
-    
+
     /**
      * @ODM\Property(name="negative_short", type="short")
      */
     protected $negative_short;
-    
+
     /**
      * @ODM\Property(name="positive_short", type="short")
      */
     protected $positive_short;
-    
+
     /**
      * @ODM\Property(name="invalid_short", type="short")
      */
     protected $invalid_short;
-    
+
     /**
      * @ODM\Property(name="negative_long", type="long")
      */
     protected $negative_long;
-    
+
     /**
      * @ODM\Property(name="positive_long", type="long")
      */
     protected $positive_long;
-    
+
     /**
      * @ODM\Property(name="invalid_long", type="long")
      */
     protected $invalid_long;
-    
+
     /**
      * @ODM\Property(name="negative_byte", type="byte")
      */
     protected $negative_byte;
-    
+
     /**
      * @ODM\Property(name="positive_byte", type="byte")
      */
     protected $positive_byte;
-    
+
     /**
      * @ODM\Property(name="invalid_byte", type="byte")
      */
     protected $invalid_byte;
-    
+
     /**
      * @ODM\Property(type="float")
      */
     protected $floating;
-    
+
     /**
      * @ODM\Property(type="binary")
      */
     protected $image;
-    
+
     /**
      * @ODM\Property(type="link")
      */
     protected $link;
-    
+
     /**
      * @ODM\Property(type="embedded")
      */
     protected $embedded;
 
-    
+
     /**
      * @ODM\Property(type="embedded_set", cast="link")
      */
     protected $embeddedset;
-    
+
     /**
      * @ODM\Property(type="embedded_list", cast="link")
      */
     protected $embeddedlist;
-    
+
     /**
      * @ODM\Property(type="embedded_list", cast="boolean")
      */
     protected $embeddedbooleans;
-    
+
     /**
      * @ODM\Property(type="embedded_list", cast="string")
      */
     protected $embeddedstrings;
-    
+
     /**
      * @ODM\Property(type="embedded_list", cast="integer")
      */
     protected $embeddedintegers;
-    
+
     /**
      * @ODM\Property(type="embedded_set", cast="boolean")
      */
     protected $embeddedsetbooleans;
-    
+
     /**
      * @ODM\Property(type="embedded_set", cast="string")
      */
     protected $embeddedsetstrings;
-    
+
     /**
      * @ODM\Property(type="embedded_set", cast="integer")
      */
     protected $embeddedsetintegers;
-    
+
     /**
      * @ODM\Property(type="link")
      */
     protected $lazy_link;
-    
+
     /**
      * @ODM\Property(type="linklist")
      */
     protected $lazy_linklist;
-    
+
     /**
      * @ODM\Property(type="linkset")
      */
     public $lazy_linkset;
-    
+
     /**
      * @ODM\Property(type="linkmap")
      */
     public $lazy_linkmap;
-    
+
     /**
      * @ODM\Property(type="linkset")
      */
     protected $linkset;
-    
+
     /**
      * @ODM\Property(type="linklist")
      */
     protected $linklist;
-    
+
     /**
      * @ODM\Property(type="linkmap")
      */
     protected $linkmap;
-    
+
     /**
      * @ODM\Property(type="embedded_map", cast="link")
      */
     protected $embedded_map;
-    
+
     /**
      * @ODM\Property(type="integer")
      */
     protected $number;
-    
+
     protected $street;
 
     public function setType($type)
@@ -221,17 +221,17 @@ class Address
     {
         return $this->date;
     }
-    
+
     public function setEmbeddedList($list)
     {
         $this->embeddedlist = $list;
     }
-    
+
     public function getEmbeddedList()
     {
         return $this->embeddedlist;
     }
-    
+
     public function setEmbeddedSet($set)
     {
         $this->embeddedset = $set;
@@ -241,7 +241,7 @@ class Address
     {
         return $this->embeddedset;
     }
-    
+
     public function setEmbeddedIntegers($list)
     {
         $this->embeddedintegers = $list;
@@ -251,7 +251,7 @@ class Address
     {
         return $this->embeddedintegers;
     }
-    
+
     public function setEmbeddedBooleans($list)
     {
         $this->embeddedbooleans = $list;
@@ -261,7 +261,7 @@ class Address
     {
         return $this->embeddedbooleans;
     }
-    
+
     public function setEmbeddedStrings($list)
     {
         $this->embeddedstrings = $list;
@@ -342,7 +342,7 @@ class Address
     {
         $this->positive_short = $short;
     }
-    
+
     public function getLink()
     {
         return $this->link;
@@ -352,7 +352,7 @@ class Address
     {
         $this->link = $link;
     }
-    
+
     public function getEmbedded()
     {
         return $this->embedded;
@@ -362,7 +362,7 @@ class Address
     {
         $this->embedded = $embedded;
     }
-    
+
     public function getLinkset()
     {
         return $this->linkset;
@@ -372,7 +372,7 @@ class Address
     {
         $this->linkset = $linkset;
     }
-    
+
     public function getLinklist()
     {
         return $this->linklist;
@@ -382,7 +382,7 @@ class Address
     {
         $this->linklist = $linklist;
     }
-    
+
     public function getLinkmap()
     {
         return $this->linkmap;
@@ -392,7 +392,7 @@ class Address
     {
         $this->linkmap = $linkmap;
     }
-    
+
     public function getEmbeddedMap()
     {
         return $this->embedded_map;
@@ -402,7 +402,7 @@ class Address
     {
         $this->embedded_map = $embedded_map;
     }
-    
+
     public function getLazyLink()
     {
         return $this->lazy_link;
@@ -412,12 +412,12 @@ class Address
     {
         $this->lazy_link = $lazy_link;
     }
-    
+
     public function getLazyLinkList()
     {
         return $this->lazy_linklist;
     }
-    
+
     public function setLazyLinkList($lazy_linklist)
     {
         $this->lazy_linklist = $lazy_linklist;
@@ -552,22 +552,22 @@ class Address
     {
         $this->is__false = $val;
     }
-    
+
     public function getExampleProperty()
     {
         return $this->example_property;
     }
-    
+
     public function setExampleProperty($value)
     {
         $this->example_property = $value;
     }
-    
+
     public function testCustomMethod($k1, $k2)
     {
         return $k1 + $k2;
     }
-    
+
     public static function testStaticMethod($k1, $k2)
     {
         return $k1 + $k2;

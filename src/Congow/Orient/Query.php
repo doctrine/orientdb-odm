@@ -72,8 +72,8 @@ class Query implements QueryInterface
     {
         $this->setCommands($commands);
 
-        $commandClass   = $this->getCommandClass('select');
-        $this->command  = new $commandClass($target);
+        $commandClass = $this->getCommandClass('select');
+        $this->command = new $commandClass($target);
     }
 
     /**
@@ -86,8 +86,8 @@ class Query implements QueryInterface
      */
     public function add(array $updates, $class, $append = true)
     {
-        $commandClass   = $this->getCommandClass('update.add');
-        $this->command  = new $commandClass($updates, $class, $append);
+        $commandClass = $this->getCommandClass('update.add');
+        $this->command = new $commandClass($updates, $class, $append);
 
         return $this->command;
     }
@@ -102,8 +102,8 @@ class Query implements QueryInterface
      */
     public function alter($class, $attribute, $value)
     {
-        $commandClass   = $this->getCommandClass('class.alter');
-        $this->command  = new $commandClass($class, $attribute, $value);
+        $commandClass = $this->getCommandClass('class.alter');
+        $this->command = new $commandClass($class, $attribute, $value);
 
         return $this->command;
     }
@@ -119,8 +119,8 @@ class Query implements QueryInterface
      */
     public function alterProperty($class, $property, $attribute, $value)
     {
-        $commandClass   = $this->getCommandClass('property.alter');
-        $this->command  = new $commandClass($property);
+        $commandClass = $this->getCommandClass('property.alter');
+        $this->command = new $commandClass($property);
 
         return $this->command->on($class)->changing($attribute, $value);
     }
@@ -174,8 +174,8 @@ class Query implements QueryInterface
      */
     public function delete($from)
     {
-        $commandClass   = $this->getCommandClass('delete');
-        $this->command  = new $commandClass($from);
+        $commandClass = $this->getCommandClass('delete');
+        $this->command = new $commandClass($from);
 
         return $this->command;
     }
@@ -215,7 +215,7 @@ class Query implements QueryInterface
     {
         return $this->command->from($target, $append);
     }
-    
+
     /**
      * Returns the internal command.
      *
@@ -254,8 +254,8 @@ class Query implements QueryInterface
      */
     public function grant($permission)
     {
-        $commandClass   = $this->getCommandClass('grant');
-        $this->command  = new $commandClass($permission);
+        $commandClass = $this->getCommandClass('grant');
+        $this->command = new $commandClass($permission);
 
         return $this->command;
     }
@@ -272,8 +272,8 @@ class Query implements QueryInterface
      */
     public function findReferences($rid, array $classes = array(), $append = true)
     {
-        $commandClass   = $this->getCommandClass('references.find');
-        $this->command  = new $commandClass($rid);
+        $commandClass = $this->getCommandClass('references.find');
+        $this->command = new $commandClass($rid);
         $this->command->in($classes, $append);
 
         return $this->command;
@@ -304,8 +304,8 @@ class Query implements QueryInterface
      */
     public function index($property, $type, $class = null)
     {
-        $commandClass   = $this->getCommandClass('index.create');
-        $this->command  = new $commandClass($property, $type, $class);
+        $commandClass = $this->getCommandClass('index.create');
+        $this->command = new $commandClass($property, $type, $class);
 
         return $this->command;
     }
@@ -317,8 +317,8 @@ class Query implements QueryInterface
      */
     public function indexCount($indexName)
     {
-        $commandClass   = $this->getCommandClass('index.count');
-        $this->command  = new $commandClass($indexName);
+        $commandClass = $this->getCommandClass('index.count');
+        $this->command = new $commandClass($indexName);
 
         return $this->command;
     }
@@ -332,8 +332,8 @@ class Query implements QueryInterface
      */
     public function indexPut($indexName, $key, $rid)
     {
-        $commandClass   = $this->getCommandClass('index.put');
-        $this->command  = new $commandClass($indexName, $key, $rid);
+        $commandClass = $this->getCommandClass('index.put');
+        $this->command = new $commandClass($indexName, $key, $rid);
 
         return $this->command;
     }
@@ -347,8 +347,8 @@ class Query implements QueryInterface
      */
     public function indexRemove($indexName, $key, $rid = null)
     {
-        $commandClass   = $this->getCommandClass('index.remove');
-        $this->command  = new $commandClass($indexName, $key, $rid);
+        $commandClass = $this->getCommandClass('index.remove');
+        $this->command = new $commandClass($indexName, $key, $rid);
 
         return $this->command;
     }
@@ -360,8 +360,8 @@ class Query implements QueryInterface
      */
     public function insert()
     {
-        $commandClass   = $this->getCommandClass('insert');
-        $this->command  = new $commandClass;
+        $commandClass = $this->getCommandClass('insert');
+        $this->command = new $commandClass;
 
         return $this->command;
     }
@@ -471,8 +471,8 @@ class Query implements QueryInterface
      */
     public function remove(array $updates, $class, $append = true)
     {
-        $commandClass   = $this->getCommandClass('update.remove');
-        $this->command  = new $commandClass($updates, $class, $append);
+        $commandClass = $this->getCommandClass('update.remove');
+        $this->command = new $commandClass($updates, $class, $append);
 
         return $this->command;
     }
@@ -497,8 +497,8 @@ class Query implements QueryInterface
      */
     public function revoke($permission)
     {
-        $commandClass   = $this->getCommandClass('revoke');
-        $this->command  = new $commandClass($permission);
+        $commandClass = $this->getCommandClass('revoke');
+        $this->command = new $commandClass($permission);
 
         return $this->command;
     }
@@ -535,9 +535,16 @@ class Query implements QueryInterface
     {
         return $this->command->to($to);
     }
-    
+
+    /**
+     * Truncates an entity.
+     *
+     * @param   string   $entity
+     * @param   boolean  $andCluster
+     * @return  Query
+     */
     public function truncate($entity, $andCluster = false)
-    {        
+    {
         try {
             $validator      = new Validator\Rid;
             $validator->check($entity);
@@ -545,14 +552,14 @@ class Query implements QueryInterface
         }
         catch (Exception\Validation $e) {
             $commandClass   = $this->getCommandClass('truncate.class');
-            
+
             if ($andCluster) {
                 $commandClass   = $this->getCommandClass('truncate.cluster');
-            }   
+            }
         }
-        
+
         $this->command  = new $commandClass($entity);
-        
+
         return $this->command;
     }
 
@@ -597,7 +604,7 @@ class Query implements QueryInterface
 
         return $this->command;
     }
-    
+
     /**
      * Checks whether the current query, when executed against OrientDB,
      * should return some results.
@@ -605,11 +612,11 @@ class Query implements QueryInterface
      * @return boolean
      */
     public function shouldReturn()
-    {   
+    {
         if ($this->getCommand() instanceOf Select) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -699,9 +706,9 @@ class Query implements QueryInterface
     {
         if ($property) {
             return $this->manageProperty($action, $class, $property, $type, $linked);
-        } else {
-            return $this->manageClass($action, $class);
         }
+
+        return $this->manageClass($action, $class);
     }
 
     /**

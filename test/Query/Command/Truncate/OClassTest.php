@@ -22,7 +22,7 @@ class OClassTest extends TestCase
 
         $this->assertCommandGives("TRUNCATE CLASS myClass", $truncate->getRaw());
     }
-    
+
     public function testTheNameArgumentIsFiltered()
     {
         $truncate = new TruncateClass('myClass 54..');

@@ -61,6 +61,7 @@ class HttpBinding implements BindingInterface
         if ($database) {
             $location .= '/' . rawurlencode($database);
         }
+
         if ($arguments) {
             $location .= '/' . implode('/', array_map('rawurlencode', $arguments));
         }
@@ -84,6 +85,7 @@ class HttpBinding implements BindingInterface
         if (isset($limit)) {
             $arguments[] = $limit;
         }
+
         if (isset($fetchPlan)) {
             $arguments[] = $fetchPlan;
         }

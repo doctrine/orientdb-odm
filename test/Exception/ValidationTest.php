@@ -12,8 +12,8 @@
 /**
  * Class ValidationTest
  *
- * @package     
- * @subpackage  
+ * @package
+ * @subpackage
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -32,7 +32,7 @@ class ValidationTest extends TestCase
     {
         throw new Validation('text', 'V');
     }
-    
+
     /**
      * @expectedException Congow\Orient\Exception\Validation
      * @expectedExceptionMessage Validation of "a, b" as V failed
