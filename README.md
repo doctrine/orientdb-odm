@@ -19,15 +19,11 @@ If you don't know [OrientDB](http://www.orientechnologies.com/) take a look at i
 
 ## After cloning
 
-In order to be able to run the examples and the test suite provided by Orient, you must first enter the root
-of the cloned repository and initialize all the needed dependencies. We provide an utility script in the `bin/`
-subdirectory to ease this process and you can choose between two different methods: [Composer](http://packagist.org/about-composer)
-or Git submodules.
+In order to be able to run the examples and the test suite provided by Orient, you must first enter the root of
+the cloned repository and initialize all the needed dependencies with Composer [Composer](http://getcomposer.org/).
+We provide an utility script in the `bin/` subdirectory to ease this process so you can just do the following:
 
-    $ ./bin/initialize-dependencies.sh composer
-    $ ./bin/initialize-dependencies.sh submodules
-
-If you do not specify any argument, Composer will be used by default.
+    $ ./bin/initialize-dependencies.sh
 
 
 ## Current status of the binding
