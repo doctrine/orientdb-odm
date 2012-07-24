@@ -82,14 +82,14 @@ class QueryBuilderTest extends TestCase
     {
         $query = new Query();
         $query->from(array('13:100', '13:101'))
-              ->orderBy('rid ASC')
+              ->orderBy('@rid ASC')
               ->orderBy('street DESC');
 
         $result = $this->doQuery($query);
         $this->assertHttpStatus(200, $result);
         $this->assertFirstRid('13:100', $result);
 
-        $query->orderBy('rid DESC', false);
+        $query->orderBy('@rid DESC', false);
 
         $result = $this->doQuery($query);
         $this->assertHttpStatus(200, $result);
