@@ -15,14 +15,6 @@ use test\PHPUnit\TestCase;
 use Congow\Orient\Query;
 use Congow\Orient\Query\Command\Select;
 
-class StubQuery extends Query
-{
-    public function aMethodCallingABadCommand()
-    {
-        return $this->getCommandClass('OMN NO NO ON ON ');
-    }
-}
-
 class QueryTest extends TestCase
 {
     public function setup()
@@ -419,7 +411,18 @@ class QueryTest extends TestCase
      */
     public function testAnExceptionIsRaisedWhenTryingToAccessANonExistingMethod()
     {
-        $query = new StubQuery();
+        $query = $this->getMock('Congow\Orient\Query', array('aMethodCallingABadCommand'));
+        $getCommandClass = new \ReflectionMethod($query, 'getCommandClass');
+        $getCommandClass->setAccessible(true);
+
+        $aMethodCallingABadCommand = function () use ($query, $getCommandClass) {
+            $getCommandClass->invoke($query, 'OMN NO NO ON ON');
+        };
+
+        $query->expects($this->once())
+              ->method('aMethodCallingABadCommand')
+              ->will($this->returnCallback($aMethodCallingABadCommand));
+
         $query->aMethodCallingABadCommand();
     }
 

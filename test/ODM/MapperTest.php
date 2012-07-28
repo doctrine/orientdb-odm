@@ -17,35 +17,6 @@ use Congow\Orient\ODM\Manager;
 use Congow\Orient\ODM\Mapper;
 use Congow\Orient\ODM\Mapper\Annotations\Reader as AnnotationReader;
 
-class Adapter implements \Congow\Orient\Contract\Protocol\Adapter
-{
-    public function __construct()
-    {
-
-    }
-
-    public function getResult()
-    {
-        return json_decode('{
-            "@type": "d", "@rid": "#19:0", "@version": 2, "@class": "Address",
-            "name": "Luca",
-            "surname": "Garulli",
-            "out": ["#20:1"]
-          }');
-    }
-
-    public function execute($sql)
-    {
-        return true;
-    }
-
-    public function findRecords(array $rids)
-    {
-        return array($this->getResult("#20:1"),$this->getResult("#20:2"));
-
-    }
-}
-
 class MapperTest extends TestCase
 {
     const BINARY_64_ENCODED = "data:;base64,/9j/4AAQSkZJRgABAgAAZABkAAD/7AARRHVja3kAAQAEAAAAWAAA/+4ADkFkb2JlAGTAAAAAAf/bAEMAAQEBAQEBAQEBAQIBAQECAgIBAQICAwICAgICAwQDAwMDAwMEBAQEBQQEBAYGBgYGBggICAgICQkJCQkJCQkJCf/bAEMBAgICAwMDBQQEBQgGBQYICQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCf/CABEIADAAMAMBEQACEQEDEQH/xAAZAAEBAQEBAQAAAAAAAAAAAAAABwkIBAb/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAHYQAAAnB9We4nBVQYsnfpVDFk37AAABxYQAFVO/QAAD//EAB0QAAMBAAIDAQAAAAAAAAAAAAUGBwQAFwgQIDD/2gAIAQEAAQUC+y7gor+kaTGmcWnTmxZhr0kGdvryNktBfHeJrZpRmL0N2mUiJxOnKNO/CjTFudDfQVJ50FSeJMhd1dn+/wD/xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAEDAQE/ARP/xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAECAQE/ARP/xAArEAABBAAFAgQHAQAAAAAAAAABAgMEBQAGERIUE0EHFSIxECAhMDiR1DL/2gAIAQEABj8C+dEO+zTXUkxxAdbiy5rMZxTZJAUEuKB01B+uGbKosGLWukbuPPjOpfZXsJSdq0Eg6EaYkTJkhESHEQp2VKdUENttoGqlKUfoAB7nDNbUZxqrWxkbuPAjWDD7y9gKjtQhZJ0A1+NXb5UoPNa6PVMxnpHKjMaPIffWU6POIPssYyzl7MMPy+4r+Zy4nUQ7t6sp1xPqbKknVKh3xnGorWeRY2tVYRoEfcEb3n2FoQnVRAGpPfGWcw5hyz5fT1/M5cvmRXdvViutp9LbqlHVSh2+zFtKHxWscjQ2IqGHKmIHum44la1F09OQ0NSFAe3bH5E3n6lf3Y/Im8/Ur+7FZe2/jPa5sroPW5FBJD/Rf6jSmxu3ynB6Srd/nt9j/8QAHhABAAEEAwEBAAAAAAAAAAAAAREAITFRECBBkTD/2gAIAQEAAT8h7uu2eWVZiIRI6raDENrRJQ2RKdNu18/g5UYCtoMQ2tElBYF59B5RNKsNkIvnNfQCO/8ApLLO61DIhaWSJQHrXwAD/wD6Syzr8Xbb+Xvptb2Dfw46dLIICdfT4SrjGTv/AP/aAAwDAQACAAMAAAAQAAAEAgAEgAAAAkAAAA//xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAEDAQE/EBP/xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAECAQE/EBP/xAAeEAEAAQQCAwAAAAAAAAAAAAABEQAQIWEwwSBBcf/aAAgBAQABPxDzFuqfDtNkkEMqNkhWCkv6SiESjvgt1rWNICqBWwQrBSX9JRALfchqwCRIrwEgOhPfKDCzBgIfQDRqEn5VIAtdCa/UCFmTAU4HVKT0rz5DIDIuVq3sQj0atSu5KOA//9k=";
@@ -281,15 +252,13 @@ class MapperTest extends TestCase
 
     public function testGettingTheDirectoriesInWhichTheMapperLooksForPOPOs()
     {
-        $annotationReader = new AnnotationReader;
-        $this->mapper = new Mapper(new Adapter, $annotationReader);
-        $dirs = array(
-            'dir'   => 'namespace',
-            'dir2'  => 'namespace2',
-        );
-        $object = $this->mapper->setDocumentDirectories($dirs);
+        $directories = array('dir' => 'namespace', 'dir2' => 'namespace2');
+        $adapter = $this->getMock('Congow\Orient\Contract\Protocol\Adapter');
 
-        $this->assertEquals($dirs, $this->mapper->getDocumentDirectories());
+        $this->mapper = new Mapper($adapter, new AnnotationReader());
+        $object = $this->mapper->setDocumentDirectories($directories);
+
+        $this->assertEquals($directories, $this->mapper->getDocumentDirectories());
     }
 
     public function testNoRecordsIsLostWhenHydratingACollection()

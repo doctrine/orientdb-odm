@@ -38,20 +38,13 @@ class Mapped
     protected $multiassoc;
 }
 
-class TestMapper extends \Congow\Orient\ODM\Mapper
-{
-    public function __construct()
-    {
-        $this->annotationReader = new \Congow\Orient\ODM\Mapper\Annotations\Reader;
-    }
-}
-
-
 class ClassMetadataTest extends TestCase
 {
     public function setup()
     {
-        $this->metadata = new ClassMetadata('test\ODM\Mapper\Mapped', new TestMapper);
+        $mapper = $this->getMock('Congow\Orient\ODM\Mapper', null, array(null));
+
+        $this->metadata = new ClassMetadata('test\ODM\Mapper\Mapped', $mapper);
     }
 
     function testGetName()

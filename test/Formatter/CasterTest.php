@@ -19,10 +19,6 @@ use Congow\Orient\Foundation\Types\Rid;
 use Congow\Orient\Foundation\Types\Rid\Collection;
 use Congow\Orient\Formatter\Caster;
 
-class StubProperty extends \Congow\Orient\ODM\Mapper\Annotations\Property
-{
-}
-
 class CasterTest extends TestCase
 {
     private $mapper;
@@ -584,8 +580,11 @@ class CasterTest extends TestCase
      */
     public function testEmbeddedSetCasting($expected,$embeddedSet)
     {
+        $property = $this->getMock('Congow\Orient\ODM\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
+
         $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
-        $this->caster->setProperty('annotation', new StubProperty(array('cast' => 'embedded')));
+        $this->caster->setProperty('annotation', $property);
+
         $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedSet());
     }
 
@@ -594,8 +593,11 @@ class CasterTest extends TestCase
      */
     public function testEmbeddedMapCasting($expected,$embeddedSet)
     {
+        $property = $this->getMock('Congow\Orient\ODM\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
+
         $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
-        $this->caster->setProperty('annotation', new StubProperty(array('cast' => 'embedded')));
+        $this->caster->setProperty('annotation', $property);
+
         $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedMap());
     }
 
@@ -604,8 +606,11 @@ class CasterTest extends TestCase
      */
     public function testEmbeddedListCasting($expected,$embeddedSet)
     {
+        $property = $this->getMock('Congow\Orient\ODM\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
+
         $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
-        $this->caster->setProperty('annotation', new StubProperty(array('cast' => 'embedded')));
+        $this->caster->setProperty('annotation', $property);
+
         $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedList());
     }
 
