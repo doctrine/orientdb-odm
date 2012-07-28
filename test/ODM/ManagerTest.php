@@ -41,7 +41,7 @@ class ManagerTest extends TestCase
                 ->method('execute')
                 ->will($this->returnValue($result));
 
-        $hydrationResultCallback = function($document) {
+        $hydrationResultCallback = function ($document) {
             $linktracker = new LinkTracker();
             $linktracker->add('capital', new Rid('1:2'));
 

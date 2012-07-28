@@ -55,7 +55,7 @@ class Caster implements CasterInterface
      */
     public function __construct(Mapper $mapper, $value = null, $dateClass = "\DateTime")
     {
-        $this->mapper       = $mapper;
+        $this->mapper = $mapper;
         $this->assignDateClass($dateClass);
 
         if ($value) {
@@ -88,7 +88,7 @@ class Caster implements CasterInterface
             }
         }
 
-        $castFunction = function($value) {
+        $castFunction = function ($value) {
             return (bool) $value;
         };
 
@@ -115,7 +115,7 @@ class Caster implements CasterInterface
         $min = self::BYTE_MIN_VALUE;
         $max = self::BYTE_MAX_VALUE;
 
-        $castFunction = function($value) use ($min, $max){
+        $castFunction = function ($value) use ($min, $max){
             if ($value < 0) {
                 return $min;
             }
@@ -212,7 +212,7 @@ class Caster implements CasterInterface
      */
     public function castFloat()
     {
-        $castFunction = function($value){
+        $castFunction = function ($value) {
             return (float) $value;
         };
 
@@ -230,12 +230,8 @@ class Caster implements CasterInterface
      */
     public function castInteger()
     {
-        $castFunction = function($value){
-            if (is_object($value)) {
-                return 1;
-            }
-
-            return (int) $value;
+        $castFunction = function ($value){
+            return is_object($value) ? 1 : (int) $value;
         };
 
         if (is_numeric($this->value)){
@@ -324,7 +320,7 @@ class Caster implements CasterInterface
      */
     public function castInBuffer($limit, $type)
     {
-        $castFunction = function($value) use ($limit) {
+        $castFunction = function ($value) use ($limit) {
             return abs($value) < $limit ? $value : $limit;
         };
 
@@ -343,7 +339,7 @@ class Caster implements CasterInterface
      */
     public function castString()
     {
-        $castFunction = function($value){
+        $castFunction = function ($value){
             return is_array($value) ? 'Array' : (string) $value;
         };
 
@@ -480,7 +476,7 @@ class Caster implements CasterInterface
             }
 
             try {
-                $ridCollection = new Rid\Collection(array_map(function($rid){
+                $ridCollection = new Rid\Collection(array_map(function ($rid) {
                     new Rid($rid);
 
                     return $rid;

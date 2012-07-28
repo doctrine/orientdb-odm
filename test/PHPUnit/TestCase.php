@@ -23,7 +23,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         $parameters = array();
 
-        array_walk($options, function($value, $key) use (&$parameters) {
+        array_walk($options, function ($value, $key) use (&$parameters) {
             if (0 === $pos = strpos($key, 'odb.')) {
                 $parameters[substr($key, strpos($key, '.') + 1)] = $value;
             }
