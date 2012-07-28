@@ -461,7 +461,6 @@ class CasterTest extends TestCase
     {
         return array(
             array('2011-01-01 11:11:11'),
-            array(array()),
             array(12),
             array(-12),
         );
