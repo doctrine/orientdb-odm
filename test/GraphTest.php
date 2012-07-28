@@ -12,8 +12,8 @@
 /**
  * Class GraphTest
  *
- * @package     
- * @subpackage  
+ * @package    Congow\Orient
+ * @subpackage Test
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -27,15 +27,15 @@ class GraphTest extends TestCase
     public function setup()
     {
         $this->graph = new Graph();
-        
+
         $this->v1 = new Graph\Vertex('v1');
     }
-    
+
     public function  testYouCanAddVerticesToAGraph()
     {
         $this->assertEquals(array('v1' => $this->v1), $this->graph->add($this->v1)->getVertices());
     }
-    
+
     /**
      * @expectedException Congow\Orient\Exception
      */
@@ -43,7 +43,7 @@ class GraphTest extends TestCase
     {
         $this->assertEquals(array('v1' => $this->v1), $this->graph->add($this->v1)->add($this->v1)->getVertices());
     }
-    
+
     public function  testYouCanRetrieveAVertexFromTheGraph()
     {
         $this->assertEquals($this->v1, $this->graph->add($this->v1)->getVertex($this->v1->getId()));
@@ -57,4 +57,3 @@ class GraphTest extends TestCase
         $this->assertEquals($this->v1, $this->graph->add($this->v1)->getVertex('OMGOMG'));
     }
 }
-

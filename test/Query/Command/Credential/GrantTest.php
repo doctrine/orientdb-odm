@@ -53,13 +53,13 @@ class GrantTest extends TestCase
 
     public function testUsingTheFluentInterface()
     {
-        $this->grant->permission("read")
+        $this->grant
+                ->permission("read")
                 ->to("myUser")
                 ->to("myOtherUser")
                 ->on("server");
-        $sql =
-                'GRANT read ON server TO myOtherUser'
-        ;
+
+        $sql = 'GRANT read ON server TO myOtherUser';
 
         $this->assertCommandGives($sql, $this->grant->getRaw());
     }

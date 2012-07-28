@@ -42,6 +42,7 @@ class LookupTest extends TestCase
     {
         $query = 'SELECT FROM index:dictionary WHERE key = "luke"';
         $this->lookup->where('key = ?', 'luke');
+
         $this->assertCommandGives($query, $this->lookup->getRaw());
     }
 }

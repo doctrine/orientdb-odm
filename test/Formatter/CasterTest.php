@@ -45,14 +45,14 @@ class CasterTest extends TestCase
     public function getBooleans()
     {
         return array(
-          array(true, true),
-          array(true, 1),
-          array(true, 'true'),
-          array(true, '1'),
-          array(false, '0'),
-          array(false, 'false'),
-          array(false, false),
-          array(false, 0),
+            array(true, true),
+            array(true, 1),
+            array(true, 'true'),
+            array(true, '1'),
+            array(false, '0'),
+            array(false, 'false'),
+            array(false, false),
+            array(false, 0),
         );
     }
 
@@ -77,16 +77,16 @@ class CasterTest extends TestCase
     public function getForcedBooleans()
     {
         return array(
-          array(true, 'ciao'),
-          array(true, 1111),
-          array(false, ''),
-          array(false, null),
-          array(true, ' '),
-          array(true, 'off'),
-          array(true, 12.12),
-          array(true, (float) 12.12),
-          array(true, '12,12'),
-          array(true, -50),
+            array(true, 'ciao'),
+            array(true, 1111),
+            array(false, ''),
+            array(false, null),
+            array(true, ' '),
+            array(true, 'off'),
+            array(true, 12.12),
+            array(true, (float) 12.12),
+            array(true, '12,12'),
+            array(true, -50),
         );
     }
 
@@ -101,13 +101,13 @@ class CasterTest extends TestCase
     public function getBytes()
     {
         return array(
-          array(0),
-          array(1),
-          array(100),
-          array(127),
-          array(-127),
-          array(-128),
-          array(-1),
+            array(0),
+            array(1),
+            array(100),
+            array(127),
+            array(-127),
+            array(-128),
+            array(-1),
         );
     }
 
@@ -132,15 +132,15 @@ class CasterTest extends TestCase
     public function getForcedBytes()
     {
         return array(
-          array(Caster::BYTE_MAX_VALUE, '129'),
-          array(Caster::BYTE_MIN_VALUE, '-129'),
-          array(Caster::BYTE_MAX_VALUE, '2000'),
-          array(Caster::BYTE_MIN_VALUE, '-2000'),
-          array(Caster::BYTE_MIN_VALUE, (float) -500.12),
-          array(Caster::BYTE_MAX_VALUE, (float) 500.12),
-          array(Caster::BYTE_MIN_VALUE, '-1500/3'),
-          array(Caster::BYTE_MAX_VALUE, '1500/3'),
-          array(127, 'ciao'),
+            array(Caster::BYTE_MAX_VALUE, '129'),
+            array(Caster::BYTE_MIN_VALUE, '-129'),
+            array(Caster::BYTE_MAX_VALUE, '2000'),
+            array(Caster::BYTE_MIN_VALUE, '-2000'),
+            array(Caster::BYTE_MIN_VALUE, (float) -500.12),
+            array(Caster::BYTE_MAX_VALUE, (float) 500.12),
+            array(Caster::BYTE_MIN_VALUE, '-1500/3'),
+            array(Caster::BYTE_MAX_VALUE, '1500/3'),
+            array(127, 'ciao'),
         );
     }
 
@@ -155,15 +155,15 @@ class CasterTest extends TestCase
     public function getLongs()
     {
         return array(
-          array(0),
-          array(1),
-          array(100),
-          array(127),
-          array(1273825789),
-          array(-127),
-          array(-12735355),
-          array(-128),
-          array(-1),
+            array(0),
+            array(1),
+            array(100),
+            array(127),
+            array(1273825789),
+            array(-127),
+            array(-12735355),
+            array(-128),
+            array(-1),
         );
     }
 
@@ -188,14 +188,14 @@ class CasterTest extends TestCase
     public function getForcedLongs()
     {
         return array(
-          array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + '129'),
-          array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT - '129'),
-          array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + '2000'),
-          array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT -'2000'),
-          array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT -(float) 500.12),
-          array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + (float) 500.12),
-          array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT - '1500/3'),
-          array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + '1500/3'),
+            array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + '129'),
+            array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT - '129'),
+            array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + '2000'),
+            array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT -'2000'),
+            array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT -(float) 500.12),
+            array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + (float) 500.12),
+            array(Caster::LONG_LIMIT, - Caster::LONG_LIMIT - '1500/3'),
+            array(Caster::LONG_LIMIT, Caster::LONG_LIMIT + '1500/3'),
         );
     }
 
@@ -210,10 +210,10 @@ class CasterTest extends TestCase
     public function getIntegers()
     {
         return array(
-          array(0, '0'),
-          array(1, 1),
-          array(100, '100'),
-          array(-4, '-4'),
+            array(0, '0'),
+            array(1, 1),
+            array(100, '100'),
+            array(-4, '-4'),
         );
     }
 
@@ -238,9 +238,9 @@ class CasterTest extends TestCase
     public function getForcedIntegers()
     {
         return array(
-          array(0, 'ciao'),
-          array(0, null),
-          array(1, new \stdClass()),
+            array(0, 'ciao'),
+            array(0, null),
+            array(1, new \stdClass()),
         );
     }
 
@@ -256,11 +256,11 @@ class CasterTest extends TestCase
     public function getDoubles()
     {
         return array(
-          array(0.2, '0.2'),
-          array(11, 11),
-          array(0, '00.00000000000000'),
-          array(-4, -4),
-          array(-4, '-4'),
+            array(0.2, '0.2'),
+            array(11, 11),
+            array(0, '00.00000000000000'),
+            array(-4, -4),
+            array(-4, '-4'),
         );
     }
 
@@ -285,11 +285,11 @@ class CasterTest extends TestCase
     public function getForcedDoubles()
     {
         return array(
-          array(0, ''),
-          array(0, null),
-          array(0, 'one'),
-          array('15', '15/3'),
-          array(15.2, '15.2.2'),
+            array(0, ''),
+            array(0, null),
+            array(0, 'one'),
+            array('15', '15/3'),
+            array(15.2, '15.2.2'),
         );
     }
 
@@ -330,9 +330,9 @@ class CasterTest extends TestCase
     public function getStrings()
     {
         return array(
-          array('0', '0'),
-          array('hello', 'hello'),
-          array('', ''),
+            array('0', '0'),
+            array('hello', 'hello'),
+            array('', ''),
         );
     }
 
@@ -357,10 +357,10 @@ class CasterTest extends TestCase
     public function getForcedStrings()
     {
         return array(
-          array('12', 12),
-          array('-12', -12),
-          array('', null),
-          array('Array', array(1,2,3)),
+            array('12', 12),
+            array('-12', -12),
+            array('', null),
+            array('Array', array(1,2,3)),
         );
     }
 
@@ -433,7 +433,7 @@ class CasterTest extends TestCase
     public function getDateTimes()
     {
         return array(
-          array(new \DateTime('2011-01-01 11:11:11'), '2011-01-01 11:11:11'),
+            array(new \DateTime('2011-01-01 11:11:11'), '2011-01-01 11:11:11'),
         );
     }
 
@@ -464,10 +464,10 @@ class CasterTest extends TestCase
     public function getBinaries()
     {
         return array(
-          array('2011-01-01 11:11:11'),
-          array(array()),
-          array(12),
-          array(-12),
+            array('2011-01-01 11:11:11'),
+            array(array()),
+            array(12),
+            array(-12),
         );
     }
 

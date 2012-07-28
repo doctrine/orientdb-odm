@@ -137,7 +137,8 @@ class SelectTest extends TestCase
 
     public function testUsingTheFluentInterface()
     {
-        $this->select->select(array('name', 'username', 'email'), false)
+        $this->select
+                ->select(array('name', 'username', 'email'), false)
                 ->from(array('12:0', '12:1'), false)
                 ->where('any() traverse ( any() like "%danger%" )')
                 ->orWhere("1 = ?", 1)
@@ -146,46 +147,46 @@ class SelectTest extends TestCase
                 ->orderBy('username')
                 ->orderBy('name', true, true)
                 ->range("12:0", "12:1");
-        $sql =
-                'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = "1" AND links = "1" ORDER BY name, username LIMIT 20 RANGE 12:0 12:1'
-        ;
+
+        $sql = 'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = "1" AND links = "1" ORDER BY name, username LIMIT 20 RANGE 12:0 12:1';
 
         $this->assertCommandGives($sql, $this->select->getRaw());
     }
 
     public function testYouCanSelectFromTheIndexes()
     {
-        $this->select->from(array('index:coordinates'), false)
+        $this->select
+                ->from(array('index:coordinates'), false)
                 ->between('k', "10.3", "10.7");
-        $sql =
-                'SELECT FROM index:coordinates WHERE k BETWEEN 10.3 AND 10.7'
-        ;
+
+        $sql ='SELECT FROM index:coordinates WHERE k BETWEEN 10.3 AND 10.7';
 
         $this->assertCommandGives($sql, $this->select->getRaw());
 
         $this->select->resetWhere();
-        $this->select->select(array('key'))
+        $this->select
+                ->select(array('key'))
                 ->from(array('index:coordinates'), false);
-        $sql =
-                'SELECT key FROM index:coordinates'
-        ;
+
+        $sql = 'SELECT key FROM index:coordinates';
 
         $this->assertCommandGives($sql, $this->select->getRaw());
 
         $this->select->resetWhere();
-        $this->select->select(array('key', 'value'))
+        $this->select
+                ->select(array('key', 'value'))
                 ->from(array('index:coordinates'), false);
-        $sql =
-                'SELECT key, value FROM index:coordinates'
-        ;
+
+        $sql = 'SELECT key, value FROM index:coordinates';
 
         $this->assertCommandGives($sql, $this->select->getRaw());
     }
 
     public function testAllowsFieldAliases()
     {
-        $this->select->select(array('name AS aliased_name', 'surname AS aliased surname!'))
-                     ->from(array('profile'), false);
+        $this->select
+                ->select(array('name AS aliased_name', 'surname AS aliased surname!'))
+                ->from(array('profile'), false);
 
         $sql = 'SELECT name AS aliased_name, surname AS aliased surname! FROM profile';
 
@@ -194,8 +195,9 @@ class SelectTest extends TestCase
 
     public function testAllowsSQLFunctionOnFields()
     {
-        $this->select->select(array('MIN(x) AS fn_min', 'MAX(y) AS fn_max', 'COUNT(*) AS fn_count'))
-                     ->from(array('MapPoint'), false);
+        $this->select
+                ->select(array('MIN(x) AS fn_min', 'MAX(y) AS fn_max', 'COUNT(*) AS fn_count'))
+                ->from(array('MapPoint'), false);
 
         $sql = 'SELECT MIN(x) AS fn_min, MAX(y) AS fn_max, COUNT(*) AS fn_count FROM MapPoint';
 
@@ -204,8 +206,9 @@ class SelectTest extends TestCase
 
     public function testAllowsFilterMethodsOnFields()
     {
-        $this->select->select(array('name.toUpperCase() AS name_uppercase', 'surname.toLowerCase() AS surname_lowercase'))
-                     ->from(array('profile'), false);
+        $this->select
+                ->select(array('name.toUpperCase() AS name_uppercase', 'surname.toLowerCase() AS surname_lowercase'))
+                ->from(array('profile'), false);
 
         $sql = 'SELECT name.toUpperCase() AS name_uppercase, surname.toLowerCase() AS surname_lowercase FROM profile';
 
@@ -214,8 +217,9 @@ class SelectTest extends TestCase
 
     public function testAllowsReferencingFieldsOfLinks()
     {
-        $this->select->select(array('city.country.name AS country'))
-                     ->from(array('address'), false);
+        $this->select
+                ->select(array('city.country.name AS country'))
+                ->from(array('address'), false);
 
         $sql = 'SELECT city.country.name AS country FROM address';
 
