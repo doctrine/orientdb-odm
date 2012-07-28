@@ -12,10 +12,10 @@
 /**
  * Class Result encapsulates an hydration made with a mapper.
  *
- * @package     Orient
- * @subpackage  ODM
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
- * @author      David Funaro <ing.davidino@gmail.com>
+ * @package    Orient
+ * @subpackage ODM
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     David Funaro <ing.davidino@gmail.com>
  */
 
 namespace Congow\Orient\ODM\Mapper\Hydration;
@@ -36,8 +36,8 @@ class Result
      */
     public function __construct($document, LinkTracker $linkTracker)
     {
-      $this->document    = $document;
-      $this->linkTracker = $linkTracker;
+        $this->document = $document;
+        $this->linkTracker = $linkTracker;
     }
 
     /**

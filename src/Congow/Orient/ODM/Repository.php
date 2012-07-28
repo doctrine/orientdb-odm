@@ -41,9 +41,9 @@ class Repository implements ObjectRepository
      */
     public function __construct($className, Manager $manager, Mapper $mapper)
     {
-        $this->manager   = $manager;
         $this->className = $className;
-        $this->mapper    = $mapper;
+        $this->manager = $manager;
+        $this->mapper = $mapper;
     }
 
     /**
@@ -54,20 +54,20 @@ class Repository implements ObjectRepository
      */
     public function find($rid)
     {
-        $document   = $this->getManager()->find($rid);
+        $document = $this->getManager()->find($rid);
 
-        if ($document) {
-            if ($this->contains($document)) {
-                return $document;
-            }
-
-            $message = "You are asking to find record $rid through the repository ";
-            $message .= "{$this->getClassName()} but the document belongs to another repository (" . get_class($document) . ")";
-
-            throw new Exception($message);
+        if (!$document) {
+            return null;
         }
 
-        return null;
+        if ($this->contains($document)) {
+            return $document;
+        }
+
+        throw new Exception(
+            "You are asking to find record $rid through the repository {$this->getClassName()}".
+            "but the document belongs to another repository (" . get_class($document) . ")"
+        );
     }
 
     /**
@@ -98,7 +98,7 @@ class Repository implements ObjectRepository
         $results = array();
 
         foreach ($this->getOrientClasses() as $mappedClass) {
-            $query      = new Query(array($mappedClass));
+            $query = new Query(array($mappedClass));
 
             foreach ($criteria as $key => $value) {
                 $query->where("$key = ?", $value);
@@ -115,12 +115,10 @@ class Repository implements ObjectRepository
             $collection = $this->getManager()->execute($query);
 
             if (!is_array($collection)) {
-                $message = <<<EOT
-Problems executing the query "{$query->getRaw()}".
-The server returned $collection, while it should be an Array.
-EOT;
-
-                throw new Exception($message);
+                throw new Exception(
+                    "Problems executing the query \"{$query->getRaw()}\".".
+                    "The server returned $collection instead of Array."
+                );
             }
 
             $results = array_merge($results, $collection);

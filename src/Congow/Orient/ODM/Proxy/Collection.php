@@ -38,7 +38,7 @@ class Collection extends AbstractProxy
     function __construct(Manager $manager, Array $rids)
     {
         $this->manager = $manager;
-        $this->rids    = $rids;
+        $this->rids = $rids;
     }
 
     /**
@@ -48,13 +48,12 @@ class Collection extends AbstractProxy
      */
     public function __invoke()
     {
-        if ($this->collection) {
-            return $this->collection;
-        } else {
-            $this->collection = $this->getManager()->findRecords($this->getRids());
-
-            return $this->collection;
+        if (!$this->collection) {
+            $rids = $this->getRids();
+            $this->collection = $this->getManager()->findRecords($rids);
         }
+
+        return $this->collection;
     }
 
     /**

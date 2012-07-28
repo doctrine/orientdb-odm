@@ -12,10 +12,10 @@
 /**
  * Class Factory
  *
- * @package     Orient
- * @subpackage  Mapper
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
- * @author      David Funaro <ing.davidino@gmail.com>
+ * @package    Orient
+ * @subpackage Mapper
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     David Funaro <ing.davidino@gmail.com>
  */
 
 namespace Congow\Orient\ODM\Mapper\ClassMetadata;
@@ -30,6 +30,7 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 class Factory implements ClassMetadataFactory
 {
     protected $mapper;
+    protected $metadata = array();
 
     /**
      * Instantiates a new Metadata factory, injecting a Mapper which is used to
@@ -41,8 +42,6 @@ class Factory implements ClassMetadataFactory
     {
         $this->mapper = $mapper;
     }
-
-    protected $metadata = array();
 
     /**
      * @to implement and test
@@ -94,7 +93,6 @@ class Factory implements ClassMetadataFactory
     {
         $this->metadata[$className] = $metadata;
     }
-
 
     /**
      * Returns the mapper associated with this Factory.

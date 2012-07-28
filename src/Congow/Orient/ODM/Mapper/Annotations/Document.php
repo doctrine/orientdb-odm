@@ -37,7 +37,7 @@ class Document extends \Doctrine\Common\Annotations\Annotation
         $classes = explode(',', $this->class);
 
         foreach ($classes as $class) {
-            if ($class === $orientClass ) {
+            if ($class === $orientClass) {
                 return true;
             }
         }

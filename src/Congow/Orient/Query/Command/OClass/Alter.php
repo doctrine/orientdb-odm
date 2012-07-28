@@ -12,8 +12,8 @@
 /**
  * Command used to alter a class's native properties (eg. name, superclass).
  *
- * @package    
- * @subpackage 
+ * @package    Congow\Orient
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 

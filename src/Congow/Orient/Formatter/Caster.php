@@ -115,15 +115,11 @@ class Caster implements CasterInterface
         $min = self::BYTE_MIN_VALUE;
         $max = self::BYTE_MAX_VALUE;
 
-        $castFunction = function ($value) use ($min, $max){
-            if ($value < 0) {
-                return $min;
-            }
-
-            return $max;
+        $castFunction = function ($value) use ($min, $max) {
+            return $value < 0 ? $min : $max;
         };
 
-        if (is_numeric($this->value) && $this->value >= $min && $this->value <= $max){
+        if (is_numeric($this->value) && $this->value >= $min && $this->value <= $max) {
             return $this->value;
         } else {
             return $this->handleMismatch($castFunction, 'byte');
@@ -137,8 +133,8 @@ class Caster implements CasterInterface
      */
     public function castDate()
     {
-        $dateClass  = $this->getDateClass();
-        $value      = preg_replace('/(\s\d{2}:\d{2}:\d{2}):(\d{1,6})/', '$1.$2', $this->value);
+        $dateClass = $this->getDateClass();
+        $value = preg_replace('/(\s\d{2}:\d{2}:\d{2}):(\d{1,6})/', '$1.$2', $this->value);
 
         return new $dateClass($value);
     }
@@ -216,7 +212,7 @@ class Caster implements CasterInterface
             return (float) $value;
         };
 
-        if (is_numeric($this->value)){
+        if (is_numeric($this->value)) {
             return $castFunction($this->value);
         } else {
             return $this->handleMismatch($castFunction, 'double');
@@ -230,11 +226,11 @@ class Caster implements CasterInterface
      */
     public function castInteger()
     {
-        $castFunction = function ($value){
+        $castFunction = function ($value) {
             return is_object($value) ? 1 : (int) $value;
         };
 
-        if (is_numeric($this->value)){
+        if (is_numeric($this->value)) {
             return $castFunction($this->value);
         } else {
             return $this->handleMismatch($castFunction, 'integer');
@@ -339,7 +335,7 @@ class Caster implements CasterInterface
      */
     public function castString()
     {
-        $castFunction = function ($value){
+        $castFunction = function ($value) {
             return is_array($value) ? 'Array' : (string) $value;
         };
 
@@ -409,12 +405,12 @@ class Caster implements CasterInterface
      */
     protected function castArrayOf($type)
     {
-        $method         = 'cast' . ucfirst($type);
-        $results        = array();
-        $innerCaster    = new self($this->getMapper());
+        $results = array();
+        $method = 'cast' . ucfirst($type);
+        $innerCaster = new self($this->getMapper());
 
         if (!method_exists($innerCaster, $method)) {
-            throw new Exception('');
+            throw new Exception(sprintf('Method %s for %s not found', $method, get_class($innerCaster)));
         }
 
         foreach ($this->value as $key => $value) {
@@ -436,10 +432,7 @@ class Caster implements CasterInterface
         $annotation = $this->getProperty('annotation');
 
         if (!$annotation) {
-            $message =  "In order to cast collections you should inject\n";
-            $message .= "an annotation object into the caster.";
-
-            throw new Exception($message);
+            throw new Exception("Cannot cast a collection using a caster without an associated annotation object");
         }
 
         $listType = $annotation->getCast();
@@ -450,14 +443,11 @@ class Caster implements CasterInterface
 
         try {
             return $this->castArrayOf($listType);
-        }
-        catch (Exception $e) {
-            $message  = "Seems like you are trying to hydrate an embedded ";
-            $message .= "property without specifying its type.\n";
-            $message .= "Please add the 'cast' (eg cast='boolean') ";
-            $message .= "to the annotation.";
+        } catch (Exception $exception) {
+            $message = "It seems like you are trying to hydrate an embedded property without specifying its type.\n".
+                       "Please add the 'cast' (eg cast='boolean') to the annotation.";
 
-            throw new Exception($message);
+            throw new Exception($message, null, $exception);
         }
     }
 
@@ -497,12 +487,12 @@ class Caster implements CasterInterface
      */
     protected function convertJsonCollectionToArray()
     {
-        if(!is_array($this->value) && is_object($this->value)) {
+        if (!is_array($this->value) && is_object($this->value)) {
             $orientObjects = array();
 
             $refClass = new \ReflectionObject($this->value);
-
             $properties = $refClass->getProperties(\ReflectionProperty::IS_PUBLIC);
+
             foreach ($properties as $property) {
                 $orientObjects[$property->name] = $this->value->{$property->name};
             }

@@ -12,9 +12,9 @@
 /**
  * Class AbstractProxy
  *
- * @package     Orient
- * @subpackage  ODM
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @package    Orient
+ * @subpackage ODM
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Congow\Orient\ODM\Proxy;

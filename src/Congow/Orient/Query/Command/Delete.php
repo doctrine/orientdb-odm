@@ -13,9 +13,9 @@
  * This class manages the creation of SQL statements able to delete records
  * in a class.
  *
- * @package     Congow\Orient
- * @subpackage  Query
- * @author      Alessandro nadalin <alessandro.nadalin@gmail.com>
+ * @package    Congow\Orient
+ * @subpackage Query
+ * @author     Alessandro nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Congow\Orient\Query\Command;

@@ -33,12 +33,13 @@ class Remove extends Index
         $this->setToken('Name', $indexName);
 
         if (!is_null($key)) {
-          $this->where("key = ?", $key);
+            $this->where("key = ?", $key);
         }
 
         if ($rid) {
+            $rid = $ridFormatter::format(array($rid));
             $method = $key ? 'andWhere' : 'where';
-            $rid    = $ridFormatter::format(array($rid));
+
             $this->$method("rid = $rid");
         }
     }

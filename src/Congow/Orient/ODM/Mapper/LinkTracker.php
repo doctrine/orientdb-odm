@@ -12,10 +12,10 @@
 /**
  * Class LinkTracker
  *
- * @package     Orient
- * @subpackage  Mapper
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
- * @author      David Funaro <ing.davidino@gmail.com>
+ * @package    Orient
+ * @subpackage Mapper
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     David Funaro <ing.davidino@gmail.com>
  */
 
 namespace Congow\Orient\ODM\Mapper;

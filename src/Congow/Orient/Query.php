@@ -549,8 +549,7 @@ class Query implements QueryInterface
             $validator      = new Validator\Rid;
             $validator->check($entity);
             $commandClass   = $this->getCommandClass('truncate.record');
-        }
-        catch (Exception\Validation $e) {
+        } catch (Exception\Validation $e) {
             $commandClass   = $this->getCommandClass('truncate.class');
 
             if ($andCluster) {

@@ -12,9 +12,9 @@
 /**
  * Class OClass
  *
- * @package     Congow\Orient
- * @subpackage  Query
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @package    Congow\Orient
+ * @subpackage Query
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Congow\Orient\Query\Command\Truncate;

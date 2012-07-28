@@ -12,9 +12,9 @@
 /**
  * Class Value
  *
- * @package
- * @subpackage
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @package    Congow\Orient
+ * @subpackage ODM
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Congow\Orient\ODM\Proxy;

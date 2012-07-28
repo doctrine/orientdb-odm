@@ -27,7 +27,7 @@ class Between extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {
-        if (count($values) == 2) {
+        if (count($values) === 2) {
             return "BETWEEN " . $values[0] . " AND " . $values[1];
         }
 

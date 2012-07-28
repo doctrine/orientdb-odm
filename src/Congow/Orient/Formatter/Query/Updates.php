@@ -30,9 +30,7 @@ class Updates extends Query implements TokenFormatter
         $string = "";
 
         foreach ($values as $key => $update) {
-            $key = String::filterNonSQLChars($key);
-
-            if ($key) {
+            if ($key = String::filterNonSQLChars($key)) {
                 $string .= ' ' . $key . ' = "' . addslashes($update) . '",';
             }
         }

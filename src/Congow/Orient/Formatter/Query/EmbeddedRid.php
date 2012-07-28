@@ -27,8 +27,10 @@ class EmbeddedRid extends Query\Rid implements TokenFormatter
 {
     public static function format(array $values)
     {
-        $rid = parent::format($values);
+        if ($rid = parent::format($values)) {
+            return "#$rid";
+        }
 
-        return $rid ? "#" . $rid : null;
+        return null;
     }
 }

@@ -72,7 +72,7 @@ class Insert extends Command implements InsertInterface
 
         return $this;
     }
-    
+
     /**
      * Returns the formatters for this query's tokens.
      *

@@ -35,8 +35,10 @@ class Range extends Query implements TokenFormatter
             }
         }
 
-        $range = array_slice($range, 0, 2);
+        if ($range = array_slice($range, 0, 2)) {
+            return "RANGE " . implode(' ', $range);
+        }
 
-        return count($range) ? "RANGE " . implode(' ', $range) : null;
+        return null;
     }
 }

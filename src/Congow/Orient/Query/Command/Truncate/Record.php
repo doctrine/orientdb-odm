@@ -12,9 +12,9 @@
 /**
  * Class Record
  *
- * @package     Congow\Orient
- * @subpackage  Query
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @package    Congow\Orient
+ * @subpackage Query
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Congow\Orient\Query\Command\Truncate;
@@ -26,7 +26,7 @@ class Record extends Command
     public function __construct($rid)
     {
         parent::__construct();
-        
+
         $this->setToken('Rid', $rid);
     }
 
@@ -38,6 +38,9 @@ class Record extends Command
         return "TRUNCATE RECORD :Rid";
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
@@ -45,4 +48,3 @@ class Record extends Command
         ));
     }
 }
-

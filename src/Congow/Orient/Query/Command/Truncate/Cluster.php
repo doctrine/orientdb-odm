@@ -12,9 +12,9 @@
 /**
  * Class Cluster
  *
- * @package     Congow\Orient
- * @subpackage  Query
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @package    Congow\Orient
+ * @subpackage Query
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Congow\Orient\Query\Command\Truncate;
@@ -31,4 +31,3 @@ class Cluster extends Truncate
         return "TRUNCATE CLUSTER :Name";
     }
 }
-

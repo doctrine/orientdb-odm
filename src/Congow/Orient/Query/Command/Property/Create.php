@@ -34,11 +34,11 @@ class Create extends Property
     public function __construct($property, $type = null, $linked = null)
     {
         parent::__construct($property);
-        
+
         if ($type) {
             $this->setType($type);
         }
-        
+
         if ($linked) {
             $this->setLinked($linked);
         }
@@ -55,14 +55,14 @@ class Create extends Property
     public function setLinked($linked)
     {
         $this->setToken('Linked', $linked);
-        
+
         return $this;
     }
-    
+
     public function setType($type)
     {
         $this->setToken('Type', $type);
-        
+
         return $this;
     }
 

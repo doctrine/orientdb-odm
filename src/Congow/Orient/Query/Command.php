@@ -30,9 +30,9 @@ use Congow\Orient\Validator\Escaper as EscapeValidator;
 
 abstract class Command implements CommandContract
 {
-    protected $tokens       = array();
-    protected $formatters   = array();
-    protected $formatter    = null;
+    protected $formatter;
+    protected $formatters = array();
+    protected $tokens = array();
 
     /**
      * Builds a new object, creating the SQL statement from the class SCHEMA
@@ -95,8 +95,8 @@ abstract class Command implements CommandContract
      */
     public function getTokens()
     {
-        $tokens = array();
         preg_match_all("/(\:\w+)/", $this->getSchema(), $matches);
+        $tokens = array();
 
         foreach ($matches[0] as $match) {
             $tokens[$match] = array();
@@ -177,7 +177,7 @@ abstract class Command implements CommandContract
             $condition = str_replace("?", $value, $condition);
         }
 
-        $this->setTokenValues('Where', array("{$clause} " . $condition), $append, false, false);
+        $this->setTokenValues('Where', array("{$clause} $condition"), $append, false, false);
 
         return $this;
     }
@@ -298,8 +298,8 @@ abstract class Command implements CommandContract
         $formatters = $this->getTokenFormatters();
 
         if (!array_key_exists($token, $formatters)) {
-            $message = "The class %s does not know how to format the %s token\n";
-            $message .= "Have you added it in the getTokenFormatters() method?";
+            $message = "The class %s does not know how to format the %s token\n".
+                       "Have you added it in the getTokenFormatters() method?";
 
             throw new Exception(sprintf($message, get_called_class(), $token));
         }

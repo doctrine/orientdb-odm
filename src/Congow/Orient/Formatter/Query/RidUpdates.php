@@ -29,17 +29,21 @@ class RidUpdates extends Query implements TokenFormatter
     public static function format(array $values)
     {
         $rids = array();
+        $validator = new RidValidator;
 
         foreach ($values as $key => $value) {
-            $key        = String::filterNonSQLChars($key);
-            $validator  = new RidValidator;
-            $rid        = $validator->check($value, true);
+            $key = String::filterNonSQLChars($key);
+            $rid = $validator->check($value, true);
 
             if ($key && $rid) {
-                $rids[$key] = "$key = " . $rid;
+                $rids[$key] = "$key = $rid";
             }
         }
 
-        return count($rids) ? self::implode($rids) : null;
+        if ($rids) {
+            return self::implode($rids);
+        }
+
+        return null;
     }
 }

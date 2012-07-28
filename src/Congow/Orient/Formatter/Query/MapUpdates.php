@@ -28,16 +28,16 @@ class MapUpdates extends Query implements TokenFormatter
 {
     public static function format(array $values)
     {
-        $updates    = array();
-        $validator  = new RidValidator;
+        $updates = array();
+        $validator = new RidValidator;
 
         foreach ($values as $map => $update) {
             $map = String::filterNonSQLChars($map);
 
             if ($map && is_array($update)) {
                 foreach ($update as $key => $rid) {
-                  $rid = $validator->check($rid, true);
-                  $key = String::filterNonSQLChars($key);
+                    $rid = $validator->check($rid, true);
+                    $key = String::filterNonSQLChars($key);
                 }
 
                 $updates[$map] = "$map = '$key', $rid";

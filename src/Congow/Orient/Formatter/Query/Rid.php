@@ -30,10 +30,15 @@ class Rid extends Query implements TokenFormatter
     {
         $validator = new RidValidator();
 
-        $values = array_filter($values, function ($arr) use ($validator) {
+        $filterCallback = function ($arr) use ($validator) {
             return $validator->check($arr, true);
-        });
+        };
 
-        return (count($values)) ? array_shift($values) : null;
+        if ($values = array_filter($values, $filterCallback)) {
+            return array_shift($values);
+        }
+
+        return null;
     }
 }
+

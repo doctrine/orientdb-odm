@@ -66,7 +66,7 @@ class Select extends Command implements SelectInterface
 
         return $this;
     }
-    
+
     /**
      * Deletes all the WHERE and BETWEEN conditions in the current SELECT.
      *
@@ -75,7 +75,7 @@ class Select extends Command implements SelectInterface
     public function resetWhere()
     {
         parent::resetWhere();
-        
+
         $this->clearToken('Between');
 
         return true;

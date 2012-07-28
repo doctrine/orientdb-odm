@@ -27,11 +27,11 @@ use Congow\Orient\Exception;
 
 class Dijkstra implements AlgorithmInterface
 {
-    protected $startingVertex   = null;
-    protected $endingVertex     = null;
-    protected $graph            = null;
-    protected $paths            = array();
-    protected $solution         = false;
+    protected $startingVertex;
+    protected $endingVertex;
+    protected $graph;
+    protected $paths = array();
+    protected $solution = false;
 
     /**
      * Instantiates a new algorithm, requiring a graph to work with.
@@ -51,10 +51,9 @@ class Dijkstra implements AlgorithmInterface
     public function getDistance()
     {
         if (!$this->isSolved()) {
-            $message = "Cannot calculate the distance of a non-solved algorithm:\n";
-            $message .= "Did you forget to call ->solve() ?";
-
-            throw new Exception\Logic($message);
+            throw new Exception\Logic(
+                "Cannot calculate the distance of a non-solved algorithm:\nDid you forget to call ->solve()?"
+            );
         }
 
         return $this->getEndingVertex()->getPotential();
@@ -147,9 +146,7 @@ class Dijkstra implements AlgorithmInterface
     public function solve()
     {
         if (!$this->getStartingVertex() || !$this->getEndingVertex()) {
-            $message = "Cannot solve the algorithm without both starting and ending vertices";
-
-            throw new Exception\Logic($message);
+            throw new Exception\Logic("Cannot solve the algorithm without both starting and ending vertices");
         }
 
         $this->calculatePotentials($this->getStartingVertex());

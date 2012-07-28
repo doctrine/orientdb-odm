@@ -13,8 +13,8 @@
  * The aim of a Formatter class is to manipulate token values and format them
  * in order to build valid Congow\OrientDB's SQL expressions.
  *
- * @package    
- * @subpackage 
+ * @package    Congow\Orient
+ * @subpackage Formatter
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 

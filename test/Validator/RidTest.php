@@ -60,7 +60,8 @@ class RidTest extends TestCase
     /**
      * @expectedException Congow\Orient\Exception\Validation
      */
-    public function testEmptyRid(){
+    public function testEmptyRid()
+    {
         $this->validator->check('');
     }
 }

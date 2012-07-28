@@ -12,16 +12,15 @@
 /**
  * Class ClassMetadata
  *
- * @package     Orient
- * @subpackage  ClassMetadata
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
- * @author      David Funaro <ing.davidino@gmail.com>
+ * @package    Orient
+ * @subpackage ClassMetadata
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     David Funaro <ing.davidino@gmail.com>
  */
 
 namespace Congow\Orient\ODM\Mapper;
 
 use Congow\Orient\ODM\Mapper as DataMapper;
-
 use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineMetadata;
 
 class ClassMetadata implements DoctrineMetadata
@@ -29,8 +28,8 @@ class ClassMetadata implements DoctrineMetadata
     protected $class;
     protected $refClass;
     protected $mapper;
-    private   $singleAssociations   = array('link');
-    private   $multipleAssociations = array('linklist', 'linkset', 'linkmap');
+    private $singleAssociations = array('link');
+    private $multipleAssociations = array('linklist', 'linkset', 'linkmap');
 
     /**
      * Instantiates a new Metadata for the given $className.
@@ -38,9 +37,9 @@ class ClassMetadata implements DoctrineMetadata
      * @param string        $className
      * @param DataMapper    $mapper
      */
-    public function  __construct($className, DataMapper $mapper)
+    public function __construct($className, DataMapper $mapper)
     {
-        $this->class  = $className;
+        $this->class = $className;
         $this->mapper = $mapper;
     }
 
@@ -49,7 +48,7 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @return string
      */
-    public function  getName()
+    public function getName()
     {
         return $this->class;
     }
@@ -61,7 +60,7 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @return array
      */
-    public function  getIdentifier()
+    public function getIdentifier()
     {
         return array('@rid');
     }
@@ -71,7 +70,7 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @return ReflectionClass
      */
-    public function  getReflectionClass()
+    public function getReflectionClass()
     {
         if (!$this->refClass) {
             $this->refClass = new \ReflectionClass($this->getName());
@@ -86,9 +85,9 @@ class ClassMetadata implements DoctrineMetadata
      * @param string $fieldName
      * @return boolean
      */
-    public function  isIdentifier($fieldName)
+    public function isIdentifier($fieldName)
     {
-        return ($fieldName == "@rid");
+        return ($fieldName === "@rid");
     }
 
     /**
@@ -97,7 +96,7 @@ class ClassMetadata implements DoctrineMetadata
      * @param string $fieldName
      * @return boolean
      */
-    public function  hasField($fieldName)
+    public function hasField($fieldName)
     {
         return (bool) $this->getField($fieldName);
     }
@@ -108,7 +107,7 @@ class ClassMetadata implements DoctrineMetadata
      * @param string $fieldName
      * @return boolean
      */
-    public function  hasAssociation($fieldName)
+    public function hasAssociation($fieldName)
     {
         return (bool) $this->getAssociation($fieldName);
     }
@@ -119,7 +118,7 @@ class ClassMetadata implements DoctrineMetadata
      * @param string $fieldName
      * @return boolean
      */
-    public function  isSingleValuedAssociation($fieldName)
+    public function isSingleValuedAssociation($fieldName)
     {
         return $this->isValuedAssociation($fieldName, $this->singleAssociations);
     }
@@ -130,7 +129,7 @@ class ClassMetadata implements DoctrineMetadata
      * @param string $fieldName
      * @return boolean
      */
-    public function  isCollectionValuedAssociation($fieldName)
+    public function isCollectionValuedAssociation($fieldName)
     {
         return $this->isValuedAssociation($fieldName, $this->multipleAssociations);
     }
@@ -142,7 +141,7 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @return Array
      */
-    public function  getFieldNames()
+    public function getFieldNames()
     {
         $names = array();
 
@@ -160,7 +159,7 @@ class ClassMetadata implements DoctrineMetadata
      *
      * @return Array
      */
-    public function  getAssociationNames()
+    public function getAssociationNames()
     {
         $names = array();
 
@@ -180,7 +179,7 @@ class ClassMetadata implements DoctrineMetadata
      * @param   string $fieldName
      * @return  string
      */
-    public function  getTypeOfField($fieldName)
+    public function getTypeOfField($fieldName)
     {
         if ($field = $this->getField($fieldName)) {
             return $field->type;
@@ -195,7 +194,7 @@ class ClassMetadata implements DoctrineMetadata
      * @param   string $assocName
      * @return  string
      */
-    public function  getAssociationTargetClass($assocName)
+    public function getAssociationTargetClass($assocName)
     {
         return null;
     }

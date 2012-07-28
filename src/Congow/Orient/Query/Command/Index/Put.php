@@ -30,7 +30,7 @@ class Put extends Index
      *
      * @param string $indexName
      * @param string $key
-     * @param string $rid 
+     * @param string $rid
      */
     public function __construct($indexName, $key, $rid)
     {
@@ -51,7 +51,7 @@ class Put extends Index
 
     /**
      * Returns the formatters for this query's tokens.
-     * 
+     *
      * @return Array
      */
     protected function getTokenFormatters()

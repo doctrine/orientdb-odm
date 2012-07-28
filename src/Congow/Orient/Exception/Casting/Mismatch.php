@@ -12,9 +12,9 @@
 /**
  * Class Mismatch
  *
- * @package     Congow\Orient
- * @subpackage  Exception
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @package    Congow\Orient
+ * @subpackage Exception
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Congow\Orient\Exception\Casting;

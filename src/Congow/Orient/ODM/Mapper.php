@@ -46,8 +46,8 @@ use Symfony\Component\Finder\Finder;
 
 class Mapper
 {
-    protected $documentDirectories          = array();
-    protected $enableMismatchesTolerance    = false;
+    protected $documentDirectories       = array();
+    protected $enableMismatchesTolerance = false;
     protected $annotationReader;
     protected $inflector;
     protected $documentProxiesDirectory;
@@ -65,13 +65,12 @@ class Mapper
      */
     public function __construct(
         $documentProxyDirectory,
-        AnnotationReaderInterface
-        $annotationReader = null,
+        AnnotationReaderInterface $annotationReader = null,
         Inflector $inflector = null
     ) {
-        $this->annotationReader       = $annotationReader ?: new Reader;
-        $this->inflector              = $inflector ?: new DoctrineInflector;
         $this->documentProxyDirectory = $documentProxyDirectory;
+        $this->annotationReader = $annotationReader ?: new Reader;
+        $this->inflector = $inflector ?: new DoctrineInflector;
     }
 
     /**
@@ -103,8 +102,8 @@ class Mapper
      */
     public function getClassAnnotation($class)
     {
-        $reader              = $this->getAnnotationReader();
-        $reflClass           = new \ReflectionClass($class);
+        $reader = $this->getAnnotationReader();
+        $reflClass = new \ReflectionClass($class);
         $mappedDocumentClass = self::ANNOTATION_CLASS_CLASS;
 
         foreach ($reader->getClassAnnotations($reflClass) as $annotation) {
@@ -155,12 +154,13 @@ class Mapper
         $classProperty = self::ORIENT_PROPERTY_CLASS;
 
         if (property_exists($orientObject, $classProperty)) {
-            $orientClass  = $orientObject->$classProperty;
+            $orientClass = $orientObject->$classProperty;
 
             if ($orientClass) {
-                $class       = $this->findClassMappingInDirectories($orientClass);
                 $linkTracker = new LinkTracker();
-                $document    = $this->createDocument($class, $orientObject, $linkTracker);
+
+                $class = $this->findClassMappingInDirectories($orientClass);
+                $document = $this->createDocument($class, $orientObject, $linkTracker);
 
                 return new Hydration\Result($document, $linkTracker);
             }
@@ -211,13 +211,10 @@ class Mapper
      * @param   LinkTracker $linkTracker
      * @return  object of type $class
      */
-    protected function createDocument(
-        $class,
-        \stdClass $orientObject,
-        LinkTracker $linkTracker
-    ) {
+    protected function createDocument($class, \stdClass $orientObject, LinkTracker $linkTracker) {
         $proxyClass = $this->getProxyClass($class);
-        $document   = new $proxyClass();
+        $document = new $proxyClass();
+
         $this->fill($document, $orientObject, $linkTracker);
 
         return $document;
@@ -234,6 +231,7 @@ class Mapper
     {
         $caster = new Caster($this);
         $method = 'cast' . $this->inflector->camelize($annotation->type);
+
         $caster->setValue($propertyValue);
         $caster->setProperty('annotation', $annotation);
         $this->verifyCastingSupport($caster, $method, $annotation->type);
@@ -312,17 +310,16 @@ class Mapper
         StringFormatterInterface $stringFormatter = null,
         \Iterator $iterator = null
     ) {
-        $stringFormatter = $stringFormatter ?: new StringFormatter;
-        $finder          = new Finder;
-        $iterator        = $finder->files()->name('*.php')->in($directory);
+        $stringFormatter = $stringFormatter ?: new StringFormatter();
+        $finder = new Finder();
 
-        foreach ($iterator as $file) {
+        foreach ($finder->files()->name('*.php')->in($directory) as $file) {
             $class = $stringFormatter::convertPathToClassName($file, $namespace);
 
             if (class_exists($class)) {
                 $annotation = $this->getClassAnnotation($class);
 
-                if ($annotation && $annotation->hasMatchingClass($OClass)){
+                if ($annotation && $annotation->hasMatchingClass($OClass)) {
                     return $class;
                 }
             }
@@ -386,7 +383,7 @@ class $proxyClassName extends $class
 }
 EOT;
 
-        $f = file_put_contents($dir . '/' . $proxyClassName . ".php", $proxy);
+        file_put_contents("$dir/$proxyClassName.php", $proxy);
     }
 
     /**
@@ -409,10 +406,11 @@ EOT;
      */
     protected function getProxyClass($class)
     {
-        $namespaces     = explode('\\', $class);
+        $namespaces = explode('\\', $class);
+        $proxyClassFQN = "Congow\Orient\Proxy" . $class;
         $proxyClassName = array_pop($namespaces);
 
-        if (!class_exists("Congow\Orient\Proxy" . $class)) {
+        if (!class_exists($proxyClassFQN)) {
             $dir = $this->getDocumentProxyDirectory() . '/Congow/Orient/Proxy';
 
             foreach ($namespaces as $namespace) {
@@ -423,12 +421,10 @@ EOT;
                 }
             }
 
-            $namespace = implode('\\', $namespaces);
-
             $this->generateProxyClass($class, $proxyClassName, $dir);
         }
 
-        return "Congow\Orient\Proxy" . $class;
+        return $proxyClassFQN;
     }
 
     /**
@@ -482,22 +478,20 @@ EOT;
             }
         }
 
-        $setter     = 'set' . $this->inflector->camelize($property);
+        $setter = 'set' . $this->inflector->camelize($property);
 
         if (method_exists($document, $setter)) {
             $document->$setter($value);
         }
         else {
-            $refClass    = new \ReflectionObject($document);
+            $refClass = new \ReflectionObject($document);
             $refProperty = $refClass->getProperty($property);
 
             if ($refProperty->isPublic()) {
                 $document->$property = $value;
             } else {
-                $message = "%s has not method %s: you have to added the setter in order to correctly let Congow\Orient hydrate your object ?";
-
                 throw new Exception(
-                    sprintf($message,
+                    sprintf("%s has not method %s: you have to added the setter in order to correctly let Congow\Orient hydrate your object ?",
                     get_class($document),
                     $setter)
                 );
@@ -530,7 +524,8 @@ EOT;
     {
         if (!method_exists($caster, $method)) {
             $message  = sprintf(
-                'You are trying to map a property wich seems not to have a standard type (%s). Do you have a typo in your annotation? If you think everything\'s ok, go check on %s class which property types are supported.',
+                'You are trying to map a property wich seems not to have a standard type (%s). Do you have a typo in your annotation?'.
+                    'If you think everything\'s ok, go check on %s class which property types are supported.',
                 $annotationType,
                 get_class($caster)
             );

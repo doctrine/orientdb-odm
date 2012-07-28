@@ -13,8 +13,8 @@
  * This class is a central point to manage SQL statements dealing with
  * class manipulation in Congow\OrientDB.
  *
- * @package    
- * @subpackage 
+ * @package    Congow\Orient
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 

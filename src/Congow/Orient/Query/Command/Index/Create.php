@@ -41,7 +41,7 @@ class Create extends Index
             $this->setToken('IndexClass', $class);
         }
 
-        $this->type($type);        
+        $this->type($type);
         $this->setToken('Property', $property);
     }
 

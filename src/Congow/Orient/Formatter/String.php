@@ -12,8 +12,8 @@
 /**
  * This class is responsible of general-purpose manipulating strings.
  *
- * @package    
- * @subpackage 
+ * @package    Congow\Orient
+ * @subpackage Formatter
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
@@ -32,24 +32,24 @@ class String  implements StringInterface
      * @return  string
      */
     public static function convertPathToClassName($file, $namespace = '')
-    {   
+    {
         $absPath    = realpath($file);
         $namespaces = explode('/', $absPath);
         $start      = false;
         $i          = 0;
         $chunk      = explode('\\', $namespace);
         $namespace  = array_shift($chunk);
-        
+
         while ($namespaces[$i] != $namespace) {
             unset($namespaces[$i]);
-            
-            if(!array_key_exists(++$i,$namespaces)) {
+
+            if (!array_key_exists(++$i,$namespaces)) {
                 break;
             }
         }
-        
+
         $className = str_replace('.php', null, array_pop($namespaces));
-        
+
         return '\\'. implode('\\', $namespaces) . '\\' . $className;
     }
 

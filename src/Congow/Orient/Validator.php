@@ -36,8 +36,7 @@ abstract class Validator implements ValidatorInterface
     {
         try {
             return $this->clean($value);
-        }
-        catch (ValidationException $e) {
+        } catch (ValidationException $e) {
             return $this->fail($e, $value, $silent);
         }
     }

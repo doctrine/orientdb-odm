@@ -35,10 +35,10 @@ class Proxy extends AbstractProxy
      * @param Mapper $manager
      * @param string $rid
      */
-    function __construct(Manager $manager, $rid)
+    public function __construct(Manager $manager, $rid)
     {
         $this->manager = $manager;
-        $this->rid    = $rid;
+        $this->rid = $rid;
     }
 
     /**
@@ -48,13 +48,11 @@ class Proxy extends AbstractProxy
      */
     public function __invoke()
     {
-        if ($this->record) {
-            return $this->record;
-        } else {
+        if (!$this->record) {
             $this->record = $this->getManager()->find($this->getRid());
-
-            return $this->record;
         }
+
+        return $this->record;
     }
 
     /**

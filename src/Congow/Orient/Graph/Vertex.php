@@ -25,10 +25,10 @@ use Congow\Orient\Contract\Graph\Vertex as VertexInterface;
 class Vertex implements VertexInterface
 {
     protected $id;
-    protected $connections      = array();
-    protected $potential        = null;
-    protected $potentialFrom    = null;
-    protected $passed           = false;
+    protected $potential;
+    protected $potentialFrom;
+    protected $connections = array();
+    protected $passed = false;
 
     /**
      * Instantiates a new vertex, requiring a ID to avoid collisions.
@@ -138,8 +138,8 @@ class Vertex implements VertexInterface
         $potential = (int) $potential;
 
         if (!$this->getPotential() || $potential < $this->getPotential()) {
-            $this->potential        = $potential;
-            $this->potentialFrom    = $from;
+            $this->potential = $potential;
+            $this->potentialFrom = $from;
 
             return true;
         }
@@ -147,4 +147,3 @@ class Vertex implements VertexInterface
         return false;
     }
 }
-

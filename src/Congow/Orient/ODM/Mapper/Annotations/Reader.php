@@ -14,9 +14,9 @@
  * If you want to use a custom annotation reader library you should make your
  * reader extend this class.
  *
- * @package     Congow\Orient
- * @subpackage  ODM
- * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @package    Congow\Orient
+ * @subpackage ODM
+ * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Congow\Orient\ODM\Mapper\Annotations;
@@ -36,7 +36,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class Reader implements ReaderInterface
 {
-    protected $reader = null;
+    protected $reader;
 
     /**
      * Instantiates a new annotation reader, optionally injecting a cache
@@ -148,6 +148,6 @@ class Reader implements ReaderInterface
      */
     protected function createCacheProvider()
     {
-        return function_exists('apc_fetch') ? new ApcCache() : new ArrayCache();
+        return extension_loaded('apc') ? new ApcCache() : new ArrayCache();
     }
 }
