@@ -63,4 +63,30 @@ class GrantTest extends TestCase
 
         $this->assertCommandGives($sql, $this->grant->getRaw());
     }
+
+    public function testOnCommandWorksAndCanBeOverwritten()
+    {
+        $this->grant->on('resource');
+        $query = 'GRANT myPermission ON resource TO';
+
+        $this->assertCommandGives($query, $this->grant->getRaw());
+
+        $this->grant->on('resource2');
+        $query = 'GRANT myPermission ON resource2 TO';
+
+        $this->assertCommandGives($query, $this->grant->getRaw());
+    }
+
+    public function testToCommandWorksAndCanBeOverwritten()
+    {
+        $this->grant->to('user');
+        $query = 'GRANT myPermission ON TO user';
+
+        $this->assertCommandGives($query, $this->grant->getRaw());
+
+        $this->grant->to('user2');
+        $query = 'GRANT myPermission ON TO user2';
+
+        $this->assertCommandGives($query, $this->grant->getRaw());
+    }
 }
