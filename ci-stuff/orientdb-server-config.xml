@@ -6,7 +6,18 @@
             <protocol name="http" implementation="com.orientechnologies.orient.server.network.protocol.http.ONetworkProtocolHttpDb"/>
         </protocols>
         <listeners>
-            <listener ip-address="127.0.0.1" port-range="2480" protocol="http"/>
+            <listener ip-address="127.0.0.1" port-range="2480" protocol="http">
+                <commands>
+                    <command
+                        pattern="GET|www GET|studio/ GET| GET|*.htm GET|*.html GET|*.xml GET|*.jpeg GET|*.jpg GET|*.png GET|*.gif GET|*.js GET|*.css GET|*.swf GET|*.ico GET|*.txt"
+                        implementation="com.orientechnologies.orient.server.network.protocol.http.command.get.OServerCommandGetStaticContent">
+                        <parameters>
+                            <entry name="http.cache:*.htm *.html" value="Cache-Control: no-cache, no-store, max-age=0, must-revalidate\r\nPragma: no-cache" />
+                            <entry name="http.cache:default" value="Cache-Control: max-age=120" />
+                        </parameters>
+                    </command>
+                </commands>
+            </listener>
         </listeners>
     </network>
     <storages>
