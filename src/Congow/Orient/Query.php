@@ -722,4 +722,12 @@ class Query implements QueryInterface
 
         return true;
     }
+
+    /**
+     * Returns the raw SQL statement
+     */
+    public function __toString()
+    {
+        return $this->getRaw();
+    }
 }
