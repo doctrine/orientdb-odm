@@ -168,14 +168,16 @@ abstract class Command implements CommandContract
         if (is_array($value)) {
             $condition = $this->formatWhereConditionWithMultipleTokens($condition, $value, $validator);
         } else {
-            if ($rid = $this->ridValidator->check($value, true)) {
-                $value = $rid;
+            if ($value === null) {
+                $condition = preg_replace("/=\s*\?/", "IS ?", $condition, 1);
+                $value = 'NULL';
             } else if (is_bool($value)) {
                 $value = $value ? 'TRUE' : 'FALSE';
             } else if (is_int($value) || is_float($value)) {
                 // Preserve $value as is
             } else {
-                $value = '"' . $validator->check($value, 1) . '"';
+                $rid = $this->ridValidator->check($value, true);
+                $value = $rid ? $rid : '"' . $validator->check($value, true) . '"';
             }
 
             $condition = str_replace("?", $value, $condition);

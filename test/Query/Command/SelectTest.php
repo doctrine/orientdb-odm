@@ -137,13 +137,14 @@ class SelectTest extends TestCase
                 ->from(array('12:0', '12:1'), false)
                 ->where('any() traverse ( any() like "%danger%" )')
                 ->orWhere("1 = ?", 1)
+                ->orWhere("1 = ?", NULL)
                 ->andWhere("links = ?", "1")
                 ->limit(20)
                 ->orderBy('username')
                 ->orderBy('name', true, true)
                 ->range("12:0", "12:1");
 
-        $sql = 'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = 1 AND links = "1" ORDER BY name, username LIMIT 20 RANGE 12:0 12:1';
+        $sql = 'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = 1 OR 1 IS NULL AND links = "1" ORDER BY name, username LIMIT 20 RANGE 12:0 12:1';
 
         $this->assertCommandGives($sql, $this->select->getRaw());
     }
