@@ -319,8 +319,7 @@ abstract class Command implements CommandContract
         foreach ($this->tokens as $token => $value) {
             $key                = $this->getFormatter()->untokenize($token);
             $formatter          = $this->getTokenFormatter($key);
-            $values             = array_filter($value);
-            $replaces[$token]   = $formatter::format($values);
+            $replaces[$token]   = $formatter::format($value);
         }
 
         return $replaces;

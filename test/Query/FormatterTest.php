@@ -268,8 +268,13 @@ class FormatterTest extends TestCase
     public function testFormattingValues()
     {
         $values = array(
+            true,
+            false,
+            null,
+            "12",
             12,
             '0',
+            0,
             '"',
             '@class',
             '@@rid',
@@ -281,7 +286,7 @@ class FormatterTest extends TestCase
             "!@#$%^&*()",
         );
 
-        $expected = '"12", "0", "\"", "@class", "@@rid", "prop", [1, 2], "\\\'", "\\\", "<a href=\"http://ciao.com\">ciao</a>", "!@#$%^&*()"';
+        $expected = 'TRUE, FALSE, NULL, "12", 12, "0", 0, "\"", "@class", "@@rid", "prop", [1, 2], "\\\'", "\\\", "<a href=\"http://ciao.com\">ciao</a>", "!@#$%^&*()"';
         $formatter = new Formatter\Query\Values();
 
         $this->assertEquals($expected, $formatter::format($values));
