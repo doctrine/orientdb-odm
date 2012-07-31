@@ -171,7 +171,13 @@ abstract class Command implements CommandContract
             try {
                 $value = $ridValidator->check($value);
             } catch (Exception $e) {
-                $value = '"' . $validator->check($value, 1) . '"';
+                if (is_bool($value)) {
+                    $value = $value ? 'TRUE' : 'FALSE';
+                } else if (is_int($value) || is_float($value)) {
+                    // NOOP
+                } else {
+                    $value = '"' . $validator->check($value, 1) . '"';
+                }
             }
 
             $condition = str_replace("?", $value, $condition);
