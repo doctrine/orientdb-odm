@@ -30,6 +30,7 @@ use Congow\Orient\Validator\Escaper as EscapeValidator;
 
 abstract class Command implements CommandContract
 {
+    protected $ridValidator;
     protected $formatter;
     protected $formatters = array();
     protected $tokens = array();
@@ -41,6 +42,7 @@ abstract class Command implements CommandContract
     public function __construct()
     {
         $this->tokens = $this->getTokens();
+        $this->ridValidator = new RidValidator();
     }
 
     /**
@@ -166,18 +168,14 @@ abstract class Command implements CommandContract
         if (is_array($value)) {
             $condition = $this->formatWhereConditionWithMultipleTokens($condition, $value, $validator);
         } else {
-            $ridValidator = new RidValidator();
-
-            try {
-                $value = $ridValidator->check($value);
-            } catch (Exception $e) {
-                if (is_bool($value)) {
-                    $value = $value ? 'TRUE' : 'FALSE';
-                } else if (is_int($value) || is_float($value)) {
-                    // NOOP
-                } else {
-                    $value = '"' . $validator->check($value, 1) . '"';
-                }
+            if ($rid = $this->ridValidator->check($value, true)) {
+                $value = $rid;
+            } else if (is_bool($value)) {
+                $value = $value ? 'TRUE' : 'FALSE';
+            } else if (is_int($value) || is_float($value)) {
+                // Preserve $value as is
+            } else {
+                $value = '"' . $validator->check($value, 1) . '"';
             }
 
             $condition = str_replace("?", $value, $condition);
