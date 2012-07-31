@@ -200,8 +200,6 @@ abstract class Command implements CommandContract
                 $this->$method($token, $key, $value);
             }
         }
-
-        $this->tokens[$token] = array_unique($this->tokens[$token], SORT_REGULAR);
     }
 
     /**

@@ -56,7 +56,7 @@ class SelectTest extends TestCase
 
         $this->assertCommandGives($query, $this->select->getRaw());
 
-        $this->select->orderBy("name ASC");
+        $this->select->orderBy("name ASC", false);
         $this->select->orderBy("surname DESC");
         $query = 'SELECT FROM myClass ORDER BY name ASC, surname DESC';
 
@@ -64,11 +64,6 @@ class SelectTest extends TestCase
 
         $this->select->orderBy("id", false);
         $query = 'SELECT FROM myClass ORDER BY id';
-
-        $this->assertCommandGives($query, $this->select->getRaw());
-
-        $this->select->orderBy("name", true, true);
-        $query = 'SELECT FROM myClass ORDER BY name, id';
 
         $this->assertCommandGives($query, $this->select->getRaw());
     }
@@ -126,11 +121,11 @@ class SelectTest extends TestCase
         $this->select->limit(20);
         $this->select->from(array('23:2', '12:4'), false);
         $this->select->select(array('id', 'name'));
-        $this->select->select(array('name'));
+        $this->select->select(array('lastname'));
         $this->select->range('10:3');
         $this->select->range(null, '12:0');
 
-        $query = 'SELECT id, name FROM [23:2, 12:4] LIMIT 20 RANGE 10:3 12:0';
+        $query = 'SELECT id, name, lastname FROM [23:2, 12:4] LIMIT 20 RANGE 10:3 12:0';
 
         $this->assertCommandGives($query, $this->select->getRaw());
     }
@@ -174,7 +169,7 @@ class SelectTest extends TestCase
 
         $this->select->resetWhere();
         $this->select
-                ->select(array('key', 'value'))
+                ->select(array('key', 'value'), false)
                 ->from(array('index:coordinates'), false);
 
         $sql = 'SELECT key, value FROM index:coordinates';
