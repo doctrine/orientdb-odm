@@ -296,6 +296,11 @@ class FormatterTest extends TestCase
     {
         $fields = array(
             1 => 1,
+            'int0' => 0,
+            'str0' => '0',
+            'false' => false,
+            'true' => true,
+            'null' => null,
             '@rid' => '12:0',
             '"' => '"',
             '\'' => '\'',
@@ -305,7 +310,7 @@ class FormatterTest extends TestCase
             'html' => '<a href="http://ciao.com">ciao</a>\\',
         );
 
-        $updates = ' 1 = "1", @rid = "12:0", carl = "\"\"", #1 = "#13", 44 = "#13", html = "<a href=\"http://ciao.com\">ciao</a>\\\"';
+        $updates = ' 1 = 1, int0 = 0, str0 = "0", false = FALSE, true = TRUE, null = NULL, @rid = "12:0", carl = "\"\"", #1 = "#13", 44 = "#13", html = "<a href=\"http://ciao.com\">ciao</a>\\\"';
         $formatter = new Formatter\Query\Updates();
 
         $this->assertEquals($updates, $formatter::format($fields));
