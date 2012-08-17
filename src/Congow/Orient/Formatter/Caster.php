@@ -160,16 +160,30 @@ class Caster implements CasterInterface
         $min    = (float) 4.9E-324;
         $max    = (float) 1.7976931348623157E+308;
         $value  = (float) $this->value;
-        
+
         if ($value >= $min && $value <= $max) {
             return $value;
         }
-        
-        $castFunction = function($value){
+
+
+        $castFunction = function($value) use ($min,$max) {
+
+            if ($value < $min ) {
+                return $min;
+            }
+
+            if ($value > $max) {
+                return $max;
+            }
+
             return (float) $value;
         };
-        
-        $this->handleMismatch($castFunction, 'decimal');
+
+        if (is_numeric($this->value)) {
+            return $castFunction($this->value);
+        } else {
+            return $this->handleMismatch($castFunction, 'decimal');
+        }
     }
 
     /**
