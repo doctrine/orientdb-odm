@@ -4,8 +4,8 @@ try.php
 docs/html
 docs/latex
 docs/coverage
-lib/*
-#proxies/Congow/Orient/Proxy/*
+proxies/Congow/Orient/Proxy/*
+!proxies/Congow/Orient/Proxy/README.md
 nbproject
 ci-stuff/environment
 vendor/
