@@ -240,6 +240,23 @@ class CasterTest extends TestCase
         );
     }
 
+    /**
+     * @dataProvider getDecimals
+     */
+    public function testDecimalCasting($expected, $double)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($double)->castDecimal());
+    }
+
+    public function getDecimals()
+    {
+        return array(
+            array(0, '0'),
+            array(11.56, 11.56),
+            array(-50, -50),
+            array(-12.8999, '-12.8999'),
+        );
+    }
 
     /**
      * @dataProvider getDoubles
