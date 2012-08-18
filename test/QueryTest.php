@@ -258,9 +258,9 @@ class QueryTest extends TestCase
         $this->query
                 ->delete("Profile")
                 ->where("1 = ?", 1)
-                ->andWhere("links = ?", 1);
+                ->andWhere("links = ?", "1");
 
-        $sql = 'DELETE FROM Profile WHERE 1 = "1" AND links = "1"';
+        $sql = 'DELETE FROM Profile WHERE 1 = 1 AND links = "1"';
 
         $this->assertCommandGives($sql, $this->query->getRaw());
     }
@@ -323,10 +323,10 @@ class QueryTest extends TestCase
     {
         $this->query->from(array('class'));
         $this->query->where('1 = ?', 1);
-        $this->query->andWhere('1 = ?', 1);
-        $this->query->orWhere("1 = ?", 1);
+        $this->query->andWhere('1 = ?', "1");
+        $this->query->orWhere("1 = ?", false);
 
-        $sql = 'SELECT FROM class WHERE 1 = "1" AND 1 = "1" OR 1 = "1"';
+        $sql = 'SELECT FROM class WHERE 1 = 1 AND 1 = "1" OR 1 = FALSE';
 
         $this->assertCommandGives($sql, $this->query->getRaw());
     }
