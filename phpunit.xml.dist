@@ -54,6 +54,7 @@
       <blacklist>
         <directory suffix=".php">test</directory>
         <directory suffix=".php">lib</directory>
+        <directory suffix=".php">vendor</directory>
       </blacklist>
     </filter>
 
