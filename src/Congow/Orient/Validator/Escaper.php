@@ -26,10 +26,6 @@ class Escaper extends Validator
 {
     protected function clean($value)
     {
-        if (!$value = addslashes($value)) {
-            throw new ValidationException($value, __CLASS__);
-        }
-
-        return $value;
+        return addslashes($value);
     }
 }

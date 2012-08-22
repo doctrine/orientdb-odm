@@ -56,14 +56,17 @@ class QueryBuilderTest extends TestCase
         $this->assertHttpStatus(200, $result);
         $this->assertSame(20, $this->getResultCount($result));
 
+        $query = new Query();
         $query->from(array('Address'))->limit(30);
-        $query->from(array('Address'))->limit(20);
+        $query->limit(20);
 
         $result = $this->doQuery($query);
         $this->assertHttpStatus(200, $result);
         $this->assertSame(20, $this->getResultCount($result));
 
+        $query = new Query();
         $result = $this->doQuery($query->from(array('Address'))->limit('a'));
+
         $this->assertHttpStatus(200, $result);
         $this->assertGreaterThan(21, $this->getResultCount($result));
     }

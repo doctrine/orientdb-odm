@@ -34,6 +34,12 @@ class Values extends Query implements TokenFormatter
                 } else {
                     $values[$key] = addslashes(array_shift($value));
                 }
+            } else if ($value === null) {
+                $values[$key] = 'NULL';
+            } else if (is_int($value) || is_float($value)) {
+                $values[$key] = $value;
+            } else if (is_bool($value)) {
+                $values[$key] = $value ? 'TRUE' : 'FALSE';
             } else {
                 $values[$key] = '"' . addslashes($value) . '"';
             }
