@@ -164,29 +164,31 @@ class Dijkstra implements AlgorithmInterface
      */
     protected function calculatePotentials(Vertex $vertex)
     {
-        foreach ($vertex->getConnections() as $id => $distance) {
+        $connections = $vertex->getConnections();
+        $sorted = array_flip($connections);
+
+        krsort($sorted);
+
+        foreach ($connections as $id => $distance) {
             $v = $this->getGraph()->getVertex($id);
             $v->setPotential($vertex->getPotential() + $distance, $vertex);
 
             foreach ($this->getPaths() as $path) {
                 $count = count($path);
 
-                if ($path[$count - 1]->getId() == $vertex->getId()) {
+                if ($path[$count - 1]->getId() === $vertex->getId()) {
                     $this->paths[] = array_merge($path, array($v));
                 }
             }
         }
 
         $vertex->markPassed();
-        $mostAdjacentConnectionId = $vertex->getMostAdjacentConnectionId();
 
-        if ($mostAdjacentConnectionId && $mostAdjacentConnectionId != $this->getEndingVertex()->getId()) {
-            $vertex = $this->getGraph()->getVertex($mostAdjacentConnectionId);
+        // Get loop through the current node's nearest connections
+        // to calculate their potentials.
+        foreach ($sorted as $id) {
+            $vertex = $this->getGraph()->getVertex($id);
 
-            $this->calculatePotentials($vertex);
-        }
-
-        foreach ($this->getGraph()->getVertices() as $vertex) {
             if (!$vertex->isPassed()) {
                 $this->calculatePotentials($vertex);
             }

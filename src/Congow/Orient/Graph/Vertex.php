@@ -73,20 +73,6 @@ class Vertex implements VertexInterface
     }
 
     /**
-     * Returns the most adjacent connection's ID of the current vertex,
-     * null if the vertex has no connections.
-     *
-     * @return mixed
-     */
-    public function getMostAdjacentConnectionId()
-    {
-        $connections = array_flip($this->getConnections());
-        sort($connections);
-
-        return count($connections) ? array_shift($connections) : null;
-    }
-
-    /**
      * Returns vertex's potential.
      *
      * @return integer
