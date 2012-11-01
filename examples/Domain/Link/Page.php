@@ -11,7 +11,7 @@
 
 namespace Domain\Link;
 
-use Congow\Orient\ODM\Mapper\Annotations as ODM;
+use Doctrine\Orient\ODM\Mapper\Annotations as ODM;
 
 /**
 * @ODM\Document(class="pagelink")

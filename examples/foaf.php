@@ -1,9 +1,9 @@
 <?php
 
-namespace Congow\Orient;
+namespace Doctrine\Orient;
 
-use Congow\Orient\Binding\HttpBinding;
-use Congow\Orient\Binding\BindingParameters;
+use Doctrine\Orient\Binding\HttpBinding;
+use Doctrine\Orient\Binding\BindingParameters;
 
 require __DIR__.'/../autoload.php';
 

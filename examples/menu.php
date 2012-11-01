@@ -1,10 +1,10 @@
 <?php
 
-namespace Congow\Orient;
+namespace Doctrine\Orient;
 
 use Symfony\Component\ClassLoader\UniversalClassLoader;
-use Congow\Orient\Binding\HttpBinding;
-use Congow\Orient\Binding\BindingParameters;
+use Doctrine\Orient\Binding\HttpBinding;
+use Doctrine\Orient\Binding\BindingParameters;
 
 require __DIR__.'/../autoload.php';
 
