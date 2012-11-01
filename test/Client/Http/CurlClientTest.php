@@ -3,14 +3,14 @@
 /**
  * CurlClientTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
  */
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Client\Http\CurlClient;
+use Doctrine\Orient\Client\Http\CurlClient;
 
 class CurlClientTest extends TestCase
 {
@@ -30,7 +30,7 @@ class CurlClientTest extends TestCase
     }
 
     /**
-     * @expectedException Congow\Orient\Exception\Http\Response\Void
+     * @expectedException Doctrine\Orient\Exception\Http\Response\Void
      */
     public function testRetrievingAnEmptyResponseRaisesAnException()
     {

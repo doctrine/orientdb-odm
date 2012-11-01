@@ -3,7 +3,7 @@
 /**
  * QueryTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
@@ -12,8 +12,8 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Query;
-use Congow\Orient\Query\Command\Select;
+use Doctrine\Orient\Query;
+use Doctrine\Orient\Query\Command\Select;
 
 class QueryTest extends TestCase
 {
@@ -24,7 +24,7 @@ class QueryTest extends TestCase
 
     public function testQueryImplementsAGenericInterface()
     {
-        $this->assertInstanceOf("\Congow\Orient\Contract\Query", $this->query);
+        $this->assertInstanceOf("\Doctrine\Orient\Contract\Query", $this->query);
     }
 
     public function testDataFiltering()
@@ -89,7 +89,7 @@ class QueryTest extends TestCase
 
     public function testSelect()
     {
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Select', $this->query->select(array()));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Select', $this->query->select(array()));
     }
 
     public function testYouCanResetAllTheWheresOfAQuery()
@@ -104,66 +104,66 @@ class QueryTest extends TestCase
 
     public function testInsert()
     {
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Insert', $this->query->insert());
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Insert', $this->query->insert());
     }
 
     public function testFields()
     {
         $this->query->insert();
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Insert', $this->query->fields(array()));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Insert', $this->query->fields(array()));
     }
 
     public function testInto()
     {
         $this->query->insert();
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Insert', $this->query->into('class'));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Insert', $this->query->into('class'));
     }
 
     public function testRange()
     {
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Select', $this->query->range('12', '14'));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Select', $this->query->range('12', '14'));
     }
 
     public function testValues()
     {
         $this->query->insert();
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Insert', $this->query->values(array()));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Insert', $this->query->values(array()));
     }
 
     public function testTo()
     {
         $this->query->grant('a');
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Credential\Grant', $this->query->to('c'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Credential\Grant', $this->query->to('c'));
     }
 
     public function testGrant()
     {
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Credential', $this->query->grant('p'));
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Credential\Grant', $this->query->grant('p'));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Credential', $this->query->grant('p'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Credential\Grant', $this->query->grant('p'));
     }
 
     public function testYouCanCreateARevoke()
     {
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Credential', $this->query->revoke('p'));
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Credential\Revoke', $this->query->revoke('p'));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Credential', $this->query->revoke('p'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Credential\Revoke', $this->query->revoke('p'));
     }
 
     public function testCreationOfAClass()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\OClass\Create', $this->query->create('p'));
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\OClass', $this->query->create('p'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\OClass\Create', $this->query->create('p'));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\OClass', $this->query->create('p'));
     }
 
     public function testRemovalOfAClass()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\OClass\Drop', $this->query->drop('p'));
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\OClass', $this->query->drop('p'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\OClass\Drop', $this->query->drop('p'));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\OClass', $this->query->drop('p'));
     }
 
     public function testRemovalOfAProperty()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Property\Drop', $this->query->drop('p', 'h'));
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Property', $this->query->drop('p', 'h'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Property\Drop', $this->query->drop('p', 'h'));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Property', $this->query->drop('p', 'h'));
 
 
         $this->query = new Query();
@@ -180,8 +180,8 @@ class QueryTest extends TestCase
 
     public function testCreationOfAProperty()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Property\Create', $this->query->create('p', 'h'));
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Property', $this->query->create('p', 'h'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Property\Create', $this->query->create('p', 'h'));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Property', $this->query->create('p', 'h'));
 
         $this->query->create("read", "hallo", "type");
         $sql = 'CREATE PROPERTY read.hallo type';
@@ -196,8 +196,8 @@ class QueryTest extends TestCase
 
     public function testFindReferences()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Reference\Find', $this->query->findReferences("1:1"));
-        //$this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Reference\Find', $this->query->findReferences("1:1"));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Reference\Find', $this->query->findReferences("1:1"));
+        //$this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Reference\Find', $this->query->findReferences("1:1"));
 
         $this->query->in(array('class2', 'cluster:class3'));
         $sql = 'FIND REFERENCES 1:1 [class2, cluster:class3]';
@@ -207,8 +207,8 @@ class QueryTest extends TestCase
 
     public function testDroppingAnIndex()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Index\Drop', $this->query->unindex("class", "property"));
-        //$this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Index', $this->query->unindex("class", "property"));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Index\Drop', $this->query->unindex("class", "property"));
+        //$this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Index', $this->query->unindex("class", "property"));
 
         $this->query->unindex("property", "class");
         $sql = 'DROP INDEX class.property';
@@ -223,13 +223,13 @@ class QueryTest extends TestCase
 
     public function testLookingUpAnIndex()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Index\Lookup', $this->query->lookup('index'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Index\Lookup', $this->query->lookup('index'));
     }
 
     public function testCreatingAnIndex()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Index\Create', $this->query->index("class", "property"));
-        //$this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Index', $this->query->index("class", "property"));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Index\Create', $this->query->index("class", "property"));
+        //$this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Index', $this->query->index("class", "property"));
 
         $this->query->index("property", 'unique',"class");
         $sql = 'CREATE INDEX class.property unique';
@@ -333,7 +333,7 @@ class QueryTest extends TestCase
 
     public function testLimit()
     {
-        $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Select', $this->query->limit(20));
+        $this->assertInstanceOf('\Doctrine\Orient\Contract\Query\Command\Select', $this->query->limit(20));
 
         $this->query->from(array('class'))->limit(10);
         $sql = 'SELECT FROM class LIMIT 10';
@@ -343,11 +343,11 @@ class QueryTest extends TestCase
 
     public function testOn()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Property\Create', $this->query->create('p', 'c'));
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Property\Create', $this->query->on('p', 'f'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Property\Create', $this->query->create('p', 'c'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Property\Create', $this->query->on('p', 'f'));
 
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Property\Drop', $this->query->drop('p', 'c'));
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Property\Drop', $this->query->on('c', 'c'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Property\Drop', $this->query->drop('p', 'c'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Property\Drop', $this->query->on('c', 'c'));
 
         $sql = 'DROP PROPERTY c.c';
 
@@ -356,7 +356,7 @@ class QueryTest extends TestCase
 
     public function testAlter()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\OClass\Alter', $this->query->alter('c', 'p', 'v'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\OClass\Alter', $this->query->alter('c', 'p', 'v'));
 
         $sql = 'ALTER CLASS c p v';
 
@@ -365,7 +365,7 @@ class QueryTest extends TestCase
 
     public function testAlterProperty()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Property\Alter', $this->query->alterProperty('p', 'c', 'a', 'v'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Property\Alter', $this->query->alterProperty('p', 'c', 'a', 'v'));
 
         $sql = 'ALTER PROPERTY c.p a v';
 
@@ -383,7 +383,7 @@ class QueryTest extends TestCase
 
     public function testPuttingANewIndex()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Index\Put', $this->query->indexPut('i', 'k', 'v'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Index\Put', $this->query->indexPut('i', 'k', 'v'));
     }
 
     public function testANormalSelectCanBeConvertedIntoAnIndexSelect()
@@ -397,21 +397,21 @@ class QueryTest extends TestCase
 
     public function testAnIndexCanBeRemoved()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Index\Remove', $this->query->indexRemove('i', 'k', 'v'));
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Index\Remove', $this->query->indexRemove('i', 'k'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Index\Remove', $this->query->indexRemove('i', 'k', 'v'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Index\Remove', $this->query->indexRemove('i', 'k'));
     }
 
     public function testYouCanCountInAnIndex()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Index\Count', $this->query->indexCount('i'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Index\Count', $this->query->indexCount('i'));
     }
 
     /**
-     * @expectedException Congow\Orient\Exception
+     * @expectedException Doctrine\Orient\Exception
      */
     public function testAnExceptionIsRaisedWhenTryingToAccessANonExistingMethod()
     {
-        $query = $this->getMock('Congow\Orient\Query', array('aMethodCallingABadCommand'));
+        $query = $this->getMock('Doctrine\Orient\Query', array('aMethodCallingABadCommand'));
         $getCommandClass = new \ReflectionMethod($query, 'getCommandClass');
         $getCommandClass->setAccessible(true);
 
@@ -434,16 +434,16 @@ class QueryTest extends TestCase
 
     public function testTruncatingAClass()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Truncate\OClass', $this->query->truncate('myFictionaryClass'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Truncate\OClass', $this->query->truncate('myFictionaryClass'));
     }
 
     public function testTruncatingACluster()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Truncate\Cluster', $this->query->truncate('myFictionaryCluster', true));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Truncate\Cluster', $this->query->truncate('myFictionaryCluster', true));
     }
 
     public function testTruncatingARecord()
     {
-        $this->assertInstanceOf('\Congow\Orient\Query\Command\Truncate\Record', $this->query->truncate('12:0'));
+        $this->assertInstanceOf('\Doctrine\Orient\Query\Command\Truncate\Record', $this->query->truncate('12:0'));
     }
 }

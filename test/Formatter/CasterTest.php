@@ -3,7 +3,7 @@
 /**
  * CasterTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
@@ -13,11 +13,11 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\ODM\Mapper;
-use Congow\Orient\ODM\Manager;
-use Congow\Orient\Foundation\Types\Rid;
-use Congow\Orient\Foundation\Types\Rid\Collection;
-use Congow\Orient\Formatter\Caster;
+use Doctrine\Orient\ODM\Mapper;
+use Doctrine\Orient\ODM\Manager;
+use Doctrine\Orient\Foundation\Types\Rid;
+use Doctrine\Orient\Foundation\Types\Rid\Collection;
+use Doctrine\Orient\Formatter\Caster;
 
 class CasterTest extends TestCase
 {
@@ -63,7 +63,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedBooleans
-     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     * @expectedException Doctrine\Orient\Exception\Casting\Mismatch
      */
     public function testForcedBooleanCastingRaisesAnException($expected, $input)
     {
@@ -118,7 +118,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedBytes
-     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     * @expectedException Doctrine\Orient\Exception\Casting\Mismatch
      */
     public function testForcedBytesCastingRaisesAnException($expected, $byte)
     {
@@ -174,7 +174,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedLongs
-     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     * @expectedException Doctrine\Orient\Exception\Casting\Mismatch
      */
     public function testForcedLongsCastingRaisesAnException($expected, $long)
     {
@@ -224,7 +224,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedIntegers
-     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     * @expectedException Doctrine\Orient\Exception\Casting\Mismatch
      */
     public function testForcedIntegersCastingRaisesAnException($expected, $integer)
     {
@@ -259,7 +259,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedDecimals
-     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     * @expectedException Doctrine\Orient\Exception\Casting\Mismatch
      */
     public function testForcedDecimalCastingRaisesAnException($expected, $decimal)
     {
@@ -315,7 +315,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedDoubles
-     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     * @expectedException Doctrine\Orient\Exception\Casting\Mismatch
      */
     public function testForcedDoublesCastingRaisesAnException($expected, $ddouble)
     {
@@ -352,7 +352,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedDoubles
-     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     * @expectedException Doctrine\Orient\Exception\Casting\Mismatch
      */
     public function testForcedFloatsCastingRaisesAnException($expected, $float)
     {
@@ -387,7 +387,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedStrings
-     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     * @expectedException Doctrine\Orient\Exception\Casting\Mismatch
      */
     public function testForcedStringsCastingRaisesAnException($expected, $string)
     {
@@ -444,7 +444,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedShorts
-     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     * @expectedException Doctrine\Orient\Exception\Casting\Mismatch
      */
     public function testForcedShortsCastingRaisesAnException($expected, $short)
     {
@@ -521,7 +521,7 @@ class CasterTest extends TestCase
     public function getForcedBinaries()
     {
         return array(
-            array(new \Congow\Orient\Client\Http\CurlClientResponse("1\r\n\r\n2")),
+            array(new \Doctrine\Orient\Client\Http\CurlClientResponse("1\r\n\r\n2")),
         );
     }
 
@@ -540,11 +540,11 @@ class CasterTest extends TestCase
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
 
-        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
-        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+        $address = new \Doctrine\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Doctrine\Orient\ODM\Mapper\Hydration\Result($address, new \Doctrine\Orient\ODM\Mapper\LinkTracker);
 
         return array(
-            array(new \Congow\Orient\ODM\Proxy\Value($result), $orientDocument),
+            array(new \Doctrine\Orient\ODM\Proxy\Value($result), $orientDocument),
             array(new Rid('#10:3'), '#10:3'),
             array(null, 'pete')
         );
@@ -585,8 +585,8 @@ class CasterTest extends TestCase
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
 
-        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
-        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+        $address = new \Doctrine\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Doctrine\Orient\ODM\Mapper\Hydration\Result($address, new \Doctrine\Orient\ODM\Mapper\LinkTracker);
 
         $collection = new Collection(array('hello' => '#10:4'));
         return array(
@@ -610,8 +610,8 @@ class CasterTest extends TestCase
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
 
-        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
-        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+        $address = new \Doctrine\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Doctrine\Orient\ODM\Mapper\Hydration\Result($address, new \Doctrine\Orient\ODM\Mapper\LinkTracker);
 
         return array(
             array($result, $orientDocument),
@@ -623,7 +623,7 @@ class CasterTest extends TestCase
      */
     public function testEmbeddedSetCasting($expected,$embeddedSet)
     {
-        $property = $this->getMock('Congow\Orient\ODM\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
+        $property = $this->getMock('Doctrine\Orient\ODM\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
 
         $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
         $this->caster->setProperty('annotation', $property);
@@ -636,7 +636,7 @@ class CasterTest extends TestCase
      */
     public function testEmbeddedMapCasting($expected,$embeddedSet)
     {
-        $property = $this->getMock('Congow\Orient\ODM\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
+        $property = $this->getMock('Doctrine\Orient\ODM\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
 
         $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
         $this->caster->setProperty('annotation', $property);
@@ -649,7 +649,7 @@ class CasterTest extends TestCase
      */
     public function testEmbeddedListCasting($expected,$embeddedSet)
     {
-        $property = $this->getMock('Congow\Orient\ODM\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
+        $property = $this->getMock('Doctrine\Orient\ODM\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
 
         $this->mapper->setDocumentDirectories(array(__DIR__ . '/../Integration/Document/' => 'test'));
         $this->caster->setProperty('annotation', $property);
@@ -662,8 +662,8 @@ class CasterTest extends TestCase
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
 
-        $address = new \Congow\Orient\Proxy\test\Integration\Document\Address();
-        $result  = new \Congow\Orient\ODM\Mapper\Hydration\Result($address, new \Congow\Orient\ODM\Mapper\LinkTracker);
+        $address = new \Doctrine\Orient\Proxy\test\Integration\Document\Address();
+        $result  = new \Doctrine\Orient\ODM\Mapper\Hydration\Result($address, new \Doctrine\Orient\ODM\Mapper\LinkTracker);
 
         return array(
             array(array('hello' => $result), array('hello' => $orientDocument)),

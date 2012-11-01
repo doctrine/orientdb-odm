@@ -20,12 +20,12 @@
 namespace test\Exception;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Exception\Validation;
+use Doctrine\Orient\Exception\Validation;
 
 class ValidationTest extends TestCase
 {
     /**
-     * @expectedException Congow\Orient\Exception\Validation
+     * @expectedException Doctrine\Orient\Exception\Validation
      * @expectedExceptionMessage Validation of "text" as V failed
      */
     public function testException()
@@ -34,7 +34,7 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * @expectedException Congow\Orient\Exception\Validation
+     * @expectedException Doctrine\Orient\Exception\Validation
      * @expectedExceptionMessage Validation of "a, b" as V failed
      */
     public function testExceptionWithArrayArgument()

@@ -10,7 +10,7 @@
 
 namespace test\Query;
 
-use Congow\Orient\Formatter;
+use Doctrine\Orient\Formatter;
 use test\PHPUnit\TestCase;
 
 class FormatterTest extends TestCase

@@ -3,7 +3,7 @@
 /**
  * QueryTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
@@ -11,7 +11,7 @@
 
 namespace test\Query\Command\Credential;
 
-use Congow\Orient\Query\Command\Credential\Grant;
+use Doctrine\Orient\Query\Command\Credential\Grant;
 use test\PHPUnit\TestCase;
 
 class GrantTest extends TestCase

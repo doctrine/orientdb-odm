@@ -3,7 +3,7 @@
 /**
  * CountTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
@@ -12,7 +12,7 @@
 namespace test\Query\Command\Index;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Query\Command\Index\Count;
+use Doctrine\Orient\Query\Command\Index\Count;
 
 class CountTest extends TestCase
 {

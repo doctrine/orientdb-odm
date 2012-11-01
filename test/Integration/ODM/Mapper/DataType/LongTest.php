@@ -3,7 +3,7 @@
 /**
  * LongTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
@@ -13,7 +13,7 @@
 namespace test\Integration\ODM\Mapper\DataType;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Query;
+use Doctrine\Orient\Query;
 
 class LongTest extends TestCase
 {

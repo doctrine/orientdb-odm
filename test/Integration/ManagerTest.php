@@ -11,7 +11,7 @@
 namespace test\Integration;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Query;
+use Doctrine\Orient\Query;
 
 class ManagerTest extends TestCase
 {
@@ -50,7 +50,7 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * @expectedException \Congow\Orient\Exception\Query\SQL\Invalid
+     * @expectedException \Doctrine\Orient\Exception\Query\SQL\Invalid
      */
     public function testAnExceptionGetsRaisedWhenExecutingAWrongQuery()
     {
@@ -79,7 +79,7 @@ class ManagerTest extends TestCase
         $post = $manager->find('30:0', '*:-1');
 
         $this->assertInternalType('array', $post->comments);
-        $this->assertFalse($post->comments instanceOf \Congow\Orient\ODM\Proxy\Collection);
+        $this->assertFalse($post->comments instanceOf \Doctrine\Orient\ODM\Proxy\Collection);
     }
 
 
@@ -104,7 +104,7 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * @expectedException \Congow\Orient\Exception\ODM\OClass\NotFound
+     * @expectedException \Doctrine\Orient\Exception\ODM\OClass\NotFound
      */
     public function testLookingForANonMappedTypeRaisesAnException()
     {
@@ -135,7 +135,7 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * @expectedException \Congow\Orient\Exception\Query\SQL\Invalid
+     * @expectedException \Doctrine\Orient\Exception\Query\SQL\Invalid
      */
     public function testFindingSomeGoodAndSomeWrongRecords()
     {
@@ -145,7 +145,7 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * @expectedException \Congow\Orient\Exception\Query\SQL\Invalid
+     * @expectedException \Doctrine\Orient\Exception\Query\SQL\Invalid
      */
     public function testFindingSomeRecordsAndSomeAreWrongThrowsAnException()
     {

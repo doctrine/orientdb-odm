@@ -12,7 +12,7 @@
 /**
  * Class GraphTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
@@ -20,7 +20,7 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Graph;
+use Doctrine\Orient\Graph;
 
 class GraphTest extends TestCase
 {
@@ -37,7 +37,7 @@ class GraphTest extends TestCase
     }
 
     /**
-     * @expectedException Congow\Orient\Exception
+     * @expectedException Doctrine\Orient\Exception
      */
     public function  testYouCannotAddVerticesWithTheSameIdToAGraph()
     {
@@ -50,7 +50,7 @@ class GraphTest extends TestCase
     }
 
     /**
-     * @expectedException Congow\Orient\Exception
+     * @expectedException Doctrine\Orient\Exception
      */
     public function  testAnExceptionIsRaisedWhenTryingToRetrieveANonExistingVertexFromTheGraph()
     {

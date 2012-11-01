@@ -3,7 +3,7 @@
 /**
  * HttpBindingTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     Daniele Alessandri <suppakilla@gmail.com>
@@ -13,10 +13,10 @@
 namespace test\Binding;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Binding\HttpBinding;
-use Congow\Orient\Binding\BindingParameters;
-use Congow\Orient\Binding\Adapter\CurlClientAdapter;
-use Congow\Orient\Client\Http\CurlClient;
+use Doctrine\Orient\Binding\HttpBinding;
+use Doctrine\Orient\Binding\BindingParameters;
+use Doctrine\Orient\Binding\Adapter\CurlClientAdapter;
+use Doctrine\Orient\Client\Http\CurlClient;
 
 class HttpBindingTest extends TestCase
 {
@@ -110,7 +110,7 @@ class HttpBindingTest extends TestCase
 
     public function testSettingAuthentication()
     {
-        $adapter = $this->getMock('Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
+        $adapter = $this->getMock('Doctrine\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
         $adapter->expects($this->at(1))
                 ->method('setAuthentication')
                 ->with(null, null);
@@ -127,7 +127,7 @@ class HttpBindingTest extends TestCase
 
     public function testInjectHttpClientAdapter()
     {
-        $adapter = $this->getMock('Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
+        $adapter = $this->getMock('Doctrine\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
 
         $parameters = new BindingParameters();
         $binding = new HttpBinding($parameters, $adapter);
@@ -136,11 +136,11 @@ class HttpBindingTest extends TestCase
     }
 
     /**
-     * @expectedException Congow\Orient\Exception
+     * @expectedException Doctrine\Orient\Exception
      */
     public function testResolveDatabase()
     {
-        $adapter = $this->getMock('Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
+        $adapter = $this->getMock('Doctrine\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
 
         $parameters = new BindingParameters();
         $binding = new HttpBinding($parameters, $adapter);
@@ -191,7 +191,7 @@ class HttpBindingTest extends TestCase
         $host = TEST_ODB_HOST;
         $port = TEST_ODB_PORT;
 
-        $adapter = $this->getMock('Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
+        $adapter = $this->getMock('Doctrine\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
         $adapter->expects($this->once())
                 ->method('request')
                 ->with('GET', "http://$host:$port/query/DB/sql/SELECT%20OMNOMNOMN/2/%2A%3A1%20field1%3A3", null, null);
@@ -208,7 +208,7 @@ class HttpBindingTest extends TestCase
         $port = TEST_ODB_PORT;
         $database = TEST_ODB_DATABASE;
 
-        $adapter = $this->getMock('Congow\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
+        $adapter = $this->getMock('Doctrine\Orient\Contract\Binding\Adapter\HttpClientAdapterInterface');
         $adapter->expects($this->at(0))
                 ->method('request')
                 ->with('POST', "http://$host:$port/command/$database/sql/SELECT%201", null, null);

@@ -3,7 +3,7 @@
 /**
  * QueryBuilderTest class
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     Daniele Alessandri <daniele.alessandri@gmail.com>
@@ -12,9 +12,9 @@
 namespace test\Integration;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Query;
-use Congow\Orient\Binding\HttpBinding;
-use Congow\Orient\Contract\Binding\HttpBindingResultInterface;
+use Doctrine\Orient\Query;
+use Doctrine\Orient\Binding\HttpBinding;
+use Doctrine\Orient\Contract\Binding\HttpBindingResultInterface;
 
 class QueryBuilderTest extends TestCase
 {

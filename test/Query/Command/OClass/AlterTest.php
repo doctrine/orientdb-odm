@@ -3,7 +3,7 @@
 /**
  * QueryTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
@@ -12,7 +12,7 @@
 namespace test\Query\Command\OClass;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Query\Command\OClass\Alter;
+use Doctrine\Orient\Query\Command\OClass\Alter;
 
 class AlterTest extends TestCase
 {

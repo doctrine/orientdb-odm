@@ -3,7 +3,7 @@
 /**
  * ClassMetadataTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
@@ -13,9 +13,9 @@
 namespace test\ODM\Mapper;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\ODM\Mapper;
-use Congow\Orient\ODM\Mapper\ClassMetadata;
-use Congow\Orient\ODM\Mapper\Annotations as ODM;
+use Doctrine\Orient\ODM\Mapper;
+use Doctrine\Orient\ODM\Mapper\ClassMetadata;
+use Doctrine\Orient\ODM\Mapper\Annotations as ODM;
 
 /**
 * @ODM\Document(class="Mapped")
@@ -42,7 +42,7 @@ class ClassMetadataTest extends TestCase
 {
     public function setup()
     {
-        $mapper = $this->getMock('Congow\Orient\ODM\Mapper', null, array(null));
+        $mapper = $this->getMock('Doctrine\Orient\ODM\Mapper', null, array(null));
 
         $this->metadata = new ClassMetadata('test\ODM\Mapper\Mapped', $mapper);
     }

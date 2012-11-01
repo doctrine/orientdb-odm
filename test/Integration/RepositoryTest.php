@@ -11,10 +11,10 @@
 namespace test\Integration;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Query;
-use Congow\Orient\ODM\Manager;
-use Congow\Orient\ODM\Mapper;
-use Congow\Orient\ODM\Repository;
+use Doctrine\Orient\Query;
+use Doctrine\Orient\ODM\Manager;
+use Doctrine\Orient\ODM\Mapper;
+use Doctrine\Orient\ODM\Repository;
 
 class RepositoryTest extends TestCase
 {
@@ -38,7 +38,7 @@ class RepositoryTest extends TestCase
     }
 
     /**
-     * @expectedException Congow\Orient\Exception
+     * @expectedException Doctrine\Orient\Exception
      */
     public function testFindingADocumentOfAnotherRepoRaisesAnException()
     {

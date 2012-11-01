@@ -3,7 +3,7 @@
 /**
  * ClusterTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
@@ -12,7 +12,7 @@
 namespace test\Query\Command\Truncate;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\Query\Command\Truncate\Cluster as TruncateCluster;
+use Doctrine\Orient\Query\Command\Truncate\Cluster as TruncateCluster;
 
 class ClusterTest extends TestCase
 {

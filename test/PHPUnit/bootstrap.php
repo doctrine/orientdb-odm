@@ -7,8 +7,9 @@ require_once(__DIR__.'/../../autoload.php');
 $loader = new UniversalClassLoader();
 
 $loader->registerNamespaces(array(
-    'Congow\Orient\Proxy' => __DIR__.'/../../test/proxies/',
+    'Doctrine\Orient\Proxy' => __DIR__.'/../../test/proxies/',
     'test' => __DIR__.'/../../',
 ));
 
 $loader->register();
+

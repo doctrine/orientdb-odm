@@ -3,7 +3,7 @@
 /**
  * QueryTest
  *
- * @package    Congow\Orient
+ * @package    Doctrine\Orient
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
@@ -13,9 +13,9 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
-use Congow\Orient\ODM\Manager;
-use Congow\Orient\ODM\Mapper;
-use Congow\Orient\ODM\Mapper\Annotations\Reader as AnnotationReader;
+use Doctrine\Orient\ODM\Manager;
+use Doctrine\Orient\ODM\Mapper;
+use Doctrine\Orient\ODM\Mapper\Annotations\Reader as AnnotationReader;
 
 class MapperTest extends TestCase
 {
@@ -214,7 +214,7 @@ class MapperTest extends TestCase
     }
 
     /**
-     * @expectedException Congow\Orient\Exception\Document\NotFound
+     * @expectedException Doctrine\Orient\Exception\Document\NotFound
      */
     public function testAnExceptionIsRaisedWhenAnObjectGetsPersistedWithoutAClass()
     {
@@ -222,7 +222,7 @@ class MapperTest extends TestCase
     }
 
     /**
-     * @expectedException Congow\Orient\Exception\ODM\OClass\NotFound
+     * @expectedException Doctrine\Orient\Exception\ODM\OClass\NotFound
      */
     public function testAnExceptionIsRaisedWhenAnObjectGetsPersistedWithAWrongClass()
     {
@@ -253,7 +253,7 @@ class MapperTest extends TestCase
     public function testGettingTheDirectoriesInWhichTheMapperLooksForPOPOs()
     {
         $directories = array('dir' => 'namespace', 'dir2' => 'namespace2');
-        $adapter = $this->getMock('Congow\Orient\Contract\Protocol\Adapter');
+        $adapter = $this->getMock('Doctrine\Orient\Contract\Protocol\Adapter');
 
         $this->mapper = new Mapper($adapter, new AnnotationReader());
         $object = $this->mapper->setDocumentDirectories($directories);

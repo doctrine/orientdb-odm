@@ -2,7 +2,7 @@
 
 namespace test\ODM\Document\Stub;
 
-use Congow\Orient\ODM\Mapper\Annotations as ODM;
+use Doctrine\Orient\ODM\Mapper\Annotations as ODM;
 
 /**
 * @ODM\Document(class="OCity")

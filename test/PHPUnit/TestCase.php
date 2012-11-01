@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TestCase class bound to Congow\Orient.
+ * TestCase class bound to Doctrine\Orient.
  *
  * @author Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author Daniele Alessandri <suppakilla@gmail.com>
@@ -9,13 +9,13 @@
 
 namespace test\PHPUnit;
 
-use Congow\Orient\ODM\Manager;
-use Congow\Orient\ODM\Mapper;
-use Congow\Orient\Binding\HttpBinding;
-use Congow\Orient\Binding\BindingParameters;
-use Congow\Orient\Contract\Binding\HttpBindingResultInterface;
-use Congow\Orient\Client\Http\CurlClient;
-use Congow\Orient\Binding\Adapter\CurlClientAdapter;
+use Doctrine\Orient\ODM\Manager;
+use Doctrine\Orient\ODM\Mapper;
+use Doctrine\Orient\Binding\HttpBinding;
+use Doctrine\Orient\Binding\BindingParameters;
+use Doctrine\Orient\Contract\Binding\HttpBindingResultInterface;
+use Doctrine\Orient\Client\Http\CurlClient;
+use Doctrine\Orient\Binding\Adapter\CurlClientAdapter;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
