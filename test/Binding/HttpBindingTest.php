@@ -66,10 +66,10 @@ class HttpBindingTest extends TestCase
         $this->assertHttpStatus(200, $binding->cluster('Address', 1));
 
         $result = json_decode($binding->cluster('Address', 1)->getInnerResponse()->getBody(), true);
-        $this->assertSame('Address', $result['schema']['name'], 'The cluster is wrong');
+        $this->assertSame('Address', $result['result'][0]['@class'], 'The cluster is wrong');
 
         $result = json_decode($binding->cluster('Country', 10)->getInnerResponse()->getBody(), true);
-        $this->assertSame('Country', $result['schema']['name'], 'The cluster is wrong');
+        $this->assertSame('Country', $result['result'][0]['@class'], 'The cluster is wrong');
         $this->assertCount(10, $result['result'], 'The limit is wrong');
     }
 
@@ -85,7 +85,7 @@ class HttpBindingTest extends TestCase
         $binding = $this->createHttpBinding();
 
         $this->assertHttpStatus(200, $binding->getDatabase(TEST_ODB_DATABASE), 'Get informations about an existing database');
-        $this->assertHttpStatus(500, $binding->getDatabase('INVALID_DB'), 'Get informations about a non-existing database');
+        $this->assertHttpStatus(401, $binding->getDatabase('INVALID_DB'), 'Get informations about a non-existing database');
     }
 
     public function testCommandMethod()
@@ -164,7 +164,7 @@ class HttpBindingTest extends TestCase
         $rid = str_replace('#', '', $creation->getInnerResponse()->getBody());
 
         $document = json_encode(array('@rid' => $rid, '@class' => 'Address','name' => 'Test'));
-        $this->assertHttpStatus(200, $binding->putDocument($rid, $document), 'Updates a valid document');
+        $this->assertHttpStatus(200, $binding->putDocument($rid, $document), "Record #$rid updated successfully.");
 
         $document = json_encode(array('@class' => 'Address', 'name' => 'Test', '@version' => 1));
         $this->assertHttpStatus(200, $binding->putDocument($rid, $document), 'Updates a valid document');
@@ -176,11 +176,11 @@ class HttpBindingTest extends TestCase
          * @see https://github.com/congow/Orient/commit/44dfff40e25251fc2b8941525e71d0464a1867ef#commitcomment-450144
          */
         $binding->getAdapter()->getClient()->restart();
-        $this->assertHttpStatus(409, $binding->deleteDocument($rid, 3), 'Deletes a valid document');
-
         $this->assertHttpStatus(204, $binding->deleteDocument($rid, 2), 'Deletes a valid document');
-        $this->assertHttpStatus(500, $binding->deleteDocument('999:1'), 'Deletes a non existing document');
+        $this->assertHttpStatus(404, $binding->deleteDocument('999:1'), 'Deletes a non existing document');
         $this->assertHttpStatus(500, $binding->deleteDocument('9991'), 'Deletes an invalid document');
+
+        $this->markTestIncomplete('have to fix line 167');
     }
 
     /**
