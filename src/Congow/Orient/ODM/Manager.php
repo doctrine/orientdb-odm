@@ -271,7 +271,7 @@ class Manager implements ObjectManager
         $binding = $this->getBinding();
         $results = $binding->execute($query->getRaw(), $fetchPlan)->getResult();
 
-        if (isset($results)) {
+        if (isset($results) && count($results)) {
           $record = is_array($results) ? array_shift($results) : $results;
           $results = $this->getMapper()->hydrate($record);
 
