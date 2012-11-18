@@ -31,21 +31,11 @@ class QueryBuilderTest extends TestCase
         $this->assertHttpStatus(200, $this->doQuery($query->select(array('@version', 'street'))));
     }
 
-    public function testSelectRange()
+    public function testSelectBetween()
     {
         $query = new Query();
 
-        $this->assertHttpStatus(200, $this->doQuery($query->from(array('Address'))->range('13:0')));
-        $this->assertHttpStatus(200, $this->doQuery($query->range(null, '12')));
-        $this->assertHttpStatus(200, $this->doQuery($query->range('10.0')));
-        $this->assertHttpStatus(200, $this->doQuery($query->range('10.1', false)));
-        $this->assertHttpStatus(200, $this->doQuery($query->range('13:0', '13:2')));
-
-        /**
-         * @todo what? there should be 2 records:
-         * @see http://code.google.com/p/orient/issues/detail?id=574&thanks=574&ts=1318783142
-         */
-        //$this->assertEquals(165, $this->countResults($this->query()));
+        $this->assertHttpStatus(200, $this->doQuery($query->from(array('Profile'))->between('@rid', '#13:0', '#13:5')));
     }
 
     public function testSelectLimit()
@@ -74,29 +64,29 @@ class QueryBuilderTest extends TestCase
     public function testSelectByRID()
     {
         $query = new Query();
-        $query->from(array('13:100'));
+        $query->from(array('19:100'));
 
         $result = $this->doQuery($query);
         $this->assertHttpStatus(200, $result);
-        $this->assertFirstRid('13:100', $result);
+        $this->assertFirstRid('19:100', $result);
     }
 
     public function testSelectOrderBy()
     {
         $query = new Query();
-        $query->from(array('13:100', '13:101'))
+        $query->from(array('19:100', '19:101'))
               ->orderBy('@rid ASC')
               ->orderBy('street DESC');
 
         $result = $this->doQuery($query);
         $this->assertHttpStatus(200, $result);
-        $this->assertFirstRid('13:100', $result);
+        $this->assertFirstRid('19:100', $result);
 
         $query->orderBy('@rid DESC', false);
 
         $result = $this->doQuery($query);
         $this->assertHttpStatus(200, $result);
-        $this->assertFirstRid('13:101', $result);
+        $this->assertFirstRid('19:101', $result);
     }
 
     public function testSelectComplex()
@@ -104,11 +94,9 @@ class QueryBuilderTest extends TestCase
         $query = new Query();
         $query->limit(10)
               ->limit(20)
-              ->from(array('13:2', '13:4'), false)
+              ->from(array('19:2', '19:4'), false)
               ->select(array('rid', 'street'))
               ->select(array('type'))
-              ->range('13:2')
-              ->range(null, '13:4')
               ->orderBy('street ASC');
 
         $this->assertHttpStatus(200, $this->doQuery($query));
@@ -213,14 +201,16 @@ class QueryBuilderTest extends TestCase
         $this->assertHttpStatus(200, $result);
         $this->assertSame('0', $result->getInnerResponse()->getBody());
 
-        $count = $this->getResultCount($binding->query('SELECT FROM OGraphEdge'));
+        $count = $this->getResultCount($binding->query('SELECT FROM OUser'));
 
         $query = new Query();
-        $query->index('in', 'unique', 'OGraphEdge');
+        $query->index('name', 'unique', 'OUser');
 
         $result = $this->doQuery($query, $binding);
+
         $this->assertHttpStatus(200, $result);
         $this->assertEquals($result->getInnerResponse()->getBody(), $count);
+
     }
 
     public function testIndexCount()
@@ -239,7 +229,9 @@ class QueryBuilderTest extends TestCase
         $this->assertHttpStatus(200, $this->doQuery($query));
 
         $query->where('fakekey = ?', 2);
-        $this->assertHttpStatus(500, $this->doQuery($query));
+        $jsonResult = json_decode($this->doQuery($query)->getInnerResponse()->getBody(),true);
+        $this->assertHttpStatus(200, $this->doQuery($query));
+        $this->assertCount(0,$jsonResult['result']);
 
         $query = new Query();
         $query->from(array('index:index_name_2'))
@@ -255,12 +247,14 @@ class QueryBuilderTest extends TestCase
         $query->indexCount('index_name_2');
         $before = $this->getResultCount($this->doQuery($query));
 
-        $query->indexPut('index_name_2', 'k', '13:100');
-        $this->assertHttpStatus(204, $this->doQuery($query));
+        $query->indexPut('index_name_2', 'k', '19:100');
+        $this->assertHttpStatus(200, $this->doQuery($query));
+        //$this->markTestIncomplete('in the previous test the status code whas 204 but now return 200');
 
         $query->indexCount('index_name_2');
         $after = $this->getResultCount($this->doQuery($query));
         $this->assertEquals($after, $before + 1);
+
     }
 
     public function testRemoveEntryFromIndex()
@@ -299,7 +293,7 @@ class QueryBuilderTest extends TestCase
     {
         $query = new Query();
 
-        $query->findReferences('13:0');
+        $query->findReferences('19:0');
         $this->assertHttpStatus(200, $this->doQuery($query));
     }
 
@@ -399,7 +393,12 @@ class QueryBuilderTest extends TestCase
         $query = new Query();
 
         $query->drop($class);
-        $this->assertHttpStatus(204, $this->doQuery($query));
+        $response = $this->doQuery($query)->getInnerResponse();
+        $json = json_decode($response->getBody(),true);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertTrue($json);
+
 
         return $class;
     }
@@ -418,17 +417,17 @@ class QueryBuilderTest extends TestCase
         $binding = $this->createHttpBinding();
 
         $query->update('Address')->set(array('nick' => 'Luca'))
-              ->orWhere('@rid = ?', '13:101');
+              ->orWhere('@rid = ?', '19:101');
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM Address WHERE @rid = #13:101')->getResult();
+        $records = $binding->command('SELECT FROM Address WHERE @rid = #19:6')->getResult();
         $this->assertSame('Luca', $records[0]->nick);
 
         $query->update('Address')->set(array('nick' => 'Luca2'))
-              ->orWhere('@rid = ?', '13:101');
+              ->orWhere('@rid = ?', '19:6');
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM Address WHERE @rid = #13:101')->getResult();
+        $records = $binding->command('SELECT FROM Address WHERE @rid = #19:101')->getResult();
         $this->assertSame('Luca2', $records[0]->nick);
     }
 
@@ -437,14 +436,14 @@ class QueryBuilderTest extends TestCase
         $query = new Query();
         $binding = $this->createHttpBinding();
 
-        $records = $binding->command('SELECT FROM 30:1')->getResult();
+        $records = $binding->command('SELECT FROM 94:0')->getResult();
         $before = count($records[0]->comments);
 
-        $query->add(array('comments' => '31:0'), 'post')
-              ->where('@rid = ?', '30:1');
+        $query->add(array('comments' => '95:4'), 'post')
+              ->where('@rid = ?', '94:0');
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM 30:1')->getResult();
+        $records = $binding->command('SELECT FROM 94:0')->getResult();
         $after = count($records[0]->comments);
 
         $this->assertSame($after, $before + 1);
@@ -458,14 +457,14 @@ class QueryBuilderTest extends TestCase
         $query = new Query();
         $binding = $this->createHttpBinding();
 
-        $records = $binding->command('SELECT FROM 30:1')->getResult();
+        $records = $binding->command('SELECT FROM 94:0')->getResult();
         $before = count($records[0]->comments);
 
-        $query->remove(array('comments' => '31:0'), 'post')
-              ->where('@rid = ?', '30:1');
+        $query->remove(array('comments' => '95:4'), 'post')
+              ->where('@rid = ?', '94:0');
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM 30:1')->getResult();
+        $records = $binding->command('SELECT FROM 94:0')->getResult();
         $after = count($records[0]->comments);
 
         $this->assertSame($after, $before - 1);
@@ -478,14 +477,14 @@ class QueryBuilderTest extends TestCase
 
         $binding->command('UPDATE profile REMOVE followers');
 
-        $query->put(array('followers' => array('Johnny' => '10:2')), 'profile')
-              ->where('@rid = ?', '10:1');
+        $query->put(array('followers' => array('Johnny' => '13:2')), 'profile')
+              ->where('@rid = ?', '13:1');
 
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM 10:1')->getResult();
+        $records = $binding->command('SELECT FROM 13:1')->getResult();
         $this->assertInstanceOf('\stdClass', $records[0]->followers);
-        $this->assertSame('#10:2', $records[0]->followers->Johnny);
+        $this->assertSame('#13:2', $records[0]->followers->Johnny);
     }
 
     public function testTruncateNonExistingClass()

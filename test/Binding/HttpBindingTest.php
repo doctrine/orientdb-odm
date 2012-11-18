@@ -18,6 +18,7 @@ use Congow\Orient\Binding\BindingParameters;
 use Congow\Orient\Binding\Adapter\CurlClientAdapter;
 use Congow\Orient\Client\Http\CurlClient;
 
+
 class HttpBindingTest extends TestCase
 {
     public function testConnectToDatabase()
@@ -66,10 +67,10 @@ class HttpBindingTest extends TestCase
         $this->assertHttpStatus(200, $binding->cluster('Address', 1));
 
         $result = json_decode($binding->cluster('Address', 1)->getInnerResponse()->getBody(), true);
-        $this->assertSame('Address', $result['schema']['name'], 'The cluster is wrong');
+        $this->assertSame('Address', $result['result'][0]['@class'], 'The cluster is wrong');
 
         $result = json_decode($binding->cluster('Country', 10)->getInnerResponse()->getBody(), true);
-        $this->assertSame('Country', $result['schema']['name'], 'The cluster is wrong');
+        $this->assertSame('Country', $result['result'][0]['@class'], 'The cluster is wrong');
         $this->assertCount(10, $result['result'], 'The limit is wrong');
     }
 
@@ -85,7 +86,7 @@ class HttpBindingTest extends TestCase
         $binding = $this->createHttpBinding();
 
         $this->assertHttpStatus(200, $binding->getDatabase(TEST_ODB_DATABASE), 'Get informations about an existing database');
-        $this->assertHttpStatus(500, $binding->getDatabase('INVALID_DB'), 'Get informations about a non-existing database');
+        $this->assertHttpStatus(401, $binding->getDatabase('INVALID_DB'), 'Get informations about a non-existing database');
     }
 
     public function testCommandMethod()
@@ -157,30 +158,63 @@ class HttpBindingTest extends TestCase
         $this->assertHttpStatus(500, $binding->getDocument('999:0'), 'Retrieves a document from a non existing cluster');
         $this->assertHttpStatus(200, $binding->getDocument('1:0'), 'Retrieves a valid document');
 
-        $document = json_encode(array('@class' => 'Address', 'name' => 'Test'));
-
-        $creation = $binding->postDocument($document);
-        $this->assertHttpStatus(201, $creation, 'Creates a valid document');
-        $rid = str_replace('#', '', $creation->getInnerResponse()->getBody());
-
-        $document = json_encode(array('@rid' => $rid, '@class' => 'Address','name' => 'Test'));
-        $this->assertHttpStatus(200, $binding->putDocument($rid, $document), 'Updates a valid document');
-
-        $document = json_encode(array('@class' => 'Address', 'name' => 'Test', '@version' => 1));
-        $this->assertHttpStatus(200, $binding->putDocument($rid, $document), 'Updates a valid document');
-
-        $this->assertHttpStatus(500, $binding->putDocument('9991', $document), 'Updates an invalid document');
-
         /**
          * We must reset the OSESSIONID or we won't get a 409 Conflict response from OrientDB.
          * @see https://github.com/congow/Orient/commit/44dfff40e25251fc2b8941525e71d0464a1867ef#commitcomment-450144
          */
-        $binding->getAdapter()->getClient()->restart();
-        $this->assertHttpStatus(409, $binding->deleteDocument($rid, 3), 'Deletes a valid document');
+        //$binding->getAdapter()->getClient()->restart();
 
-        $this->assertHttpStatus(204, $binding->deleteDocument($rid, 2), 'Deletes a valid document');
-        $this->assertHttpStatus(500, $binding->deleteDocument('999:1'), 'Deletes a non existing document');
+
+
+    }
+
+
+    public function testCreateDocument()
+    {
+        $binding = $this->createHttpBinding();
+
+        $document = json_encode(array('@class' => 'Address', 'name' => 'Pippo'));
+
+        $creation = $binding->postDocument($document);
+
+        $this->assertHttpStatus(201, $creation, 'Creates a valid document');
+        $rid = str_replace('#', '', $creation->getInnerResponse()->getBody());
+
+        return $rid;
+    }
+
+    /**
+     * @depends testCreateDocument
+     */
+    public function testUpdateAnExistingRecord($rid)
+    {
+        $binding = $this->createHttpBinding();
+
+        $binding->getAdapter()->getClient()->restart();
+
+        $_document = json_decode($binding->getDocument($rid)->getInnerResponse()->getBody(),true);
+        $document = json_encode(array('@rid' => $rid, '@class' => 'Address','name' => 'Test','@version' => $_document['@version']));
+        $putResult = $binding->putDocument($rid, $document);
+
+        $this->assertEquals(200, $putResult->getInnerResponse()->getStatusCode(), "Wrong Status Code");
+        $this->assertHttpStatus(500, $binding->putDocument('9991', $document), 'Updates an invalid document');
+
+        return $rid;
+    }
+
+    /**
+     * @depends testUpdateAnExistingRecord
+     */
+    public function testDeleteADocument($rid)
+    {
+        $binding = $this->createHttpBinding();
+
+        $binding->getAdapter()->getClient()->restart();
+
+        $this->assertHttpStatus(204, $binding->deleteDocument($rid), 'Deletes a valid document');
+        $this->assertHttpStatus(404, $binding->deleteDocument('999:1'), 'Deletes a non existing document');
         $this->assertHttpStatus(500, $binding->deleteDocument('9991'), 'Deletes an invalid document');
+
     }
 
     /**

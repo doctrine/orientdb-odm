@@ -19,7 +19,8 @@ class FloatTest extends TestCase
     public function testHydrationOfAFloatProperty()
     {
         $manager = $this->createManager();
-        $point = $manager->find("#27:1");
+        //MapPoint
+        $point = $manager->find("#86:1");
 
         $this->assertInternalType('float', $point->y);
     }

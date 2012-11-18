@@ -240,6 +240,50 @@ class CasterTest extends TestCase
         );
     }
 
+    /**
+     * @dataProvider getDecimals
+     */
+    public function testDecimalCasting($expected, $double)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($double)->castDecimal());
+    }
+
+    /**
+     * @dataProvider getForcedDecimals
+     */
+    public function testForcedDecimalCasting($expected, $decimal)
+    {
+        $this->mapper->enableMismatchesTolerance(true);
+        $this->assertEquals($expected, $this->caster->setValue($decimal)->castDecimal());
+    }
+
+    /**
+     * @dataProvider getForcedDecimals
+     * @expectedException Congow\Orient\Exception\Casting\Mismatch
+     */
+    public function testForcedDecimalCastingRaisesAnException($expected, $decimal)
+    {
+        $this->assertEquals($expected, $this->caster->setValue($decimal)->castDecimal());
+    }
+
+    public function getDecimals()
+    {
+        return array(
+            array(1E-8, "1E-8"), //0.00000001
+            array(4.9E-324, 4.8E-324),
+            array(4.9E100, 4.9E100),
+            array(1.7976931348623157E+308, 1.7976931348623157E+308),
+
+        );
+    }
+
+    public function getForcedDecimals()
+    {
+        return array(
+            array(4.9E-324, 'ciao'),
+            array(4.9E-324, null),
+        );
+    }
 
     /**
      * @dataProvider getDoubles

@@ -4,8 +4,8 @@ php:
   - 5.4
 before_script:
   - ./bin/initialize-dependencies.sh
-  - sh -c ./bin/initialize-ci.sh 1.0rc6
-script: phpunit --coverage-text test/
+  - sh -c ./bin/initialize-ci.sh 1.2.0
+script: phpunit test/
 notifications:
   email:
     - alessandro.nadalin@gmail.com

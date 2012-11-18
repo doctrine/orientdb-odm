@@ -22,7 +22,7 @@ class ManagerTest extends TestCase
         $query = new Query(array('Address'));
         $addresses = $manager->execute($query);
 
-        $this->assertEquals(165, count($addresses));
+        $this->assertEquals(166, count($addresses));
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
     }
 
@@ -30,7 +30,7 @@ class ManagerTest extends TestCase
     {
         $manager = $this->createManager();
 
-        $query = new Query(array('13:0'));
+        $query = new Query(array('19:0'));
         $addresses = $manager->execute($query);
 
         $this->assertEquals(1, count($addresses));
@@ -65,7 +65,7 @@ class ManagerTest extends TestCase
     public function testFindingARecord()
     {
         $manager = $this->createManager();
-        $address = $manager->find('13:0');
+        $address = $manager->find('19:0');
 
         $this->assertInstanceOf("test\Integration\Document\Address", $address);
     }
@@ -76,7 +76,7 @@ class ManagerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post = $manager->find('30:0', '*:-1');
+        $post = $manager->find('94:0', '*:-1');
 
         $this->assertInternalType('array', $post->comments);
         $this->assertFalse($post->comments instanceOf \Congow\Orient\ODM\Proxy\Collection);
@@ -86,7 +86,7 @@ class ManagerTest extends TestCase
     public function testGettingARelatedRecord()
     {
         $manager = $this->createManager();
-        $address = $manager->find('13:0');
+        $address = $manager->find('19:0');
 
         $this->assertInstanceOf("test\Integration\Document\Country", $address->getCity());
     }
@@ -97,7 +97,7 @@ class ManagerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post = $manager->find('30:0');
+        $post = $manager->find('94:0');
         $comments = $post->getComments();
 
         $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
@@ -112,14 +112,14 @@ class ManagerTest extends TestCase
             'document_dir' => array('./docs' => '\\'),
         ));
 
-        $manager->find('13:0');
+        $manager->find('19:0');
     }
 
     public function testFindingANonExistingRecord()
     {
         $manager = $this->createManager();
 
-        $address = $manager->find('13:2000');
+        $address = $manager->find('19:2000');
 
         $this->assertInternalType("null", $address);
     }
@@ -128,29 +128,17 @@ class ManagerTest extends TestCase
     {
         $manager = $this->createManager();
 
-        $addresses = $manager->findRecords(array('13:0', '13:1'));
+        $addresses = $manager->findRecords(array('19:0', '19:1'));
 
         $this->assertEquals(2, count($addresses));
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
     }
 
-    /**
-     * @expectedException \Congow\Orient\Exception\Query\SQL\Invalid
-     */
-    public function testFindingSomeGoodAndSomeWrongRecords()
+    public function testFindingSomeGoodAndSomeWrongRecordsReturnsGoodRecords()
     {
         $manager = $this->createManager();
 
-        $manager->findRecords(array('13:0', '13:700000'));
-    }
-
-    /**
-     * @expectedException \Congow\Orient\Exception\Query\SQL\Invalid
-     */
-    public function testFindingSomeRecordsAndSomeAreWrongThrowsAnException()
-    {
-        $manager = $this->createManager();
-        $manager->findRecords(array('13:0', '13:1000'));
+        $manager->findRecords(array('19:0', '19:700000'));
     }
 
     public function testExecutingASelectOfASingleRecordReturnsAnArrayWithOneRecord()
@@ -158,7 +146,7 @@ class ManagerTest extends TestCase
         $manager = $this->createManager();
 
         $query = new Query(array('Address'));
-        $query->where('@rid = ?', '13:0');
+        $query->where('@rid = ?', '19:0');
 
         $results = $manager->execute($query);
 

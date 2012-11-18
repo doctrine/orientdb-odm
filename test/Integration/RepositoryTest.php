@@ -34,7 +34,7 @@ class RepositoryTest extends TestCase
         $class = 'test\Integration\Document\Post';
         $repository = $this->createRepository($class);
 
-        $this->assertInstanceOf($class, $repository->find('30:0'));
+        $this->assertInstanceOf($class, $repository->find('94:0'));
     }
 
     /**
@@ -59,7 +59,7 @@ class RepositoryTest extends TestCase
 
         $posts = $repository->findAll();
 
-        $this->assertEquals(2, count($posts));
+        $this->assertEquals(4, count($posts));
     }
 
     public function testRetrievingByCriteria()
@@ -70,11 +70,11 @@ class RepositoryTest extends TestCase
         $this->assertCount(0, $posts);
 
         $posts = $repository->findBy(array(), array('@rid' => 'DESC'));
-        $this->assertCount(2, $posts);
+        $this->assertCount(4, $posts);
         $this->assertTrue($posts[0]->getRid() > $posts[1]->getRid());
 
         $posts = $repository->findBy(array(), array('@rid' => 'ASC'));
-        $this->assertCount(2, $posts);
+        $this->assertCount(4, $posts);
         $this->assertTrue($posts[0]->getRid() < $posts[1]->getRid());
 
         $posts = $repository->findBy(array(), array('@rid' => 'ASC'), 1);
