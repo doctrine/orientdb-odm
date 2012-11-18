@@ -25,7 +25,7 @@ if [ ! -d "$CI_DIR" ]; then
 
   # Copy the configuration file and the demo database
   echo "--- Setting up OrientDB ---"
-  tar xf $CI_DIR/databases.tar.gz -C "${ODB_DIR}/"
+  #tar xf $CI_DIR/databases.tar.gz -C "${ODB_DIR}/"
   cp $PARENT_DIR/ci-stuff/orientdb-server-config.xml "${ODB_DIR}/config/"
   cp $PARENT_DIR/ci-stuff/orientdb-server-log.properties "${ODB_DIR}/config/"
 else
