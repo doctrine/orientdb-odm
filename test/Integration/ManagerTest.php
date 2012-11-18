@@ -134,26 +134,11 @@ class ManagerTest extends TestCase
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
     }
 
-    /**
-     * @expectedException \Congow\Orient\Exception\Query\SQL\Invalid
-     */
-    public function testFindingSomeGoodAndSomeWrongRecords()
+    public function testFindingSomeGoodAndSomeWrongRecordsReturnsGoodRecords()
     {
-        $this->markTestIncomplete();
         $manager = $this->createManager();
 
         $manager->findRecords(array('19:0', '19:700000'));
-    }
-
-    /**
-     * @expectedException \Congow\Orient\Exception\Query\SQL\Invalid
-     */
-    public function testFindingSomeRecordsAndSomeAreWrongThrowsAnException()
-    {
-        $this->markTestIncomplete();
-
-        $manager = $this->createManager();
-        $manager->findRecords(array('19:0', '19:1000'));
     }
 
     public function testExecutingASelectOfASingleRecordReturnsAnArrayWithOneRecord()

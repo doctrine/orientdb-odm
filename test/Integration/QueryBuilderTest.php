@@ -31,16 +31,11 @@ class QueryBuilderTest extends TestCase
         $this->assertHttpStatus(200, $this->doQuery($query->select(array('@version', 'street'))));
     }
 
-    public function testSelectRange()
+    public function testSelectBetween()
     {
+        $query = new Query();
 
-        $this->markTestSkipped('range deprecated');
-
-        /*
-         * NOTE: Starting from 1.0rc7 the RANGE keyword has been removed. To execute range queries use the BETWEEN operator against @rid as explained in Pagination.
-         * http://code.google.com/p/orient/wiki/SQLQuery
-         */
-
+        $this->assertHttpStatus(200, $this->doQuery($query->from(array('Profile'))->between('@rid', '#13:0', '#13:5')));
     }
 
     public function testSelectLimit()
