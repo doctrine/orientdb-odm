@@ -21,7 +21,7 @@ if [ ! -d "$CI_DIR" ]; then
   # Download and extract OrientDB
   echo "--- Downloading OrientDB v${ODB_VERSION} ---"
   odb_download "https://orient.googlecode.com/files/${ODB_PACKAGE}.zip" $CI_DIR
-  unzip -q "${CI_DIR}/${ODB_PACKAGE}.zip" -d $ODB_DIR && chmod +x $ODB_LAUNCHER
+  unzip -q "${CI_DIR}/${ODB_PACKAGE}.zip" -d $CI_DIR && chmod +x $ODB_LAUNCHER
 
   # Copy the configuration file and the demo database
   echo "--- Setting up OrientDB ---"
