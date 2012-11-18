@@ -3,7 +3,7 @@
 PARENT_DIR=$(dirname $(cd "$(dirname "$0")"; pwd))
 CI_DIR="$PARENT_DIR/ci-stuff/environment"
 
-ODB_VERSION=${1:-"1.0rc6"}
+ODB_VERSION=${1:-"1.2.0"}
 ODB_PACKAGE="orientdb-${ODB_VERSION}"
 ODB_DIR="${CI_DIR}/${ODB_PACKAGE}"
 ODB_LAUNCHER="${ODB_DIR}/bin/server.sh"
