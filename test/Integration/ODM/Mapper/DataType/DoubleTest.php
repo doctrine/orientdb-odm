@@ -19,7 +19,8 @@ class DoubleTest extends TestCase
     public function testHydrationOfADoubleProperty()
     {
         $manager = $this->createManager();
-        $point = $manager->find("#27:1");
+        //MapPoint
+        $point = $manager->find("#86:0");
 
         $this->assertInternalType('float', $point->y);
     }
