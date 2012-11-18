@@ -16,7 +16,7 @@ cd "$PARENT_DIR"
 
 if [ ! -d "$CI_DIR" ]; then
   # Fetch the stuff needed to run the CI session.
-  git clone --quiet git://gist.github.com/1370152.git $CI_DIR
+  git clone --quiet git://gist.github.com/410672.git $CI_DIR
 
   # Download and extract OrientDB
   echo "--- Downloading OrientDB v${ODB_VERSION} ---"
