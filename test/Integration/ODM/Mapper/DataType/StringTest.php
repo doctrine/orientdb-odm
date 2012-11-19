@@ -19,7 +19,8 @@ class StringTest extends TestCase
     public function testHydratingAStringProperty()
     {
         $manager = $this->createManager();
-        $country = $manager->find('#15:1');
+        //Country
+        $country = $manager->find('#22:0');
 
         $this->assertInternalType('string', $country->name);
     }

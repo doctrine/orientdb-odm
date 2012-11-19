@@ -46,13 +46,13 @@ class InsertTest extends TestCase
 
         $this->assertCommandGives($query, $this->insert->getRaw());
 
-        $this->insert->fields(array('name', 'username'), true);
+        $this->insert->fields(array('name', 'username'), false);
         $query = 'INSERT INTO (name, username) VALUES ()';
 
         $this->assertCommandGives($query, $this->insert->getRaw());
 
-        $this->insert->fields(array('name'), false);
-        $query = 'INSERT INTO (name) VALUES ()';
+        $this->insert->fields(array('name'), true);
+        $query = 'INSERT INTO (name, username, name) VALUES ()';
 
         $this->assertCommandGives($query, $this->insert->getRaw());
     }

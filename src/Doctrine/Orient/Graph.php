@@ -24,6 +24,11 @@ use Doctrine\Orient\Contract\Graph as GraphInterface;
 
 class Graph implements GraphInterface
 {
+    /**
+     * All the vertices in the graph
+     *
+     * @var array
+     */
     protected $vertices = array();
 
     /**
@@ -35,12 +40,8 @@ class Graph implements GraphInterface
      */
     public function add(Vertex $vertex)
     {
-        foreach ($this->getVertices() as $oldVertex) {
-            if ($oldVertex->getId() == $vertex->getId()) {
-                $message = 'Unable to insert multiple Vertices with the same ID in a Graph';
-
-                throw new Exception($message);
-            }
+        if (array_key_exists($vertex->getId(), $this->getVertices())) {
+            throw new Exception('Unable to insert multiple Vertices with the same ID in a Graph');
         }
 
         $this->vertices[$vertex->getId()] = $vertex;

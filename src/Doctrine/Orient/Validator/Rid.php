@@ -26,18 +26,10 @@ class Rid extends Validator
 {
     protected function clean($rid)
     {
-        if (is_string($rid) && strlen($rid)) {
-            if ($rid[0] === "#") {
-                $rid = substr($rid, 1);
-            }
-
-            $parts  = explode(':', $rid);
-
-            if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1])) {
-                return '#' . $rid;
-            }
+        if (!preg_match('/^\s*#?(\d+:\d+)\s*$/', $rid, $matches)) {
+            throw new ValidationException($rid, __CLASS__);
         }
 
-        throw new ValidationException($rid, __CLASS__);
+        return "#{$matches[1]}";
     }
 }

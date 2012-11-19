@@ -28,6 +28,6 @@
         <user name="admin" password="admin" resources="*"/>
     </users>
     <properties>
-        <entry name="log.console.level" value="info"/>
+        <entry name="log.console.level" value="off"/>
     </properties>
 </orient-server>

@@ -29,9 +29,19 @@ class Updates extends Query implements TokenFormatter
     {
         $string = "";
 
-        foreach ($values as $key => $update) {
+        foreach ($values as $key => $value) {
             if ($key = String::filterNonSQLChars($key)) {
-                $string .= ' ' . $key . ' = "' . addslashes($update) . '",';
+                if ($value === null) {
+                    $value = 'NULL';
+                } else if (is_int($value) || is_float($value)) {
+                    // Preserve content of $value as is
+                } else if (is_bool($value)) {
+                    $value = $value ? 'TRUE' : 'FALSE';
+                } else {
+                    $value = '"' . addslashes($value) . '"';
+                }
+
+                $string .= " $key = $value,";
             }
         }
 

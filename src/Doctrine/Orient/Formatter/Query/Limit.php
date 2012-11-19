@@ -28,7 +28,7 @@ class Limit extends Query implements TokenFormatter
     public static function format(array $values)
     {
         foreach ($values as $limit) {
-            if (is_numeric($limit)) {
+            if (is_numeric($limit) && $limit > 0) {
                 return "LIMIT $limit";
             }
         }

@@ -3,7 +3,7 @@
 PARENT_DIR=$(dirname $(cd "$(dirname "$0")"; pwd))
 CI_DIR="$PARENT_DIR/ci-stuff/environment"
 
-ODB_VERSION=${1:-"1.0rc6"}
+ODB_VERSION=${1:-"1.2.0"}
 ODB_PACKAGE="orientdb-${ODB_VERSION}"
 ODB_DIR="${CI_DIR}/${ODB_PACKAGE}"
 ODB_LAUNCHER="${ODB_DIR}/bin/server.sh"
@@ -16,16 +16,16 @@ cd "$PARENT_DIR"
 
 if [ ! -d "$CI_DIR" ]; then
   # Fetch the stuff needed to run the CI session.
-  git clone --quiet git://gist.github.com/1370152.git $CI_DIR
+  # git clone --quiet git://gist.github.com/410672.git $CI_DIR
 
   # Download and extract OrientDB
   echo "--- Downloading OrientDB v${ODB_VERSION} ---"
-  odb_download "http://orient.googlecode.com/files/${ODB_PACKAGE}.zip" $CI_DIR
-  unzip -q "${CI_DIR}/${ODB_PACKAGE}.zip" -d $ODB_DIR && chmod +x $ODB_LAUNCHER
+  odb_download "https://orient.googlecode.com/files/${ODB_PACKAGE}.zip" $CI_DIR
+  unzip -q "${CI_DIR}/${ODB_PACKAGE}.zip" -d $CI_DIR && chmod +x $ODB_LAUNCHER
 
   # Copy the configuration file and the demo database
   echo "--- Setting up OrientDB ---"
-  tar xf $CI_DIR/databases.tar.gz -C "${ODB_DIR}/"
+  #tar xf $CI_DIR/databases.tar.gz -C "${ODB_DIR}/"
   cp $PARENT_DIR/ci-stuff/orientdb-server-config.xml "${ODB_DIR}/config/"
   cp $PARENT_DIR/ci-stuff/orientdb-server-log.properties "${ODB_DIR}/config/"
 else

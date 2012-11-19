@@ -30,6 +30,8 @@ use Doctrine\Orient\Validator\Escaper as EscapeValidator;
 
 abstract class Command implements CommandContract
 {
+    protected $ridValidator;
+    protected $escapeValidator;
     protected $formatter;
     protected $formatters = array();
     protected $tokens = array();
@@ -41,6 +43,8 @@ abstract class Command implements CommandContract
     public function __construct()
     {
         $this->tokens = $this->getTokens();
+        $this->ridValidator = new RidValidator();
+        $this->escapeValidator = new EscapeValidator();
     }
 
     /**
@@ -161,17 +165,19 @@ abstract class Command implements CommandContract
      */
     public function where($condition, $value = null, $append = false, $clause = "WHERE")
     {
-        $validator = new EscapeValidator;
-
         if (is_array($value)) {
-            $condition = $this->formatWhereConditionWithMultipleTokens($condition, $value, $validator);
+            $condition = $this->formatWhereConditionWithMultipleTokens($condition, $value, $this->escapeValidator);
         } else {
-            $ridValidator = new RidValidator();
-
-            try {
-                $value = $ridValidator->check($value);
-            } catch (Exception $e) {
-                $value = '"' . $validator->check($value, 1) . '"';
+            if ($value === null) {
+                $condition = preg_replace("/=\s*\?/", "IS ?", $condition, 1);
+                $value = 'NULL';
+            } else if (is_bool($value)) {
+                $value = $value ? 'TRUE' : 'FALSE';
+            } else if (is_int($value) || is_float($value)) {
+                // Preserve $value as is
+            } else {
+                $rid = $this->ridValidator->check($value, true);
+                $value = $rid ? $rid : '"' . $this->escapeValidator->check($value, true) . '"';
             }
 
             $condition = str_replace("?", $value, $condition);
@@ -200,8 +206,6 @@ abstract class Command implements CommandContract
                 $this->$method($token, $key, $value);
             }
         }
-
-        $this->tokens[$token] = array_unique($this->tokens[$token], SORT_REGULAR);
     }
 
     /**
@@ -319,8 +323,7 @@ abstract class Command implements CommandContract
         foreach ($this->tokens as $token => $value) {
             $key                = $this->getFormatter()->untokenize($token);
             $formatter          = $this->getTokenFormatter($key);
-            $values             = array_filter($value);
-            $replaces[$token]   = $formatter::format($values);
+            $replaces[$token]   = $formatter::format($value);
         }
 
         return $replaces;
