@@ -15,9 +15,6 @@ cd "$PARENT_DIR"
 . "$PARENT_DIR/bin/odb-shared.sh"
 
 if [ ! -d "$CI_DIR" ]; then
-  # Fetch the stuff needed to run the CI session.
-  # git clone --quiet git://gist.github.com/410672.git $CI_DIR
-
   # Download and extract OrientDB
   echo "--- Downloading OrientDB v${ODB_VERSION} ---"
   odb_download "https://orient.googlecode.com/files/${ODB_PACKAGE}.zip" $CI_DIR
@@ -25,7 +22,6 @@ if [ ! -d "$CI_DIR" ]; then
 
   # Copy the configuration file and the demo database
   echo "--- Setting up OrientDB ---"
-  #tar xf $CI_DIR/databases.tar.gz -C "${ODB_DIR}/"
   cp $PARENT_DIR/ci-stuff/orientdb-server-config.xml "${ODB_DIR}/config/"
   cp $PARENT_DIR/ci-stuff/orientdb-server-log.properties "${ODB_DIR}/config/"
 else
