@@ -200,6 +200,49 @@ class ClassMetadata implements DoctrineMetadata
     }
 
     /**
+     * @todo to implement/test
+     *
+     * @return array
+     */
+    public function getIdentifierFieldNames()
+    {
+        throw new \Exception('to be implemented');
+    }
+
+    /**
+     * @todo to implement/test
+     *
+     * @param string $assocName
+     * @return boolean
+     */
+    function isAssociationInverseSide($assocName)
+    {
+        throw new \Exception('to be implemented');
+    }
+
+    /**
+     * @todo to implement/test
+     *
+     * @param string $assocName
+     * @return string
+     */
+    function getAssociationMappedByTargetField($assocName)
+    {
+        throw new \Exception('to be implemented');
+    }
+
+    /**
+     * @todo to implement/test
+     *
+     * @param object $object
+     * @return array
+     */
+    function getIdentifierValues($object)
+    {
+        throw new \Exception('to be implemented');
+    }
+
+    /**
      * Returns the association mapped for the given $field.
      *
      * @param   string $field
