@@ -60,12 +60,12 @@ class Mapper
      *
      * @param string                    $documentProxyDirectory
      * @param AnnotationReaderInterface $annotationReader
-     * @param Inflector                 $inflector
+     * @param InflectorInterface        $inflector
      */
     public function __construct(
         $documentProxyDirectory,
         AnnotationReaderInterface $annotationReader = null,
-        Inflector $inflector = null
+        InflectorInterface $inflector = null
     ) {
         $this->documentProxyDirectory = $documentProxyDirectory;
         $this->annotationReader = $annotationReader ?: new Reader;
