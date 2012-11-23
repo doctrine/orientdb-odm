@@ -12,14 +12,14 @@
 /**
  * Interface Proxy
  *
- * @package     Doctrine\OrientDB
- * @subpackage  Contract
+ * @package     Doctrine\ODM
+ * @subpackage  OrientDB
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\ODM;
+namespace Doctrine\ODM\OrientDB;
 
-interface Proxy
+interface ProxyInterface
 {
     /**
      * Method used to serve proxies to POPOs.

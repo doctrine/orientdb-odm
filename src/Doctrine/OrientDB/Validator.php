@@ -19,7 +19,6 @@
 
 namespace Doctrine\OrientDB;
 
-use Doctrine\OrientDB\Contract\Validator as ValidatorInterface;
 use Doctrine\OrientDB\Exception\Validation as ValidationException;
 
 abstract class Validator implements ValidatorInterface

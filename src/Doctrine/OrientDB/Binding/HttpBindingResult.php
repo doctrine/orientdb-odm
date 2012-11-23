@@ -20,7 +20,6 @@
 namespace Doctrine\OrientDB\Binding;
 
 use Doctrine\OrientDB\Exception\Query\SQL\Invalid as InvalidSQL;
-use Doctrine\OrientDB\Contract\Binding\HttpBindingResultInterface;
 
 class HttpBindingResult implements HttpBindingResultInterface
 {

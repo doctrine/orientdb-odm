@@ -13,13 +13,13 @@
  * Interface Validator
  *
  * @package     Doctrine\OrientDB
- * @subpackage  Contract
+ * @subpackage  Validator
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract;
+namespace Doctrine\OrientDB;
 
-interface Validator
+interface ValidatorInterface
 {
     /**
      * Cleans ad returns the polished $value.

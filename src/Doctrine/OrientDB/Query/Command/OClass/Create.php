@@ -19,8 +19,8 @@
 
 namespace Doctrine\OrientDB\Query\Command\OClass;
 
-use Doctrine\OrientDB\Contract\Query\Command\OClass as OClassInterface;
 use Doctrine\OrientDB\Query\Command\OClass;
+use Doctrine\OrientDB\Query\Command\OClassInterface;
 
 class Create extends OClass implements OClassInterface
 {

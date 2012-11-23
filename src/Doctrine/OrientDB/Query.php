@@ -19,16 +19,11 @@
 
 namespace Doctrine\OrientDB;
 
+use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Query\Command\Credential\Grant;
 use Doctrine\OrientDB\Query\Command\Credential\Revoke;
 use Doctrine\OrientDB\Query\Command\Insert;
 use Doctrine\OrientDB\Query\Command\Select;
-use Doctrine\OrientDB\Exception;
-use Doctrine\OrientDB\Contract\Query as QueryInterface;
-use Doctrine\OrientDB\Contract\Query\Command\Select as SelectInterface;
-use Doctrine\OrientDB\Contract\Query\Command\Insert as InsertInterface;
-use Doctrine\OrientDB\Contract\Query\Command\Grant as GrantInterface;
-use Doctrine\OrientDB\Contract\Query\Command\Revoke as RevokeInterface;
 
 class Query implements QueryInterface
 {

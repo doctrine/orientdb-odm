@@ -19,7 +19,6 @@
 
 namespace Doctrine\OrientDB\Query\Command;
 
-use Doctrine\OrientDB\Contract\Query\Command\Property as PropertyInterface;
 use Doctrine\OrientDB\Query\Command;
 
 class Property extends Command implements PropertyInterface

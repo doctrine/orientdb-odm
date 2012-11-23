@@ -13,8 +13,8 @@
 /**
  * Manager class.
  *
- * @package    Doctrine\OrientDB
- * @subpackage ODM
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
  */
@@ -29,7 +29,7 @@ use Doctrine\OrientDB\Exception\ODM\OClass\NotFound as UnmappedClass;
 use Doctrine\OrientDB\Query\Command\Select;
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Exception\Casting\Mismatch;
-use Doctrine\OrientDB\Contract\Binding\BindingInterface;
+use Doctrine\OrientDB\Binding\BindingInterface;
 use Doctrine\ODM\OrientDB\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
 use Doctrine\OrientDB\Validator\Rid as RidValidator;
 use Doctrine\Common\Persistence\ObjectManager;

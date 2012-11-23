@@ -12,14 +12,14 @@
 /**
  * Class Reader
  *
- * @package     Doctrine\OrientDB
- * @subpackage  Contract
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\ODM\Mapper\Annotations;
+namespace Doctrine\ODM\OrientDB\Mapper\Annotations;
 
-interface Reader
+interface ReaderInterface
 {
     /**
      * Gets the annotations applied to a class.

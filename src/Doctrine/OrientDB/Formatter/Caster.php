@@ -19,7 +19,6 @@
 
 namespace Doctrine\OrientDB\Formatter;
 
-use Doctrine\OrientDB\Contract\Formatter\Caster as CasterInterface;
 use Doctrine\OrientDB\Exception;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\OrientDB\Foundation\Types\Rid;

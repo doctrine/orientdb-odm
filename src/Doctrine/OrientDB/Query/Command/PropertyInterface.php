@@ -10,23 +10,23 @@
  */
 
 /**
- * The token interface exposes a single method in order to format any type
- * of Doctrine\OrientDBDB token type.
+ * Property interface is responsible to set the property (belonging to a class)
+ * to manipulate.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Formatter\Query;
+namespace Doctrine\OrientDB\Query\Command;
 
-interface Token
+interface PropertyInterface
 {
     /**
-     * Formats the token according to the implementer class' internal rules.
+     * Sets the class of the property to manipulate.
      *
-     * @param   array   $values
-     * @return  string
+     * @param   string  $class
+     * @return  Property
      */
-    public static function format(array $values);
+    public function on($class);
 }

@@ -12,14 +12,14 @@
 /**
  * Class AbstractProxy
  *
- * @package    Orient
- * @subpackage ODM
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Doctrine\ODM\OrientDB\Proxy;
 
-use Doctrine\OrientDB\Contract\ODM\Proxy as ProxyInterface;
+use Doctrine\ODM\OrientDB\ProxyInterface;
 
 abstract class AbstractProxy implements ProxyInterface
 {

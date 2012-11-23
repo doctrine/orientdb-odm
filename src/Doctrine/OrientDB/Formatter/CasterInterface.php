@@ -13,15 +13,15 @@
  * Interface Caster
  *
  * @package     Doctrine\OrientDB
- * @subpackage  Contract
+ * @subpackage  Formatter
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Formatter;
+namespace Doctrine\OrientDB\Formatter;
 
 use Doctrine\OrientDB\ODM\Mapper\Annotations\Property as PropertyAnnotation;
 
-interface Caster
+interface CasterInterface
 {
     /**
      * Casts the given $value to boolean.

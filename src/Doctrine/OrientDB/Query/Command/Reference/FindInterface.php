@@ -14,13 +14,13 @@
  * SQL command.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Query\Command\Reference;
+namespace Doctrine\OrientDB\Query\Command\Reference;
 
-interface Find
+interface FindInterface
 {
   /**
    * Sets a list of $classes in which you can look for object's references.

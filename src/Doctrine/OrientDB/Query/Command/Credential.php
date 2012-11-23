@@ -21,7 +21,6 @@
 
 namespace Doctrine\OrientDB\Query\Command;
 
-use Doctrine\OrientDB\Contract\Query\Command\Credential as CredentialInterface;
 use Doctrine\OrientDB\Query\Command;
 
 abstract class Credential extends Command implements CredentialInterface

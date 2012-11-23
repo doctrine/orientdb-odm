@@ -13,30 +13,30 @@
  * Interface Graph
  *
  * @package     Doctrine\OrientDB
- * @subpackage  Contract
+ * @subpackage  Graph
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract;
+namespace Doctrine\OrientDB;
 
-use Doctrine\OrientDB\Graph\Vertex;
+use Doctrine\OrientDB\Graph\VertexInterface;
 
-interface Graph
+interface GraphInterface
 {
     /**
      * Adds a new vertex to the current graph.
      *
      * @param   Graph\Vertex $vertex
-     * @return  Doctrine\OrientDB\Graph
+     * @return  Doctrine\OrientDB\GraphInterface
      * @throws  Doctrine\OrientDB\Exception
      */
-    public function add(Vertex $vertex);
+    public function add(VertexInterface $vertex);
 
     /**
      * Returns the vertex identified with the $id associated to this graph.
      *
      * @param   mixed $id
-     * @return  Doctrine\OrientDB\Graph\Vertex
+     * @return  Doctrine\OrientDB\Graph\VertexInterface
      * @throws  Doctrine\OrientDB\Exception
      */
     public function getVertex($id);

@@ -14,15 +14,13 @@
  * in Doctrine\OrientDB.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Query;
+namespace Doctrine\OrientDB\Query;
 
-use \Doctrine\OrientDB\Contract\Query\Formatter;
-
-interface Command
+interface CommandInterface
 {
     /**
      * Sets a where token using the AND operator.

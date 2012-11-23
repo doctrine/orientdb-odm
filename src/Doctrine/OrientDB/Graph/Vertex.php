@@ -12,7 +12,7 @@
 /**
  * Class Vertex is the foundation of a graph entity.
  *
- * @package     Orient
+ * @package     Doctrine\OrientDB
  * @subpackage  Graph
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
@@ -20,7 +20,6 @@
 namespace Doctrine\OrientDB\Graph;
 
 use Doctrine\OrientDB\Graph;
-use Doctrine\OrientDB\Contract\Graph\Vertex as VertexInterface;
 
 class Vertex implements VertexInterface
 {

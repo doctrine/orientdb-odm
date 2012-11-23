@@ -14,11 +14,11 @@
  * the server.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Binding
  * @author     Daniele Alessandri <suppakilla@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Binding;
+namespace Doctrine\OrientDB\Binding;
 
 interface BindingResultInterface
 {

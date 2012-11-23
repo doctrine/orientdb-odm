@@ -111,7 +111,7 @@ class HttpBindingTest extends TestCase
 
     public function testSettingAuthentication()
     {
-        $adapter = $this->getMock('Doctrine\OrientDB\Contract\Binding\Adapter\HttpClientAdapterInterface');
+        $adapter = $this->getMock('Doctrine\OrientDB\Binding\Adapter\HttpClientAdapterInterface');
         $adapter->expects($this->at(1))
                 ->method('setAuthentication')
                 ->with(null, null);
@@ -128,7 +128,7 @@ class HttpBindingTest extends TestCase
 
     public function testInjectHttpClientAdapter()
     {
-        $adapter = $this->getMock('Doctrine\OrientDB\Contract\Binding\Adapter\HttpClientAdapterInterface');
+        $adapter = $this->getMock('Doctrine\OrientDB\Binding\Adapter\HttpClientAdapterInterface');
 
         $parameters = new BindingParameters();
         $binding = new HttpBinding($parameters, $adapter);
@@ -141,7 +141,7 @@ class HttpBindingTest extends TestCase
      */
     public function testResolveDatabase()
     {
-        $adapter = $this->getMock('Doctrine\OrientDB\Contract\Binding\Adapter\HttpClientAdapterInterface');
+        $adapter = $this->getMock('Doctrine\OrientDB\Binding\Adapter\HttpClientAdapterInterface');
 
         $parameters = new BindingParameters();
         $binding = new HttpBinding($parameters, $adapter);
@@ -225,7 +225,7 @@ class HttpBindingTest extends TestCase
         $host = TEST_ODB_HOST;
         $port = TEST_ODB_PORT;
 
-        $adapter = $this->getMock('Doctrine\OrientDB\Contract\Binding\Adapter\HttpClientAdapterInterface');
+        $adapter = $this->getMock('Doctrine\OrientDB\Binding\Adapter\HttpClientAdapterInterface');
         $adapter->expects($this->once())
                 ->method('request')
                 ->with('GET', "http://$host:$port/query/DB/sql/SELECT%20OMNOMNOMN/2/%2A%3A1%20field1%3A3", null, null);
@@ -242,7 +242,7 @@ class HttpBindingTest extends TestCase
         $port = TEST_ODB_PORT;
         $database = TEST_ODB_DATABASE;
 
-        $adapter = $this->getMock('Doctrine\OrientDB\Contract\Binding\Adapter\HttpClientAdapterInterface');
+        $adapter = $this->getMock('Doctrine\OrientDB\Binding\Adapter\HttpClientAdapterInterface');
         $adapter->expects($this->at(0))
                 ->method('request')
                 ->with('POST', "http://$host:$port/command/$database/sql/SELECT%201", null, null);

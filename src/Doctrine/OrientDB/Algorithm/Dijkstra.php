@@ -20,7 +20,6 @@
 
 namespace Doctrine\OrientDB\Algorithm;
 
-use Doctrine\OrientDB\Contract\Algorithm as AlgorithmInterface;
 use Doctrine\OrientDB\Graph;
 use Doctrine\OrientDB\Graph\Vertex;
 use Doctrine\OrientDB\Exception;

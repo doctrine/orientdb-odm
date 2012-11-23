@@ -13,13 +13,13 @@
  * Interface for adapters to various HTTP client libraries and classes.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Binding
  * @author     Daniele Alessandri <suppakilla@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Binding\Adapter;
+namespace Doctrine\OrientDB\Binding\Adapter;
 
-use Doctrine\OrientDB\Contract\Binding\BindingResultInterface;
+use Doctrine\OrientDB\Binding\BindingResultInterface;
 
 interface HttpClientAdapterInterface
 {

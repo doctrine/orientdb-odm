@@ -12,8 +12,8 @@
 /**
  * Class Factory
  *
- * @package    Orient
- * @subpackage Mapper
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
  */

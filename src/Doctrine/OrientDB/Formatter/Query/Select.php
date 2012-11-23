@@ -20,9 +20,8 @@
 namespace Doctrine\OrientDB\Formatter\Query;
 
 use Doctrine\OrientDB\Formatter\Query;
-use Doctrine\OrientDB\Contract\Formatter\Query\Token as TokenFormatter;
 
-class Select extends Query implements TokenFormatter
+class Select extends Query implements TokenInterface
 {
     public static function format(array $values)
     {

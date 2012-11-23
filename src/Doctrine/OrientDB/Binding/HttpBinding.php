@@ -19,13 +19,12 @@
 
 namespace Doctrine\OrientDB\Binding;
 
-use Doctrine\OrientDB\Contract\Binding\BindingInterface;
-use Doctrine\OrientDB\Contract\Binding\Adapter\HttpClientAdapterInterface;
+use Doctrine\OrientDB\Binding\Adapter\HttpClientAdapterInterface;
 use Doctrine\OrientDB\Client\Http\CurlClient;
 use Doctrine\OrientDB\Binding\Adapter\CurlClientAdapter;
 use Doctrine\OrientDB\Exception as OrientException;
 
-class HttpBinding implements BindingInterface
+class HttpBinding implements HttpBindingInterface
 {
     protected $server;
     protected $database;
@@ -392,10 +391,11 @@ class HttpBinding implements BindingInterface
     }
 
     /**
-     * Deletes a document.
+     * Deletes the document identified by the given $rid in the $database.
      *
      * @api
      * @param string $rid
+     * @param string $version
      * @param string $database
      * @return BindingResultInterface
      */
@@ -414,7 +414,7 @@ class HttpBinding implements BindingInterface
     }
 
     /**
-     * Sets the database for the current instance.
+     * Sets the default database for the current binding instance.
      *
      * @param string $database
      */

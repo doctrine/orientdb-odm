@@ -19,10 +19,9 @@
 
 namespace Doctrine\OrientDB\Formatter;
 
-use Doctrine\OrientDB\Contract\Formatter\String as StringInterface;
 use Doctrine\OrientDB\Validator;
 
-class String  implements StringInterface
+class String implements StringInterface
 {
     /**
      * Converts a filesystem path into a class name.

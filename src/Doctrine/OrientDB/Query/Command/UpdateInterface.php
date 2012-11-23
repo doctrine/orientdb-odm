@@ -4,13 +4,13 @@
  * SQL command Update interface
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Query\Command;
+namespace Doctrine\OrientDB\Query\Command;
 
-interface Update
+interface UpdateInterface
 {
     /**
      * Set the $values of the updates to be done.

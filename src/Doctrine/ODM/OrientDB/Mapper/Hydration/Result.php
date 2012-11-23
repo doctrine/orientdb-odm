@@ -12,8 +12,8 @@
 /**
  * Class Result encapsulates an hydration made with a mapper.
  *
- * @package    Orient
- * @subpackage ODM
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
  */

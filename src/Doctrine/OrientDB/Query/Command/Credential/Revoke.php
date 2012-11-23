@@ -19,7 +19,6 @@
 
 namespace Doctrine\OrientDB\Query\Command\Credential;
 
-use Doctrine\OrientDB\Contract\Query\Formatter;
 use Doctrine\OrientDB\Query\Command\Credential;
 
 class Revoke extends Credential

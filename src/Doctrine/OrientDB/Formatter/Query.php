@@ -22,9 +22,8 @@ namespace Doctrine\OrientDB\Formatter;
 
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Formatter\String;
-use Doctrine\OrientDB\Contract\Formatter;
 
-class Query implements Formatter\Query
+class Query implements QueryInterface
 {
     /**
      * Tokenizes a string.

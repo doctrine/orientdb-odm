@@ -19,8 +19,7 @@
 
 namespace Doctrine\OrientDB;
 
-use Doctrine\OrientDB\Graph\Vertex;
-use Doctrine\OrientDB\Contract\Graph as GraphInterface;
+use Doctrine\OrientDB\Graph\VertexInterface;
 
 class Graph implements GraphInterface
 {
@@ -34,11 +33,11 @@ class Graph implements GraphInterface
     /**
      * Adds a new vertex to the current graph.
      *
-     * @param   Graph\Vertex $vertex
+     * @param   Doctrine\OrientDB\Graph\VertexInterface $vertex
      * @return  Doctrine\OrientDB\Graph
      * @throws  Doctrine\OrientDB\Exception
      */
-    public function add(Vertex $vertex)
+    public function add(VertexInterface $vertex)
     {
         if (array_key_exists($vertex->getId(), $this->getVertices())) {
             throw new Exception('Unable to insert multiple Vertices with the same ID in a Graph');
@@ -53,7 +52,7 @@ class Graph implements GraphInterface
      * Returns the vertex identified with the $id associated to this graph.
      *
      * @param   mixed $id
-     * @return  Doctrine\OrientDB\Graph\Vertex
+     * @return  Doctrine\OrientDB\Graph\VertexInterface
      * @throws  Doctrine\OrientDB\Exception
      */
     public function getVertex($id)

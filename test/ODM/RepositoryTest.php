@@ -37,7 +37,7 @@ class RepositoryTest extends TestCase
             "out": ["#20:1"]
         }]');
 
-        $result = $this->getMock('Doctrine\OrientDB\Contract\Binding\BindingResultInterface');
+        $result = $this->getMock('Doctrine\OrientDB\Binding\BindingResultInterface');
         $result->expects($this->at(0))
                ->method('getResult')
                ->will($this->returnValue($rawResult));
@@ -45,7 +45,7 @@ class RepositoryTest extends TestCase
                ->method('getResult')
                ->will($this->returnValue(array()));
 
-        $binding = $this->getMock('Doctrine\OrientDB\Contract\Binding\BindingInterface');
+        $binding = $this->getMock('Doctrine\OrientDB\Binding\BindingInterface');
         $binding->expects($this->any())
                 ->method('execute')
                 ->will($this->returnValue($result));

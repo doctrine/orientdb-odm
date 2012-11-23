@@ -10,24 +10,15 @@
  */
 
 /**
- * The Grant class it's used to build GRANT SQL statements.
+ * OClass interface manages the construction of class-related SQL commands.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Query\Command\Credential;
+namespace Doctrine\OrientDB\Query\Command;
 
-use Doctrine\OrientDB\Query\Command\Credential;
-
-class Grant extends Credential
+interface OClassInterface
 {
-    /**
-     * @inheritdoc
-     */
-    protected function getSchema()
-    {
-        return "GRANT :Permission ON :Resource TO :Role";
-    }
 }

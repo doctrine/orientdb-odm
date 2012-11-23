@@ -20,7 +20,6 @@
 namespace Doctrine\OrientDB\Binding\Adapter;
 
 use Doctrine\OrientDB\Client\Http\CurlClient;
-use Doctrine\OrientDB\Contract\Binding\Adapter\HttpClientAdapterInterface;
 
 class CurlClientAdapter implements HttpClientAdapterInterface
 {

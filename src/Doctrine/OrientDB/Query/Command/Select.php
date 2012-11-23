@@ -20,9 +20,7 @@
 namespace Doctrine\OrientDB\Query\Command;
 
 use Doctrine\OrientDB\Exception\Query\Command as CommandException;
-use Doctrine\OrientDB\Contract\Query\Formatter;
 use Doctrine\OrientDB\Query\Command;
-use Doctrine\OrientDB\Contract\Query\Command\Select as SelectInterface;
 
 class Select extends Command implements SelectInterface
 {

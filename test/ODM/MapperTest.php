@@ -253,9 +253,8 @@ class MapperTest extends TestCase
     public function testGettingTheDirectoriesInWhichTheMapperLooksForPOPOs()
     {
         $directories = array('dir' => 'namespace', 'dir2' => 'namespace2');
-        $adapter = $this->getMock('Doctrine\OrientDB\Contract\Protocol\Adapter');
 
-        $this->mapper = new Mapper($adapter, new AnnotationReader());
+        $this->mapper = new Mapper('', new AnnotationReader());
         $object = $this->mapper->setDocumentDirectories($directories);
 
         $this->assertEquals($directories, $this->mapper->getDocumentDirectories());

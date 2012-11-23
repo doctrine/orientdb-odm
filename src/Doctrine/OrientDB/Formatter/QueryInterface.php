@@ -14,13 +14,13 @@
  * in order to manipulate Query strings.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Formatter
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Formatter;
+namespace Doctrine\OrientDB\Formatter;
 
-interface Query
+interface QueryInterface
 {
     /**
      * Tokenizes the given string: since the SQL statements are managed

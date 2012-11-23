@@ -13,13 +13,13 @@
  * Interface Vertex
  *
  * @package     Doctrine\OrientDB
- * @subpackage  Contract
+ * @subpackage  Graph
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Graph;
+namespace Doctrine\OrientDB\Graph;
 
-interface Vertex
+interface VertexInterface
 {
     /**
      * Connects the vertex to another $vertex.
@@ -28,7 +28,7 @@ interface Vertex
      * @param Vertex $vertex
      * @param integer $distance
      */
-    public function connect(Vertex $vertex, $distance = 1);
+    public function connect(VertexInterface $vertex, $distance = 1);
 
     /**
      * Returns the connections of the current vertex.
@@ -79,5 +79,5 @@ interface Vertex
      * @param   Vertex $from
      * @return  boolean
      */
-    public function setPotential($potential, Vertex $from);
+    public function setPotential($potential, VertexInterface $from);
 }

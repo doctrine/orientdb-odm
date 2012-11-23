@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Doctrine\OrientDB package.
+ * This file is part of the Orient package.
  *
  * (c) Alessandro Nadalin <alessandro.nadalin@gmail.com>
  *
@@ -10,16 +10,21 @@
  */
 
 /**
- * Class Inflector
+ * Interface Algorithm
  *
  * @package     Doctrine\OrientDB
- * @subpackage  Contract
+ * @subpackage  Algorithm
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Formatter;
+namespace Doctrine\OrientDB\Algorithm;
 
-class Inflector
+interface AlgorithmInterface
 {
-  public static function camelize($string);
+    /**
+     * Solves the algorithm and returns all possible results.
+     *
+     * @return mixed
+     */
+    public function solve();
 }

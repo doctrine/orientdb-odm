@@ -14,7 +14,7 @@ namespace test\Integration;
 use test\PHPUnit\TestCase;
 use Doctrine\OrientDB\Query;
 use Doctrine\OrientDB\Binding\HttpBinding;
-use Doctrine\OrientDB\Contract\Binding\HttpBindingResultInterface;
+use Doctrine\OrientDB\Binding\HttpBindingResultInterface;
 
 class QueryBuilderTest extends TestCase
 {

@@ -12,8 +12,8 @@
 /**
  * Class used to identify a document's annotations.
  *
- * @package    Doctrine\OrientDB
- * @subpackage ODM
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 

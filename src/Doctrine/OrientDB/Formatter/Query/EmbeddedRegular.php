@@ -19,10 +19,7 @@
 
 namespace Doctrine\OrientDB\Formatter\Query;
 
-use Doctrine\OrientDB\Formatter\Query;
-use Doctrine\OrientDB\Contract\Formatter\Query\Token as TokenFormatter;
-
-class EmbeddedRegular extends Query\Regular implements TokenFormatter
+class EmbeddedRegular extends Regular implements TokenInterface
 {
     public static function format(array $values)
     {

@@ -13,7 +13,7 @@ use Doctrine\ODM\OrientDB\Manager;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\OrientDB\Binding\HttpBinding;
 use Doctrine\OrientDB\Binding\BindingParameters;
-use Doctrine\OrientDB\Contract\Binding\HttpBindingResultInterface;
+use Doctrine\OrientDB\Binding\HttpBindingResultInterface;
 use Doctrine\OrientDB\Client\Http\CurlClient;
 use Doctrine\OrientDB\Binding\Adapter\CurlClientAdapter;
 

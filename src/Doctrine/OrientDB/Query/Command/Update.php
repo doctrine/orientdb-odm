@@ -20,7 +20,6 @@
 namespace Doctrine\OrientDB\Query\Command;
 
 use Doctrine\OrientDB\Query\Command;
-use Doctrine\OrientDB\Contract\Query\Command\Update as UpdateInterface;
 
 class Update extends Command implements UpdateInterface
 {

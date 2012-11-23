@@ -19,7 +19,7 @@
 
 namespace Doctrine\OrientDB\Binding\Adapter;
 
-use Doctrine\OrientDB\Contract\Binding\HttpBindingResultInterface;
+use Doctrine\OrientDB\Binding\HttpBindingResultInterface;
 use Doctrine\OrientDB\Client\Http\CurlClientResponse;
 use Doctrine\OrientDB\Exception\Query\SQL\Invalid as InvalidSQL;
 

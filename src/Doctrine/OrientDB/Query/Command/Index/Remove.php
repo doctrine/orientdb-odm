@@ -20,7 +20,6 @@
 namespace Doctrine\OrientDB\Query\Command\Index;
 
 use Doctrine\OrientDB\Query\Command\Index;
-use Doctrine\OrientDB\Contract\Formatter\Query\Token as TokenFormatter;
 use Doctrine\OrientDB\Formatter\Query\EmbeddedRid as EmbeddedRidFormatter;
 
 class Remove extends Index

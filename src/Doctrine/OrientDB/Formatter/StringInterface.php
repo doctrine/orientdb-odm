@@ -13,13 +13,13 @@
  * This interface is responsible of general-purpose manipulation of strings.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Formatter
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Formatter;
+namespace Doctrine\OrientDB\Formatter;
 
-interface String
+interface StringInterface
 {
     /**
      * Converts a filesystem path into a class name.

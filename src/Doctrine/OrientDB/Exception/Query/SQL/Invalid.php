@@ -20,7 +20,7 @@
 namespace Doctrine\OrientDB\Exception\Query\SQL;
 
 use Doctrine\OrientDB\Exception;
-use Doctrine\OrientDB\Contract\Binding\BindingResultInterface;
+use Doctrine\OrientDB\Binding\BindingResultInterface;
 
 class Invalid extends Exception
 {

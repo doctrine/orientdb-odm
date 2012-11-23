@@ -19,7 +19,6 @@
 
 namespace Doctrine\OrientDB\Query\Command;
 
-use Doctrine\OrientDB\Contract\Query\Command\Insert as InsertInterface;
 use Doctrine\OrientDB\Query\Command;
 
 class Insert extends Command implements InsertInterface

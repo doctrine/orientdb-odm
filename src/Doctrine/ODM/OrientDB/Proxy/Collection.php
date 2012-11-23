@@ -12,8 +12,8 @@
 /**
  * Collection class
  *
- * @package    Doctrine\OrientDB
- * @subpackage ODM
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
  */
@@ -21,7 +21,6 @@
 namespace Doctrine\ODM\OrientDB\Proxy;
 
 use Doctrine\ODM\OrientDB\Manager;
-use Doctrine\ODM\OrientDB\Proxy\AbstractProxy;
 
 class Collection extends AbstractProxy
 {

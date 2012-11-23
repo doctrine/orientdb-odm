@@ -14,13 +14,13 @@
  * by a class responsibl of generating SELECT SQL statements in Doctrine\OrientDBDB.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Query\Command;
+namespace Doctrine\OrientDB\Query\Command;
 
-interface Select
+interface SelectInterface
 {
     /**
      * Converts the "normal" select into an index one.

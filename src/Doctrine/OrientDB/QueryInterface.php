@@ -4,13 +4,13 @@
  * Query interface
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract;
+namespace Doctrine\OrientDB;
 
-interface Query
+interface QueryInterface
 {
     /**
      * Adds a relation in a link-list|set.

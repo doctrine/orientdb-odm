@@ -14,14 +14,13 @@
  * If you want to use a custom annotation reader library you should make your
  * reader extend this class.
  *
- * @package    Doctrine\OrientDB
- * @subpackage ODM
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Doctrine\ODM\OrientDB\Mapper\Annotations;
 
-use Doctrine\OrientDB\Contract\ODM\Mapper\Annotations\Reader as ReaderInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Closure;
 use ReflectionClass;

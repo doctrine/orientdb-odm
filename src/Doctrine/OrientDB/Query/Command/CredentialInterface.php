@@ -14,13 +14,13 @@
  * of credentials in Doctrine\OrientDBDB.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Query\Command;
+namespace Doctrine\OrientDB\Query\Command;
 
-interface Credential
+interface CredentialInterface
 {
     /**
      * Sets the $permission to grant/revoke.

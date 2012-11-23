@@ -14,8 +14,8 @@
  * This class is responsible to convert JSON objects to POPOs and viceversa, via
  * Doctrine's annotations library.
  *
- * @package    Doctrine\OrientDB
- * @subpackage ODM
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
  */
@@ -26,17 +26,17 @@ use Doctrine\ODM\OrientDB\Mapper\Hydration;
 use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Reader;
+use Doctrine\ODM\OrientDB\Mapper\Annotations\ReaderInterface as AnnotationreaderInterface;
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Query;
 use Doctrine\OrientDB\Foundation\Types\Rid;
 use Doctrine\OrientDB\Exception\Document\NotFound as DocumentNotFoundException;
 use Doctrine\OrientDB\Formatter\CasterInterface as CasterInterface;
 use Doctrine\OrientDB\Formatter\Caster;
-use Doctrine\OrientDB\Contract\Formatter\Inflector;
+use Doctrine\OrientDB\Formatter\InflectorInterface;
 use Doctrine\OrientDB\Filesystem\Iterator\Regex as RegexIterator;
-use Doctrine\OrientDB\Contract\Formatter\String as StringFormatterInterface;
+use Doctrine\OrientDB\Formatter\StringInterface as StringFormatterInterface;
 use Doctrine\OrientDB\Formatter\String as StringFormatter;
-use Doctrine\OrientDB\Contract\ODM\Mapper\Annotations\Reader as AnnotationreaderInterface;
 use Doctrine\OrientDB\Exception\ODM\OClass\NotFound as ClassNotFoundException;
 use Doctrine\OrientDB\Exception\Casting\Mismatch;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;

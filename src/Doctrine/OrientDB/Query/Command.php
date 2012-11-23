@@ -21,14 +21,13 @@
 namespace Doctrine\OrientDB\Query;
 
 use Doctrine\OrientDB\Exception\Query\Command as CommandException;
-use Doctrine\OrientDB\Contract\Formatter\Query as QueryFormatter;
+use Doctrine\OrientDB\Formatter\QueryInterface as QueryFormatterInterface;
 use Doctrine\OrientDB\Formatter\Query as Formatter;
 use Doctrine\OrientDB\Validator\Rid as RidValidator;
 use Doctrine\OrientDB\Exception;
-use Doctrine\OrientDB\Contract\Query\Command as CommandContract;
 use Doctrine\OrientDB\Validator\Escaper as EscapeValidator;
 
-abstract class Command implements CommandContract
+abstract class Command implements CommandInterface
 {
     protected $ridValidator;
     protected $escapeValidator;
@@ -148,9 +147,9 @@ abstract class Command implements CommandContract
     /**
      * Sets the internal query formatter object.
      *
-     * @param QueryFormatter $formatter
+     * @param QueryFormatterInterface $formatter
      */
-    public function setFormatter(QueryFormatter $formatter)
+    public function setFormatter(QueryFormatterInterface $formatter)
     {
         $this->formatter = $formatter;
     }
@@ -266,7 +265,7 @@ abstract class Command implements CommandContract
      * Returns a brand new instance of a Formatter in order to format query
      * tokens.
      *
-     * @return  QueryFormatter
+     * @return  QueryFormatterInterface
      */
     protected function getFormatter()
     {

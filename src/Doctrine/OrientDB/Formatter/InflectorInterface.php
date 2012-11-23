@@ -10,15 +10,16 @@
  */
 
 /**
- * OClass interface manages the construction of class-related SQL commands.
+ * Class Inflector
  *
- * @package    Doctrine\OrientDB
- * @subpackage Contract
- * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @package     Doctrine\OrientDB
+ * @subpackage  Formatter
+ * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Query\Command;
+namespace Doctrine\OrientDB\Formatter;
 
-interface OClass
+class InflectorInterface
 {
+    public static function camelize($string);
 }

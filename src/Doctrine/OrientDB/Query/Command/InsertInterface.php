@@ -14,13 +14,13 @@
  * in Doctrine\OrientDBDB.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Contract
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Contract\Query\Command;
+namespace Doctrine\OrientDB\Query\Command;
 
-interface Insert
+interface InsertInterface
 {
     /**
      * Sets the $fields that are going to be inserted.

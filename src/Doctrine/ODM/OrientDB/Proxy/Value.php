@@ -12,15 +12,14 @@
 /**
  * Class Value
  *
- * @package    Doctrine\OrientDB
- * @subpackage ODM
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
 namespace Doctrine\ODM\OrientDB\Proxy;
 
 use Doctrine\ODM\OrientDB\Mapper;
-use Doctrine\ODM\OrientDB\Proxy\AbstractProxy;
 
 class Value extends AbstractProxy
 {

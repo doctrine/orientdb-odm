@@ -20,7 +20,6 @@
 
 namespace Doctrine\OrientDB\Query\Command\Reference;
 
-use Doctrine\OrientDB\Contract\Query\Command\Reference\Find as FindInterface;
 use Doctrine\OrientDB\Query\Command;
 
 class Find extends Command implements FindInterface
