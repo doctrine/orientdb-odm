@@ -14,7 +14,7 @@ $loader->register();
 $parameters = BindingParameters::create('http://admin:admin@127.0.0.1:2480/menu');
 $binding = new HttpBinding($parameters);
 
-$mapper = new ODM\Mapper(__DIR__ . '/../proxies');
+$mapper = new ODM\Mapper(__DIR__ . '/../examples/proxies');
 $mapper->setDocumentDirectories(array(__DIR__.'/../examples/' => 'Domain'));
 
 $manager = new ODM\Manager($mapper, $binding);

@@ -4,8 +4,8 @@ try.php
 docs/html
 docs/latex
 docs/coverage
-proxies/Doctrine/Orient/Proxy/*
-!proxies/Doctrine/Orient/Proxy/README.md
+examples/proxies/Doctrine/OrientDB/Proxy/*
+!examples/proxies/Doctrine/OrientDB/Proxy/README.md
 nbproject
 ci-stuff/environment
 vendor/
