@@ -10,7 +10,7 @@
  */
 
 /**
- * This class manages indexes on Doctrine\OrientDBDB.
+ * This class manages indexes on Doctrine\OrientDB.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

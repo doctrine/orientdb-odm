@@ -10,7 +10,7 @@
  */
 
 /**
- * This class lets you build SQL statements to create a class in Doctrine\OrientDBDB.
+ * This class lets you build SQL statements to create a class in Doctrine\OrientDB.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

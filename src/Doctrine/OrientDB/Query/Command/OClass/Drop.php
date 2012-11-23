@@ -10,7 +10,7 @@
  */
 
 /**
- * This class lets you build SQL statements to drop a class from Doctrine\OrientDBDB.
+ * This class lets you build SQL statements to drop a class from Doctrine\OrientDB.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

@@ -11,7 +11,7 @@
 
 /**
  * The Credential interface manages the SQL statements dealing with th CRUD
- * of credentials in Doctrine\OrientDBDB.
+ * of credentials in Doctrine\OrientDB.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

@@ -12,7 +12,7 @@
 
 /**
  * This class manages the generation of SQL statements able to assign or revoke
- * permissions inside Doctrine\OrientDBDB.
+ * permissions inside Doctrine\OrientDB.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

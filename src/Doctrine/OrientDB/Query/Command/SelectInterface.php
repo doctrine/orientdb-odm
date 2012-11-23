@@ -11,7 +11,7 @@
 
 /**
  * Select interface is responsible to define which methods should be implemented
- * by a class responsibl of generating SELECT SQL statements in Doctrine\OrientDBDB.
+ * by a class responsibl of generating SELECT SQL statements in Doctrine\OrientDB.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

@@ -11,7 +11,7 @@
 
 /**
  * The aim of a Formatter class is to manipulate token values and format them
- * in order to build valid Doctrine\OrientDBDB's SQL expressions.
+ * in order to build valid Doctrine\OrientDB's SQL expressions.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Formatter

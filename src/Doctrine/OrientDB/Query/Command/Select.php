@@ -10,7 +10,7 @@
  */
 
 /**
- * Select class, to build SELECT commands for Doctrine\OrientDBDB.
+ * Select class, to build SELECT commands for Doctrine\OrientDB.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

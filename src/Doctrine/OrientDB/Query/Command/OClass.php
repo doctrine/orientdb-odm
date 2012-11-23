@@ -11,7 +11,7 @@
 
 /**
  * This class is a central point to manage SQL statements dealing with
- * class manipulation in Doctrine\OrientDBDB.
+ * class manipulation in Doctrine\OrientDB.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

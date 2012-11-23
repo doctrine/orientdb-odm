@@ -273,7 +273,7 @@ class Mapper
     }
 
     /**
-     * Tries to find the PHP class mapping Doctrine\OrientDBDB's $OClass in each of the
+     * Tries to find the PHP class mapping Doctrine\OrientDB's $OClass in each of the
      * directories where the documents are stored.
      *
      * @param   string $OClass
@@ -292,7 +292,7 @@ class Mapper
     }
 
     /**
-     * Searches a PHP class mapping Doctrine\OrientDBDB's $OClass in $directory,
+     * Searches a PHP class mapping Doctrine\OrientDB's $OClass in $directory,
      * which uses the given $namespace.
      *
      * @param   string                      $OClass

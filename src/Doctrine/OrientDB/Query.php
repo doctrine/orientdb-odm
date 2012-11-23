@@ -10,7 +10,7 @@
  */
 
 /**
- * Query class to build queries execute by an Doctrine\OrientDBDB's protocol adapter.
+ * Query class to build queries execute by an Doctrine\OrientDB's protocol adapter.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

@@ -11,7 +11,7 @@
 
 /**
  * Insert interface provides common method to deal with document insertions
- * in Doctrine\OrientDBDB.
+ * in Doctrine\OrientDB.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

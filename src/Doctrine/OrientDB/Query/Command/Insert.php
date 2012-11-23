@@ -10,7 +10,7 @@
  */
 
 /**
- * Insert class, to build INSERT commands for Doctrine\OrientDBDB.
+ * Insert class, to build INSERT commands for Doctrine\OrientDB.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

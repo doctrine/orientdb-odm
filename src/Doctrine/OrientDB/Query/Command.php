@@ -11,7 +11,7 @@
 
 /**
  * Command class is a base class shared among all the command executable with
- * Doctrine\OrientDBDB's SQL synthax.
+ * Doctrine\OrientDB's SQL synthax.
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query

@@ -32,7 +32,7 @@ interface StringInterface
 
     /**
      * Cleans the input $string removing all the characters not allowed in
-     * Doctrine\OrientDBDB SQL statements.
+     * Doctrine\OrientDB SQL statements.
      *
      * @param   string $string
      * @param   string $nonFilter
