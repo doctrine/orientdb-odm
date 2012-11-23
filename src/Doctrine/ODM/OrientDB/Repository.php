@@ -145,6 +145,16 @@ class Repository implements ObjectRepository
     }
 
     /**
+     * Returns the POPO class associated with this repository.
+     *
+     * @return string
+     */
+    public function getClassName()
+    {
+        return $this->className;
+    }
+
+    /**
      * Verifies if the $document should belog to this repository.
      *
      * @param   object  $document
@@ -153,16 +163,6 @@ class Repository implements ObjectRepository
     protected function contains($document)
     {
         return in_array($this->getClassName(), class_parents(get_class($document)));
-    }
-
-    /**
-     * Returns the POPO class associated with this repository.
-     *
-     * @return string
-     */
-    protected function getClassName()
-    {
-        return $this->className;
     }
 
     /**

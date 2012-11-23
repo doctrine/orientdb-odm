@@ -256,6 +256,26 @@ class Manager implements ObjectManager
     }
 
     /**
+     * @todo to implement/test
+     *
+     * @param \stdClass $object
+     */
+    public function clear($object = null)
+    {
+        throw new \Exception();
+    }
+
+    /**
+     * @todo to implement/test
+     *
+     * @param \stdClass $object
+     */
+    public function contains($object)
+    {
+        throw new \Exception();
+    }
+
+    /**
      * Executes a query against OrientDB to find the specified RID and finalizes the
      * hydration result.
      *
