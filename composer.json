@@ -14,6 +14,11 @@
             "name": "David Funaro",
             "email": "ing.davidino@gmail.com",
             "homepage": "http://davidfunaro.com"
+        },
+        {
+            "name": "Daniele Alessandri",
+            "email": "suppakilla@gmail.com",
+            "homepage": "http://clorophilla.net"
         }
     ],
     "autoload": {
