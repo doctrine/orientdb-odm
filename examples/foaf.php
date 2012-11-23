@@ -1,7 +1,5 @@
 <?php
 
-namespace Doctrine\OrientDB;
-
 use Doctrine\OrientDB\Binding\HttpBinding;
 use Doctrine\OrientDB\Binding\BindingParameters;
 

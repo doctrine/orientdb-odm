@@ -11,7 +11,7 @@
 
 namespace Domain;
 
-use Doctrine\OrientDB\ODM\Mapper\Annotations as ODM;
+use Doctrine\ODM\OrientDB\Mapper\Annotations as ODM;
 
 /**
 * @ODM\Document(class="Address")
