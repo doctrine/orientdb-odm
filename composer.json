@@ -18,7 +18,8 @@
     ],
     "autoload": {
         "psr-0": {
-            "Doctrine\\Orient": "src/"
+            "Doctrine\\OrientDB": "src/",
+            "Doctrine\\ODM\\OrientDB": "src/"
         }
     },
     "require": {

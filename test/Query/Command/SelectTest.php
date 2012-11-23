@@ -3,7 +3,7 @@
 /**
  * QueryTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
@@ -11,7 +11,7 @@
 
 namespace test\Query\Command;
 
-use Doctrine\Orient\Query\Command\Select;
+use Doctrine\OrientDB\Query\Command\Select;
 use test\PHPUnit\TestCase;
 
 class SelectTest extends TestCase

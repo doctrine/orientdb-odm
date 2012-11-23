@@ -3,7 +3,7 @@
 /**
  * QueryTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
@@ -11,9 +11,9 @@
 
 namespace test\Query;
 
-use Doctrine\Orient\Query;
+use Doctrine\OrientDB\Query;
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\Formatter\Query as Formatter;
+use Doctrine\OrientDB\Formatter\Query as Formatter;
 
 class StubCommand extends Query\Command
 {
@@ -49,7 +49,7 @@ class Command extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\Orient\Exception
+     * @expectedException Doctrine\OrientDB\Exception
      */
     public function testAnExceptionIsRaisedIfYouDontExplicitHowToFormatAToken()
     {
@@ -58,7 +58,7 @@ class Command extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\Orient\Exception\Logic
+     * @expectedException Doctrine\OrientDB\Exception\Logic
      */
     public function testAnExceptionIsRaisedIfYouMakeAWhereWithDifferentParamsAndValues()
     {
@@ -134,7 +134,7 @@ class Command extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\Orient\Exception\Query\Command\TokenNotFound
+     * @expectedException Doctrine\OrientDB\Exception\Query\Command\TokenNotFound
      */
     public function testCheckAnExceptionRaisedWhenRequestingInvalidToken()
     {

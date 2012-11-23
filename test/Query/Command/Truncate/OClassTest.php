@@ -3,7 +3,7 @@
 /**
  * OClassTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
@@ -12,7 +12,7 @@
 namespace test\Query\Command\Truncate;
 
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\Query\Command\Truncate\OClass as TruncateClass;
+use Doctrine\OrientDB\Query\Command\Truncate\OClass as TruncateClass;
 
 class OClassTest extends TestCase
 {

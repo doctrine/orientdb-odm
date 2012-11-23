@@ -3,7 +3,7 @@
 /**
  * CasterTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
@@ -13,7 +13,7 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\Formatter\String;
+use Doctrine\OrientDB\Formatter\String;
 
 
 class StringTest extends TestCase

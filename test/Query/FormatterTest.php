@@ -10,7 +10,7 @@
 
 namespace test\Query;
 
-use Doctrine\Orient\Formatter;
+use Doctrine\OrientDB\Formatter;
 use test\PHPUnit\TestCase;
 
 class FormatterTest extends TestCase

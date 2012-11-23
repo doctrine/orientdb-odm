@@ -3,7 +3,7 @@
 /**
  * ReporitoryTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
@@ -13,12 +13,12 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\ODM\Manager;
-use Doctrine\Orient\ODM\Mapper;
-use Doctrine\Orient\ODM\Repository;
-use Doctrine\Orient\ODM\Mapper\LinkTracker;
-use Doctrine\Orient\Foundation\Types\Rid;
-use Doctrine\Orient\ODM\Mapper\Hydration\Result as HydrationResult;
+use Doctrine\ODM\OrientDB\Manager;
+use Doctrine\ODM\OrientDB\Mapper;
+use Doctrine\ODM\OrientDB\Repository;
+use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
+use Doctrine\OrientDB\Foundation\Types\Rid;
+use Doctrine\ODM\OrientDB\Mapper\Hydration\Result as HydrationResult;
 use test\ODM\Document\Stub\Contact\Address;
 
 class RepositoryTest extends TestCase
@@ -37,7 +37,7 @@ class RepositoryTest extends TestCase
             "out": ["#20:1"]
         }]');
 
-        $result = $this->getMock('Doctrine\Orient\Contract\Binding\BindingResultInterface');
+        $result = $this->getMock('Doctrine\OrientDB\Contract\Binding\BindingResultInterface');
         $result->expects($this->at(0))
                ->method('getResult')
                ->will($this->returnValue($rawResult));
@@ -45,7 +45,7 @@ class RepositoryTest extends TestCase
                ->method('getResult')
                ->will($this->returnValue(array()));
 
-        $binding = $this->getMock('Doctrine\Orient\Contract\Binding\BindingInterface');
+        $binding = $this->getMock('Doctrine\OrientDB\Contract\Binding\BindingInterface');
         $binding->expects($this->any())
                 ->method('execute')
                 ->will($this->returnValue($result));
@@ -58,7 +58,7 @@ class RepositoryTest extends TestCase
             return new HydrationResult(new Address(), $linktracker);
         };
 
-        $mapper = $this->getMock('Doctrine\Orient\ODM\Mapper', array('hydrate'), array(__DIR__ . '/../../proxies'));
+        $mapper = $this->getMock('Doctrine\ODM\OrientDB\Mapper', array('hydrate'), array(__DIR__ . '/../../proxies'));
         $mapper->expects($this->any())
                ->method('hydrate')
                ->will($this->returnCallback($hydrationResultCallback));

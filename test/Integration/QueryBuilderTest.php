@@ -3,7 +3,7 @@
 /**
  * QueryBuilderTest class
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     Daniele Alessandri <daniele.alessandri@gmail.com>
@@ -12,9 +12,9 @@
 namespace test\Integration;
 
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\Query;
-use Doctrine\Orient\Binding\HttpBinding;
-use Doctrine\Orient\Contract\Binding\HttpBindingResultInterface;
+use Doctrine\OrientDB\Query;
+use Doctrine\OrientDB\Binding\HttpBinding;
+use Doctrine\OrientDB\Contract\Binding\HttpBindingResultInterface;
 
 class QueryBuilderTest extends TestCase
 {

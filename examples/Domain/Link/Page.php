@@ -11,7 +11,7 @@
 
 namespace Domain\Link;
 
-use Doctrine\Orient\ODM\Mapper\Annotations as ODM;
+use Doctrine\OrientDB\ODM\Mapper\Annotations as ODM;
 
 /**
 * @ODM\Document(class="pagelink")

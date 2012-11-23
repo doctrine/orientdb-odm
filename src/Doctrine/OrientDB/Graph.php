@@ -1,0 +1,79 @@
+<?php
+
+/*
+ * This file is part of the Orient package.
+ *
+ * (c) Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
+ * Class Graph is a dataset to easily work with a simulated graph.
+ *
+ * @package     Orient
+ * @subpackage  Graph
+ * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ */
+
+namespace Doctrine\OrientDB;
+
+use Doctrine\OrientDB\Graph\Vertex;
+use Doctrine\OrientDB\Contract\Graph as GraphInterface;
+
+class Graph implements GraphInterface
+{
+    /**
+     * All the vertices in the graph
+     *
+     * @var array
+     */
+    protected $vertices = array();
+
+    /**
+     * Adds a new vertex to the current graph.
+     *
+     * @param   Graph\Vertex $vertex
+     * @return  Doctrine\OrientDB\Graph
+     * @throws  Doctrine\OrientDB\Exception
+     */
+    public function add(Vertex $vertex)
+    {
+        if (array_key_exists($vertex->getId(), $this->getVertices())) {
+            throw new Exception('Unable to insert multiple Vertices with the same ID in a Graph');
+        }
+
+        $this->vertices[$vertex->getId()] = $vertex;
+
+        return $this;
+    }
+
+    /**
+     * Returns the vertex identified with the $id associated to this graph.
+     *
+     * @param   mixed $id
+     * @return  Doctrine\OrientDB\Graph\Vertex
+     * @throws  Doctrine\OrientDB\Exception
+     */
+    public function getVertex($id)
+    {
+        $vertices = $this->getVertices();
+
+        if (!array_key_exists($id, $vertices)) {
+            throw new Exception("Unable to find $id in the Graph");
+        }
+
+        return $vertices[$id];
+    }
+
+    /**
+     * Returns all the vertices that belong to this graph.
+     *
+     * @return Array
+     */
+    public function getVertices()
+    {
+        return $this->vertices;
+    }
+}

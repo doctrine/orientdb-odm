@@ -3,7 +3,7 @@
 /**
  * IntegerTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
@@ -27,7 +27,7 @@ class IntegerTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\Orient\Exception\Casting\Mismatch
+     * @expectedException Doctrine\OrientDB\Exception\Casting\Mismatch
      */
     public function testAnExceptionIsRaisedWhenAnIntegerPropertyIsNotAnInteger()
     {

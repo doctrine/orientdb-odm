@@ -20,9 +20,9 @@
 namespace test\Algorithm;
 
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\Graph;
-use Doctrine\Orient\Graph\Vertex;
-use Doctrine\Orient\Algorithm\Dijkstra;
+use Doctrine\OrientDB\Graph;
+use Doctrine\OrientDB\Graph\Vertex;
+use Doctrine\OrientDB\Algorithm\Dijkstra;
 
 class DijkstraTest extends TestCase
 {
@@ -149,7 +149,7 @@ class DijkstraTest extends TestCase
     }
 
     /**
-     * @expectedException \Doctrine\Orient\Exception\Logic
+     * @expectedException \Doctrine\OrientDB\Exception\Logic
      */
     public function testYouNeedToSolveTheAlgorithmBeforeCalculatingTheDistance()
     {
@@ -169,7 +169,7 @@ class DijkstraTest extends TestCase
     }
 
     /**
-     * @expectedException \Doctrine\Orient\Exception\Logic
+     * @expectedException \Doctrine\OrientDB\Exception\Logic
      */
     public function testYouCantSolveTheAlgorithmWithoutaStart()
     {
@@ -179,7 +179,7 @@ class DijkstraTest extends TestCase
     }
 
     /**
-     * @expectedException \Doctrine\Orient\Exception\Logic
+     * @expectedException \Doctrine\OrientDB\Exception\Logic
      */
     public function testYouCantSolveTheAlgorithmWithoutaEnd()
     {

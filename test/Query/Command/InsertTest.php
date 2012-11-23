@@ -3,7 +3,7 @@
 /**
  * QueryTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
@@ -12,7 +12,7 @@
 namespace test\Query\Command;
 
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\Query\Command\Insert;
+use Doctrine\OrientDB\Query\Command\Insert;
 
 class InsertTest extends TestCase
 {

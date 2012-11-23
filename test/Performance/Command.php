@@ -32,7 +32,7 @@ class Command
     {
         $this->startTime();
         for ($x = 0; $x < 100000; $x++) {
-            new \Doctrine\Orient\Query\Command\Credential\Grant('OMN');
+            new \Doctrine\OrientDB\Query\Command\Credential\Grant('OMN');
         }
 
         $this->stop();

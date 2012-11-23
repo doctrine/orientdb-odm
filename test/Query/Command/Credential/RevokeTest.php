@@ -3,7 +3,7 @@
 /**
  * RevokeTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
@@ -11,7 +11,7 @@
 
 namespace test\Query\Command\Credential;
 
-use Doctrine\Orient\Query\Command\Credential\Revoke;
+use Doctrine\OrientDB\Query\Command\Credential\Revoke;
 use test\PHPUnit\TestCase;
 
 class RevokeTest extends TestCase

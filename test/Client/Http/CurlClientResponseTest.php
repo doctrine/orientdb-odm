@@ -3,12 +3,12 @@
 /**
  * CurlClientResponseTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
  */
-use Doctrine\Orient\Client\Http\CurlClientResponse;
+use Doctrine\OrientDB\Client\Http\CurlClientResponse;
 
 class ResponseTest extends PHPUnit_Framework_TestCase
 {

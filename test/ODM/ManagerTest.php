@@ -3,7 +3,7 @@
 /**
  * QueryTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
@@ -14,11 +14,11 @@
 namespace test\ODM;
 
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\Query;
-use Doctrine\Orient\ODM\Manager;
-use Doctrine\Orient\ODM\Mapper\LinkTracker;
-use Doctrine\Orient\Foundation\Types\Rid;
-use Doctrine\Orient\ODM\Mapper\Hydration\Result as HydrationResult;
+use Doctrine\OrientDB\Query;
+use Doctrine\OrientDB\Foundation\Types\Rid;
+use Doctrine\ODM\OrientDB\Manager;
+use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
+use Doctrine\ODM\OrientDB\Mapper\Hydration\Result as HydrationResult;
 
 class ManagerTest extends TestCase
 {
@@ -31,12 +31,12 @@ class ManagerTest extends TestCase
             "out": ["#20:1"]
         }]');
 
-        $result = $this->getMock('Doctrine\Orient\Contract\Binding\BindingResultInterface');
+        $result = $this->getMock('Doctrine\OrientDB\Contract\Binding\BindingResultInterface');
         $result->expects($this->any())
                ->method('getResult')
                ->will($this->returnValue($rawResult));
 
-        $binding = $this->getMock('Doctrine\Orient\Contract\Binding\BindingInterface');
+        $binding = $this->getMock('Doctrine\OrientDB\Contract\Binding\BindingInterface');
         $binding->expects($this->any())
                 ->method('execute')
                 ->will($this->returnValue($result));
@@ -48,7 +48,7 @@ class ManagerTest extends TestCase
             return new HydrationResult(new Document\Stub\Contact\Address, $linktracker);
         };
 
-        $mapper = $this->getMock('Doctrine\Orient\ODM\Mapper', array('hydrate'), array(__DIR__ . '/../../proxies'));
+        $mapper = $this->getMock('\Doctrine\ODM\OrientDB\Mapper', array('hydrate'), array(__DIR__ . '/../../proxies'));
         $mapper->expects($this->any())
                ->method('hydrate')
                ->will($this->returnCallback($hydrationResultCallback));
@@ -63,7 +63,7 @@ class ManagerTest extends TestCase
         $manager = $this->createTestManager();
         $metadata = $manager->getClassMetadata('test\ODM\Document\Stub\Contact\Address');
 
-        $this->assertInstanceOf('Doctrine\Orient\ODM\Mapper\ClassMetadata', $metadata);
+        $this->assertInstanceOf('Doctrine\ODM\OrientDB\Mapper\ClassMetadata', $metadata);
     }
 
     public function testManagerActsAsAProxyForExecutingQueries()

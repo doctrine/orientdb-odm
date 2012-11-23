@@ -3,7 +3,7 @@
 /**
  * RidTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
@@ -13,7 +13,7 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\Validator\Rid;
+use Doctrine\OrientDB\Validator\Rid;
 
 
 class RidTest extends TestCase
@@ -34,7 +34,7 @@ class RidTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\Orient\Exception\Validation
+     * @expectedException Doctrine\OrientDB\Exception\Validation
      */
     public function testTheValidatorDoesNotAcceptsStringsOnly()
     {
@@ -42,7 +42,7 @@ class RidTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\Orient\Exception\Validation
+     * @expectedException Doctrine\OrientDB\Exception\Validation
      */
     public function testTheValidatorDoesNotAcceptsIntegersOnly()
     {
@@ -50,7 +50,7 @@ class RidTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\Orient\Exception\Validation
+     * @expectedException Doctrine\OrientDB\Exception\Validation
      */
     public function testTheValidatorDoesNotAcceptsRidsWithMultiplesPrefixes()
     {
@@ -58,7 +58,7 @@ class RidTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\Orient\Exception\Validation
+     * @expectedException Doctrine\OrientDB\Exception\Validation
      */
     public function testEmptyRid()
     {

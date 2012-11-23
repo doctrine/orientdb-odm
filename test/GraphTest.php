@@ -12,7 +12,7 @@
 /**
  * Class GraphTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
@@ -20,7 +20,7 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\Graph;
+use Doctrine\OrientDB\Graph;
 
 class GraphTest extends TestCase
 {
@@ -37,7 +37,7 @@ class GraphTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\Orient\Exception
+     * @expectedException Doctrine\OrientDB\Exception
      */
     public function  testYouCannotAddVerticesWithTheSameIdToAGraph()
     {
@@ -50,7 +50,7 @@ class GraphTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\Orient\Exception
+     * @expectedException Doctrine\OrientDB\Exception
      */
     public function  testAnExceptionIsRaisedWhenTryingToRetrieveANonExistingVertexFromTheGraph()
     {

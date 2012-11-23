@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TestCase class bound to Doctrine\Orient.
+ * TestCase class bound to Doctrine\OrientDB.
  *
  * @author Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author Daniele Alessandri <suppakilla@gmail.com>
@@ -9,13 +9,13 @@
 
 namespace test\PHPUnit;
 
-use Doctrine\Orient\ODM\Manager;
-use Doctrine\Orient\ODM\Mapper;
-use Doctrine\Orient\Binding\HttpBinding;
-use Doctrine\Orient\Binding\BindingParameters;
-use Doctrine\Orient\Contract\Binding\HttpBindingResultInterface;
-use Doctrine\Orient\Client\Http\CurlClient;
-use Doctrine\Orient\Binding\Adapter\CurlClientAdapter;
+use Doctrine\ODM\OrientDB\Manager;
+use Doctrine\ODM\OrientDB\Mapper;
+use Doctrine\OrientDB\Binding\HttpBinding;
+use Doctrine\OrientDB\Binding\BindingParameters;
+use Doctrine\OrientDB\Contract\Binding\HttpBindingResultInterface;
+use Doctrine\OrientDB\Client\Http\CurlClient;
+use Doctrine\OrientDB\Binding\Adapter\CurlClientAdapter;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {

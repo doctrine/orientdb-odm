@@ -3,7 +3,7 @@
 /**
  * RemoveTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
@@ -12,7 +12,7 @@
 namespace test\Query\Command\Index;
 
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\Query\Command\Index\Remove;
+use Doctrine\OrientDB\Query\Command\Index\Remove;
 
 class RemoveTest extends TestCase
 {

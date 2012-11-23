@@ -1,6 +1,6 @@
 <?php
 
-namespace Doctrine\Orient;
+namespace Doctrine\OrientDB;
 
 use Symfony\Component\ClassLoader\UniversalClassLoader;
 
@@ -9,7 +9,7 @@ require __DIR__.'/OrientDB-PHP/OrientDB/OrientDB.php';
 
 $loader = new UniversalClassLoader();
 $loader->registerNamespaces(array('Domain' => __DIR__.'/../examples/'));
-$loader->registerNamespaces(array('Doctrine\Orient\Proxy' => __DIR__.'/../proxies/'));
+$loader->registerNamespaces(array('Doctrine\OrientDB\Proxy' => __DIR__.'/../proxies/'));
 $loader->register();
 
 class Binary implements Contract\Protocol\Adapter

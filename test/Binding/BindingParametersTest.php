@@ -3,7 +3,7 @@
 /**
  * BindingParametersTest
  *
- * @package    Doctrine\Orient
+ * @package    Doctrine\OrientDB
  * @subpackage Test
  * @author     Daniele Alessandri <suppakilla@gmail.com>
  * @version
@@ -12,7 +12,7 @@
 namespace test\Binding;
 
 use test\PHPUnit\TestCase;
-use Doctrine\Orient\Binding\BindingParameters;
+use Doctrine\OrientDB\Binding\BindingParameters;
 
 class BindingParametersTest extends TestCase
 {
@@ -146,8 +146,8 @@ class BindingParametersTest extends TestCase
      */
     public function testParametersCreateAcceptsOnlyStringsOrArrays()
     {
-        $this->assertInstanceOf('Doctrine\Orient\Binding\BindingParameters', BindingParameters::create(array()));
-        $this->assertInstanceOf('Doctrine\Orient\Binding\BindingParameters', BindingParameters::create(''));
+        $this->assertInstanceOf('Doctrine\OrientDB\Binding\BindingParameters', BindingParameters::create(array()));
+        $this->assertInstanceOf('Doctrine\OrientDB\Binding\BindingParameters', BindingParameters::create(''));
 
         BindingParameters::create((object) array());
     }
