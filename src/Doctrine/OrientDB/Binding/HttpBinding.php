@@ -20,8 +20,8 @@
 namespace Doctrine\OrientDB\Binding;
 
 use Doctrine\OrientDB\Binding\Adapter\HttpClientAdapterInterface;
-use Doctrine\OrientDB\Client\Http\CurlClient;
 use Doctrine\OrientDB\Binding\Adapter\CurlClientAdapter;
+use Doctrine\OrientDB\Binding\Client\Http\CurlClient;
 use Doctrine\OrientDB\Exception as OrientException;
 
 class HttpBinding implements HttpBindingInterface

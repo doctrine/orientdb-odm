@@ -13,12 +13,12 @@
  * This class wraps an HTTP response returned by the Curl client.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Client
+ * @subpackage Binding
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     Daniele Alessandri <suppakilla@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Client\Http;
+namespace Doctrine\OrientDB\Binding\Client\Http;
 
 class CurlClientResponse
 {

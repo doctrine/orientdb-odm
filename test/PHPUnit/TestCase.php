@@ -14,8 +14,8 @@ use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\OrientDB\Binding\HttpBinding;
 use Doctrine\OrientDB\Binding\BindingParameters;
 use Doctrine\OrientDB\Binding\HttpBindingResultInterface;
-use Doctrine\OrientDB\Client\Http\CurlClient;
 use Doctrine\OrientDB\Binding\Adapter\CurlClientAdapter;
+use Doctrine\OrientDB\Binding\Client\Http\CurlClient;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {

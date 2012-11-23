@@ -8,7 +8,7 @@
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @version
  */
-use Doctrine\OrientDB\Client\Http\CurlClientResponse;
+use Doctrine\OrientDB\Binding\Client\Http\CurlClientResponse;
 
 class ResponseTest extends PHPUnit_Framework_TestCase
 {

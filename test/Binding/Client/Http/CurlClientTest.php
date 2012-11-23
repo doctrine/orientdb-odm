@@ -10,7 +10,7 @@
  */
 
 use test\PHPUnit\TestCase;
-use Doctrine\OrientDB\Client\Http\CurlClient;
+use Doctrine\OrientDB\Binding\Client\Http\CurlClient;
 
 class CurlClientTest extends TestCase
 {

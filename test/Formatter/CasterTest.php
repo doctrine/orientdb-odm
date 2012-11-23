@@ -521,7 +521,7 @@ class CasterTest extends TestCase
     public function getForcedBinaries()
     {
         return array(
-            array(new \Doctrine\OrientDB\Client\Http\CurlClientResponse("1\r\n\r\n2")),
+            array(new \Doctrine\OrientDB\Binding\Client\Http\CurlClientResponse("1\r\n\r\n2")),
         );
     }
 

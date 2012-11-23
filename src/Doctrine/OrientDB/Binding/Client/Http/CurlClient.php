@@ -13,12 +13,12 @@
  * This class represents an HTTP client based on Curl.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Client
+ * @subpackage Binding
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     Daniele Alessandri <suppakilla@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Client\Http;
+namespace Doctrine\OrientDB\Binding\Client\Http;
 
 use Doctrine\OrientDB\Exception\Http\Response\Void as VoidResponse;
 
