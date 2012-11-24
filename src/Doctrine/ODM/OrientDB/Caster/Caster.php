@@ -21,8 +21,8 @@ namespace Doctrine\ODM\OrientDB\Caster;
 
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Foundation\Types\Rid;
-use Doctrine\OrientDB\Validator\Rid as RidValidator;
-use Doctrine\OrientDB\ValidationException;
+use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
+use Doctrine\OrientDB\Query\Validator\ValidationException;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
 use Doctrine\ODM\OrientDB\Proxy;

@@ -14,7 +14,7 @@
 namespace test\ODM;
 
 use test\PHPUnit\TestCase;
-use Doctrine\OrientDB\Query;
+use Doctrine\OrientDB\Query\Query;
 use Doctrine\OrientDB\Foundation\Types\Rid;
 use Doctrine\ODM\OrientDB\Manager;
 use Doctrine\ODM\OrientDB\Mapper\LinkTracker;

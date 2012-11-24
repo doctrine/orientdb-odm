@@ -52,7 +52,7 @@ class Lookup extends Index
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Index' => "Doctrine\OrientDB\Formatter\Query\Regular",
+            'Index' => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
         ));
     }
 }

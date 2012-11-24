@@ -76,7 +76,7 @@ class Find extends Command implements FindInterface
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'ClassList'    => "Doctrine\OrientDB\Formatter\Query\ClassList",
+            'ClassList'    => "Doctrine\OrientDB\Query\Formatter\Query\ClassList",
         ));
     }
 }

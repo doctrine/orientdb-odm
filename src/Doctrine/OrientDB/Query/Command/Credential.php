@@ -84,9 +84,9 @@ abstract class Credential extends Command implements CredentialInterface
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Role'          => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'Resource'      => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'Permission'    => "Doctrine\OrientDB\Formatter\Query\Regular",
+            'Role'          => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Resource'      => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Permission'    => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
         ));
     }
 }

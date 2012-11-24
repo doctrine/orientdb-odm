@@ -19,7 +19,7 @@
 
 namespace Doctrine\OrientDB\Foundation\Types;
 
-use Doctrine\OrientDB\Validator\Rid as RidValidator;
+use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
 
 class Rid
 {

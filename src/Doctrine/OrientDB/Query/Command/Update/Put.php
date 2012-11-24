@@ -56,7 +56,7 @@ class Put extends Update
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Updates'  => "Doctrine\OrientDB\Formatter\Query\MapUpdates",
+            'Updates'  => "Doctrine\OrientDB\Query\Formatter\Query\MapUpdates",
         ));
     }
 }

@@ -44,7 +44,7 @@ class Record extends Command
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-          'Rid'     => "Doctrine\OrientDB\Formatter\Query\Rid",
+          'Rid'     => "Doctrine\OrientDB\Query\Formatter\Query\Rid",
         ));
     }
 }

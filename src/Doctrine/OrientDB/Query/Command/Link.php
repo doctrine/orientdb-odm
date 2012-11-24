@@ -76,12 +76,12 @@ class Link extends Command
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Inverse'               => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'SourceClass'           => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'SourceProperty'        => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'DestinationClass'      => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'DestinationProperty'   => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'Name'                  => "Doctrine\OrientDB\Formatter\Query\Regular",
+            'Inverse'               => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'SourceClass'           => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'SourceProperty'        => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'DestinationClass'      => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'DestinationProperty'   => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Name'                  => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
         ));
     }
 }

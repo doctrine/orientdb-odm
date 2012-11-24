@@ -74,7 +74,7 @@ class Create extends Property
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Linked'    => "Doctrine\OrientDB\Formatter\Query\Regular",
+            'Linked'    => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
         ));
     }
 }

@@ -13,7 +13,7 @@
 namespace test\Integration\ODM\Mapper\DataType;
 
 use test\PHPUnit\TestCase;
-use Doctrine\OrientDB\Query;
+use Doctrine\OrientDB\Query\Query;
 
 class LongTest extends TestCase
 {

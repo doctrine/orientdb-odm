@@ -56,7 +56,7 @@ class Count extends Index
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Name'  => 'Doctrine\OrientDB\Formatter\Query\Regular',
+            'Name'  => 'Doctrine\OrientDB\Query\Formatter\Query\Regular',
         ));
     }
 }

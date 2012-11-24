@@ -149,11 +149,11 @@ class Select extends Command implements SelectInterface
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Projections' => "Doctrine\OrientDB\Formatter\Query\Select",
-            'OrderBy'     => "Doctrine\OrientDB\Formatter\Query\OrderBy",
-            'Limit'       => "Doctrine\OrientDB\Formatter\Query\Limit",
-            'Range'       => "Doctrine\OrientDB\Formatter\Query\Range",
-            'Between'     => "Doctrine\OrientDB\Formatter\Query\Between",
+            'Projections' => "Doctrine\OrientDB\Query\Formatter\Query\Select",
+            'OrderBy'     => "Doctrine\OrientDB\Query\Formatter\Query\OrderBy",
+            'Limit'       => "Doctrine\OrientDB\Query\Formatter\Query\Limit",
+            'Range'       => "Doctrine\OrientDB\Query\Formatter\Query\Range",
+            'Between'     => "Doctrine\OrientDB\Query\Formatter\Query\Between",
         ));
     }
 }

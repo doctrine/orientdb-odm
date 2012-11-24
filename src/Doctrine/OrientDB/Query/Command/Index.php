@@ -31,7 +31,7 @@ class Index extends Command
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'IndexClass'    => "Doctrine\OrientDB\Formatter\Query\IndexClass",
+            'IndexClass'    => "Doctrine\OrientDB\Query\Formatter\Query\IndexClass",
         ));
     }
 }

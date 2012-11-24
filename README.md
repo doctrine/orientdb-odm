@@ -55,7 +55,7 @@ Graph Edition: http://code.google.com/p/orient/wiki/GraphEdTutorial.
 To take advantage of the QB you only have to instantiate a Query object:
 
 ```
-use Doctrine\OrientDB\Query;
+use Doctrine\OrientDB\Query\Query;
 
 $query = new Query();
 $query->from(array('users'))->where('username = ?', "admin");

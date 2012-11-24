@@ -55,7 +55,7 @@ class Add extends Update
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'RidUpdates'  => "Doctrine\OrientDB\Formatter\Query\RidUpdates",
+            'RidUpdates'  => "Doctrine\OrientDB\Query\Formatter\Query\RidUpdates",
         ));
     }
 }

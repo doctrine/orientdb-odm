@@ -57,9 +57,9 @@ class Put extends Index
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Name'  => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'Key'   => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'Value' => "Doctrine\OrientDB\Formatter\Query\EmbeddedRid",
+            'Name'  => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Key'   => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Value' => "Doctrine\OrientDB\Query\Formatter\Query\EmbeddedRid",
         ));
     }
 }

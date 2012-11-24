@@ -11,11 +11,12 @@
 
 namespace test\Query;
 
-use Doctrine\OrientDB\Query;
+use Doctrine\OrientDB\Query\Query;
+use Doctrine\OrientDB\Query\Command as QueryCommand;
 use test\PHPUnit\TestCase;
-use Doctrine\OrientDB\Formatter\Query as Formatter;
+use Doctrine\OrientDB\Query\Formatter\Query as Formatter;
 
-class StubCommand extends Query\Command
+class StubCommand extends QueryCommand
 {
     protected function getSchema()
     {
@@ -23,7 +24,7 @@ class StubCommand extends Query\Command
     }
 }
 
-class StubExceptionedCommand extends Query\Command
+class StubExceptionedCommand extends QueryCommand
 {
     protected function getSchema()
     {
@@ -31,7 +32,7 @@ class StubExceptionedCommand extends Query\Command
     }
 }
 
-class NullCommand extends Query\Command
+class NullCommand extends QueryCommand
 {
 }
 

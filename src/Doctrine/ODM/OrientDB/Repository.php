@@ -22,7 +22,7 @@ namespace Doctrine\ODM\OrientDB;
 
 use Doctrine\ODM\OrientDB\Manager;
 use Doctrine\ODM\OrientDB\Mapper;
-use Doctrine\OrientDB\Query;
+use Doctrine\OrientDB\Query\Query;
 use Doctrine\OrientDB\Exception;
 use Doctrine\Common\Persistence\ObjectRepository;
 

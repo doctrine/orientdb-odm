@@ -54,9 +54,9 @@ class Alter extends OClass
     protected function getTokenFormatters()
     {
         return array(
-            'Class'         => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'Attribute'     => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'Value'         => "Doctrine\OrientDB\Formatter\Query\Regular",
+            'Class'         => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Attribute'     => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Value'         => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
         );
     }
 }

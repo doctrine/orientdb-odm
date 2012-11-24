@@ -11,7 +11,7 @@
 namespace test\Integration;
 
 use test\PHPUnit\TestCase;
-use Doctrine\OrientDB\Query;
+use Doctrine\OrientDB\Query\Query;
 use Doctrine\OrientDB\ODM\Manager;
 use Doctrine\OrientDB\ODM\Mapper;
 use Doctrine\OrientDB\ODM\Repository;

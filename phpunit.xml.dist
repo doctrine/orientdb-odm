@@ -22,7 +22,6 @@
     <testsuites>
       <testsuite name="Query builder">
           <directory >test/Query</directory>
-          <file >test/QueryTest.php</file>
       </testsuite>
       <testsuite name="Graph">
           <directory >test/Graph</directory>
@@ -33,17 +32,8 @@
       <testsuite name="ODM">
           <directory >test/ODM</directory>
       </testsuite>
-      <testsuite name="Formatter">
-          <directory >test/Formatter</directory>
-      </testsuite>
       <testsuite name="ODM">
           <directory >test/ODM</directory>
-      </testsuite>
-      <testsuite name="Excp">
-          <directory >test/Exception</directory>
-      </testsuite>
-      <testsuite name="Validator">
-          <directory >test/Validator</directory>
       </testsuite>
     </testsuites>
 

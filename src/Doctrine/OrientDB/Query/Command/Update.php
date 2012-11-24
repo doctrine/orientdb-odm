@@ -66,7 +66,7 @@ class Update extends Command implements UpdateInterface
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Updates'  => "Doctrine\OrientDB\Formatter\Query\Updates",
+            'Updates'  => "Doctrine\OrientDB\Query\Formatter\Query\Updates",
         ));
     }
 }

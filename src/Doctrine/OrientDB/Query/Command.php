@@ -20,12 +20,12 @@
 
 namespace Doctrine\OrientDB\Query;
 
-use Doctrine\OrientDB\Formatter\QueryInterface as QueryFormatterInterface;
-use Doctrine\OrientDB\Formatter\Query as Formatter;
-use Doctrine\OrientDB\Validator\Rid as RidValidator;
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\LogicException;
-use Doctrine\OrientDB\Validator\Escaper as EscapeValidator;
+use Doctrine\OrientDB\Query\Formatter\QueryInterface as QueryFormatterInterface;
+use Doctrine\OrientDB\Query\Formatter\Query as Formatter;
+use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
+use Doctrine\OrientDB\Query\Validator\Escaper as EscapeValidator;
 
 abstract class Command implements CommandInterface
 {
@@ -280,12 +280,12 @@ abstract class Command implements CommandInterface
     protected function getTokenFormatters()
     {
         return array(
-            'Target'    => "Doctrine\OrientDB\Formatter\Query\Target",
-            'Where'     => "Doctrine\OrientDB\Formatter\Query\Where",
-            'Class'     => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'Property'  => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'Type'      => "Doctrine\OrientDB\Formatter\Query\Regular",
-            'Rid'       => "Doctrine\OrientDB\Formatter\Query\Rid",
+            'Target'    => "Doctrine\OrientDB\Query\Formatter\Query\Target",
+            'Where'     => "Doctrine\OrientDB\Query\Formatter\Query\Where",
+            'Class'     => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Property'  => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Type'      => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Rid'       => "Doctrine\OrientDB\Query\Formatter\Query\Rid",
         );
     }
 
