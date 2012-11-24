@@ -20,7 +20,6 @@
 namespace Doctrine\OrientDB\Query\Formatter\Query;
 
 use Doctrine\OrientDB\Query\Formatter\Query;
-use Doctrine\OrientDB\Query\Formatter\String;
 use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
 
 class MapUpdates extends Query implements TokenInterface
@@ -31,12 +30,12 @@ class MapUpdates extends Query implements TokenInterface
         $validator = new RidValidator;
 
         foreach ($values as $map => $update) {
-            $map = String::filterNonSQLChars($map);
+            $map = self::stripNonSQLCharacters($map);
 
             if ($map && is_array($update)) {
                 foreach ($update as $key => $rid) {
                     $rid = $validator->check($rid, true);
-                    $key = String::filterNonSQLChars($key);
+                    $key = self::stripNonSQLCharacters($key);
                 }
 
                 $updates[$map] = "$map = '$key', $rid";

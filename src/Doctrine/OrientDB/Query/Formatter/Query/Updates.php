@@ -29,7 +29,7 @@ class Updates extends Query implements TokenInterface
         $string = "";
 
         foreach ($values as $key => $value) {
-            if ($key = String::filterNonSQLChars($key)) {
+            if ($key = self::stripNonSQLCharacters($key)) {
                 if ($value === null) {
                     $value = 'NULL';
                 } else if (is_int($value) || is_float($value)) {

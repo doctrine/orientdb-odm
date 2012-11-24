@@ -33,8 +33,6 @@ use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Query\Query;
 use Doctrine\OrientDB\Foundation\Types\Rid;
 use Doctrine\OrientDB\Filesystem\Iterator\Regex as RegexIterator;
-use Doctrine\OrientDB\Query\Formatter\StringInterface as StringFormatterInterface;
-use Doctrine\OrientDB\Query\Formatter\String as StringFormatter;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\Finder\Finder;
@@ -294,22 +292,14 @@ class Mapper
      * @param   string                      $OClass
      * @param   string                      $directory
      * @param   string                      $namespace
-     * @param   StringFormatterInterface    $stringFormatter
-     * @param   \Iterator                   $iterator
      * @return  string|null
      */
-    protected function findClassMappingInDirectory(
-        $OClass,
-        $directory,
-        $namespace,
-        StringFormatterInterface $stringFormatter = null,
-        \Iterator $iterator = null
-    ) {
-        $stringFormatter = $stringFormatter ?: new StringFormatter();
+    protected function findClassMappingInDirectory($OClass, $directory, $namespace)
+    {
         $finder = new Finder();
 
         foreach ($finder->files()->name('*.php')->in($directory) as $file) {
-            $class = $stringFormatter::convertPathToClassName($file, $namespace);
+            $class = $this->getClassByPath($file, $namespace);
 
             if (class_exists($class)) {
                 $annotation = $this->getClassAnnotation($class);
@@ -321,6 +311,35 @@ class Mapper
         }
 
         return null;
+    }
+
+    /**
+     * Returns the fully qualified name of a class by its path
+     *
+     * @param  string $file
+     * @param  string $namespace
+     * @return string
+     */
+    public function getClassByPath($file, $namespace)
+    {
+        $absPath    = realpath($file);
+        $namespaces = explode('/', $absPath);
+        $start      = false;
+        $i          = 0;
+        $chunk      = explode('\\', $namespace);
+        $namespace  = array_shift($chunk);
+
+        while ($namespaces[$i] != $namespace) {
+            unset($namespaces[$i]);
+
+            if (!array_key_exists(++$i, $namespaces)) {
+                break;
+            }
+        }
+
+        $className = str_replace('.php', null, array_pop($namespaces));
+
+        return '\\'. implode('\\', $namespaces) . '\\' . $className;
     }
 
     /**

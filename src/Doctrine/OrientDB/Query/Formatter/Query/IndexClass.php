@@ -20,14 +20,13 @@
 namespace Doctrine\OrientDB\Query\Formatter\Query;
 
 use Doctrine\OrientDB\Query\Formatter\Query;
-use Doctrine\OrientDB\Query\Formatter\String;
 
 class IndexClass extends Query implements TokenInterface
 {
     public static function format(array $values)
     {
         if ($values) {
-            return String::filterNonSQLChars(array_shift($values)) . ".";
+            return self::stripNonSQLCharacters(array_shift($values)) . '.';
         }
 
         return null;

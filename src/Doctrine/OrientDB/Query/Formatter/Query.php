@@ -21,7 +21,6 @@
 namespace Doctrine\OrientDB\Query\Formatter;
 
 use Doctrine\OrientDB\Exception;
-use Doctrine\OrientDB\Query\Formatter\String;
 
 class Query implements QueryInterface
 {
@@ -48,17 +47,29 @@ class Query implements QueryInterface
     }
 
     /**
-     * Filters the array values leaving intact regular characters a-z and
+     * Strips non-SQL characters from a string leaving intact regular characters a-z and
      * integers.
      *
-     * @param   array $values
+     * @param   string $string
+     * @return  string
+     */
+    public static function stripNonSQLCharacters($string, $nonFilter = null)
+    {
+        return preg_replace("/[^a-z|A-Z|0-9|:|@|#|$nonFilter]/", '', $string);
+    }
+
+    /**
+     * Strips non-SQL charactes from the strings contained in the the array leaving intact
+     * regular characters a-z and integers.
+     *
+     * @param   array $strings
      * @return  array
      */
-    protected static function filterRegularChars(array $values, $nonFilter = null)
+    protected static function stripNonSQLCharactersArray(array $strings, $nonFilter = null)
     {
-        return array_map(function ($arr) use ($nonFilter) {
-                    return String::filterNonSQLChars($arr, $nonFilter);
-                }, $values);
+        return array_map(function ($string) use ($nonFilter) {
+            return Query::stripNonSQLCharacters($string, $nonFilter);
+        }, $strings);
     }
 
     /**
@@ -80,7 +91,7 @@ class Query implements QueryInterface
      */
     protected static function implodeRegular(array $values, $nonFilter = null)
     {
-        $values = self::filterRegularChars($values, $nonFilter);
+        $values = self::stripNonSQLCharactersArray($values, $nonFilter);
         $nonEmptyValues = array();
 
         foreach ($values as $value) {

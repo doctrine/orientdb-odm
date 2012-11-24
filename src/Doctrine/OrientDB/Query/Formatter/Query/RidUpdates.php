@@ -19,8 +19,7 @@
 
 namespace Doctrine\OrientDB\Query\Formatter\Query;
 
-use Doctrine\OrientDB\Query\Formatter\Query;
-use Doctrine\OrientDB\Query\Formatter\String;
+use       Doctrine\OrientDB\Query\Formatter\Query;
 use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
 
 class RidUpdates extends Query implements TokenInterface
@@ -31,7 +30,7 @@ class RidUpdates extends Query implements TokenInterface
         $validator = new RidValidator;
 
         foreach ($values as $key => $value) {
-            $key = String::filterNonSQLChars($key);
+            $key = self::stripNonSQLCharacters($key);
             $rid = $validator->check($value, true);
 
             if ($key && $rid) {

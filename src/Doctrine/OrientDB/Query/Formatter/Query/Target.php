@@ -25,7 +25,7 @@ class Target extends Query implements TokenInterface
 {
     public static function format(array $values)
     {
-        $values = self::filterRegularChars($values);
+        $values = self::stripNonSQLCharacters($values);
 
         if ($count = count($values)) {
             if ($count > 1) {

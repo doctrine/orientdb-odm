@@ -206,6 +206,18 @@ class MapperTest extends TestCase
 
     }
 
+    public function testConvertPathToClassName()
+    {
+        $className = $this->mapper->getClassByPath('./test/ODM/Document/Stub/City.php', 'test');
+        $this->assertEquals('\test\ODM\Document\Stub\City', $className);
+    }
+
+    public function testConvertPathToClassNameWhenProvidingNestedNamespaces()
+    {
+        $className = $this->mapper->getClassByPath('./test/ODM/Document/Stub/City.php', 'test\ODM');
+        $this->assertEquals('\test\ODM\Document\Stub\City', $className);
+    }
+
     public function testAJsonGetsConvertedToAnObject()
     {
         $result = $this->mapper->hydrate($this->jsonRecord);
