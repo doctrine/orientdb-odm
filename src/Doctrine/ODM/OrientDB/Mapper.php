@@ -32,7 +32,6 @@ use Doctrine\ODM\OrientDB\Mapper\Annotations\ReaderInterface as Annotationreader
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Query;
 use Doctrine\OrientDB\Foundation\Types\Rid;
-use Doctrine\OrientDB\Formatter\InflectorInterface;
 use Doctrine\OrientDB\Filesystem\Iterator\Regex as RegexIterator;
 use Doctrine\OrientDB\Formatter\StringInterface as StringFormatterInterface;
 use Doctrine\OrientDB\Formatter\String as StringFormatter;
@@ -57,12 +56,12 @@ class Mapper
      *
      * @param string                    $documentProxyDirectory
      * @param AnnotationReaderInterface $annotationReader
-     * @param InflectorInterface        $inflector
+     * @param DoctrineInflector         $inflector
      */
     public function __construct(
         $documentProxyDirectory,
         AnnotationReaderInterface $annotationReader = null,
-        InflectorInterface $inflector = null
+        DoctrineInflector $inflector = null
     ) {
         $this->documentProxyDirectory = $documentProxyDirectory;
         $this->annotationReader = $annotationReader ?: new Reader;
