@@ -20,17 +20,11 @@
          verbose="false">
 
     <testsuites>
-      <testsuite name="Query builder">
+      <testsuite name="Query Builder">
           <directory >test/Query</directory>
       </testsuite>
       <testsuite name="Graph">
           <directory >test/Graph</directory>
-      </testsuite>
-      <testsuite name="HTTP">
-          <directory >test/Http</directory>
-      </testsuite>
-      <testsuite name="ODM">
-          <directory >test/ODM</directory>
       </testsuite>
       <testsuite name="ODM">
           <directory >test/ODM</directory>
