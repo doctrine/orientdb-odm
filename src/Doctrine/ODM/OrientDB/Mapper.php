@@ -22,6 +22,8 @@
 
 namespace Doctrine\ODM\OrientDB;
 
+use Doctrine\ODM\OrientDB\Caster\Caster;
+use Doctrine\ODM\OrientDB\Caster\CasterInterface;
 use Doctrine\ODM\OrientDB\Mapper\Hydration;
 use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
@@ -30,8 +32,6 @@ use Doctrine\ODM\OrientDB\Mapper\Annotations\ReaderInterface as Annotationreader
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Query;
 use Doctrine\OrientDB\Foundation\Types\Rid;
-use Doctrine\OrientDB\Formatter\CasterInterface as CasterInterface;
-use Doctrine\OrientDB\Formatter\Caster;
 use Doctrine\OrientDB\Formatter\InflectorInterface;
 use Doctrine\OrientDB\Filesystem\Iterator\Regex as RegexIterator;
 use Doctrine\OrientDB\Formatter\StringInterface as StringFormatterInterface;

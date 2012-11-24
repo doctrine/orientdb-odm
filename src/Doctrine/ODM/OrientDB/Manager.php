@@ -27,7 +27,7 @@ use Doctrine\OrientDB\Query;
 use Doctrine\OrientDB\Foundation\Types\Rid;
 use Doctrine\OrientDB\Query\Command\Select;
 use Doctrine\OrientDB\Exception;
-use Doctrine\OrientDB\Formatter\CastingMismatchException;
+use Doctrine\ODM\OrientDB\Caster\CastingMismatchException;
 use Doctrine\OrientDB\Binding\BindingInterface;
 use Doctrine\ODM\OrientDB\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
 use Doctrine\OrientDB\Validator\Rid as RidValidator;

@@ -12,12 +12,12 @@
 /**
  * Class CastingMismatchException
  *
- * @package    Doctrine\OrientDB
- * @subpackage Formatter
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Formatter;
+namespace Doctrine\ODM\OrientDB\Caster;
 
 use Doctrine\OrientDB\Exception;
 

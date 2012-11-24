@@ -12,18 +12,18 @@
 /**
  * Caster class is responsible for converting an input value to another type.
  *
- * @package    Doctrine\OrientDB
- * @subpackage Formatter
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Formatter;
+namespace Doctrine\ODM\OrientDB\Caster;
 
 use Doctrine\OrientDB\Exception;
-use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\OrientDB\Foundation\Types\Rid;
 use Doctrine\OrientDB\Validator\Rid as RidValidator;
 use Doctrine\OrientDB\ValidationException;
+use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
 use Doctrine\ODM\OrientDB\Proxy;
 use Doctrine\ODM\OrientDB\Proxy\Collection as CollectionProxy;

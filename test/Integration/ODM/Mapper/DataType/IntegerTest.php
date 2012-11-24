@@ -27,7 +27,7 @@ class IntegerTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Formatter\CastingMismatchException
+     * @expectedException Doctrine\ODM\OrientDB\Caster\CastingMismatchException
      */
     public function testAnExceptionIsRaisedWhenAnIntegerPropertyIsNotAnInteger()
     {
