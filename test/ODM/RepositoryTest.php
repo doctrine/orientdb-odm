@@ -17,7 +17,7 @@ use Doctrine\ODM\OrientDB\Manager;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Repository;
 use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
-use Doctrine\OrientDB\Foundation\Types\Rid;
+use Doctrine\ODM\OrientDB\Types\Rid;
 use Doctrine\ODM\OrientDB\Mapper\Hydration\Result as HydrationResult;
 use test\ODM\Document\Stub\Contact\Address;
 

@@ -15,10 +15,10 @@ namespace test\ODM;
 
 use test\PHPUnit\TestCase;
 use Doctrine\OrientDB\Query\Query;
-use Doctrine\OrientDB\Foundation\Types\Rid;
 use Doctrine\ODM\OrientDB\Manager;
 use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
 use Doctrine\ODM\OrientDB\Mapper\Hydration\Result as HydrationResult;
+use Doctrine\ODM\OrientDB\Types\Rid;
 
 class ManagerTest extends TestCase
 {

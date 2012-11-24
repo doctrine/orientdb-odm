@@ -23,13 +23,13 @@ namespace Doctrine\ODM\OrientDB;
 
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Mapper\Hydration\Result;
-use Doctrine\OrientDB\Query\Query;
-use Doctrine\OrientDB\Foundation\Types\Rid;
-use Doctrine\OrientDB\Query\Command\Select;
-use Doctrine\OrientDB\Exception;
+use Doctrine\ODM\OrientDB\Types\Rid;
 use Doctrine\ODM\OrientDB\Caster\CastingMismatchException;
-use Doctrine\OrientDB\Binding\BindingInterface;
 use Doctrine\ODM\OrientDB\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
+use Doctrine\OrientDB\Exception;
+use Doctrine\OrientDB\Binding\BindingInterface;
+use Doctrine\OrientDB\Query\Query;
+use Doctrine\OrientDB\Query\Command\Select;
 use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;

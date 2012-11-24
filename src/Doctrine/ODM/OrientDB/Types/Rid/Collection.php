@@ -12,14 +12,14 @@
 /**
  * Collection class
  *
- * @package    Doctrine\OrientDB
- * @subpackage Foundation
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Foundation\Types\Rid;
+namespace Doctrine\ODM\OrientDB\Types\Rid;
 
-use Doctrine\OrientDB\Foundation\Types\Rid;
+use Doctrine\ODM\OrientDB\Types\Rid;
 
 class Collection extends Rid
 {

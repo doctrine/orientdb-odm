@@ -12,12 +12,12 @@
 /**
  * Rid class encapsulates a rid.
  *
- * @package    Doctrine\OrientDB
- * @subpackage Foundation
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Foundation\Types;
+namespace Doctrine\ODM\OrientDB\Types;
 
 use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
 
