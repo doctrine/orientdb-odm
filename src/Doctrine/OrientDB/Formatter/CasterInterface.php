@@ -153,7 +153,7 @@ interface CasterInterface
      * @param integer   $limit
      * @param string    $type
      * @return integer
-     * @throws Doctrine\OrientDB\Exception\Overflow
+     * @throws Doctrine\OrientDB\Overflow
      */
     public function castInBuffer($limit, $type);
 

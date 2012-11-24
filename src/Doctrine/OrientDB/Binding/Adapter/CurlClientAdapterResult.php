@@ -20,8 +20,8 @@
 namespace Doctrine\OrientDB\Binding\Adapter;
 
 use Doctrine\OrientDB\Binding\HttpBindingResultInterface;
+use Doctrine\OrientDB\Binding\InvalidQueryException;
 use Doctrine\OrientDB\Binding\Client\Http\CurlClientResponse;
-use Doctrine\OrientDB\Exception\Query\SQL\Invalid as InvalidSQL;
 
 class CurlClientAdapterResult implements HttpBindingResultInterface
 {
@@ -41,7 +41,7 @@ class CurlClientAdapterResult implements HttpBindingResultInterface
     public function getResult()
     {
         if (!$this->isValid()) {
-            throw new InvalidSQL($this->response->getBody(), $this);
+            throw new InvalidQueryException($this->response->getBody(), $this);
         }
 
         if (false === $json = json_decode($this->response->getBody())) {

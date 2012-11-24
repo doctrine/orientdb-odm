@@ -20,25 +20,25 @@
 namespace test\Exception;
 
 use test\PHPUnit\TestCase;
-use Doctrine\OrientDB\Exception\Validation;
+use Doctrine\OrientDB\ValidationException;
 
 class ValidationTest extends TestCase
 {
     /**
-     * @expectedException Doctrine\OrientDB\Exception\Validation
+     * @expectedException Doctrine\OrientDB\ValidationException
      * @expectedExceptionMessage Validation of "text" as V failed
      */
     public function testException()
     {
-        throw new Validation('text', 'V');
+        throw new ValidationException('text', 'V');
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Exception\Validation
+     * @expectedException Doctrine\OrientDB\ValidationException
      * @expectedExceptionMessage Validation of "a, b" as V failed
      */
     public function testExceptionWithArrayArgument()
     {
-        throw new Validation(array('a', 'b'), 'V');
+        throw new ValidationException(array('a', 'b'), 'V');
     }
 }

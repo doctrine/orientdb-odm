@@ -20,11 +20,11 @@
 
 namespace Doctrine\OrientDB\Query;
 
-use Doctrine\OrientDB\Exception\Query\Command as CommandException;
 use Doctrine\OrientDB\Formatter\QueryInterface as QueryFormatterInterface;
 use Doctrine\OrientDB\Formatter\Query as Formatter;
 use Doctrine\OrientDB\Validator\Rid as RidValidator;
 use Doctrine\OrientDB\Exception;
+use Doctrine\OrientDB\LogicException;
 use Doctrine\OrientDB\Validator\Escaper as EscapeValidator;
 
 abstract class Command implements CommandInterface
@@ -238,12 +238,12 @@ abstract class Command implements CommandInterface
      *
      * @param   string $token
      * @return  mixed
-     * @throws  Exception\Query\Command\TokenNotFound
+     * @throws  TokenNotFoundException
      */
     protected function checkToken($token)
     {
         if (!array_key_exists($token, $this->tokens)) {
-            throw new CommandException\TokenNotFound($token, get_called_class());
+            throw new TokenNotFoundException($token, get_called_class());
         }
 
         return $this->tokens[$token];
@@ -349,7 +349,7 @@ abstract class Command implements CommandInterface
      * @param   string $condition
      * @param   array $values
      * @return  string
-     * @throws  \LogicException
+     * @throws  LogicException
      */
     protected function formatWhereConditionWithMultipleTokens(
         $condition,
@@ -357,7 +357,7 @@ abstract class Command implements CommandInterface
         EscapeValidator $validator
     ) {
         if (count($values) !== substr_count($condition, '?')) {
-            throw new Exception\Logic("Number of given parameters does not match number of tokens");
+            throw new LogicException("Number of given parameters does not match number of tokens");
         }
 
         foreach ($values as $replacement) {

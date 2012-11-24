@@ -10,17 +10,17 @@
  */
 
 /**
- * Class Mismatch
+ * Class CastingMismatchException
  *
  * @package    Doctrine\OrientDB
- * @subpackage Exception
+ * @subpackage Formatter
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Exception\Casting;
+namespace Doctrine\OrientDB\Formatter;
 
 use Doctrine\OrientDB\Exception;
 
-class Mismatch extends Exception
+class CastingMismatchException extends Exception
 {
 }

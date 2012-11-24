@@ -58,7 +58,7 @@ class Command extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Exception\Logic
+     * @expectedException Doctrine\OrientDB\LogicException
      */
     public function testAnExceptionIsRaisedIfYouMakeAWhereWithDifferentParamsAndValues()
     {
@@ -134,7 +134,7 @@ class Command extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Exception\Query\Command\TokenNotFound
+     * @expectedException Doctrine\OrientDB\Query\TokenNotFoundException
      */
     public function testCheckAnExceptionRaisedWhenRequestingInvalidToken()
     {

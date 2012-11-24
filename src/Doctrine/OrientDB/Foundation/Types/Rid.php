@@ -20,7 +20,6 @@
 namespace Doctrine\OrientDB\Foundation\Types;
 
 use Doctrine\OrientDB\Validator\Rid as RidValidator;
-use Doctrine\OrientDB\Exception\Validation as ValidationException;
 
 class Rid
 {

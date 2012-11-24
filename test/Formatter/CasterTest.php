@@ -63,7 +63,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedBooleans
-     * @expectedException Doctrine\OrientDB\Exception\Casting\Mismatch
+     * @expectedException Doctrine\OrientDB\Formatter\CastingMismatchException
      */
     public function testForcedBooleanCastingRaisesAnException($expected, $input)
     {
@@ -118,7 +118,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedBytes
-     * @expectedException Doctrine\OrientDB\Exception\Casting\Mismatch
+     * @expectedException Doctrine\OrientDB\Formatter\CastingMismatchException
      */
     public function testForcedBytesCastingRaisesAnException($expected, $byte)
     {
@@ -174,7 +174,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedLongs
-     * @expectedException Doctrine\OrientDB\Exception\Casting\Mismatch
+     * @expectedException Doctrine\OrientDB\Formatter\CastingMismatchException
      */
     public function testForcedLongsCastingRaisesAnException($expected, $long)
     {
@@ -224,7 +224,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedIntegers
-     * @expectedException Doctrine\OrientDB\Exception\Casting\Mismatch
+     * @expectedException Doctrine\OrientDB\Formatter\CastingMismatchException
      */
     public function testForcedIntegersCastingRaisesAnException($expected, $integer)
     {
@@ -259,7 +259,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedDecimals
-     * @expectedException Doctrine\OrientDB\Exception\Casting\Mismatch
+     * @expectedException Doctrine\OrientDB\Formatter\CastingMismatchException
      */
     public function testForcedDecimalCastingRaisesAnException($expected, $decimal)
     {
@@ -315,7 +315,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedDoubles
-     * @expectedException Doctrine\OrientDB\Exception\Casting\Mismatch
+     * @expectedException Doctrine\OrientDB\Formatter\CastingMismatchException
      */
     public function testForcedDoublesCastingRaisesAnException($expected, $ddouble)
     {
@@ -352,7 +352,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedDoubles
-     * @expectedException Doctrine\OrientDB\Exception\Casting\Mismatch
+     * @expectedException Doctrine\OrientDB\Formatter\CastingMismatchException
      */
     public function testForcedFloatsCastingRaisesAnException($expected, $float)
     {
@@ -387,7 +387,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedStrings
-     * @expectedException Doctrine\OrientDB\Exception\Casting\Mismatch
+     * @expectedException Doctrine\OrientDB\Formatter\CastingMismatchException
      */
     public function testForcedStringsCastingRaisesAnException($expected, $string)
     {
@@ -444,7 +444,7 @@ class CasterTest extends TestCase
 
     /**
      * @dataProvider getForcedShorts
-     * @expectedException Doctrine\OrientDB\Exception\Casting\Mismatch
+     * @expectedException Doctrine\OrientDB\Formatter\CastingMismatchException
      */
     public function testForcedShortsCastingRaisesAnException($expected, $short)
     {

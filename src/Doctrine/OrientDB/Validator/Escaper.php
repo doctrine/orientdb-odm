@@ -20,7 +20,7 @@
 namespace Doctrine\OrientDB\Validator;
 
 use Doctrine\OrientDB\Validator;
-use Doctrine\OrientDB\Exception\Validation as ValidationException;
+use Doctrine\OrientDB\ValidationException;
 
 class Escaper extends Validator
 {

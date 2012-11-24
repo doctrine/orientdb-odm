@@ -26,7 +26,7 @@ interface ValidatorInterface
      *
      * @param   mixed $value
      * @return  mixed
-     * @throws  Doctrine\OrientDB\Exception\validation
+     * @throws  Doctrine\OrientDB\ValidationException
      */
     public function check($value);
 }

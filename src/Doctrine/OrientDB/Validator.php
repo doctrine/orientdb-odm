@@ -19,8 +19,6 @@
 
 namespace Doctrine\OrientDB;
 
-use Doctrine\OrientDB\Exception\Validation as ValidationException;
-
 abstract class Validator implements ValidatorInterface
 {
     /**
@@ -53,7 +51,7 @@ abstract class Validator implements ValidatorInterface
      *
      * @param   mixed $value
      * @param   boolean $silent
-     * @throws  Doctrine\OrientDB\Exception\Validation
+     * @throws  ValidationException
      */
     protected function fail(ValidationException $e, $value, $silent = false)
     {

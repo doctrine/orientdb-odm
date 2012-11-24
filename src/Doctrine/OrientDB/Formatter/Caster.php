@@ -23,12 +23,11 @@ use Doctrine\OrientDB\Exception;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\OrientDB\Foundation\Types\Rid;
 use Doctrine\OrientDB\Validator\Rid as RidValidator;
-use Doctrine\OrientDB\Exception\Validation as ValidationException;
+use Doctrine\OrientDB\ValidationException;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
 use Doctrine\ODM\OrientDB\Proxy;
 use Doctrine\ODM\OrientDB\Proxy\Collection as CollectionProxy;
 use Doctrine\ODM\OrientDB\Proxy\Value as ValueProxy;
-use Doctrine\OrientDB\Exception\Casting\Mismatch;
 
 class Caster implements CasterInterface
 {
@@ -106,7 +105,7 @@ class Caster implements CasterInterface
 
     /**
      * Casts the given $value to a byte.
-     * @throws Doctrine\OrientDB\Exception\Casting\Mismatch
+     * @throws CastingMismatchException
      * @return mixed
      */
     public function castByte()
@@ -348,7 +347,7 @@ class Caster implements CasterInterface
      * @param integer   $limit
      * @param string    $type
      * @return integer
-     * @throws Doctrine\OrientDB\Exception\Casting\Mismatch
+     * @throws CastingMismatchException
      */
     public function castInBuffer($limit, $type)
     {
@@ -593,6 +592,6 @@ class Caster implements CasterInterface
             $value = implode(',', $value);
         }
 
-        throw new Mismatch(sprintf(self::MISMATCH_MESSAGE, $value, $expectedType));
+        throw new CastingMismatchException(sprintf(self::MISMATCH_MESSAGE, $value, $expectedType));
     }
 }

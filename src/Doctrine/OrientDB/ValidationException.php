@@ -10,18 +10,18 @@
  */
 
 /**
- * Class Validation
+ * Class ValidationException
  *
  * @package     Doctrine\OrientDB
- * @subpackage  Exception
+ * @subpackage
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Exception;
+namespace Doctrine\OrientDB;
 
 use Doctrine\OrientDB\Exception;
 
-class Validation extends Exception
+class ValidationException extends Exception
 {
     public function __construct($value, $class)
     {

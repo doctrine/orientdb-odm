@@ -19,8 +19,6 @@
 
 namespace Doctrine\OrientDB\Binding;
 
-use Doctrine\OrientDB\Exception\Query\SQL\Invalid as InvalidSQL;
-
 class HttpBindingResult implements HttpBindingResultInterface
 {
     protected $response;
@@ -39,7 +37,7 @@ class HttpBindingResult implements HttpBindingResultInterface
     public function getResult()
     {
         if (!$this->isValid()) {
-            throw new InvalidSQL($this->response->getBody(), $this);
+            throw new InvalidQueryException($this->response->getBody(), $this);
         }
 
         if (false === $json = json_decode($this->response->getBody())) {

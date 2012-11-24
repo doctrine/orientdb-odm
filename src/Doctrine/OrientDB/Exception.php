@@ -13,7 +13,7 @@
  * This is a general Exception class for the Doctrine\OrientDB library.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Exception
+ * @subpackage
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 

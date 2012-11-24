@@ -30,15 +30,12 @@ use Doctrine\ODM\OrientDB\Mapper\Annotations\ReaderInterface as Annotationreader
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Query;
 use Doctrine\OrientDB\Foundation\Types\Rid;
-use Doctrine\OrientDB\Exception\Document\NotFound as DocumentNotFoundException;
 use Doctrine\OrientDB\Formatter\CasterInterface as CasterInterface;
 use Doctrine\OrientDB\Formatter\Caster;
 use Doctrine\OrientDB\Formatter\InflectorInterface;
 use Doctrine\OrientDB\Filesystem\Iterator\Regex as RegexIterator;
 use Doctrine\OrientDB\Formatter\StringInterface as StringFormatterInterface;
 use Doctrine\OrientDB\Formatter\String as StringFormatter;
-use Doctrine\OrientDB\Exception\ODM\OClass\NotFound as ClassNotFoundException;
-use Doctrine\OrientDB\Exception\Casting\Mismatch;
 use Doctrine\Common\Util\Inflector as DoctrineInflector;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\Finder\Finder;
@@ -146,7 +143,7 @@ class Mapper
      *
      * @param   StdClass    $orientObject
      * @return  Hydration\Result
-     * @throws  Doctrine\OrientDB\Exception\Document\NotFound
+     * @throws  DocumentNotFoundException
      */
     public function hydrate(\StdClass $orientObject)
     {
@@ -278,7 +275,7 @@ class Mapper
      *
      * @param   string $OClass
      * @return  string
-     * @throws  Doctrine\OrientDB\Exception\ODM\OClass\NotFound
+     * @throws  Doctrine\ODM\OrientDB\OClassNotFoundException
      */
     protected function findClassMappingInDirectories($OClass)
     {
@@ -288,7 +285,7 @@ class Mapper
             }
         }
 
-        throw new ClassNotFoundException($OClass);
+        throw new OClassNotFoundException($OClass);
     }
 
     /**

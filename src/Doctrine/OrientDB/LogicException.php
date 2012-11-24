@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Doctrine\OrientDB package.
+ * This file is part of the Orient package.
  *
  * (c) Alessandro Nadalin <alessandro.nadalin@gmail.com>
  *
@@ -10,18 +10,15 @@
  */
 
 /**
- * Class Overflow
+ * Class LogicException
  *
  * @package     Doctrine\OrientDB
- * @subpackage  Exception
+ * @subpackage
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
+namespace Doctrine\OrientDB;
 
-namespace Doctrine\OrientDB\Exception;
-
-use Doctrine\OrientDB\Exception;
-
-class Overflow extends Exception
+class LogicException extends Exception
 {
     public function __construct($message)
     {

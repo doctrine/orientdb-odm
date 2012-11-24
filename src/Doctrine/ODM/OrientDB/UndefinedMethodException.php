@@ -13,16 +13,16 @@
  * Undefined exceptionclass gets raised when you try to call a non existing
  * method in a class.
  *
- * @package    Doctrine\OrientDB
- * @subpackage Exception
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Exception\Method;
+namespace Doctrine\ODM\OrientDB;
 
 use Doctrine\OrientDB\Exception;
 
-class Undefined extends Exception
+class UndefinedMethodException extends Exception
 {
     const MESSAGE = "The class %s does not have the %s method.";
 

@@ -10,21 +10,21 @@
  */
 
 /**
- * TokenNotFound exceptionclass gets raised when you try to replace a token, in
+ * TokenNotFoundException gets raised when you try to replace a token, in
  * a command, which isn't part of the command schema.
  *
  * For example, when you add a LIMIT clause on a DELETE.
  *
  * @package    Doctrine\OrientDB
- * @subpackage Exception
+ * @subpackage Query
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Exception\Query\Command;
+namespace Doctrine\OrientDB\Query;
 
 use Doctrine\OrientDB\Exception;
 
-class TokenNotFound extends Exception
+class TokenNotFoundException extends Exception
 {
     const MESSAGE =
         "The token %s is not contained in the %s command schema\n

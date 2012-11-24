@@ -23,6 +23,7 @@ namespace Doctrine\OrientDB\Algorithm;
 use Doctrine\OrientDB\Graph;
 use Doctrine\OrientDB\Graph\Vertex;
 use Doctrine\OrientDB\Exception;
+use Doctrine\OrientDB\LogicException;
 
 class Dijkstra implements AlgorithmInterface
 {
@@ -50,7 +51,7 @@ class Dijkstra implements AlgorithmInterface
     public function getDistance()
     {
         if (!$this->isSolved()) {
-            throw new Exception\Logic(
+            throw new LogicException(
                 "Cannot calculate the distance of a non-solved algorithm:\nDid you forget to call ->solve()?"
             );
         }
@@ -145,7 +146,7 @@ class Dijkstra implements AlgorithmInterface
     public function solve()
     {
         if (!$this->getStartingVertex() || !$this->getEndingVertex()) {
-            throw new Exception\Logic("Cannot solve the algorithm without both starting and ending vertices");
+            throw new LogicException("Cannot solve the algorithm without both starting and ending vertices");
         }
 
         $this->calculatePotentials($this->getStartingVertex());

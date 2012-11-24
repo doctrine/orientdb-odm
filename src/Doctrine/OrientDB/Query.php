@@ -19,7 +19,6 @@
 
 namespace Doctrine\OrientDB;
 
-use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Query\Command\Credential\Grant;
 use Doctrine\OrientDB\Query\Command\Credential\Revoke;
 use Doctrine\OrientDB\Query\Command\Insert;
@@ -544,7 +543,7 @@ class Query implements QueryInterface
             $validator      = new Validator\Rid;
             $validator->check($entity);
             $commandClass   = $this->getCommandClass('truncate.record');
-        } catch (Exception\Validation $e) {
+        } catch (ValidationException $e) {
             $commandClass   = $this->getCommandClass('truncate.class');
 
             if ($andCluster) {

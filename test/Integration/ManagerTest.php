@@ -50,7 +50,7 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * @expectedException \Doctrine\OrientDB\Exception\Query\SQL\Invalid
+     * @expectedException Doctrine\OrientDB\Binding\InvalidQueryException
      */
     public function testAnExceptionGetsRaisedWhenExecutingAWrongQuery()
     {
@@ -105,7 +105,7 @@ $this->markTestIncomplete('$comments is not an array');
     }
 
     /**
-     * @expectedException \Doctrine\OrientDB\Exception\ODM\OClass\NotFound
+     * @expectedException Doctrine\ODM\OrientDB\OClassNotFoundException
      */
     public function testLookingForANonMappedTypeRaisesAnException()
     {

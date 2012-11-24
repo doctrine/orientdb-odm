@@ -20,8 +20,6 @@
 
 namespace Doctrine\OrientDB\Binding\Client\Http;
 
-use Doctrine\OrientDB\Exception\Http\Response\Void as VoidResponse;
-
 class CurlClient
 {
     protected $curl;
@@ -95,7 +93,7 @@ class CurlClient
 
         if (!$response = curl_exec($this->curl)) {
             $this->restart();
-            throw new VoidResponse(__CLASS__, $location);
+            throw new EmptyResponseException($this, $location);
         }
 
         $response = new CurlClientResponse($response);

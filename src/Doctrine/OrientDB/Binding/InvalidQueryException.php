@@ -13,16 +13,16 @@
  * Class Invalid
  *
  * @package     Doctrine\OrientDB
- * @subpackage  Exception
+ * @subpackage  Binding
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author      Daniele Alessandri <suppakilla@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Exception\Query\SQL;
+namespace Doctrine\OrientDB\Binding;
 
 use Doctrine\OrientDB\Exception;
-use Doctrine\OrientDB\Binding\BindingResultInterface;
 
-class Invalid extends Exception
+class InvalidQueryException extends Exception
 {
     protected $result;
 

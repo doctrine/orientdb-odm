@@ -34,7 +34,7 @@ class RidTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Exception\Validation
+     * @expectedException Doctrine\OrientDB\ValidationException
      */
     public function testTheValidatorDoesNotAcceptsStringsOnly()
     {
@@ -42,7 +42,7 @@ class RidTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Exception\Validation
+     * @expectedException Doctrine\OrientDB\ValidationException
      */
     public function testTheValidatorDoesNotAcceptsIntegersOnly()
     {
@@ -50,7 +50,7 @@ class RidTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Exception\Validation
+     * @expectedException Doctrine\OrientDB\ValidationException
      */
     public function testTheValidatorDoesNotAcceptsRidsWithMultiplesPrefixes()
     {
@@ -58,7 +58,7 @@ class RidTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Exception\Validation
+     * @expectedException Doctrine\OrientDB\ValidationException
      */
     public function testEmptyRid()
     {

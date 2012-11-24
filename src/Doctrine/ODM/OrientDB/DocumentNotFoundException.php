@@ -12,21 +12,21 @@
 /**
  * An exception raised when an Json object cannot be converted to a POPO
  *
- * @package    Doctrine\OrientDB
- * @subpackage Exception
+ * @package    Doctrine\ODM
+ * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Exception\ODM\OClass;
+namespace Doctrine\ODM\OrientDB;
 
 use Doctrine\OrientDB\Exception;
 
-class NotFound extends Exception
+class DocumentNotFoundException extends Exception
 {
-    const MESSAGE = 'Unable to find a PHP class mapped for "%s".';
+    const MESSAGE = 'The object can not be converted to a POPO mapped by the ODM.';
 
-    public function __construct($class)
+    public function __construct()
     {
-        $this->message = sprintf(self::MESSAGE, $class);
+        $this->message = self::MESSAGE;
     }
 }

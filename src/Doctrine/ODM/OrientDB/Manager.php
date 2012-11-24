@@ -25,10 +25,9 @@ use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Mapper\Hydration\Result;
 use Doctrine\OrientDB\Query;
 use Doctrine\OrientDB\Foundation\Types\Rid;
-use Doctrine\OrientDB\Exception\ODM\OClass\NotFound as UnmappedClass;
 use Doctrine\OrientDB\Query\Command\Select;
 use Doctrine\OrientDB\Exception;
-use Doctrine\OrientDB\Exception\Casting\Mismatch;
+use Doctrine\OrientDB\Formatter\CastingMismatchException;
 use Doctrine\OrientDB\Binding\BindingInterface;
 use Doctrine\ODM\OrientDB\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
 use Doctrine\OrientDB\Validator\Rid as RidValidator;
@@ -106,7 +105,7 @@ class Manager implements ObjectManager
      * @param   string    $rid
      * @param   string    $fetchPlan
      * @return  Proxy|object
-     * @throws  UnmappedClass|Mismatch|Exception
+     * @throws  OClassNotFoundException|CastingMismatchException|Exception
      */
     public function find($rid, $fetchPlan = null)
     {
@@ -119,9 +118,9 @@ class Manager implements ObjectManager
 
         try {
             return $this->doFind($rid, $fetchPlan);
-        } catch (UnmappedClass $e) {
+        } catch (OClassNotFoundException $e) {
             throw $e;
-        } catch (Mismatch $e) {
+        } catch (CastingMismatchException $e) {
             throw $e;
         } catch (Exception $e) {
             return null;
@@ -138,7 +137,7 @@ class Manager implements ObjectManager
      * @param   string      $rid
      * @param   mixed       $fetchPlan
      * @return  Proxy\Collection|array
-     * @throws  Doctrine\OrientDB\Exception\Query\SQL\Invalid
+     * @throws  Doctrine\OrientDB\Binding\InvalidQueryException
      */
     public function findRecords(Array $rids, $fetchPlan = null)
     {

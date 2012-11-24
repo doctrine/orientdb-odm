@@ -30,7 +30,7 @@ class CurlClientTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Exception\Http\Response\Void
+     * @expectedException Doctrine\OrientDB\Binding\Client\Http\EmptyResponseException
      */
     public function testRetrievingAnEmptyResponseRaisesAnException()
     {

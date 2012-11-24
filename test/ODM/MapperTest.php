@@ -214,7 +214,7 @@ class MapperTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Exception\Document\NotFound
+     * @expectedException Doctrine\ODM\OrientDB\DocumentNotFoundException
      */
     public function testAnExceptionIsRaisedWhenAnObjectGetsPersistedWithoutAClass()
     {
@@ -222,7 +222,7 @@ class MapperTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Exception\ODM\OClass\NotFound
+     * @expectedException Doctrine\ODM\OrientDB\OClassNotFoundException
      */
     public function testAnExceptionIsRaisedWhenAnObjectGetsPersistedWithAWrongClass()
     {

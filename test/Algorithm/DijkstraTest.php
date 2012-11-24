@@ -149,7 +149,7 @@ class DijkstraTest extends TestCase
     }
 
     /**
-     * @expectedException \Doctrine\OrientDB\Exception\Logic
+     * @expectedException \Doctrine\OrientDB\LogicException
      */
     public function testYouNeedToSolveTheAlgorithmBeforeCalculatingTheDistance()
     {
@@ -169,7 +169,7 @@ class DijkstraTest extends TestCase
     }
 
     /**
-     * @expectedException \Doctrine\OrientDB\Exception\Logic
+     * @expectedException \Doctrine\OrientDB\LogicException
      */
     public function testYouCantSolveTheAlgorithmWithoutaStart()
     {
@@ -179,7 +179,7 @@ class DijkstraTest extends TestCase
     }
 
     /**
-     * @expectedException \Doctrine\OrientDB\Exception\Logic
+     * @expectedException \Doctrine\OrientDB\LogicException
      */
     public function testYouCantSolveTheAlgorithmWithoutaEnd()
     {
