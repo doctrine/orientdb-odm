@@ -20,9 +20,9 @@
 namespace test\Algorithm;
 
 use test\PHPUnit\TestCase;
-use Doctrine\OrientDB\Graph;
+use Doctrine\OrientDB\Graph\Graph;
 use Doctrine\OrientDB\Graph\Vertex;
-use Doctrine\OrientDB\Algorithm\Dijkstra;
+use Doctrine\OrientDB\Graph\Algorithm\Dijkstra;
 
 class DijkstraTest extends TestCase
 {

@@ -25,7 +25,7 @@
           <file >test/QueryTest.php</file>
       </testsuite>
       <testsuite name="Graph">
-          <file >test/GraphTest.php</file>
+          <directory >test/Graph</directory>
       </testsuite>
       <testsuite name="HTTP">
           <directory >test/Http</directory>
@@ -35,9 +35,6 @@
       </testsuite>
       <testsuite name="Formatter">
           <directory >test/Formatter</directory>
-      </testsuite>
-      <testsuite name="Algorithm">
-          <directory >test/Algorithm</directory>
       </testsuite>
       <testsuite name="ODM">
           <directory >test/ODM</directory>

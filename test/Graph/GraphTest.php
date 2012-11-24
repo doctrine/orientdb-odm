@@ -20,15 +20,15 @@
 namespace test;
 
 use test\PHPUnit\TestCase;
-use Doctrine\OrientDB\Graph;
+use Doctrine\OrientDB\Graph\Graph;
+use Doctrine\OrientDB\Graph\Vertex;
 
 class GraphTest extends TestCase
 {
     public function setup()
     {
         $this->graph = new Graph();
-
-        $this->v1 = new Graph\Vertex('v1');
+        $this->v1 = new Vertex('v1');
     }
 
     public function  testYouCanAddVerticesToAGraph()

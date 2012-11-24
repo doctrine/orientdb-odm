@@ -19,8 +19,6 @@
 
 namespace Doctrine\OrientDB\Graph;
 
-use Doctrine\OrientDB\Graph;
-
 class Vertex implements VertexInterface
 {
     protected $id;

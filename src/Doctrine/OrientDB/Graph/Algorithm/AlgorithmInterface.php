@@ -13,11 +13,11 @@
  * Interface Algorithm
  *
  * @package     Doctrine\OrientDB
- * @subpackage  Algorithm
+ * @subpackage  Graph
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Algorithm;
+namespace Doctrine\OrientDB\Graph\Algorithm;
 
 interface AlgorithmInterface
 {

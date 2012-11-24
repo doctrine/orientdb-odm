@@ -100,9 +100,9 @@ However, it's under heavy work, so don't expect to be able to use it in a few we
 Orient incapsulates also a few utilities for PHP developers: on of them is an implementation of Dijkstra's algorithm.
 
 ```
-use Doctrine\OrientDB\Graph;
+use Doctrine\OrientDB\Graph\Graph;
 use Doctrine\OrientDB\Graph\Vertex;
-use Doctrine\OrientDB\Algorithm\Dijkstra;
+use Doctrine\OrientDB\Graph\Algorithm\Dijkstra;
 
 $graph = new Graph();
 

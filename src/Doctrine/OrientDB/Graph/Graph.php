@@ -17,9 +17,9 @@
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB;
+namespace Doctrine\OrientDB\Graph;
 
-use Doctrine\OrientDB\Graph\VertexInterface;
+use Doctrine\OrientDB\Exception;
 
 class Graph implements GraphInterface
 {
@@ -31,11 +31,7 @@ class Graph implements GraphInterface
     protected $vertices = array();
 
     /**
-     * Adds a new vertex to the current graph.
-     *
-     * @param   Doctrine\OrientDB\Graph\VertexInterface $vertex
-     * @return  Doctrine\OrientDB\Graph
-     * @throws  Doctrine\OrientDB\Exception
+     * {@inheritdoc}
      */
     public function add(VertexInterface $vertex)
     {
@@ -49,11 +45,7 @@ class Graph implements GraphInterface
     }
 
     /**
-     * Returns the vertex identified with the $id associated to this graph.
-     *
-     * @param   mixed $id
-     * @return  Doctrine\OrientDB\Graph\VertexInterface
-     * @throws  Doctrine\OrientDB\Exception
+     * {@inheritdoc}
      */
     public function getVertex($id)
     {
@@ -67,9 +59,7 @@ class Graph implements GraphInterface
     }
 
     /**
-     * Returns all the vertices that belong to this graph.
-     *
-     * @return Array
+     * {@inheritdoc}
      */
     public function getVertices()
     {

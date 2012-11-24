@@ -17,17 +17,15 @@
  * @author      Alessandro Nadalin <alessandro.nadalin@gmail.com>
  */
 
-namespace Doctrine\OrientDB;
-
-use Doctrine\OrientDB\Graph\VertexInterface;
+namespace Doctrine\OrientDB\Graph;
 
 interface GraphInterface
 {
     /**
      * Adds a new vertex to the current graph.
      *
-     * @param   Graph\Vertex $vertex
-     * @return  Doctrine\OrientDB\GraphInterface
+     * @param   VertexInterface $vertex
+     * @return  GraphInterface
      * @throws  Doctrine\OrientDB\Exception
      */
     public function add(VertexInterface $vertex);
@@ -36,7 +34,7 @@ interface GraphInterface
      * Returns the vertex identified with the $id associated to this graph.
      *
      * @param   mixed $id
-     * @return  Doctrine\OrientDB\Graph\VertexInterface
+     * @return  VertexInterface
      * @throws  Doctrine\OrientDB\Exception
      */
     public function getVertex($id);
