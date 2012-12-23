@@ -93,7 +93,6 @@ class ManagerTest extends TestCase
 
     public function testGettingARelatedCollection()
     {
-// $this->markTestIncomplete('$comments is not an array');
         $manager = $this->createManager(array(
             'mismatches_tolerance' => true,
         ));
@@ -103,6 +102,8 @@ class ManagerTest extends TestCase
         $comments = $comments();
 
         $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
+
+        $this->markTestIncomplete('find correct way');
     }
 
     /**
