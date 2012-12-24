@@ -8,7 +8,7 @@ class Post extends \test\Integration\Document\Post
         $parent = parent::getRid();
 
         if (!is_null($parent)) {
-            if ($parent instanceOf \Doctrine\OrientDB\ODM\Proxy\AbstractProxy) {
+            if ($parent instanceOf \Doctrine\ODM\OrientDB\Proxy\AbstractProxy) {
                 return $parent();
             }
 
@@ -19,7 +19,7 @@ class Post extends \test\Integration\Document\Post
         $parent = parent::setRid($rid);
 
         if (!is_null($parent)) {
-            if ($parent instanceOf \Doctrine\OrientDB\ODM\Proxy\AbstractProxy) {
+            if ($parent instanceOf \Doctrine\ODM\OrientDB\Proxy\AbstractProxy) {
                 return $parent();
             }
 
@@ -30,7 +30,7 @@ class Post extends \test\Integration\Document\Post
         $parent = parent::getComments();
 
         if (!is_null($parent)) {
-            if ($parent instanceOf \Doctrine\OrientDB\ODM\Proxy\AbstractProxy) {
+            if ($parent instanceOf \Doctrine\ODM\OrientDB\Proxy\AbstractProxy) {
                 return $parent();
             }
 
@@ -41,7 +41,7 @@ class Post extends \test\Integration\Document\Post
         $parent = parent::setComments($city);
 
         if (!is_null($parent)) {
-            if ($parent instanceOf \Doctrine\OrientDB\ODM\Proxy\AbstractProxy) {
+            if ($parent instanceOf \Doctrine\ODM\OrientDB\Proxy\AbstractProxy) {
                 return $parent();
             }
 

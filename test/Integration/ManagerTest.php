@@ -99,11 +99,8 @@ class ManagerTest extends TestCase
 
         $post = $manager->find('94:0');
         $comments = $post->getComments();
-        $comments = $comments();
 
         $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
-
-        $this->markTestIncomplete('find correct way');
     }
 
     /**

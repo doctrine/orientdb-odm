@@ -425,7 +425,7 @@ EOT;
         $proxyClassName = array_pop($namespaces);
 
         if (!class_exists($proxyClassFQN)) {
-            $dir = $this->getDocumentProxyDirectory() . '/Doctrine/Orient/Proxy';
+            $dir = $this->getDocumentProxyDirectory() . '/Doctrine/OrientDB/Proxy';
 
             foreach ($namespaces as $namespace) {
                 $dir = $dir . '/' . $namespace;
