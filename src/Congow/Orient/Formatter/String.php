@@ -63,7 +63,7 @@ class String  implements StringInterface
      */
     public static function filterNonSQLChars($string, $nonFilter = null)
     {
-        $pattern = "/[^a-z|A-Z|0-9|:|@|#|$nonFilter]/";
+        $pattern = "/[^a-z|A-Z|0-9|:|@|#|_|$nonFilter]/";
 
         return preg_replace($pattern, "", $string);
     }
