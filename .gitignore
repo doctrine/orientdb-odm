@@ -12,3 +12,4 @@ nbproject
 ci-stuff/environment
 vendor/
 composer.phar
+phpunit.xml
