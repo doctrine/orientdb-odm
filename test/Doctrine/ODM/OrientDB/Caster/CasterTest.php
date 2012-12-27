@@ -26,7 +26,7 @@ class CasterTest extends TestCase
 
     public function setup()
     {
-        $this->mapper = new Mapper('/');
+        $this->mapper = $this->createMapper();
         $this->caster = new Caster($this->mapper);
     }
 
@@ -530,8 +530,6 @@ class CasterTest extends TestCase
      */
     public function testLinksCasting($expected,$link)
     {
-        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../../../../Integration/Document/' => 'test'));
-
         $this->assertEquals($expected, $this->caster->setValue($link)->castLink());
     }
 
@@ -539,6 +537,8 @@ class CasterTest extends TestCase
     {
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
+
+        $this->ensureProxy($orientDocument);
 
         $address = new \Doctrine\OrientDB\Proxy\test\Integration\Document\Address();
         $result  = new \Doctrine\ODM\OrientDB\Mapper\Hydration\Result($address, new \Doctrine\ODM\OrientDB\Mapper\LinkTracker);
@@ -555,8 +555,6 @@ class CasterTest extends TestCase
      */
     public function testLinkListCasting($expected,$linkCollection)
     {
-        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../../../../Integration/Document/' => 'test'));
-
         $this->assertEquals($expected, $this->caster->setValue($linkCollection)->castLinkList());
     }
 
@@ -565,8 +563,6 @@ class CasterTest extends TestCase
      */
     public function testLinkSetCasting($expected,$linkCollection)
     {
-        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../../../../Integration/Document/' => 'test'));
-
         $this->assertEquals($expected, $this->caster->setValue($linkCollection)->castLinkSet());
     }
 
@@ -575,8 +571,6 @@ class CasterTest extends TestCase
      */
     public function testLinkMapCasting($expected,$linkCollection)
     {
-        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../../../../Integration/Document/' => 'test'));
-
         $this->assertEquals($expected, $this->caster->setValue($linkCollection)->castLinkMap());
     }
 
@@ -584,6 +578,8 @@ class CasterTest extends TestCase
     {
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
+
+        $this->ensureProxy($orientDocument);
 
         $address = new \Doctrine\OrientDB\Proxy\test\Integration\Document\Address();
         $result  = new \Doctrine\ODM\OrientDB\Mapper\Hydration\Result($address, new \Doctrine\ODM\OrientDB\Mapper\LinkTracker);
@@ -600,8 +596,6 @@ class CasterTest extends TestCase
      */
     public function testEmbeddedCasting($expected,$embedded)
     {
-        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../../../../Integration/Document/' => 'test'));
-
         $this->assertEquals($expected, $this->caster->setValue($embedded)->castEmbedded());
     }
 
@@ -609,6 +603,8 @@ class CasterTest extends TestCase
     {
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
+
+        $this->ensureProxy($orientDocument);
 
         $address = new \Doctrine\OrientDB\Proxy\test\Integration\Document\Address();
         $result  = new \Doctrine\ODM\OrientDB\Mapper\Hydration\Result($address, new \Doctrine\ODM\OrientDB\Mapper\LinkTracker);
@@ -625,7 +621,6 @@ class CasterTest extends TestCase
     {
         $property = $this->getMock('Doctrine\ODM\OrientDB\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
 
-        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../../../../Integration/Document/' => 'test'));
         $this->caster->setProperty('annotation', $property);
 
         $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedSet());
@@ -638,7 +633,6 @@ class CasterTest extends TestCase
     {
         $property = $this->getMock('Doctrine\ODM\OrientDB\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
 
-        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../../../../Integration/Document/' => 'test'));
         $this->caster->setProperty('annotation', $property);
 
         $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedMap());
@@ -651,7 +645,6 @@ class CasterTest extends TestCase
     {
         $property = $this->getMock('Doctrine\ODM\OrientDB\Mapper\Annotations\Property', null, array(array('cast' => 'embedded')));
 
-        $this->mapper->setDocumentDirectories(array(__DIR__ . '/../../../../Integration/Document/' => 'test'));
         $this->caster->setProperty('annotation', $property);
 
         $this->assertEquals($expected, $this->caster->setValue($embeddedSet)->castEmbeddedList());
@@ -661,6 +654,8 @@ class CasterTest extends TestCase
     {
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
+
+        $this->ensureProxy($orientDocument);
 
         $address = new \Doctrine\OrientDB\Proxy\test\Integration\Document\Address();
         $result  = new \Doctrine\ODM\OrientDB\Mapper\Hydration\Result($address, new \Doctrine\ODM\OrientDB\Mapper\LinkTracker);

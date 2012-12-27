@@ -6,6 +6,8 @@ docs/latex
 docs/coverage
 examples/proxies/Doctrine/OrientDB/Proxy/*
 !examples/proxies/Doctrine/OrientDB/Proxy/README.md
+test/proxies/Doctrine/OrientDB/Proxy/test/*
+!test/proxies/Doctrine/OrientDB/Proxy/test/README.md
 nbproject
 ci-stuff/environment
 vendor/

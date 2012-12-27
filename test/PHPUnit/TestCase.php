@@ -56,12 +56,17 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $binding;
     }
 
-    protected function createManager(Array $opts = array())
+    protected function getProxyDirectory()
+    {
+        return __DIR__ . '/../../test/proxies';
+    }
+
+    protected function createMapper(Array $opts = array())
     {
         $opts = array_merge(array(
             'mismatches_tolerance' => false,
-            'proxies_dir' => __DIR__ . '/../test/proxies',
-            'document_dir' => array('./test/Integration/Document' => 'test'),
+            'proxies_dir' => $this->getProxyDirectory(),
+            'document_dir' => array(__DIR__.'/../../test/Integration/Document' => 'test'),
         ), $opts);
 
         $mapper = new Mapper($opts['proxies_dir']);
@@ -71,11 +76,24 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $mapper->enableMismatchesTolerance();
         }
 
+        return $mapper;
+    }
+
+    protected function createManager(Array $opts = array())
+    {
+        $mapper = $this->createMapper($opts);
+
         $parameters = new BindingParameters(TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
         $binding = new HttpBinding($parameters);
         $manager = new Manager($mapper, $binding);
 
         return $manager;
+    }
+
+    protected function ensureProxy(\stdClass $orientDocument)
+    {
+        $mapper = $this->createMapper();
+        $mapper->hydrate($orientDocument);
     }
 
     public function assertHttpStatus($expected, HttpBindingResultInterface $result, $message = null)
