@@ -20,23 +20,25 @@
          verbose="false">
 
     <testsuites>
-      <testsuite name="Query Builder">
-          <directory >test/Query</directory>
-      </testsuite>
-      <testsuite name="Graph">
-          <directory >test/Graph</directory>
-      </testsuite>
-      <testsuite name="ODM">
-          <directory >test/ODM</directory>
-      </testsuite>
+        <testsuite name="OrientDB Client">
+            <directory>test/Doctrine/OrientDB</directory>
+        </testsuite>
+        <testsuite name="OrientDB ODM">
+            <directory>test/Doctrine/ODM/OrientDB</directory>
+        </testsuite>
     </testsuites>
 
+    <groups>
+        <exclude>
+            <!-- <group>integration</group> -->
+        </exclude>
+    </groups>
+
     <filter>
-      <blacklist>
-        <directory suffix=".php">test</directory>
-        <directory suffix=".php">lib</directory>
-        <directory suffix=".php">vendor</directory>
-      </blacklist>
+        <whitelist>
+            <directory suffix=".php">src/Doctrine/OrientDB/</directory>
+            <directory suffix=".php">src/Doctrine/ODM/OrientDB/</directory>
+        </whitelist>
     </filter>
 
     <php>

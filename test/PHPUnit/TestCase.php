@@ -60,7 +60,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         $opts = array_merge(array(
             'mismatches_tolerance' => false,
-            'proxies_dir' => __DIR__ . '/../proxies',
+            'proxies_dir' => __DIR__ . '/../test/proxies',
             'document_dir' => array('./test/Integration/Document' => 'test'),
         ), $opts);
 
