@@ -126,52 +126,25 @@ var_dump($algorithm->solve());
 ```
 
 
-## Tests & reports
+## Tests
 
-In order to run the tests you only need to:
+The full test suite can be launched simply by executing `phpunit` from the root directory of the repository.
 
-```
-$ cd /path/to/repo
-$ phpunit
-```
+By default the suite performs integration tests against a running instance of OrientDB to verify the correct behaviour of our implementation.
+Integration tests are marked using the [@group](http://www.phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.annotations.group)
+annotation so they can be disabled via `phpunit.xml` by adding `integration` to the list of excluded test groups.
 
-This should be enough.
-For the braves, if you want to run the full test suite, which includes the integration tests, you should:
-
-* download the supported version of OrientDB
-* make sure it has the demo database bundled with every Congow\OrientDB release (if you use a snapshot, please create the database directory and copy there the database bundled with the latest OrientDB official release)
-* add the server administration credential admin/admin in config/orientdb-server-config.xml
-* launch the server on :2424, reacheable via web at the :2480
-
-and then you can run the full test-suite:
-
-```
-$ phpunit test/
-```
-
-As you'll notice, tests are obviously slower (they need a direct connection through the HTTP protocol to Congow\OrientDB), so we highly discourage you from testing this way.
-They also may file the first time you launch them, because we set the curl timeout limit to 1 second, and the first connections to Congow\OrientDB require it to bootstrap lots of stuff (so during more than 1 second, making the tests fail): try to re-launch the tests, you should see the green bar.
-Integration tests, by the way, are run by the development team before any tag in the repository, so you are sure that any tag is fully tested against a real Congow\OrientDB instance.
-
-You can take a look at the library coding health by using PHP_CodeBrowser.
-
-You need to install:
+It is also possible to generate a HTML report showing the code health of the library using `PHP_CodeBrowser` paired with the following dependencies
+(in addition to `phpunit`):
 
 * phpcpd
 * phpdcd
 * phploc
 * phpmd
 * phpdepend
-* phpunit ( of course )
 * phpcb
 
-and then run:
-
-```
-$ ./bin/report.sh
-```
-
-You'll be able to see the HTML reports in log/report/index.html.
+Executing `./bin/report.sh` from the root directory of the repository will generate the report in `log/report/index.html`.
 
 
 ## Requirements
