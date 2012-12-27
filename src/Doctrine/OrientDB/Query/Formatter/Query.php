@@ -55,7 +55,7 @@ class Query implements QueryInterface
      */
     public static function stripNonSQLCharacters($string, $nonFilter = null)
     {
-        return preg_replace("/[^a-z|A-Z|0-9|:|@|#|$nonFilter]/", '', $string);
+        return preg_replace("/[^\w|:|@|#|$nonFilter]/", '', $string);
     }
 
     /**
