@@ -129,7 +129,7 @@ class Query implements QueryInterface
      * @param mixed   $value
      */
     public function andWhere($condition, $value = null)
-    {
+    {       
         return $this->command->andwhere($condition, $value);
     }
 
