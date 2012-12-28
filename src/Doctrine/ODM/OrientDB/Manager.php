@@ -198,6 +198,12 @@ class Manager implements ObjectManager
      */
     public function getRepository($className)
     {
+        $repositoryClass    = $className . "Repository";
+
+        if (class_exists($repositoryClass)) {
+            return new $repositoryClass($className, $this, $this->getMapper());
+        }
+
         return new Repository($className, $this, $this->getMapper());
     }
 

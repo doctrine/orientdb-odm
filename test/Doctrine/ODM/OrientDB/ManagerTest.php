@@ -82,4 +82,15 @@ class ManagerTest extends TestCase
 
         $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address', $manager->find('1:1'));
     }
+
+    public function testProvidingRightRepositoryClass()
+    {
+        $manager = $this->createManager();
+        $cityRepository = $manager->getRepository('test\Doctrine\ODM\OrientDB\Document\Stub\City');
+
+        $this->assertInstanceOf("test\Doctrine\ODM\OrientDB\Document\Stub\CityRepository",$cityRepository);
+
+        $addressRepository = $manager->getRepository('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address');
+        $this->assertInstanceOf("\Doctrine\ODM\OrientDB\Repository",$addressRepository);
+    }
 }
