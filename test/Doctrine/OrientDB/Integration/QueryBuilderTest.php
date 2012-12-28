@@ -422,14 +422,14 @@ class QueryBuilderTest extends TestCase
               ->orWhere('@rid = ?', '19:101');
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM Address WHERE @rid = #19:6')->getResult();
+        $records = $binding->command('SELECT FROM Address WHERE @rid = #19:101')->getResult();
         $this->assertSame('Luca', $records[0]->nick);
 
         $query->update('Address')->set(array('nick' => 'Luca2'))
               ->orWhere('@rid = ?', '19:6');
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM Address WHERE @rid = #19:101')->getResult();
+        $records = $binding->command('SELECT FROM Address WHERE @rid = #19:6')->getResult();
         $this->assertSame('Luca2', $records[0]->nick);
     }
 
