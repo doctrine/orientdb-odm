@@ -1,5 +1,5 @@
 {
-    "name": "congow/orient",
+    "name": "doctrine/orientdb-odm",
     "type": "library",
     "description": "A set of PHP libraries in order to use OrientDB from PHP.",
     "keywords": ["orientdb"],
