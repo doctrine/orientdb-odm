@@ -101,7 +101,7 @@ class Repository implements ObjectRepository
             $query = new Query(array($mappedClass));
 
             foreach ($criteria as $key => $value) {
-                $query->where("$key = ?", $value);
+                $query->andWhere("$key = ?", $value);
             }
 
             foreach ($orderBy as $key => $order) {
