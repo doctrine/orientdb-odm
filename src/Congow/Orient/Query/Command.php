@@ -182,6 +182,10 @@ abstract class Command implements CommandContract
 
             $condition = str_replace("?", $value, $condition);
         }
+        
+        if (!$this->getTokenValue('Where')) {
+            $clause = 'WHERE';
+        }
 
         $this->setTokenValues('Where', array("{$clause} $condition"), $append, false, false);
 

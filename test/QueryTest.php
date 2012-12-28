@@ -331,6 +331,18 @@ class QueryTest extends TestCase
         $this->assertCommandGives($sql, $this->query->getRaw());
     }
 
+    public function testYouCanJustUseAndWhere()
+    {
+        $this->query->from(array('class'));
+        $this->query->andWhere('1 = ?', 1);
+        $this->query->andWhere('1 = ?', "1");
+        $this->query->orWhere("1 = ?", false);
+
+        $sql = 'SELECT FROM class WHERE 1 = 1 AND 1 = "1" OR 1 = FALSE';
+
+        $this->assertCommandGives($sql, $this->query->getRaw());
+    }
+
     public function testLimit()
     {
         $this->assertInstanceOf('\Congow\Orient\Contract\Query\Command\Select', $this->query->limit(20));
