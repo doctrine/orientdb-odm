@@ -28,6 +28,7 @@ use Doctrine\ODM\OrientDB\Proxy;
 use Doctrine\ODM\OrientDB\Proxy\Collection as CollectionProxy;
 use Doctrine\ODM\OrientDB\Proxy\Value as ValueProxy;
 use Doctrine\ODM\OrientDB\Types\Rid;
+use Exception as PhpException;
 
 class Caster implements CasterInterface
 {
@@ -126,6 +127,8 @@ class Caster implements CasterInterface
 
     /**
      * Casts the given $value to a DateTime object.
+     * If the value was stored as a timestamp, it sets the value to the DateTime
+     * object via the setTimestamp method.
      *
      * @return \DateTime
      */
@@ -134,7 +137,14 @@ class Caster implements CasterInterface
         $dateClass = $this->getDateClass();
         $value = preg_replace('/(\s\d{2}:\d{2}:\d{2}):(\d{1,6})/', '$1.$2', $this->value);
 
-        return new $dateClass($value);
+        if (is_numeric($value)) {
+            $datetime = new $dateClass();
+            $datetime->setTimestamp($value);   
+        } else {
+            $datetime = new $dateClass($value);
+        }
+        
+        return $datetime;
     }
 
     /**
