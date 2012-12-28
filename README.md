@@ -175,8 +175,3 @@ doxygen docs/orient.d
 ```
 
 which will generate technical documentation under the folder docs/html.
-
-
-## License
-
-The code in this project is distributed under the MIT license (see LICENSE).
