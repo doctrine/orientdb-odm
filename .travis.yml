@@ -5,7 +5,7 @@ php:
 before_script:
   - ./bin/initialize-dependencies.sh
   - sh -c ./bin/initialize-ci.sh 1.2.0
-script: phpunit test/
+script: phpunit
 notifications:
   email:
     - alessandro.nadalin@gmail.com
