@@ -447,18 +447,6 @@ class Query implements QueryInterface
     }
 
     /**
-     * Sets the RID range in which the query is performed.
-     *
-     * @param   string  $left
-     * @param   string  $right
-     * @return  mixed
-     */
-    public function range($left = null, $right = null)
-    {
-        return $this->command->range($left, $right);
-    }
-
-    /**
      * Removes a link from a link-set|list.
      *
      * @param   array   $updates

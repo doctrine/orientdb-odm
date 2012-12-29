@@ -119,11 +119,6 @@ class QueryTest extends TestCase
         $this->assertInstanceOf('\Doctrine\OrientDB\Query\Command\InsertInterface', $this->query->into('class'));
     }
 
-    public function testRange()
-    {
-        $this->assertInstanceOf('\Doctrine\OrientDB\Query\Command\Select', $this->query->range('12', '14'));
-    }
-
     public function testValues()
     {
         $this->query->insert();

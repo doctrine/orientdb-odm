@@ -66,15 +66,4 @@ interface SelectInterface
      * @return  Select
      */
     public function limit($limit);
-
-    /**
-     * Sets the range of the SELECT, expressed in a pair of RIDs.
-     * This means that the SELECT will fetch records with RID starting from
-     * $left and ending before $right.
-     *
-     * @param   string  $left
-     * @param   string  $right
-     * @return  Select
-     */
-    public function range($left, $right);
 }

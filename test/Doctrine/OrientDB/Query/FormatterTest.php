@@ -241,18 +241,6 @@ class FormatterTest extends TestCase
         $this->assertEquals(null, $formatter::format(array('a#;')));
     }
 
-    public function testFormattingRange()
-    {
-        $ranges = array('@d', '0"', '11', '12:1', '12:2', '12:3', '12:2:2', '12::2');
-        $formatter = new Formatter\Query\Range();
-
-        $this->assertEquals('RANGE 12:1 12:2', $formatter::format($ranges));
-        $this->assertEquals('RANGE 12:0', $formatter::format(array('a', '12:0')));
-        $this->assertEquals(null, $formatter::format(array()));
-        $this->assertEquals(null, $formatter::format(array('a2', '@rid')));
-        $this->assertEquals(null, $formatter::format(array('a#;')));
-    }
-
     public function testFormattingFields()
     {
         $fields = array(12, '0', '"\\', '@class\"', '@@rid', 'prop');

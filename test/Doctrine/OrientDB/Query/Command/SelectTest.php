@@ -30,8 +30,7 @@ class SelectTest extends TestCase
             ':Between' => array(),
             ':OrderBy' => array(),
             ':Limit' => array(),
-            ':Skip' => array(),
-            ':Range' => array(),
+            ':Skip' => array()
         );
 
         $this->assertTokens($tokens, $this->select->getTokens());
@@ -95,40 +94,6 @@ class SelectTest extends TestCase
         $this->assertCommandGives($query, $this->select->getRaw());
     }
 
-    public function testSpecifyARange()
-    {
-        $this->select->limit(10);
-        $this->select->range('10:3');
-        $query = 'SELECT FROM myClass LIMIT 10 RANGE 10:3';
-
-        $this->assertCommandGives($query, $this->select->getRaw());
-
-        $this->select->range(null, '10:4');
-        $query = 'SELECT FROM myClass LIMIT 10 RANGE 10:3 10:4';
-
-        $this->assertCommandGives($query, $this->select->getRaw());
-
-        $this->select->range('10:5', '10:6');
-        $query = 'SELECT FROM myClass LIMIT 10 RANGE 10:5 10:6';
-
-        $this->assertCommandGives($query, $this->select->getRaw());
-
-        $this->select->range('10:1');
-        $query = 'SELECT FROM myClass LIMIT 10 RANGE 10:1 10:6';
-
-        $this->assertCommandGives($query, $this->select->getRaw());
-
-        $this->select->range('10:1', false);
-        $query = 'SELECT FROM myClass LIMIT 10 RANGE 10:1';
-
-        $this->assertCommandGives($query, $this->select->getRaw());
-
-        $this->select->range(false, false);
-        $query = 'SELECT FROM myClass LIMIT 10';
-
-        $this->assertCommandGives($query, $this->select->getRaw());
-    }
-
     public function testDoAComplexSelect()
     {
         $this->select->limit(10);
@@ -136,10 +101,9 @@ class SelectTest extends TestCase
         $this->select->from(array('23:2', '12:4'), false);
         $this->select->select(array('id', 'name'));
         $this->select->select(array('lastname'));
-        $this->select->range('10:3');
-        $this->select->range(null, '12:0');
+        $this->select->skip(10);
 
-        $query = 'SELECT id, name, lastname FROM [23:2, 12:4] LIMIT 20 RANGE 10:3 12:0';
+        $query = 'SELECT id, name, lastname FROM [23:2, 12:4] SKIP 10 LIMIT 20';
 
         $this->assertCommandGives($query, $this->select->getRaw());
     }
@@ -156,9 +120,9 @@ class SelectTest extends TestCase
                 ->limit(20)
                 ->orderBy('username')
                 ->orderBy('name', true, true)
-                ->range("12:0", "12:1");
+                ->skip(10);
 
-        $sql = 'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = 1 OR 1 IS NULL AND links = "1" ORDER BY name, username LIMIT 20 RANGE 12:0 12:1';
+        $sql = 'SELECT name, username, email FROM [12:0, 12:1] WHERE any() traverse ( any() like "%danger%" ) OR 1 = 1 OR 1 IS NULL AND links = "1" ORDER BY name, username SKIP 10 LIMIT 20';
 
         $this->assertCommandGives($sql, $this->select->getRaw());
     }
