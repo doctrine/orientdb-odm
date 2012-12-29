@@ -162,12 +162,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Deletes a class.
-     *
-     * @api
-     * @param string $class
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function deleteClass($class, $database = null)
     {
@@ -178,12 +173,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Gets a class and its records.
-     *
-     * @api
-     * @param string $class
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function getClass($class, $database = null)
     {
@@ -194,13 +184,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Creates a new class.
-     *
-     * @api
-     * @param string $class
-     * @param string $body
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function postClass($class, $body = null, $database = null)
     {
@@ -211,12 +195,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Gets informations about a cluster.
-     *
-     * @api
-     * @param string $cluster
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function cluster($cluster, $limit = null, $database = null)
     {
@@ -227,11 +206,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Connects the instance to a DB.
-     *
-     * @api
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function connect($database)
     {
@@ -242,10 +217,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Disconnect this instance from the server.
-     *
-     * @api
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function disconnect()
     {
@@ -256,10 +228,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Gets the current server.
-     *
-     * @api
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function getServer()
     {
@@ -270,11 +239,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Gets informations about a DB.
-     *
-     * @api
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function getDatabase($database = null)
     {
@@ -285,13 +250,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Creates a new database.
-     *
-     * @api
-     * @param string $database
-     * @param string $storage
-     * @param string $type
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function createDatabase($database, $storage = 'memory', $type = 'document')
     {
@@ -302,10 +261,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Lists all the existing databases.
-     *
-     * @api
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function listDatabases()
     {
@@ -316,11 +272,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Deletes an existing database.
-     *
-     * @api
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function deleteDatabase($database)
     {
@@ -349,12 +301,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Executes a raw SQL query on the given DB.
-     *
-     * @api
-     * @param string $sql
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function command($sql, $database = null)
     {
@@ -368,16 +315,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Executes a raw SQL query.
-     *
-     * It differs from the command because Doctrine\OrientDB defines a query as a SELECT only.
-     *
-     * @api
-     * @param string $sql SQL query.
-     * @param int $limit Maximum number of records (default is 20).
-     * @param string $fetchPlan
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function query($sql, $limit = null, $fetchPlan = null, $database = null)
     {
@@ -388,13 +326,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Retrieves a record.
-     *
-     * @api
-     * @param string $rid
-     * @param string $database
-     * @param string $fetchPlan
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function getDocument($rid, $database = null, $fetchPlan = null)
     {
@@ -405,12 +337,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Creates a new record.
-     *
-     * @api
-     * @param string $document
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function postDocument($document, $database = null)
     {
@@ -421,13 +348,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Updates an existing record.
-     *
-     * @api
-     * @param string $rid
-     * @param string $document
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function putDocument($rid, $document, $database = null)
     {
@@ -438,13 +359,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Deletes the document identified by the given $rid in the $database.
-     *
-     * @api
-     * @param string $rid
-     * @param string $version
-     * @param string $database
-     * @return BindingResultInterface
+     * {@inheritdoc}
      */
     public function deleteDocument($rid, $version = null, $database = null)
     {
@@ -484,10 +399,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Sets the username and password used to authenticate to the server.
-     *
-     * @param string $username
-     * @param string $password
+     * {@inheritdoc}
      */
     public function setAuthentication($username = null, $password = null)
     {
@@ -495,9 +407,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Sets the underlying HTTP client adapter.
-     *
-     * @param HttpClientAdapterInterface $client
+     * {@inheritdoc}
      */
     public function setAdapter(HttpClientAdapterInterface $adapter)
     {
@@ -505,9 +415,7 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Sets the underlying HTTP client adapter.
-     *
-     * @return HttpClientAdapterInterface
+     * {@inheritdoc}
      */
     public function getAdapter()
     {
