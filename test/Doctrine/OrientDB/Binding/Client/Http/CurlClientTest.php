@@ -17,7 +17,7 @@ use Doctrine\OrientDB\Binding\Client\Http\CurlClient;
 class CurlClientTest extends TestCase
 {
     /**
-     * @fixes https://github.com/congow/Orient/pull/97
+     * @fixes https://github.com/doctrine/orientdb-odm/pull/97
      *
      * Test coupled with a Google response
      */

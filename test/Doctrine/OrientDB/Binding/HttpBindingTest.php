@@ -186,15 +186,6 @@ class HttpBindingTest extends TestCase
         $this->assertHttpStatus(404, $binding->getDocument('9:0'), 'Retrieves a non existing document');
         $this->assertHttpStatus(500, $binding->getDocument('999:0'), 'Retrieves a document from a non existing cluster');
         $this->assertHttpStatus(200, $binding->getDocument('1:0'), 'Retrieves a valid document');
-
-        /**
-         * We must reset the OSESSIONID or we won't get a 409 Conflict response from OrientDB.
-         * @see https://github.com/congow/Orient/commit/44dfff40e25251fc2b8941525e71d0464a1867ef#commitcomment-450144
-         */
-        //$binding->getAdapter()->getClient()->restart();
-
-
-
     }
 
     public function testCreateDocument()

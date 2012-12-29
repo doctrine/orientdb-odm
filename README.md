@@ -157,7 +157,7 @@ In order to launch the test suite PHPUnit 3.6 is required.
 
 ## Tracker & software lifecycle
 
-See: https://github.com/congow/Orient/issues
+See: https://github.com/doctrine/orientdb-odm/issues
 
 
 ## Further documentation
