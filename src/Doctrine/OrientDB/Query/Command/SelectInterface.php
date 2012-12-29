@@ -66,4 +66,11 @@ interface SelectInterface
      * @return  Select
      */
     public function limit($limit);
+
+    /**
+     * Sets the number of records to skip.
+     *
+     * @param integer $limit
+     */
+    public function skip($records);
 }

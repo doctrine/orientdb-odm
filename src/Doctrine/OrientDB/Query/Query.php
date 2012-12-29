@@ -385,6 +385,16 @@ class Query implements QueryInterface
     }
 
     /**
+     * Adds a skip clause to the current query.
+     *
+     * @return  $this
+     */
+    public function skip($records)
+    {
+        return $this->command->skip($records);
+    }
+
+    /**
      * Sets the internal command to a LINK, which is capable to create a
      * reference from the $property of $class, with a given $alias.
      * You can specify if the link is one-* or two-way with the $inverse

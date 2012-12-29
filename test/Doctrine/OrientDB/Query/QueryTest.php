@@ -348,6 +348,16 @@ class QueryTest extends TestCase
         $this->assertCommandGives($sql, $this->query->getRaw());
     }
 
+    public function testSkip()
+    {
+        $this->assertInstanceOf('\Doctrine\OrientDB\Query\Command\SelectInterface', $this->query->skip(10));
+
+        $this->query->from(array('class'))->skip(10);
+        $sql = 'SELECT FROM class SKIP 10';
+
+        $this->assertCommandGives($sql, $this->query->getRaw());
+    }
+
     public function testOn()
     {
         $this->assertInstanceOf('\Doctrine\OrientDB\Query\Command\Property\Create', $this->query->create('p', 'c'));

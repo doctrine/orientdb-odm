@@ -241,6 +241,17 @@ class FormatterTest extends TestCase
         $this->assertEquals(null, $formatter::format(array('a#;')));
     }
 
+    public function testFormattingSkip()
+    {
+        $limits = array('@d', '0"', 'a', 2);
+        $formatter = new Formatter\Query\Skip();
+
+        $this->assertEquals('SKIP 10', $formatter::format(array('10')));
+        $this->assertEquals('SKIP 10', $formatter::format(array(10)));
+        $this->assertEquals('SKIP 0', $formatter::format(array(0)));
+        $this->assertNull($formatter::format(array(-1)));
+    }
+
     public function testFormattingFields()
     {
         $fields = array(12, '0', '"\\', '@class\"', '@@rid', 'prop');
