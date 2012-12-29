@@ -181,7 +181,7 @@ abstract class Command implements CommandInterface
 
             $condition = str_replace("?", $value, $condition);
         }
-        
+
         if (!$this->getTokenValue('Where')) {
             $clause = 'WHERE';
         }

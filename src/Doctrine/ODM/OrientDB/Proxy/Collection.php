@@ -34,7 +34,7 @@ class Collection extends AbstractProxy
      * @param Manager   $manager
      * @param array     $rids
      */
-    function __construct(Manager $manager, Array $rids)
+    public function __construct(Manager $manager, Array $rids)
     {
         $this->manager = $manager;
         $this->rids = $rids;

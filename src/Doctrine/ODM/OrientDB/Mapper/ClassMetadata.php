@@ -215,7 +215,7 @@ class ClassMetadata implements DoctrineMetadata
      * @param string $assocName
      * @return boolean
      */
-    function isAssociationInverseSide($assocName)
+    public function isAssociationInverseSide($assocName)
     {
         throw new \Exception('to be implemented');
     }
@@ -226,7 +226,7 @@ class ClassMetadata implements DoctrineMetadata
      * @param string $assocName
      * @return string
      */
-    function getAssociationMappedByTargetField($assocName)
+    public function getAssociationMappedByTargetField($assocName)
     {
         throw new \Exception('to be implemented');
     }
@@ -237,7 +237,7 @@ class ClassMetadata implements DoctrineMetadata
      * @param object $object
      * @return array
      */
-    function getIdentifierValues($object)
+    public function getIdentifierValues($object)
     {
         throw new \Exception('to be implemented');
     }

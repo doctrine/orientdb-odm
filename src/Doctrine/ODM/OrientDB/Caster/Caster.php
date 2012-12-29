@@ -139,11 +139,11 @@ class Caster implements CasterInterface
 
         if (is_numeric($value)) {
             $datetime = new $dateClass();
-            $datetime->setTimestamp($value);   
+            $datetime->setTimestamp($value);
         } else {
             $datetime = new $dateClass($value);
         }
-        
+
         return $datetime;
     }
 
@@ -156,7 +156,7 @@ class Caster implements CasterInterface
     {
         return $this->castDate();
     }
-    
+
     /**
      * Casts the internal value to an integer cmprehended between a range of
      * accepted integers.

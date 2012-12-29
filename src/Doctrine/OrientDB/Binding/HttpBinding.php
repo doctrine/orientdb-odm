@@ -160,6 +160,7 @@ class HttpBinding implements HttpBindingInterface
 
         return $location;
     }
+
     /**
      * Deletes a class.
      *

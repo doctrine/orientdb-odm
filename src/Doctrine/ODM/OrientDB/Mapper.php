@@ -204,7 +204,8 @@ class Mapper
      * @param   LinkTracker $linkTracker
      * @return  object of type $class
      */
-    protected function createDocument($class, \stdClass $orientObject, LinkTracker $linkTracker) {
+    protected function createDocument($class, \stdClass $orientObject, LinkTracker $linkTracker)
+    {
         $proxyClass = $this->getProxyClass($class);
         $document = new $proxyClass();
 

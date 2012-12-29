@@ -215,7 +215,7 @@ class Manager implements ObjectManager
      * @param object $obj
      * @todo implement and test
      */
-    function initializeObject($obj)
+    public function initializeObject($obj)
     {
         throw new \Exception();
     }

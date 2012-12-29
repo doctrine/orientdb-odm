@@ -81,7 +81,7 @@ class Factory implements ClassMetadataFactory
      * @return boolean
      * @todo to implement and test
      */
-    function isTransient($className)
+    public function isTransient($className)
     {
         throw new \Exception();
     }
