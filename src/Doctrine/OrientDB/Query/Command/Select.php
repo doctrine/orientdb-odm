@@ -43,7 +43,7 @@ class Select extends Command implements SelectInterface
      */
     protected function getSchema()
     {
-        return "SELECT :Projections FROM :Target :Where :Between :OrderBy :Limit :Range";
+        return "SELECT :Projections FROM :Target :Where :Between :OrderBy :Skip :Limit :Range";
     }
 
     /**
@@ -119,6 +119,18 @@ class Select extends Command implements SelectInterface
     }
 
     /**
+     * Sets the number of records to skip.
+     *
+     * @param integer $limit
+     */
+    public function skip($records)
+    {
+        $this->setToken('Skip', (int) $records);
+
+        return $this;
+    }
+
+    /**
      * Adds the range to the select.
      *
      * @param integer $limit
@@ -152,6 +164,7 @@ class Select extends Command implements SelectInterface
             'Projections' => "Doctrine\OrientDB\Query\Formatter\Query\Select",
             'OrderBy'     => "Doctrine\OrientDB\Query\Formatter\Query\OrderBy",
             'Limit'       => "Doctrine\OrientDB\Query\Formatter\Query\Limit",
+            'Skip'        => "Doctrine\OrientDB\Query\Formatter\Query\Skip",
             'Range'       => "Doctrine\OrientDB\Query\Formatter\Query\Range",
             'Between'     => "Doctrine\OrientDB\Query\Formatter\Query\Between",
         ));

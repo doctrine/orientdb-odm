@@ -30,6 +30,7 @@ class SelectTest extends TestCase
             ':Between' => array(),
             ':OrderBy' => array(),
             ':Limit' => array(),
+            ':Skip' => array(),
             ':Range' => array(),
         );
 
@@ -77,6 +78,19 @@ class SelectTest extends TestCase
 
         $this->select->limit(20);
         $query = 'SELECT FROM myClass LIMIT 20';
+
+        $this->assertCommandGives($query, $this->select->getRaw());
+    }
+
+    public function testQueryPaginationSkip()
+    {
+        $this->select->skip(0);
+        $query = 'SELECT FROM myClass SKIP 0';
+
+        $this->assertCommandGives($query, $this->select->getRaw());
+
+        $this->select->skip(10)->limit(20);
+        $query = 'SELECT FROM myClass SKIP 10 LIMIT 20';
 
         $this->assertCommandGives($query, $this->select->getRaw());
     }
