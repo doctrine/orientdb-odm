@@ -91,6 +91,33 @@ class HttpBindingTest extends TestCase
         $this->assertHttpStatus(401, $binding->getDatabase('INVALID_DB'), 'Get informations about a non-existing database');
     }
 
+    public function testListDatabasesMethod()
+    {
+        $binding = $this->createHttpBinding();
+
+        $this->assertHttpStatus(200, $response = $binding->listDatabases(TEST_ODB_DATABASE . '_temporary'), 'List existing databases');
+        $this->assertInternalType('array', $response->getData()->databases);
+    }
+
+    public function testCreateDatabaseMethod()
+    {
+        $binding = $this->createHttpBinding();
+
+        $this->assertHttpStatus(200, $binding->createDatabase(TEST_ODB_DATABASE . '_temporary'), 'Create a new database');
+        $this->assertHttpStatus(500, $binding->createDatabase(TEST_ODB_DATABASE . '_temporary'), 'Create an already existing database');
+    }
+
+    /**
+     * @depends testCreateDatabaseMethod
+     */
+    public function testDeleteDatabaseMethod()
+    {
+        $binding = $this->createHttpBinding();
+
+        $this->assertHttpStatus(204, $binding->deleteDatabase(TEST_ODB_DATABASE . '_temporary'), 'Delete a existing database');
+        $this->assertHttpStatus(500, $binding->deleteDatabase(TEST_ODB_DATABASE . '_temporary'), 'Delete a non-existing database');
+    }
+
     public function testCommandMethod()
     {
         $binding = $this->createHttpBinding();

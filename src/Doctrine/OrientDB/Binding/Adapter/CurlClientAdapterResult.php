@@ -38,7 +38,7 @@ class CurlClientAdapterResult implements HttpBindingResultInterface
     /**
      * {@inheritdoc}
      */
-    public function getResult()
+    public function getData()
     {
         if (!$this->isValid()) {
             throw new InvalidQueryException($this->response->getBody(), $this);
@@ -48,7 +48,18 @@ class CurlClientAdapterResult implements HttpBindingResultInterface
             throw new \RuntimeException("Invalid JSON payload");
         }
 
-        return isset($json->result) ? $json->result : null;
+        return $json;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getResult()
+    {
+        $json = $this->getData();
+        $result = isset($json->result) ? $json->result : null;
+
+        return $result;
     }
 
     /**

@@ -23,7 +23,14 @@ namespace Doctrine\OrientDB\Binding;
 interface BindingResultInterface
 {
     /**
-     * Returns the result set from the server.
+     * Returns the whole payload from the server response.
+     *
+     * @return mixed
+     */
+    public function getData();
+
+    /**
+     * Returns the result set from the server response.
      *
      * @return mixed
      */

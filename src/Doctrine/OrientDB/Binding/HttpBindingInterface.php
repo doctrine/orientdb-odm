@@ -103,6 +103,34 @@ interface HttpBindingInterface extends BindingInterface
     public function getDatabase($database = null);
 
     /**
+     * Creates a new database.
+     *
+     * @api
+     * @param string $database
+     * @param string $storage
+     * @param string $type
+     * @return BindingResultInterface
+     */
+    public function createDatabase($database, $storage = 'memory', $type = 'document');
+
+    /**
+     * Lists all the existing databases.
+     *
+     * @api
+     * @return BindingResultInterface
+     */
+    public function listDatabases();
+
+    /**
+     * Deletes an existing database.
+     *
+     * @api
+     * @param string $database
+     * @return BindingResultInterface
+     */
+    public function deleteDatabase($database);
+
+    /**
      * {@inheritdoc}
      */
     public function execute($sql, $return = false);
@@ -123,7 +151,7 @@ interface HttpBindingInterface extends BindingInterface
      * Results can be limited with the $limit parameter and a fetch plan can be used to
      * specify how to retrieve the graph and limit its depth.
      *
-     * It differs from the command because Doctrine\OrientDB defines a query as a SELECT only.
+     * It differs from the command because OrientDB defines a query as a SELECT only.
      *
      * @api
      * @param string $sql SQL query.

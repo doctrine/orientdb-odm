@@ -285,6 +285,52 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
+     * Creates a new database.
+     *
+     * @api
+     * @param string $database
+     * @param string $storage
+     * @param string $type
+     * @return BindingResultInterface
+     */
+    public function createDatabase($database, $storage = 'memory', $type = 'document')
+    {
+        $location = $this->getLocation('database', $database, array($storage, $type));
+        $response = $this->adapter->request('POST', $location);
+
+        return $response;
+    }
+
+    /**
+     * Lists all the existing databases.
+     *
+     * @api
+     * @return BindingResultInterface
+     */
+    public function listDatabases()
+    {
+        $location = $this->getLocation('listDatabases');
+        $response = $this->adapter->request('GET', $location);
+
+        return $response;
+    }
+
+    /**
+     * Deletes an existing database.
+     *
+     * @api
+     * @param string $database
+     * @return BindingResultInterface
+     */
+    public function deleteDatabase($database)
+    {
+        $location = $this->getLocation('database', $database);
+        $response = $this->adapter->request('DELETE', $location);
+
+        return $response;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function execute($sql, $return = false)
