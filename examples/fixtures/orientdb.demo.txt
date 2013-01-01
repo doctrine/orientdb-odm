@@ -7,7 +7,7 @@ connect remote:localhost/friends admin admin
 
 *** demo traversal
 
-dato uns et di amici, recuperare quelli collegati fino a N livelli di profondita'
+give a set of friends, retrieve those connected up to N levels deep
 
 insert into friends (name) values ("Ale")
 insert into friends (name) values ("David")
