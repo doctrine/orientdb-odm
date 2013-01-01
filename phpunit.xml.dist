@@ -30,7 +30,7 @@
 
     <groups>
         <exclude>
-            <!-- <group>integration</group> -->
+            <group>integration</group>
         </exclude>
     </groups>
 

@@ -126,11 +126,16 @@ var_dump($algorithm->solve());
 
 ## Tests
 
-The full test suite can be launched simply by executing `phpunit` from the root directory of the repository.
+The test suite can be launched simply by executing `phpunit` from the root directory of the repository.
 
-By default the suite performs integration tests against a running instance of OrientDB to verify the correct behaviour of our implementation.
-Integration tests are marked using the [@group](http://www.phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.annotations.group)
-annotation so they can be disabled via `phpunit.xml` by adding `integration` to the list of excluded test groups.
+By default the suite does not perform integration tests to verify the correct behaviour of our implementation against a running instance of OrientDB.
+Since integration tests are marked using the [@group](http://www.phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.annotations.group)
+annotation, they can be enabled by default via `phpunit.xml` by adding a comment to the `integration` group in the list of excluded groups or,
+if you just want to execute them on a single execution basis, by launching the suite with the additional `--group` argument:
+
+```
+phpunit --group __nogroup__,integration
+```
 
 It is also possible to generate a HTML report showing the code health of the library using `PHP_CodeBrowser` paired with the following dependencies
 (in addition to `phpunit`):
