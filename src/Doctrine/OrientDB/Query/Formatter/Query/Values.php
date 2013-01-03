@@ -27,11 +27,7 @@ class Values extends Query implements TokenInterface
     {
         foreach ($values as $key => $value) {
             if (is_array($value)) {
-                if (count($value) > 1) {
-                    $values[$key] = "[" . addslashes(self::implode($value)) . "]";
-                } else {
-                    $values[$key] = addslashes(array_shift($value));
-                }
+                $values[$key] = "[" . addslashes(self::implode($value)) . "]";
             } else if ($value === null) {
                 $values[$key] = 'NULL';
             } else if (is_int($value) || is_float($value)) {
