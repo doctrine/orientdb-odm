@@ -486,7 +486,16 @@ EOT;
     protected function mapProperty($document, $property, $value, PropertyAnnotation $annotation, LinkTracker $linkTracker)
     {
         if ($annotation->type) {
-            $value = $this->castProperty($annotation, $value);
+            try {
+                $value = $this->castProperty($annotation, $value);
+            } catch (Exception $e) {
+                if ($annotation->isNullable()) {
+                    $value = null;
+                } else {
+                    throw $e;
+                }
+            }
+            
 
             if ($value instanceOf Rid) {
                 $linkTracker->add($property, $value);

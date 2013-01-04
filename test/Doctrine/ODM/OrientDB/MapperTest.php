@@ -26,6 +26,22 @@ class MapperTest extends TestCase
         $this->mapper = new Mapper(__DIR__."/../../../proxies");
         $this->mapper->setDocumentDirectories(array('test/Doctrine/ODM/OrientDB/Document/Stub' => 'test'));
 
+        $this->emptyJsonRecord = json_decode('{
+            "@type":          "d",
+            "@rid":           "#13:0",
+            "@version":        0,
+            "is_true":         1,
+            "is_false":        0,
+            "@class":         "EmptyAddress",
+            "string":          null,
+            "integer":         null,
+            "image":          "' . base64_encode(fread(fopen(__DIR__ . '/bin/image.jpg', "r"), filesize(__DIR__ . '/bin/image.jpg'))) . '",
+              "embedded":      {
+                                "@type": "d", "@version": 99, "@class": "OCity",
+                                "name": "Rome"
+                               }
+         }');
+
         $this->jsonRecord = json_decode('{
             "@type":          "d",
             "@rid":           "#12:0",
@@ -204,6 +220,13 @@ class MapperTest extends TestCase
               }'),
          );
 
+    }
+    
+    public function testHydratingNullableAttributes()
+    {
+        $result = $this->mapper->hydrate($this->emptyJsonRecord);
+
+        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\EmptyAddress', $result->getDocument());        
     }
 
     public function testConvertPathToClassName()

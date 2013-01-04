@@ -27,9 +27,20 @@ class Property extends \Doctrine\Common\Annotations\Annotation
     public $name;
     public $type;
     public $cast;
+    public $notnull;
 
     public function getCast()
     {
         return $this->cast;
+    }
+    
+    /**
+     * Defines whether an hydrated property can be null.
+     * 
+     * @return bool
+     */
+    public function isNullable()
+    {
+        return $this->notnull === "false";
     }
 }
