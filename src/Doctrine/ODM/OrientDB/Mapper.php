@@ -356,23 +356,37 @@ class Mapper
      */
     protected function generateProxyClass($class, $proxyClassName, $dir)
     {
-        $refClass = new \ReflectionClass($class);
-        $methods = "";
-        $namespace = substr($class, 0, strlen($class) - strlen($proxyClassName) - 1);
+        $refClass           = new \ReflectionClass($class);
+        $methods            = "";
+        $namespace          = substr($class, 0, strlen($class) - strlen($proxyClassName) - 1);
+        $importedNamespaces = "";
 
         foreach ($refClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
             if (!$refMethod->isStatic()) {
-                $parameters = array();
+                $parameters         = array();
+                $parentParameters   = array();
 
                 foreach ($refMethod->getParameters() as $parameter) {
-                    $parameters[] = "$" . $parameter->getName();
+                    if ($parameter->getClass()) {
+                        $importedNamespaces .= <<<EOT
+use {$parameter->getClass()->getName()};
+EOT;
+
+                        $type = $parameter->getClass()->getShortName();
+                    } else {
+                        $type = null;
+                    }
+                    
+                    $parameters[]           = $type . " $" . $parameter->getName();
+                    $parentParameters[]     = "$" . $parameter->getName();
                 }
 
-                $parametersAsString = implode(', ', $parameters);
+                $parametersAsString         = implode(', ', $parameters);
+                $parentParametersAsString   = implode(', ', $parentParameters);
 
                 $methods .= <<<EOT
     public function {$refMethod->getName()}($parametersAsString) {
-        \$parent = parent::{$refMethod->getName()}($parametersAsString);
+        \$parent = parent::{$refMethod->getName()}($parentParametersAsString);
 
         if (!is_null(\$parent)) {
             if (\$parent instanceOf \Doctrine\ODM\OrientDB\Proxy\AbstractProxy) {
@@ -391,6 +405,8 @@ EOT;
 <?php
 
 namespace Doctrine\OrientDB\Proxy$namespace;
+            
+$importedNamespaces
 
 class $proxyClassName extends $class
 {
