@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <orient-server>
-    <handlers />
+    <handlers>
+        <handler class="com.orientechnologies.orient.server.handler.OServerSideScriptInterpreter">
+            <parameters>
+                <parameter name="enabled" value="true" />
+            </parameters>
+        </handler>
+    </handlers>
     <network>
         <protocols>
             <protocol name="http" implementation="com.orientechnologies.orient.server.network.protocol.http.ONetworkProtocolHttpDb"/>
