@@ -69,17 +69,17 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
-     * Returns the URL for the execution of a SQL query.
+     * Returns the URL for the execution of a query.
      *
      * @param string $database
-     * @param string $sql
+     * @param string $query
      * @param int $limit
      * @param string $fetchPlan
      * @return string
      */
-    protected function getQueryLocation($database, $sql, $limit = null, $fetchPlan = null)
+    protected function getQueryLocation($database, $query, $limit = null, $fetchPlan = null, $language = BindingInterface::LANGUAGE_SQLPLUS)
     {
-        $arguments = array('sql', $sql);
+        $arguments = array($language, $query);
 
         if (isset($limit)) {
             $arguments[] = $limit;
@@ -295,7 +295,7 @@ class HttpBinding implements HttpBindingInterface
             return $this->query($sql, -1);
         }
 
-        $response = $this->command($sql, $this->database);
+        $response = $this->command($sql);
 
         return $response;
     }
@@ -303,12 +303,12 @@ class HttpBinding implements HttpBindingInterface
     /**
      * {@inheritdoc}
      */
-    public function command($sql, $database = null)
+    public function command($query, $language = BindingInterface::LANGUAGE_SQLPLUS, $database = null)
     {
         $database = $database ?: $this->database;
         $this->ensureDatabase($database);
 
-        $location = $this->getLocation('command', $database, array('sql', $sql));
+        $location = $this->getLocation('command', $database, array($language, $query));
         $response = $this->adapter->request('POST', $location);
 
         return $response;
@@ -317,9 +317,9 @@ class HttpBinding implements HttpBindingInterface
     /**
      * {@inheritdoc}
      */
-    public function query($sql, $limit = null, $fetchPlan = null, $database = null)
+    public function query($query, $limit = null, $fetchPlan = null, $language = BindingInterface::LANGUAGE_SQLPLUS, $database = null)
     {
-        $location = $this->getQueryLocation($database ?: $this->database, $sql, $limit, $fetchPlan);
+        $location = $this->getQueryLocation($database ?: $this->database, $query, $limit, $fetchPlan, $language);
         $response = $this->adapter->request('GET', $location);
 
         return $response;

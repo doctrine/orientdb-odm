@@ -139,11 +139,12 @@ interface HttpBindingInterface extends BindingInterface
      * Executes a raw command on the given database.
      *
      * @api
-     * @param string $sql
+     * @param string $query
+     * @param string $language
      * @param string $database
      * @return BindingResultInterface
      */
-    public function command($sql, $database = null);
+    public function command($query, $language = BindingInterface::LANGUAGE_SQLPLUS, $database = null);
 
     /**
      * Executes a raw query on the given database.
@@ -154,13 +155,14 @@ interface HttpBindingInterface extends BindingInterface
      * It differs from the command because OrientDB defines a query as a SELECT only.
      *
      * @api
-     * @param string $sql SQL query.
+     * @param string $query SQL or Gremlin query.
      * @param int $limit Maximum number of records (default is 20).
      * @param string $fetchPlan
+     * @param string $language
      * @param string $database
      * @return BindingResultInterface
      */
-    public function query($sql, $limit = null, $fetchPlan = null, $database = null);
+    public function query($query, $limit = null, $fetchPlan = null, $language = BindingInterface::LANGUAGE_SQLPLUS, $database = null);
 
     /**
      * Retrieves a record from the database. An optional fetch plan can be used to

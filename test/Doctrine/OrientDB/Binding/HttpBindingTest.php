@@ -243,16 +243,17 @@ class HttpBindingTest extends TestCase
     {
         $host = TEST_ODB_HOST;
         $port = TEST_ODB_PORT;
+        $database = TEST_ODB_DATABASE;
 
         $adapter = $this->getMock('Doctrine\OrientDB\Binding\Adapter\HttpClientAdapterInterface');
         $adapter->expects($this->once())
                 ->method('request')
-                ->with('GET', "http://$host:$port/query/DB/sql/SELECT%20OMNOMNOMN/2/%2A%3A1%20field1%3A3", null, null);
+                ->with('GET', "http://$host:$port/query/$database/sql/SELECT%20OMNOMNOMN/2/%2A%3A1%20field1%3A3", null, null);
 
-        $parameters = new BindingParameters();
+        $parameters = new BindingParameters($host, $port, null, null, $database);
         $binding = new HttpBinding($parameters, $adapter);
 
-        $binding->query("SELECT OMNOMNOMN", 2, "*:1 field1:3", "DB");
+        $binding->query("SELECT OMNOMNOMN", 2, "*:1 field1:3");
     }
 
     public function testOptionalDatabaseArgumentDoesNotSwitchCurrentDatabase()
@@ -277,7 +278,7 @@ class HttpBindingTest extends TestCase
         $binding->setAdapter($adapter);
 
         $binding->command('SELECT 1');
-        $binding->command('SELECT 2', "HIJACKED");
+        $binding->command('SELECT 2', HttpBinding::LANGUAGE_SQLPLUS, "HIJACKED");
         $binding->command('SELECT 3');
     }
 }

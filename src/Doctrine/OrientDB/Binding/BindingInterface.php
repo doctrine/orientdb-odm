@@ -23,6 +23,9 @@ namespace Doctrine\OrientDB\Binding;
 
 interface BindingInterface
 {
+    const LANGUAGE_SQLPLUS = 'sql';
+    const LANGUAGE_GREMLIN = 'gremlin';
+
     /**
      * Executes an SQL query on the server.
      *
