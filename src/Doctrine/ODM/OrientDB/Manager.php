@@ -77,13 +77,14 @@ class Manager implements ObjectManager
      */
     public function execute(Query $query, $fetchPlan = null)
     {
+        
         $binding = $this->getBinding();
         $results = $binding->execute($query->getRaw(), $query->shouldReturn(), $fetchPlan)->getResult();
 
         if (is_array($results)) {
             $collection = $this->getMapper()->hydrateCollection($results);
             $collection = $this->finalizeCollection($collection);
-
+            
             return $collection;
         }
 
@@ -107,12 +108,12 @@ class Manager implements ObjectManager
      * @return  Proxy|object
      * @throws  OClassNotFoundException|CastingMismatchException|Exception
      */
-    public function find($rid, $fetchPlan = null)
+    public function find($rid, $fetchPlan = '*:1', $lazy = true)
     {
         $validator = new RidValidator;
         $rid = $validator->check($rid);
 
-        if ($fetchPlan === false) {
+        if ($lazy === false) {
             return new Proxy($this, $rid);
         }
 
@@ -139,15 +140,15 @@ class Manager implements ObjectManager
      * @return  Proxy\Collection|array
      * @throws  Doctrine\OrientDB\Binding\InvalidQueryException
      */
-    public function findRecords(Array $rids, $fetchPlan = null)
+    public function findRecords(Array $rids, $fetchPlan = null, $lazy = true)
     {
-        if ($fetchPlan === false) {
+        if ($lazy === false) {
             return new Proxy\Collection($this, $rids);
         }
 
         $query = new Query($rids);
         $binding = $this->getBinding();
-        $results = $binding->execute($query->getRaw(), $fetchPlan)->getResult();
+        $results = $binding->execute($query->getRaw(), true, $fetchPlan)->getResult();
 
         if (is_array($results)) {
             $collection = $this->getMapper()->hydrateCollection($results);
@@ -292,9 +293,9 @@ class Manager implements ObjectManager
      */
     protected function doFind($rid, $fetchPlan = null)
     {
-        $query = new Query(array($rid));
-        $binding = $this->getBinding();        
-        $results = $binding->execute($query->getRaw(), true, $fetchPlan)->getResult();
+        $query      = new Query(array($rid));
+        $binding    = $this->getBinding(); 
+        $results    = $binding->execute($query->getRaw(), true, $fetchPlan)->getResult();
 
         if (isset($results) && count($results)) {
           $record = is_array($results) ? array_shift($results) : $results;
@@ -320,7 +321,8 @@ class Manager implements ObjectManager
             
             if ($value instanceOf Rid\Collection || $value instanceOf Rid) {
                 $method = $value instanceof Rid\Collection ? 'findRecords' : 'find';
-                $result->getDocument()->$setter($this->$method($value->getValue(), false));
+                $value = $this->$method($value->getValue(), null, false);
+                $result->getDocument()->$setter($value);
             } elseif (is_array($value)) {
                 $value = $this->finalizeCollection($value);
                 $result->getDocument()->$setter($value);

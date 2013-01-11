@@ -21,6 +21,21 @@ class ManagerTest extends TestCase
     /**
      * @group integration
      */
+    public function testGettingARelatedCollectionViaLazyLoading()
+    {
+        $manager = $this->createManager(array(
+            'mismatches_tolerance' => true,
+        ));
+
+        $post       = $manager->find('94:0', '*:0');
+        $comments   = $post->getComments();
+
+        $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
+    }
+    
+    /**
+     * @group integration
+     */
     public function testExecutionOfASelect()
     {
         $manager = $this->createManager();
@@ -121,8 +136,8 @@ class ManagerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post = $manager->find('94:0');
-        $comments = $post->getComments();
+        $post       = $manager->find('94:0');
+        $comments   = $post->getComments();
 
         $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
     }

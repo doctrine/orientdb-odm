@@ -541,10 +541,9 @@ class CasterTest extends TestCase
         $this->ensureProxy($orientDocument);
 
         $address = new \Doctrine\OrientDB\Proxy\test\Integration\Document\Address();
-        $result  = new \Doctrine\ODM\OrientDB\Mapper\Hydration\Result($address, new \Doctrine\ODM\OrientDB\Mapper\LinkTracker);
 
         return array(
-            array(new \Doctrine\ODM\OrientDB\Proxy\Value($result), $orientDocument),
+            array(new \Doctrine\ODM\OrientDB\Proxy\Value($address), $orientDocument),
             array(new Rid('#10:3'), '#10:3'),
             array(null, 'pete')
         );

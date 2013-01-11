@@ -296,7 +296,7 @@ class Caster implements CasterInterface
     public function castLink()
     {
         if ($this->value instanceOf \stdClass) {
-            return new ValueProxy($this->getMapper()->hydrate($this->value));
+            return new ValueProxy($this->getMapper()->hydrate($this->value)->getDocument());
         } else {
             try {
                 return new Rid($this->value);
@@ -506,7 +506,20 @@ class Caster implements CasterInterface
     {
         foreach ($this->value as $key => $value) {
             if (is_object($value)) {
-                return $this->getMapper()->hydrateCollection($this->value);
+                
+                /**
+                 * OrientDB bug
+                 * 
+                 * @see https://github.com/nuvolabase/orientdb/issues/1277 
+                 */
+                $collection = array();
+                foreach ($this->value as $key => $value) {
+                    if (is_object($value)) {
+                        $collection[$key] = $value;
+                    }
+                }
+                
+                return $this->getMapper()->hydrateCollection($collection);
             }
 
             try {
