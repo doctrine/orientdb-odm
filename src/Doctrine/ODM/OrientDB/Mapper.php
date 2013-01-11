@@ -150,11 +150,10 @@ class Mapper
             $orientClass = $orientObject->$classProperty;
 
             if ($orientClass) {
-                $linkTracker = new LinkTracker();
-
-                $class = $this->findClassMappingInDirectories($orientClass);
-                $document = $this->createDocument($class, $orientObject, $linkTracker);
-
+                $linkTracker    = new LinkTracker();
+                $class          = $this->findClassMappingInDirectories($orientClass);
+                $document       = $this->createDocument($class, $orientObject, $linkTracker);
+                
                 return new Hydration\Result($document, $linkTracker);
             }
         }
@@ -513,7 +512,7 @@ EOT;
             }
             
 
-            if ($value instanceOf Rid) {
+            if ($value instanceof Rid || $value instanceOf Rid\Collection || is_array($value)) {
                 $linkTracker->add($property, $value);
             }
         }
@@ -524,8 +523,8 @@ EOT;
             $document->$setter($value);
         }
         else {
-            $refClass = new \ReflectionObject($document);
-            $refProperty = $refClass->getProperty($property);
+            $refClass       = new \ReflectionObject($document);
+            $refProperty    = $refClass->getProperty($property);
 
             if ($refProperty->isPublic()) {
                 $document->$property = $value;

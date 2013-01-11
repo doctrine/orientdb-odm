@@ -40,6 +40,15 @@ class RepositoryTest extends TestCase
         $this->assertInstanceOf($class, $repository->find('94:0'));
     }
 
+    public function testYouCanSpecifyFetchplansWithTheRepo()
+    {
+        $class = 'test\Integration\Document\Post';
+        $repository = $this->createRepository($class);
+
+        $this->assertInstanceOf('Doctrine\ODM\OrientDB\Proxy\Collection', $repository->find('94:0', '*:0')->comments);
+        $this->assertinternalType('array', $repository->find('94:0')->comments);
+    }
+
     /**
      * @expectedException Doctrine\OrientDB\Exception
      */

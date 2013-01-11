@@ -89,9 +89,9 @@ class Repository implements ObjectRepository
      * @param   $rid The identifier.
      * @return  object The object.
      */
-    public function find($rid)
+    public function find($rid, $fetchPlan = '*:-1')
     {
-        $document = $this->getManager()->find($rid);
+        $document = $this->getManager()->find($rid, $fetchPlan);
 
         if (!$document) {
             return null;
@@ -130,7 +130,7 @@ class Repository implements ObjectRepository
      * @param int|null $offset
      * @return mixed The objects.
      */
-    public function findBy(array $criteria, array $orderBy = array(), $limit = null, $offset = null)
+    public function findBy(array $criteria, array $orderBy = array(), $limit = null, $offset = null, $fetchPlan = '*:-1')
     {
         $results = array();
 
@@ -149,7 +149,7 @@ class Repository implements ObjectRepository
                 $query->limit($limit);
             }
 
-            $collection = $this->getManager()->execute($query);
+            $collection = $this->getManager()->execute($query, $fetchPlan);
 
             if (!is_array($collection)) {
                 throw new Exception(

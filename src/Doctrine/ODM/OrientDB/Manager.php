@@ -75,10 +75,10 @@ class Manager implements ObjectManager
      * @param   Query $query
      * @return  Array
      */
-    public function execute(Query $query)
+    public function execute(Query $query, $fetchPlan = null)
     {
         $binding = $this->getBinding();
-        $results = $binding->execute($query->getRaw(), $query->shouldReturn())->getResult();
+        $results = $binding->execute($query->getRaw(), $query->shouldReturn(), $fetchPlan)->getResult();
 
         if (is_array($results)) {
             $collection = $this->getMapper()->hydrateCollection($results);
@@ -293,8 +293,8 @@ class Manager implements ObjectManager
     protected function doFind($rid, $fetchPlan = null)
     {
         $query = new Query(array($rid));
-        $binding = $this->getBinding();
-        $results = $binding->execute($query->getRaw(), $fetchPlan)->getResult();
+        $binding = $this->getBinding();        
+        $results = $binding->execute($query->getRaw(), true, $fetchPlan)->getResult();
 
         if (isset($results) && count($results)) {
           $record = is_array($results) ? array_shift($results) : $results;
@@ -317,8 +317,14 @@ class Manager implements ObjectManager
     {
         foreach ($result->getLinkTracker()->getProperties() as $property => $value) {
             $setter = 'set' . ucfirst($property);
-            $method = $value instanceof Rid\Collection ? 'findRecords' : 'find';
-            $result->getDocument()->$setter($this->$method($value->getValue(), false));
+            
+            if ($value instanceOf Rid\Collection || $value instanceOf Rid) {
+                $method = $value instanceof Rid\Collection ? 'findRecords' : 'find';
+                $result->getDocument()->$setter($this->$method($value->getValue(), false));
+            } elseif (is_array($value)) {
+                $value = $this->finalizeCollection($value);
+                $result->getDocument()->$setter($value);
+            }
         }
 
         return $result->getDocument();
