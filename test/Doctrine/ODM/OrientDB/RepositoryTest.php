@@ -77,4 +77,38 @@ class RepositoryTest extends TestCase
 
         $this->assertSame(2, count($documents));
     }
+    
+    public function testYouCanExecuteFindByQueries()
+    {
+        $repository = $this->createRepository();
+        $documents  = $repository->findByUsername();
+        
+        $this->assertSame(2, count($documents));
+    }
+    
+    public function testYouCanExecuteFindOneByQueries()
+    {
+        $repository = $this->createRepository();
+        $documents  = $repository->findOneByUsername();
+        
+        $this->assertSame(1, count($documents));
+    }
+
+    /**
+     * @expectedException RuntimeException 
+     */
+    public function testYouCantCallWhateverMethodOfARepository()
+    {
+        $repository = new Repository('My\\Class', new Manager(new Mapper('.'), new \Doctrine\OrientDB\Binding\HttpBinding(new \Doctrine\OrientDB\Binding\BindingParameters())), new Mapper('.'));
+        $documents  = $repository->findOn();
+    }
+
+    /**
+     * @expectedException RuntimeException 
+     */
+    public function testYouCanOnlyPassObjectsHavingGetRidMethodAsArgumentsOfFindSomeBySomething()
+    {
+        $repository = new Repository('My\\Class', new Manager(new Mapper('.'), new \Doctrine\OrientDB\Binding\HttpBinding(new \Doctrine\OrientDB\Binding\BindingParameters())), new Mapper('.'));
+        $documents  = $repository->findOneByJeex(new \stdClass());
+    }
 }

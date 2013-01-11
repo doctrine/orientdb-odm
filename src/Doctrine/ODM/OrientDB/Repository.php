@@ -25,6 +25,8 @@ use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\OrientDB\Query\Query;
 use Doctrine\OrientDB\Exception;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Common\Util\Inflector;
+use RuntimeException;
 
 class Repository implements ObjectRepository
 {
@@ -44,6 +46,41 @@ class Repository implements ObjectRepository
         $this->className = $className;
         $this->manager = $manager;
         $this->mapper = $mapper;
+    }
+    
+    /**
+     * Convenient method that intercepts the find*By*() calls.
+     * 
+     * @param string $method
+     * @param array $arguments
+     * @return method
+     * @throws RuntimeException 
+     */
+    public function __call($method, $arguments)
+    {
+        if (strpos($method, 'findOneBy') === 0) {
+            $property = substr($method, 9);
+            $method   = 'findOneBy';
+        } elseif (strpos($method, 'findBy') === 0) {
+            $property = (substr($method, 6));
+            $method   = 'findBy';
+        } else {
+            throw new RuntimeException(sprintf("The %s repository class does not have a method %s", get_called_class(), $method));
+        }
+
+        $property = Inflector::tableize($property);
+
+        foreach ($arguments as $position => $argument) {
+            if (is_object($argument)) {
+                if (method_exists($argument, 'getRid')) {
+                    $arguments[$position] = $argument->getRid();
+                } else {
+                    throw new RuntimeException("When calling \$repository->find*By*(), you can only pass, as arguments, objects that have the getRid() method (shortly, entitites)");
+                }
+            }
+        }
+        
+        return $this->$method($arguments);
     }
 
     /**
