@@ -274,7 +274,7 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals($after, $before - 1);
     }
 
-    public function tetIndexDrop()
+    public function testIndexDrop()
     {
         $query = new Query();
 
@@ -289,6 +289,14 @@ class QueryBuilderTest extends TestCase
 
         $query->unindex('in', 'OGraphEdge');
         $this->assertHttpStatus(204, $this->doQuery($query));
+    }
+
+    public function testRebuildIndex()
+    {
+        $query = new Query();
+        $query->rebuild('*');
+
+        $this->assertHttpStatus(200,$this->doQuery($query));
     }
 
     public function testFindReferences()

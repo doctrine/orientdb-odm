@@ -56,6 +56,7 @@ class Query implements QueryInterface
         'index.put'         => 'Doctrine\OrientDB\Query\Command\Index\Put',
         'index.remove'      => 'Doctrine\OrientDB\Query\Command\Index\Remove',
         'index.lookup'      => 'Doctrine\OrientDB\Query\Command\Index\Lookup',
+        'index.rebuild'     => 'Doctrine\OrientDB\Query\Command\Index\Rebuild',
         'link'              => 'Doctrine\OrientDB\Query\Command\Link',
     );
 
@@ -346,6 +347,19 @@ class Query implements QueryInterface
     {
         $commandClass = $this->getCommandClass('index.remove');
         $this->command = new $commandClass($indexName, $key, $rid);
+
+        return $this->command;
+    }
+
+    /**
+     * Rebuild the index $indexName
+     *
+     * @param string $indexName
+     */
+    public function rebuild($indexName)
+    {
+        $commandClass = $this->getCommandClass('index.rebuild');
+        $this->command = new $commandClass($indexName);
 
         return $this->command;
     }

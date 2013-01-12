@@ -248,6 +248,19 @@ class QueryTest extends TestCase
         $this->assertEquals($sql, $this->query->getRaw());
     }
 
+    public function testRebuildAnIndex()
+    {
+        $this->query->rebuild('Profile.nick');
+        $sql = 'REBUILD INDEX Profile.nick';
+
+        $this->assertEquals($sql, $this->query->getRaw());
+
+        $this->query->rebuild('*');
+        $sql = 'REBUILD INDEX *';
+
+        $this->assertEquals($sql, $this->query->getRaw());
+    }
+
     public function testDeleteSQLQuery()
     {
         $this->query
