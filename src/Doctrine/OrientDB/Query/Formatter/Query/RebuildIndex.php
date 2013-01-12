@@ -29,10 +29,13 @@ class RebuildIndex extends Query implements TokenInterface
         if (count($values) == 1) {
             $index = $values[0];
 
-            if (strlen($index) == 1 && $index[0] == '*')
-                return '*';
+            if ($index == '*'){
+                return $index;
+            }
 
-            return self::implodeRegular($values, '\.');
+            if (preg_match('/\w+.\w+/',$index)){
+                return self::implodeRegular($values, '\.');
+            }
         }
 
         return null;
