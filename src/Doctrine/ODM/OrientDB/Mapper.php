@@ -323,7 +323,7 @@ class Mapper
     public function getClassByPath($file, $namespace)
     {
         $absPath    = realpath($file);
-        $namespaces = explode('/', $absPath);
+        $namespaces = explode(DIRECTORY_SEPARATOR, $absPath);
         $start      = false;
         $i          = 0;
         $chunk      = explode('\\', $namespace);
