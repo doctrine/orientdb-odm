@@ -45,12 +45,13 @@ class CurlClientAdapterResult implements HttpBindingResultInterface
         }
         $body = $this->response->getBody();
 
-        if (false === $json = json_decode($body)) {
+        if (null === $json = json_decode($body)) {
+            if ($this->isValidRid($body)) {
+                return $body;
+            } elseif ($body === "") {
+                return true;
+            }
             throw new \RuntimeException("Invalid JSON payload");
-        }
-
-        if(is_null($json) && $this->isValidRid($body)){
-            return $body;
         }
 
         return $json;
@@ -86,7 +87,7 @@ class CurlClientAdapterResult implements HttpBindingResultInterface
     /**
      * {@inheritdoc}
      */
-    public function isValidRid($body)
+    protected function isValidRid($body)
     {
         return preg_match('/#\d+:\d+/', $body);
     }
