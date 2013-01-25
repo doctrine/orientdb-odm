@@ -257,6 +257,9 @@ class Manager implements ObjectManager
      */
     public function remove($object)
     {
+        if($this->checkExists($object) === false){
+            return false;
+        }
         $response = $this->getBinding()->deleteDocument($object->getRid());
         $result = $response->getData();
         $object->setRid(null);
