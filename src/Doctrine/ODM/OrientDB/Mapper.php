@@ -33,9 +33,11 @@ use Doctrine\ODM\OrientDB\Types\Rid;
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Query\Query;
 use Doctrine\OrientDB\Filesystem\Iterator\Regex as RegexIterator;
-use Doctrine\Common\Util\Inflector as DoctrineInflector;
+use Doctrine\OrientDB\Util\Inflector\Cached as Inflector;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\Finder\Finder;
+use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\ArrayCache;
 
 class Mapper
 {
@@ -44,6 +46,10 @@ class Mapper
     protected $annotationReader;
     protected $inflector;
     protected $documentProxiesDirectory;
+    protected $classMap                       = array();
+    protected $cache;
+    protected $caster;
+    protected $castedProperties          = array();
 
     const ANNOTATION_PROPERTY_CLASS = 'Doctrine\ODM\OrientDB\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Doctrine\ODM\OrientDB\Mapper\Annotations\Document';
@@ -54,16 +60,20 @@ class Mapper
      *
      * @param string                    $documentProxyDirectory
      * @param AnnotationReaderInterface $annotationReader
-     * @param DoctrineInflector         $inflector
+     * @param Inflector         $inflector
      */
     public function __construct(
         $documentProxyDirectory,
         AnnotationReaderInterface $annotationReader = null,
-        DoctrineInflector $inflector = null
+        Inflector $inflector = null,
+        Cache $cache = null,
+        Caster $caster = null
     ) {
-        $this->documentProxyDirectory = $documentProxyDirectory;
-        $this->annotationReader = $annotationReader ?: new Reader;
-        $this->inflector = $inflector ?: new DoctrineInflector;
+        $this->documentProxyDirectory   = $documentProxyDirectory;
+        $this->annotationReader         = $annotationReader ?: new Reader;
+        $this->cache                    = $cache ?: new ArrayCache;
+        $this->inflector                = $inflector ?: new Inflector();
+        $this->caster                   = $caster ?: new Caster($this);
     }
 
     /**
@@ -222,14 +232,34 @@ class Mapper
      */
     protected function castProperty($annotation, $propertyValue)
     {
-        $caster = new Caster($this);
-        $method = 'cast' . $this->inflector->camelize($annotation->type);
+        $propertyId = $this->getCastedPropertyCacheKey($annotation->type, $propertyValue);
+        
+        if (!isset($this->castedProperties[$propertyId])) {
+            $method = 'cast' . $this->inflector->camelize($annotation->type);
 
-        $caster->setValue($propertyValue);
-        $caster->setProperty('annotation', $annotation);
-        $this->verifyCastingSupport($caster, $method, $annotation->type);
+            $this->getCaster()->setValue($propertyValue);
+            $this->getCaster()->setProperty('annotation', $annotation);
+            $this->verifyCastingSupport($this->getCaster(), $method, $annotation->type);
 
-        return $caster->$method();
+            $this->castedProperties[$propertyId] = $this->getCaster()->$method();
+        }
+
+        return $this->castedProperties[$propertyId];
+    }
+    
+    protected function getCastedPropertyCacheKey($type, $value)
+    {
+        return get_class() . "_casted_property_" . $type . "_" . serialize($value);
+    }
+    
+    /**
+     * Returns the caching layer of the mapper.
+     *
+     * @return Doctrine\Common\Cache\Cache
+     */
+    protected function getCache()
+    {
+        return $this->cache;
     }
 
     /**
@@ -297,6 +327,10 @@ class Mapper
     protected function findClassMappingInDirectory($OClass, $directory, $namespace)
     {
         $finder = new Finder();
+        
+        if (isset($this->classMap[$OClass])) {
+            return $this->classMap[$OClass];
+        }
 
         foreach ($finder->files()->name('*.php')->in($directory) as $file) {
             $class = $this->getClassByPath($file, $namespace);
@@ -305,6 +339,7 @@ class Mapper
                 $annotation = $this->getClassAnnotation($class);
 
                 if ($annotation && $annotation->hasMatchingClass($OClass)) {
+                    $this->classMap[$OClass] = $class;
                     return $class;
                 }
             }
@@ -415,6 +450,16 @@ EOT;
 
         file_put_contents("$dir/$proxyClassName.php", $proxy);
     }
+    
+    /**
+     * Returns the caster instance.
+     * 
+     * @return Doctrine\ODM\OrientDB\Caster\Caster
+     */
+    protected function getCaster()
+    {
+        return $this->caster;
+    }
 
     /**
      * Returns the directory in which all the documents' proxy classes are
@@ -465,18 +510,24 @@ EOT;
      */
     protected function getObjectPropertyAnnotations($document)
     {
-        $refObject   = new \ReflectionObject($document);
-        $annotations = array();
+        $cacheKey    = "object_property_annotations_" . get_class($document);
+        
+        if (!$this->getCache()->contains($cacheKey)) {
+            $refObject   = new \ReflectionObject($document);
+            $annotations = array();
 
-        foreach ($refObject->getProperties() as $property) {
-            $annotation = $this->getPropertyAnnotation($property);
+            foreach ($refObject->getProperties() as $property) {
+                $annotation = $this->getPropertyAnnotation($property);
 
-            if ($annotation) {
-                $annotations[$property->getName()] = $annotation;
+                if ($annotation) {
+                    $annotations[$property->getName()] = $annotation;
+                }
             }
-        }
 
-        return $annotations;
+            $this->getCache()->save($cacheKey, $annotations);
+        }
+        
+        return $this->getCache()->fetch($cacheKey);
     }
 
     /**
