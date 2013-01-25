@@ -389,10 +389,7 @@ class Manager implements ObjectManager
             $data[preg_replace('/[^a-z]/i', null, $key)] = $value;
             unset($data[$key]);
         }
-        if(isset($data['class'])){
-            $data['@class'] = $data['class'];
-            unset($data['class']);
-        }
+        $data['@class'] = join('', array_slice(explode('\\', get_class($object)), -1));
         if(array_key_exists('rid', $data)){
             unset($data['rid']);
         }
