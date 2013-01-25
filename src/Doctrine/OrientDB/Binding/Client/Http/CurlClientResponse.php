@@ -118,6 +118,7 @@ class CurlClientResponse
             self::STATUS_NO_CONTENT,
             self::STATUS_RESET_CONTENT,
             self::STATUS_PARTIAL_CONTENT,
+            self::STATUS_CREATED
         );
     }
 
