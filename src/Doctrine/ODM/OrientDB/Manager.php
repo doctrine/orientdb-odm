@@ -167,7 +167,7 @@ class Manager implements ObjectManager
      */
     public function flush()
     {
-        throw new \Exception;
+        return;
     }
 
     /**
@@ -238,7 +238,16 @@ class Manager implements ObjectManager
      */
     public function persist($object)
     {
-        throw new \Exception();
+        $json = $this->toJson($object);
+        if($this->checkExists($object) === false){
+            $response = $this->getBinding()->postDocument($json);
+            $rid = $response->getData();
+            $object->setRid($rid);    
+        } else {
+            $response = $this->getBinding()->putDocument($object->getRid(), $json);
+            $result = $response->getData();
+        }
+        return $object;
     }
 
     /**
@@ -248,7 +257,10 @@ class Manager implements ObjectManager
      */
     public function remove($object)
     {
-        throw new \Exception();
+        $response = $this->getBinding()->deleteDocument($object->getRid());
+        $result = $response->getData();
+        $object->setRid(null);
+        return $result;
     }
 
     /**
@@ -366,4 +378,31 @@ class Manager implements ObjectManager
     {
         return $this->binding;
     }
+
+    protected function toJson($object)
+    {
+        $data = (array) $object;
+        foreach ($data as $key => $value) {
+            $data[preg_replace('/[^a-z]/i', null, $key)] = $value;
+            unset($data[$key]);
+        }
+        if(isset($data['class'])){
+            $data['@class'] = $data['class'];
+            unset($data['class']);
+        }
+        if(array_key_exists('rid', $data)){
+            unset($data['rid']);
+        }
+        return json_encode($data);
+    }
+
+    protected function checkExists($object)
+    {
+        $rid = $object->getRid();
+        if(empty($rid)){
+            return false;
+        }
+        return true;
+    }
+
 }
