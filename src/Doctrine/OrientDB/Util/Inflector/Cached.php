@@ -3,7 +3,6 @@
 namespace Doctrine\OrientDB\Util\Inflector;
 
 use Doctrine\Common\Util\Inflector;
-use Doctrine\Common\Cache\Cache;
 
 class Cached extends Inflector
 {
@@ -13,41 +12,35 @@ class Cached extends Inflector
      * @inheritdoc
      */
     public static function tableize($word)
-    {
-        $cacheKey = "tableize_" . $word;
-        
-        if (!isset(static::$cache[$cacheKey])) {
-            static::$cache[$cacheKey] = parent::tableize($word);
+    {       
+        if (!isset(static::$cache['tableize'][$word])) {
+            static::$cache['tableize'][$word] = parent::tableize($word);
         }
         
-        return static::$cache[$cacheKey];
+        return static::$cache['tableize'][$word];
     }
 
     /**
      * @inheritdoc
      */
     public static function classify($word)
-    {
-        $cacheKey = "classify_" . $word;
-        
-        if (!isset(static::$cache[$cacheKey])) {
-            static::$cache[$cacheKey] = parent::classify($word);
+    {       
+        if (!isset(static::$cache['classify'][$word])) {
+            static::$cache['classify'][$word] = parent::classify($word);
         }
         
-        return static::$cache[$cacheKey];
+        return static::$cache['classify'][$word];
     }
 
     /**
      * @inheritdoc
      */
     public static function camelize($word)
-    {
-        $cacheKey = "camelize_" . $word;
-        
-        if (!isset(static::$cache[$cacheKey])) {
-            static::$cache[$cacheKey] = parent::camelize($word);
+    {        
+        if (!isset(static::$cache['camelize'][$word])) {
+            static::$cache['camelize'][$word] = parent::camelize($word);
         }
         
-        return static::$cache[$cacheKey];
+        return static::$cache['camelize'][$word];
     }
 }
