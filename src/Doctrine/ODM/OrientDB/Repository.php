@@ -145,6 +145,10 @@ class Repository implements ObjectRepository
                 $query->orderBy("$key $order");
             }
 
+            if ($offset) {
+                $query->skip($offset);
+            }
+
             if ($limit) {
                 $query->limit($limit);
             }
