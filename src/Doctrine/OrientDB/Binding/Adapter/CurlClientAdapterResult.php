@@ -43,8 +43,14 @@ class CurlClientAdapterResult implements HttpBindingResultInterface
         if (!$this->isValid()) {
             throw new InvalidQueryException($this->response->getBody(), $this);
         }
+        $body = $this->response->getBody();
 
-        if (false === $json = json_decode($this->response->getBody())) {
+        if (null === $json = json_decode($body)) {
+            if ($this->isValidRid($body)) {
+                return $body;
+            } elseif ($body === "") {
+                return true;
+            }
             throw new \RuntimeException("Invalid JSON payload");
         }
 
@@ -76,5 +82,13 @@ class CurlClientAdapterResult implements HttpBindingResultInterface
     public function getInnerResponse()
     {
         return $this->response;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isValidRid($body)
+    {
+        return preg_match('/#\d+:\d+/', $body);
     }
 }
