@@ -71,7 +71,7 @@ class Caster implements CasterInterface
      */
     public function castBoolean()
     {
-        if (is_bool($this->value) || $this->value === null) {
+        if (is_bool($this->value)) {
             return $this->value;
         }
 
@@ -187,7 +187,7 @@ class Caster implements CasterInterface
             return (float) $value;
         };
 
-        if (is_numeric($this->value) || $this->value === null) {
+        if (is_numeric($this->value)) {
             return $castFunction($this->value);
         } else {
             return $this->handleMismatch($castFunction, 'decimal');
@@ -257,7 +257,7 @@ class Caster implements CasterInterface
             return (float) $value;
         };
 
-        if (is_numeric($this->value) || $this->value === null) {
+        if (is_numeric($this->value)) {
             return $castFunction($this->value);
         } else {
             return $this->handleMismatch($castFunction, 'double');
@@ -275,7 +275,7 @@ class Caster implements CasterInterface
             return is_object($value) ? 1 : (int) $value;
         };
 
-        if (is_numeric($this->value) || $this->value === null) {
+        if (is_numeric($this->value)) {
             return $castFunction($this->value);
         } else {
             return $this->handleMismatch($castFunction, 'integer');
@@ -383,7 +383,7 @@ class Caster implements CasterInterface
             return is_array($value) ? 'Array' : (string) $value;
         };
 
-        if (is_string($this->value) || $this->value === null) {
+        if (is_string($this->value)) {
             return $castFunction($this->value);
         } else {
             return $this->handleMismatch($castFunction, 'string');
