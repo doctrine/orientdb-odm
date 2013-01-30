@@ -21,6 +21,7 @@
 
 namespace Doctrine\ODM\OrientDB;
 
+use Doctrine\Common\EventManager;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Mapper\Hydration\Result;
 use Doctrine\ODM\OrientDB\Types\Rid;
@@ -41,18 +42,37 @@ class Manager implements ObjectManager
     protected $metadataFactory;
 
     /**
+     * The DocumentRepository instances.
+     *
+     * @var \Doctrine\Common\Persistence\ObjectRepository[]
+     */
+    private $repositories = array();
+
+    /**
      * Instatiates a new Mapper, injecting the $mapper that will be used to
      * hydrate record retrieved through the $binding.
      *
      * @param   Mapper           $mapper
      * @param   BindingInterface $binding
      * @param   MetadataFactory  $metadataFactory
+     * @param   EventManager     $eventManager
      */
-    public function __construct(Mapper $mapper, BindingInterface $binding, MetadataFactory $metadataFactory = null)
+    public function __construct(Mapper $mapper, BindingInterface $binding, MetadataFactory $metadataFactory = null, EventManager $eventManager = null)
     {
         $this->mapper = $mapper;
         $this->binding = $binding;
         $this->metadataFactory = $metadataFactory ?: new ClassMetadataFactory($mapper);
+        $this->eventManager = $eventManager ?: new EventManager();
+    }
+
+    /**
+     * Gets the EventManager used by the DocumentManager.
+     *
+     * @return EventManager
+     */
+    public function getEventManager()
+    {
+        return $this->eventManager;
     }
 
     /**
@@ -138,7 +158,7 @@ class Manager implements ObjectManager
      * @param   string      $rid
      * @param   mixed       $fetchPlan
      * @return  Proxy\Collection|array
-     * @throws  Doctrine\OrientDB\Binding\InvalidQueryException
+     * @throws  \Doctrine\OrientDB\Binding\InvalidQueryException
      */
     public function findRecords(Array $rids, $fetchPlan = null, $lazy = true)
     {
@@ -174,7 +194,7 @@ class Manager implements ObjectManager
      * Gets the $class Metadata.
      *
      * @param   string $class
-     * @return  Doctrine\Common\Persistence\Mapping\ClassMetadata
+     * @return  \Doctrine\ODM\OrientDb\Mapper\ClassMetadata
      */
     public function getClassMetadata($class)
     {
@@ -199,13 +219,20 @@ class Manager implements ObjectManager
      */
     public function getRepository($className)
     {
-        $repositoryClass    = $className . "Repository";
+        if (isset($this->repositories[$className])) {
+            return $this->repositories[$className];
+        }
+        $metadata = $this->getClassMetadata($className);
+        $customRepositoryClassName = $metadata->customRepositoryClassName;
 
-        if (class_exists($repositoryClass)) {
-            return new $repositoryClass($className, $this, $this->getMapper());
+        if ($customRepositoryClassName !== null) {
+            $repository = new $customRepositoryClassName($className, $this, $this->getMapper(), $this->getEventManager());
+        } else {
+            $repository = new Repository($className, $this, $this->getMapper(), $this->getEventManager());
         }
 
-        return new Repository($className, $this, $this->getMapper());
+        $this->repositories[$className] = $repository;
+        return $repository;
     }
 
     /**

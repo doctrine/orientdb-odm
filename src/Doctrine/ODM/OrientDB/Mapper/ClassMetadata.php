@@ -32,6 +32,14 @@ class ClassMetadata implements DoctrineMetadata
     private $multipleAssociations = array('linklist', 'linkset', 'linkmap');
 
     /**
+     * The name of the custom repository class used for the document class.
+     * (Optional).
+     *
+     * @var string
+     */
+    public $customRepositoryClassName;
+
+    /**
      * Instantiates a new Metadata for the given $className.
      *
      * @param string        $className
