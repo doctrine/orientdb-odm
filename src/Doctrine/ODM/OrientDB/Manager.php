@@ -386,8 +386,15 @@ class Manager implements ObjectManager
     {
         $data = (array) $object;
         foreach ($data as $key => $value) {
-            $data[preg_replace('/[^a-z]/i', null, $key)] = $value;
+            $newKey = preg_replace('/[^a-z]/i', null, $key);
+            $data[$newKey] = $value;
             unset($data[$key]);
+            if ( $value instanceof \Doctrine\ODM\OrientDB\Proxy\Value ) {
+                $object = $value->__invoke();
+                $data[$newKey] = $object->getRid(); 
+            }elseif ( $value instanceof \DateTime ) {
+                $data[$newKey] = $value->format('Y-m-d H:i:s');
+            }
         }
         $data['@class'] = join('', array_slice(explode('\\', get_class($object)), -1));
         if(array_key_exists('rid', $data)){
