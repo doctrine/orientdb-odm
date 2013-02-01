@@ -400,6 +400,10 @@ class Manager implements ObjectManager
         if(array_key_exists('rid', $data)){
             unset($data['rid']);
         }
+        if(array_key_exists('version', $data)){
+            $data['@version'] = $data['version'];
+            unset($data['version']);
+        }
         return json_encode($data);
     }
 
