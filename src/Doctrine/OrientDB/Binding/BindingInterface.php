@@ -30,12 +30,12 @@ interface BindingInterface
      * Executes an SQL query on the server.
      *
      * The second argument specifies when to use COMMAND or QUERY as the
-     * underlying command. When passing a string as the second argument,
-     * this string should be used as a fetch plan.
+     * underlying command.
      *
      * @param string $sql Raw SQL query.
-     * @param mixed $results or use the specified fetchplan.
+     * @param bool $results Whether to use `command` or `query` for the underlying command.
+     * @param string $fetchPlan Optional fetch plan for the query.
      * @return BindingResultInterface
      */
-    public function execute($sql, $results = false);
+    public function execute($sql, $return = false, $fetchPlan = null);
 }

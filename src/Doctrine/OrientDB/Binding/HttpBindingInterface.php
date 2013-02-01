@@ -131,11 +131,6 @@ interface HttpBindingInterface extends BindingInterface
     public function deleteDatabase($database);
 
     /**
-     * {@inheritdoc}
-     */
-    public function execute($sql, $return = false);
-
-    /**
      * Executes a raw command on the given database.
      *
      * @api
