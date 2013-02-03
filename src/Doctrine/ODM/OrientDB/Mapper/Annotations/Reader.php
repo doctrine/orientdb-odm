@@ -143,7 +143,7 @@ class Reader implements ReaderInterface
     /**
      * Creates a new instance of a cache provider.
      *
-     * @return Doctrine\Common\Cache\CacheProvider
+     * @return \Doctrine\Common\Cache\CacheProvider
      */
     protected function createCacheProvider()
     {

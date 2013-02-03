@@ -223,9 +223,9 @@ class Manager implements ObjectManager
             return $this->repositories[$className];
         }
         $metadata = $this->getClassMetadata($className);
-        $customRepositoryClassName = $metadata->customRepositoryClassName;
+        $customRepositoryClassName = $metadata->getRepositoryClassname();
 
-        if ($customRepositoryClassName !== null) {
+        if (null !== $customRepositoryClassName) {
             $repository = new $customRepositoryClassName($className, $this, $this->getMapper(), $this->getEventManager());
         } else {
             $repository = new Repository($className, $this, $this->getMapper(), $this->getEventManager());

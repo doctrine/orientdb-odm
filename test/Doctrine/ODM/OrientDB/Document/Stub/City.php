@@ -5,7 +5,7 @@ namespace test\Doctrine\ODM\OrientDB\Document\Stub;
 use Doctrine\ODM\OrientDB\Mapper\Annotations as ODM;
 
 /**
-* @ODM\Document(class="OCity")
+* @ODM\Document(class="OCity", repositoryClass="test\Doctrine\ODM\OrientDB\Document\Stub\CityRepository")
 */
 class City
 {
