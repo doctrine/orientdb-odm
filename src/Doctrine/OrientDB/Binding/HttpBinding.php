@@ -328,11 +328,11 @@ class HttpBinding implements HttpBindingInterface
     /**
      * {@inheritdoc}
      */
-    public function call_function($function_name, $arguments = array(), $database = null)
+    public function callFunction($functionName, $arguments = array(), $database = null, $idempotent = true)
     {
-    	$args = array_unshift($arguments, $function_name);
+        array_unshift($arguments, $functionName);
         $location = $this->getLocation('function', $database ?: $this->database, $arguments);
-        $response = $this->adapter->request('GET', $location);
+        $response = $this->adapter->request($idempotent ? 'GET' : 'POST', $location);
 
         return $response;
     }
