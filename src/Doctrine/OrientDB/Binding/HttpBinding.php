@@ -328,6 +328,18 @@ class HttpBinding implements HttpBindingInterface
     /**
      * {@inheritdoc}
      */
+    public function call_function($function_name, $arguments = array(), $database = null)
+    {
+    	$args = array_unshift($arguments, $function_name);
+        $location = $this->getLocation('function', $database ?: $this->database, $arguments);
+        $response = $this->adapter->request('GET', $location);
+
+        return $response;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDocument($rid, $database = null, $fetchPlan = null)
     {
         $location = $this->getDocumentLocation($database ?: $this->database, $rid, $fetchPlan);
