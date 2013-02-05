@@ -58,7 +58,8 @@ class HttpBinding implements HttpBindingInterface
         $location = "http://{$this->server}/$method";
 
         if ($database) {
-            $location .= '/' . $database;
+            $location .= '/' . str_replace("%24", "$", rawurlencode($database));
+
         }
 
         if ($arguments) {

@@ -138,7 +138,7 @@ class HttpBindingTest extends TestCase
         $this->assertHttpStatus(500, $binding->query("UPDATE Profile SET online = false"), 'Tries to execute an UPDATE with the query command');
     }
 
-    public function testcallFunctionMethod()
+    public function testCallFunctionMethod()
     {
         $binding = $this->createHttpBinding();
 
