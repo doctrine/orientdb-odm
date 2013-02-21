@@ -87,6 +87,10 @@ class HttpBinding implements HttpBindingInterface
         }
 
         if (isset($fetchPlan)) {
+            if(!isset($limit)) {
+                $arguments[] = 20;
+            }
+            
             $arguments[] = $fetchPlan;
         }
 
