@@ -22,18 +22,17 @@
 namespace Doctrine\ODM\OrientDB;
 
 use Doctrine\Common\EventManager;
+use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ODM\OrientDB\Caster\CastingMismatchException;
 use Doctrine\ODM\OrientDB\Mapper;
+use Doctrine\ODM\OrientDB\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
 use Doctrine\ODM\OrientDB\Mapper\Hydration\Result;
 use Doctrine\ODM\OrientDB\Types\Rid;
-use Doctrine\ODM\OrientDB\Caster\CastingMismatchException;
-use Doctrine\ODM\OrientDB\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Binding\BindingInterface;
 use Doctrine\OrientDB\Query\Query;
-use Doctrine\OrientDB\Query\Command\Select;
 use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;
 
 class Manager implements ObjectManager
 {
@@ -183,9 +182,10 @@ class Manager implements ObjectManager
     /**
      * @todo to implement/test
      *
-     * @param \stdClass $object
+     * @param null|object|array $entity
+     * @return void
      */
-    public function flush()
+    public function flush($entity = null)
     {
         throw new \Exception;
     }
