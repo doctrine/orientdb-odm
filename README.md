@@ -1,7 +1,8 @@
 # OrientDB PHP Library
 
 [![Build Status](https://secure.travis-ci.org/doctrine/orientdb-odm.png?branch=master)](http://secure.travis-ci.org/doctrine/orientdb-odm)
-
+[![Total Downloads](https://poser.pugx.org/doctrine/orientdb-odm/downloads.png)](https://packagist.org/packages/doctrine/orientdb-odm)
+[![Latest Stable Version](https://poser.pugx.org/doctrine/orientdb-odm/v/stable.png)](https://packagist.org/packages/doctrine/orientdb-odm)
 ## What's Orient?
 
 A set of tools to use and manage any OrientDB instance from PHP.
