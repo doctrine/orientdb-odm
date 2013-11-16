@@ -13,3 +13,4 @@ ci-stuff/environment
 vendor/
 composer.phar
 phpunit.xml
+bin/phpunit
