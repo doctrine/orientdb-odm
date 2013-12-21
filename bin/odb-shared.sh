@@ -26,7 +26,7 @@ odb_download () {
   fi
 
   if odb_command_exists "wget" ; then
-    wget -q -P "$OUTPUT_DIR" "$1"
+    wget -q -O "$OUTPUT_DIR/$ODB_C_PACKAGE" "$1"
   elif odb_command_exists "curl" ; then
     ( cd "$OUTPUT_DIR" > /dev/null ; curl --silent -O "$1" ; )
   else
@@ -36,18 +36,22 @@ odb_download () {
 }
 
 odb_download_server () {
+  #http://www.orientdb.org/portal/function/portal/download/phpuser@unknown.com/%20/%20/%20/%20/unknown/orientdb-community-1.6.2.tar.gz/false/false
+
+  DOWN_USER=robot@travi-ci.com
   ODB_VERSION=$1
   CI_DIR=$2
 
-  ODB_PACKAGE="orientdb-${ODB_VERSION}"
+  ODB_PACKAGE="orientdb-community-${ODB_VERSION}"
 
   # We need to resort to tricks to automate our CI environment as much as
   # possible since the OrientDB guys keep changing the compressed archive
   # format and moving the downloadable packages URLs. Luckily for us, we
   # are smart enough to cope with that... at least until the next change.
-  if [ $(odb_compare_version $ODB_VERSION 1.3.0) -ge 0 ]; then
+  if [ $(odb_compare_version $ODB_VERSION 1.6.1) -ge 0 ]; then
     ODB_PACKAGE_EXT="tar.gz"
-    ODB_PACKAGE_URL="https://s3.amazonaws.com/orientdb/releases/${ODB_PACKAGE}.${ODB_PACKAGE_EXT}"
+    ODB_PACKAGE_URL="http://www.orientdb.org/portal/function/portal/download/${DOWN_USER}/%20/%20/%20/%20/unknown/${ODB_PACKAGE}.${ODB_PACKAGE_EXT}/false/false"
+    ODB_C_PACKAGE=${ODB_PACKAGE}.${ODB_PACKAGE_EXT}
   else
     ODB_PACKAGE_EXT="zip"
     ODB_PACKAGE_URL="https://orient.googlecode.com/files/${ODB_PACKAGE}.${ODB_PACKAGE_EXT}"

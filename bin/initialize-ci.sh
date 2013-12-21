@@ -3,8 +3,8 @@
 PARENT_DIR=$(dirname $(cd "$(dirname "$0")"; pwd))
 CI_DIR="$PARENT_DIR/ci-stuff/environment"
 
-ODB_VERSION=${1:-"1.2.0"}
-ODB_DIR="${CI_DIR}/orientdb-${ODB_VERSION}"
+ODB_VERSION=${1:-"1.6.2"}
+ODB_DIR="${CI_DIR}/orientdb-community-${ODB_VERSION}"
 ODB_LAUNCHER="${ODB_DIR}/bin/server.sh"
 
 echo "=== Initializing CI environment ==="
@@ -21,6 +21,7 @@ if [ ! -d "$ODB_DIR" ]; then
   # Ensure that launcher script is executable and copy configurations file
   echo "--- Setting up OrientDB ---"
   chmod +x $ODB_LAUNCHER
+  chmod -R +rw "${ODB_DIR}/config/"
   cp $PARENT_DIR/ci-stuff/orientdb-server-config.xml "${ODB_DIR}/config/"
   cp $PARENT_DIR/ci-stuff/orientdb-server-log.properties "${ODB_DIR}/config/"
 else
