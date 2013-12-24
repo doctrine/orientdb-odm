@@ -23,7 +23,7 @@ class DoubleTest extends TestCase
     {
         $manager = $this->createManager();
         //MapPoint
-        $point = $manager->find("#86:0");
+        $point = $manager->find("#23:0");
 
         $this->assertInternalType('float', $point->y);
     }

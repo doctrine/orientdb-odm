@@ -26,12 +26,13 @@ class LongTest extends TestCase
 
         $query = new Query();
         $query->update('Profile')
-            ->set(array('hash' => '2937480'))
-            ->where('@rid = ?', '#13:0');
+            ->set(array('hash' => 2937480 ))
+            ->where('@rid = ?', '#19:0');
 
         $manager->execute($query);
 
-        $neoProfile = $manager->find("#13:0");
+        $neoProfile = $manager->find("#19:0");
+
         $this->assertInternalType('integer', $neoProfile->hash);
     }
 }

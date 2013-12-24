@@ -25,7 +25,7 @@ class IntegerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post = $manager->find("#94:0");
+        $post = $manager->find("#21:0");
         $this->assertInternalType('integer', $post->id);
     }
 
@@ -36,7 +36,7 @@ class IntegerTest extends TestCase
     {
         $manager = $this->createManager();
 
-        $post = $manager->find("#94:0");
+        $post = $manager->find("#21:0");
     }
 
     public function testMismatchedAttributesAreConvertedIfTheMapperToleratesMismatches()
@@ -45,7 +45,7 @@ class IntegerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post = $manager->find("#94:0");
+        $post = $manager->find("#21:0");
 
         $this->assertInternalType('integer', $post->title);
     }

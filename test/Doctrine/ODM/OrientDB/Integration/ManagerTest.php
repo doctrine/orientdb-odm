@@ -27,7 +27,7 @@ class ManagerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post       = $manager->find('94:0', '*:0');
+        $post       = $manager->find('21:0', '*:0');
         $comments   = $post->getComments();
 
         $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
@@ -43,7 +43,7 @@ class ManagerTest extends TestCase
         $query = new Query(array('Address'));
         $addresses = $manager->execute($query);
 
-        $this->assertEquals(166, count($addresses));
+        $this->assertEquals(41, count($addresses));
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
     }
 
@@ -54,7 +54,7 @@ class ManagerTest extends TestCase
     {
         $manager = $this->createManager();
 
-        $query = new Query(array('19:0'));
+        $query = new Query(array('14:0'));
         $addresses = $manager->execute($query);
 
         $this->assertEquals(1, count($addresses));
@@ -69,7 +69,7 @@ class ManagerTest extends TestCase
         $manager = $this->createManager();
 
         $query = new Query(array('Address'));
-        $query->update('Address')->set(array('my' => 'yours'))->where('@rid = ?', '1:10000');
+        $query->update('Address')->set(array('my' => 'yours'))->where('@rid = ?', '14:30');
         $result = $manager->execute($query);
 
         $this->assertInternalType('boolean', $result);
@@ -96,7 +96,7 @@ class ManagerTest extends TestCase
     public function testFindingARecord()
     {
         $manager = $this->createManager();
-        $address = $manager->find('19:0');
+        $address = $manager->find('14:0');
 
         $this->assertInstanceOf("test\Integration\Document\Address", $address);
     }
@@ -110,7 +110,7 @@ class ManagerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post = $manager->find('94:0', '*:-1');
+        $post = $manager->find('21:0', '*:-1');
 
         $this->assertInternalType('array', $post->comments);
         $this->assertFalse($post->comments instanceOf \Doctrine\OrientDB\ODM\Proxy\Collection);
@@ -122,7 +122,7 @@ class ManagerTest extends TestCase
     public function testGettingARelatedRecord()
     {
         $manager = $this->createManager();
-        $address = $manager->find('19:0');
+        $address = $manager->find('14:0');
 
         $this->assertInstanceOf("test\Integration\Document\Country", $address->getCity());
     }
@@ -136,7 +136,7 @@ class ManagerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post       = $manager->find('94:0');
+        $post       = $manager->find('21:0');
         $comments   = $post->getComments();
 
         $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
@@ -174,7 +174,7 @@ class ManagerTest extends TestCase
     {
         $manager = $this->createManager();
 
-        $addresses = $manager->findRecords(array('19:0', '19:1'));
+        $addresses = $manager->findRecords(array('14:0', '14:1'));
 
         $this->assertEquals(2, count($addresses));
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
@@ -197,7 +197,7 @@ class ManagerTest extends TestCase
         $manager = $this->createManager();
 
         $query = new Query(array('Address'));
-        $query->where('@rid = ?', '19:0');
+        $query->where('@rid = ?', '14:0');
 
         $results = $manager->execute($query);
 

@@ -21,9 +21,20 @@ use Doctrine\OrientDB\Binding\HttpBindingResultInterface;
  */
 class QueryBuilderTest extends TestCase
 {
+    public $profile_id;
+    public $address_id;
+    public $post_id;
+    public $comment_id;
+
+    public $binding;
+
     public function setup()
     {
         $this->binding = $this->createHttpBinding();
+        $this->profile_id = $this->binding->getClass('Profile')->getData()->clusters[0];
+        $this->address_id = $this->binding->getClass('Address')->getData()->clusters[0];
+        $this->post_id = $this->binding->getClass('Post')->getData()->clusters[0];
+        $this->comment_id = $this->binding->getClass('Comment')->getData()->clusters[0];
     }
 
     public function testSelect()
@@ -38,7 +49,7 @@ class QueryBuilderTest extends TestCase
     {
         $query = new Query();
 
-        $this->assertHttpStatus(200, $this->doQuery($query->from(array('Profile'))->between('@rid', '#13:0', '#13:5')));
+        $this->assertHttpStatus(200, $this->doQuery($query->from(array('Profile'))->between('@rid', '#'.$this->profile_id.':0', '#'.$this->profile_id.':5')));
     }
 
     public function testSelectLimit()
@@ -67,29 +78,29 @@ class QueryBuilderTest extends TestCase
     public function testSelectByRID()
     {
         $query = new Query();
-        $query->from(array('19:100'));
+        $query->from(array($this->profile_id.':1'));
 
         $result = $this->doQuery($query);
         $this->assertHttpStatus(200, $result);
-        $this->assertFirstRid('19:100', $result);
+        $this->assertFirstRid($this->profile_id.':1', $result);
     }
 
     public function testSelectOrderBy()
     {
         $query = new Query();
-        $query->from(array('19:100', '19:101'))
+        $query->from(array($this->profile_id.':0', $this->profile_id.':1'))
               ->orderBy('@rid ASC')
               ->orderBy('street DESC');
 
         $result = $this->doQuery($query);
         $this->assertHttpStatus(200, $result);
-        $this->assertFirstRid('19:100', $result);
+        $this->assertFirstRid($this->profile_id.':0', $result);
 
         $query->orderBy('@rid DESC', false);
 
         $result = $this->doQuery($query);
         $this->assertHttpStatus(200, $result);
-        $this->assertFirstRid('19:101', $result);
+        $this->assertFirstRid($this->profile_id.':1', $result);
     }
 
     public function testSelectComplex()
@@ -114,7 +125,7 @@ class QueryBuilderTest extends TestCase
         $query = new Query();
         $query->insert()
               ->fields(array('street', 'type', 'city'))
-              ->values(array('5th avenue', 'villetta', '#13:0'))
+              ->values(array('5th avenue', 'villetta', '#18:0'))
               ->into('Address');
 
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
@@ -202,17 +213,20 @@ class QueryBuilderTest extends TestCase
         $query->index('index_name_2', 'unique');
         $result = $this->doQuery($query, $binding);
         $this->assertHttpStatus(200, $result);
-        $this->assertSame('0', $result->getInnerResponse()->getBody());
+        $body = $result->getData()->result[0];
 
-        $count = $this->getResultCount($binding->query('SELECT FROM OUser'));
+        $this->assertSame(0, $body->value);
+
+        $count = $this->getResultCount($binding->query('SELECT FROM Profile'));
 
         $query = new Query();
-        $query->index('name', 'unique', 'OUser');
+        $query->index('name', 'unique', 'Profile');
 
         $result = $this->doQuery($query, $binding);
 
         $this->assertHttpStatus(200, $result);
-        $this->assertEquals($result->getInnerResponse()->getBody(), $count);
+        $value = $result->getData()->result[0]->value;
+        $this->assertEquals($value, $count);
 
     }
 
@@ -407,7 +421,7 @@ class QueryBuilderTest extends TestCase
         $json = json_decode($response->getBody(),true);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue($json);
+        $this->assertTrue($json['result'][0]['value']);
 
 
         return $class;
@@ -426,34 +440,38 @@ class QueryBuilderTest extends TestCase
         $query = new Query();
         $binding = $this->createHttpBinding();
 
-        $query->update('Address')->set(array('nick' => 'Luca'))
-              ->orWhere('@rid = ?', '19:101');
+        $viaRossi = 'Via Rossi';
+        $query->update('Address')->set(array('street' => $viaRossi))
+              ->orWhere('@rid = ?', $this->address_id.':3');
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM Address WHERE @rid = #19:101')->getResult();
-        $this->assertSame('Luca', $records[0]->nick);
+        $records = $binding->command('SELECT FROM Address WHERE @rid = #'.$this->address_id.':3')->getResult();
+        $this->assertSame($viaRossi, $records[0]->street);
 
-        $query->update('Address')->set(array('nick' => 'Luca2'))
-              ->orWhere('@rid = ?', '19:6');
+        $viaVerdi = "Via Verdi";
+        $query->update('Address')->set(array('street' => $viaVerdi))
+              ->orWhere('@rid = ?', $this->address_id.':3');
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM Address WHERE @rid = #19:6')->getResult();
-        $this->assertSame('Luca2', $records[0]->nick);
+        $records = $binding->command('SELECT FROM Address WHERE @rid = #'.$this->address_id.':3')->getResult();
+        $this->assertSame($viaVerdi, $records[0]->street);
     }
 
     public function testAddLink()
     {
         $query = new Query();
         $binding = $this->createHttpBinding();
+        $postRid = $this->post_id . ':0';
+        $commentRid = $this->comment_id . ':1';
 
-        $records = $binding->command('SELECT FROM 94:0')->getResult();
+        $records = $binding->command('SELECT FROM '. $postRid)->getResult();
         $before = count($records[0]->comments);
 
-        $query->add(array('comments' => '95:4'), 'post')
-              ->where('@rid = ?', '94:0');
+        $query->add(array('comments' => $commentRid), 'post')
+              ->where('@rid = ?', $postRid);
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM 94:0')->getResult();
+        $records = $binding->command('SELECT FROM ' . $postRid)->getResult();
         $after = count($records[0]->comments);
 
         $this->assertSame($after, $before + 1);
@@ -466,15 +484,17 @@ class QueryBuilderTest extends TestCase
     {
         $query = new Query();
         $binding = $this->createHttpBinding();
+        $postRid = $this->post_id . ':0';
+        $commentRid = $this->comment_id . ':1';
 
-        $records = $binding->command('SELECT FROM 94:0')->getResult();
+        $records = $binding->command('SELECT FROM '.$postRid)->getResult();
         $before = count($records[0]->comments);
 
-        $query->remove(array('comments' => '95:4'), 'post')
-              ->where('@rid = ?', '94:0');
+        $query->remove(array('comments' => $commentRid), 'post')
+              ->where('@rid = ?', $postRid);
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM 94:0')->getResult();
+        $records = $binding->command('SELECT FROM '.$postRid)->getResult();
         $after = count($records[0]->comments);
 
         $this->assertSame($after, $before - 1);
@@ -482,19 +502,21 @@ class QueryBuilderTest extends TestCase
 
     public function testPutLink()
     {
-        $query = new Query();
-        $binding = $this->createHttpBinding();
+        $query         = new Query();
+        $binding       = $this->createHttpBinding();
+        $davidProfile  = '#'. $this->profile_id.':0';
+        $rexterProfile = '#'. $this->profile_id.':4';
 
-        $binding->command('UPDATE profile REMOVE followers');
+        $binding->command('UPDATE Profile REMOVE followers');
 
-        $query->put(array('followers' => array('Johnny' => '13:2')), 'profile')
-              ->where('@rid = ?', '13:1');
+        $query->put(array('followers' => array('David' => $davidProfile)), 'Profile')
+              ->where('@rid = ?', $rexterProfile);
 
         $this->assertHttpStatus(200, $this->doQuery($query, $binding));
 
-        $records = $binding->command('SELECT FROM 13:1')->getResult();
+        $records = $binding->command('SELECT FROM ' . $rexterProfile)->getResult();
         $this->assertInstanceOf('\stdClass', $records[0]->followers);
-        $this->assertSame('#13:2', $records[0]->followers->Johnny);
+        $this->assertSame($davidProfile, $records[0]->followers->David);
     }
 
     public function testTruncateNonExistingClass()

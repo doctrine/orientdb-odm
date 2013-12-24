@@ -287,6 +287,7 @@ class HttpBinding implements HttpBindingInterface
      */
     public function execute($sql, $return = false, $fetchPlan = null)
     {
+
         if (is_string($return)) {
             return $this->query($sql, -1, $fetchPlan);
         }

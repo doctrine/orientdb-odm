@@ -79,7 +79,7 @@ class HttpBindingTest extends TestCase
     public function testServerMethod()
     {
         $this->markTestSkipped('to fix');
-        
+
         $binding = $this->createHttpBinding();
 
         $this->assertHttpStatus(200, $binding->getServer());
