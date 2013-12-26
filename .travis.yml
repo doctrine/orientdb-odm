@@ -6,7 +6,7 @@ php:
 before_script:
   - ./bin/initialize-dependencies.sh
   - sh -c ./bin/initialize-ci.sh 1.6.2
-  - php test/Integration/fixtures/load.php
+  - php ./test/Integration/fixtures/load.php
 script: phpunit --group __nogroup__,integration
 notifications:
   email:
