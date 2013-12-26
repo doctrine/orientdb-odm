@@ -11,17 +11,14 @@ class Fixtures
 {
     private $client;
     public $dbname;
-    public $dbuser;
-    public $dbpass;
     public $contentType;
 
     public function __construct($dbname, $dbuser, $dbpass) {
         $this->dbname = $dbname;
-        $this->dbuser = $dbuser;
-        $this->dbpass = $dbpass;
         $this->contentType = array('Content-Type' => 'application/json');
 
         $this->client = new Client('http://127.0.0.1:2480');
+        $this->client->setDefaultOption('auth', array($dbuser,$dbpass));
 
     }
 
@@ -32,7 +29,7 @@ class Fixtures
         //Clean
         foreach ($classes as $class) {
             $query = "DROP CLASS " . $class;
-            $this->client->post('/command/' . $this->dbname . '/sql/' .$query,array('Content-Type'=>'application/json'))->setAuth($this->dbuser,$this->dbpass)->send();
+            $this->client->post('/command/' . $this->dbname . '/sql/' .$query,array('Content-Type'=>'application/json'))->send();
         }
 
         return $this;
@@ -44,22 +41,22 @@ class Fixtures
 
         foreach ($classes as $class) {
             $query = "CREATE CLASS " . $class;
-            $result = $this->client->post('/command/' . $this->dbname . '/sql/' .$query, $this->contentType)->setAuth($this->dbuser,$this->dbpass)->send()->json();
+            $result = $this->client->post('/command/' . $this->dbname . '/sql/' .$query, $this->contentType)->send()->json();
             $this->{$class} = $result['result'][0]['value'];
         }
 
         //create Profile properties
-        $this->client->post('/property/'. $this->dbname . '/Profile/name', $this->contentType)->setAuth($this->dbuser,$this->dbpass)->send();
-        $this->client->post('/property/'. $this->dbname . '/Profile', $this->contentType, '{"followers": {"propertyType": "LINKMAP","linkedClass": "Profile"}}')->setAuth($this->dbuser,$this->dbpass)->send();
+        $this->client->post('/property/'. $this->dbname . '/Profile/name', $this->contentType)->send();
+        $this->client->post('/property/'. $this->dbname . '/Profile', $this->contentType, '{"followers": {"propertyType": "LINKMAP","linkedClass": "Profile"}}')->send();
 
         //create Post properties
-        $this->client->post('/property/'. $this->dbname . '/Post', $this->contentType, '{"comments": {"propertyType": "LINKLIST","linkedClass": "Comment"}}')->setAuth($this->dbuser,$this->dbpass)->send();
+        $this->client->post('/property/'. $this->dbname . '/Post', $this->contentType, '{"comments": {"propertyType": "LINKLIST","linkedClass": "Comment"}}')->send();
 
         //create Address properties
-        $this->client->post('/property/'. $this->dbname . '/Address/city', $this->contentType)->setAuth($this->dbuser,$this->dbpass)->send();
+        $this->client->post('/property/'. $this->dbname . '/Address/city', $this->contentType)->send();
 
         //create MapPoint properties
-        $this->client->post('/property/'. $this->dbname . '/MapPoint', $this->contentType, '{"x": {"propertyType": "FLOAT"}, "y":{"propertyType": "FLOAT"} }')->setAuth($this->dbuser,$this->dbpass)->send();
+        $this->client->post('/property/'. $this->dbname . '/MapPoint', $this->contentType, '{"x": {"propertyType": "FLOAT"}, "y":{"propertyType": "FLOAT"} }')->send();
 
         return $this;
 
@@ -69,41 +66,41 @@ class Fixtures
     {
 
         //Insert  City
-        $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "City", "name": "Rome" }')->setAuth($this->dbuser,$this->dbpass)->send();
+        $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "City", "name": "Rome" }')->send();
 
 
         //Insert  Address
         for ($i = 0 ; $i <= 40 ; $i++) {
-            $this->client->post('/document/'. $this->dbname , $this->contentType, sprintf('{"@class": "Address", "street" : "New street %d, Italy", "city":"#'.$this->City.':0"}',$i))->setAuth($this->dbuser,$this->dbpass)->send();
+            $this->client->post('/document/'. $this->dbname , $this->contentType, sprintf('{"@class": "Address", "street" : "New street %d, Italy", "city":"#'.$this->City.':0"}',$i))->send();
         }
 
         //Insert countries
         $countries = array('France', 'Italy', 'Spain', 'England', 'Ireland', 'Poland', 'Bulgaria', 'Portogallo', 'Belgium', 'Suisse');
         foreach ($countries as $country) {
-            $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "Country", "name": "' . $country . '" }')->setAuth($this->dbuser,$this->dbpass)->send();
+            $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "Country", "name": "' . $country . '" }')->send();
         }
 
         //Insert Profile
         $profiles = array('David','Alex','Luke','Marko','Rexter','Gremlin', 'Thinkerpop', 'Frames');
         foreach ($profiles as $profile) {
-            $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "Profile", "name": "' . $profile . '" }')->setAuth($this->dbuser,$this->dbpass)->send();
+            $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "Profile", "name": "' . $profile . '" }')->send();
         }
 
         //Insert Comment
         $templateComment = '{"@class": "Comment", "body": "comment number %d" }';
         for ($i = 0 ; $i <= 5 ; $i++) {
-            $this->client->post('/document/'. $this->dbname , $this->contentType, sprintf($templateComment,$i,$i))->setAuth($this->dbuser,$this->dbpass)->send();
+            $this->client->post('/document/'. $this->dbname , $this->contentType, sprintf($templateComment,$i,$i))->send();
         }
 
         //Insert Post
         $templatePost = '{"@class": "Post", "id":"%d","title": "%d", "body": "Body %d", "comments":["#'.$this->Comment.':3"] }';
         for ($i = 0 ; $i <= 5 ; $i++) {
-            $this->client->post('/document/'. $this->dbname , $this->contentType, sprintf($templatePost,$i,$i,$i))->setAuth($this->dbuser,$this->dbpass)->send();
+            $this->client->post('/document/'. $this->dbname , $this->contentType, sprintf($templatePost,$i,$i,$i))->send();
         }
-        $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "Post", "id":"6","title": "titolo 6", "body": "Body 6", "comments":["#'.$this->Comment.':2"] }')->setAuth($this->dbuser,$this->dbpass)->send();
+        $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "Post", "id":"6","title": "titolo 6", "body": "Body 6", "comments":["#'.$this->Comment.':2"] }')->send();
 
         //Insert MapPoint
-        $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "MapPoint", "x": "42.573968", "y": "13.203125" }')->setAuth($this->dbuser,$this->dbpass)->send();
+        $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "MapPoint", "x": "42.573968", "y": "13.203125" }')->send();
 
         return $this;
     }
