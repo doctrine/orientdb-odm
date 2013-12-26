@@ -18,6 +18,15 @@ use Doctrine\OrientDB\Query\Query;
  */
 class ManagerTest extends TestCase
 {
+    public $postId;
+    public $addressId;
+
+    public function setup()
+    {
+        $this->postId    = $this->getClassId('Post');
+        $this->addressId = $this->getClassId('Address');
+    }
+
     /**
      * @group integration
      */
@@ -27,7 +36,7 @@ class ManagerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post       = $manager->find('21:0', '*:0');
+        $post       = $manager->find($this->postId.':0', '*:0');
         $comments   = $post->getComments();
 
         $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
@@ -54,7 +63,7 @@ class ManagerTest extends TestCase
     {
         $manager = $this->createManager();
 
-        $query = new Query(array('14:0'));
+        $query = new Query(array($this->addressId.':0'));
         $addresses = $manager->execute($query);
 
         $this->assertEquals(1, count($addresses));
@@ -69,7 +78,7 @@ class ManagerTest extends TestCase
         $manager = $this->createManager();
 
         $query = new Query(array('Address'));
-        $query->update('Address')->set(array('my' => 'yours'))->where('@rid = ?', '14:30');
+        $query->update('Address')->set(array('my' => 'yours'))->where('@rid = ?', $this->addressId.':30');
         $result = $manager->execute($query);
 
         $this->assertInternalType('boolean', $result);
@@ -96,7 +105,7 @@ class ManagerTest extends TestCase
     public function testFindingARecord()
     {
         $manager = $this->createManager();
-        $address = $manager->find('14:0');
+        $address = $manager->find($this->addressId.':0');
 
         $this->assertInstanceOf("test\Integration\Document\Address", $address);
     }
@@ -110,7 +119,7 @@ class ManagerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post = $manager->find('21:0', '*:-1');
+        $post = $manager->find($this->postId.':0', '*:-1');
 
         $this->assertInternalType('array', $post->comments);
         $this->assertFalse($post->comments instanceOf \Doctrine\OrientDB\ODM\Proxy\Collection);
@@ -122,7 +131,7 @@ class ManagerTest extends TestCase
     public function testGettingARelatedRecord()
     {
         $manager = $this->createManager();
-        $address = $manager->find('14:0');
+        $address = $manager->find($this->addressId.':0');
 
         $this->assertInstanceOf("test\Integration\Document\Country", $address->getCity());
     }
@@ -136,7 +145,7 @@ class ManagerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post       = $manager->find('21:0');
+        $post       = $manager->find($this->postId.':0');
         $comments   = $post->getComments();
 
         $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
@@ -152,7 +161,7 @@ class ManagerTest extends TestCase
             'document_dir' => array('./docs' => '\\'),
         ));
 
-        $manager->find('19:0');
+        $manager->find($this->postId.':0');
     }
 
     /**
@@ -162,7 +171,7 @@ class ManagerTest extends TestCase
     {
         $manager = $this->createManager();
 
-        $address = $manager->find('19:2000');
+        $address = $manager->find($this->postId.':2000');
 
         $this->assertInternalType("null", $address);
     }
@@ -174,7 +183,7 @@ class ManagerTest extends TestCase
     {
         $manager = $this->createManager();
 
-        $addresses = $manager->findRecords(array('14:0', '14:1'));
+        $addresses = $manager->findRecords(array($this->addressId.':0', $this->addressId.':1'));
 
         $this->assertEquals(2, count($addresses));
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
@@ -186,7 +195,7 @@ class ManagerTest extends TestCase
     public function testFindingSomeGoodAndSomeWrongRecordsReturnsGoodRecords()
     {
         $manager = $this->createManager();
-        $manager->findRecords(array('19:0', '19:700000'));
+        $manager->findRecords(array($this->postId.':0', $this->postId.':700000'));
     }
 
     /**
@@ -197,7 +206,7 @@ class ManagerTest extends TestCase
         $manager = $this->createManager();
 
         $query = new Query(array('Address'));
-        $query->where('@rid = ?', '14:0');
+        $query->where('@rid = ?', $this->addressId.':0');
 
         $results = $manager->execute($query);
 

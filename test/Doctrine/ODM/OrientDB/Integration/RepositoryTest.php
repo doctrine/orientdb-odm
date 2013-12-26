@@ -21,6 +21,15 @@ use Doctrine\OrientDB\ODM\Repository;
  */
 class RepositoryTest extends TestCase
 {
+    public $postId;
+    public $addressId;
+
+    public function setup()
+    {
+        $this->postId    = $this->getClassId('Post');
+        $this->addressId = $this->getClassId('Address');
+    }
+
     protected function createRepository($class)
     {
         $manager = $this->createManager(array(
@@ -37,7 +46,7 @@ class RepositoryTest extends TestCase
         $class = 'test\Integration\Document\Post';
         $repository = $this->createRepository($class);
 
-        $this->assertInstanceOf($class, $repository->find('21:0'));
+        $this->assertInstanceOf($class, $repository->find($this->postId.':0'));
     }
 
     public function testYouCanSpecifyFetchplansWithTheRepo()
@@ -45,8 +54,8 @@ class RepositoryTest extends TestCase
         $class = 'test\Integration\Document\Post';
         $repository = $this->createRepository($class);
 
-        $this->assertInstanceOf('Doctrine\ODM\OrientDB\Proxy\Collection', $repository->find('21:0', '*:0')->comments);
-        $this->assertinternalType('array', $repository->find('21:0')->comments);
+        $this->assertInstanceOf('Doctrine\ODM\OrientDB\Proxy\Collection', $repository->find($this->postId . ':0', '*:0')->comments);
+        $this->assertinternalType('array', $repository->find($this->postId.':0')->comments);
     }
 
     /**
@@ -55,7 +64,7 @@ class RepositoryTest extends TestCase
     public function testFindingADocumentOfAnotherRepoRaisesAnException()
     {
         $repository = $this->createRepository('test\Integration\Document\Post');
-        $repository->find('14:0');
+        $repository->find($this->addressId.':0');
     }
 
     public function testFindingANonExistingDocument()
@@ -70,7 +79,7 @@ class RepositoryTest extends TestCase
         $repository = $this->createRepository('test\Integration\Document\Post');
         $posts = $repository->findAll();
 
-        $this->assertEquals(6, count($posts));
+        $this->assertEquals(7, count($posts));
     }
 
     public function testRetrievingByCriteria()
@@ -81,11 +90,11 @@ class RepositoryTest extends TestCase
         $this->assertCount(0, $posts);
 
         $posts = $repository->findBy(array(), array('@rid' => 'DESC'));
-        $this->assertCount(6, $posts);
+        $this->assertCount(7, $posts);
         $this->assertTrue($posts[0]->getRid() > $posts[1]->getRid());
 
         $posts = $repository->findBy(array(), array('@rid' => 'ASC'));
-        $this->assertCount(6, $posts);
+        $this->assertCount(7, $posts);
         $this->assertTrue($posts[0]->getRid() < $posts[1]->getRid());
 
         $posts = $repository->findBy(array(), array('@rid' => 'ASC'), 1);

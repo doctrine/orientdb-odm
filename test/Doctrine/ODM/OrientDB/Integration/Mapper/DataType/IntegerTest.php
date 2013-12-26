@@ -19,13 +19,20 @@ use test\PHPUnit\TestCase;
  */
 class IntegerTest extends TestCase
 {
+    public $postId;
+
+    public function setup()
+    {
+        $this->postId = $this->getClassId('Post');
+    }
+
     public function testHydrationOfAnIntegerProperty()
     {
         $manager = $this->createManager(array(
             'mismatches_tolerance' => true,
         ));
 
-        $post = $manager->find("#21:0");
+        $post = $manager->find("#".$this->postId.":0");
         $this->assertInternalType('integer', $post->id);
     }
 
@@ -36,7 +43,8 @@ class IntegerTest extends TestCase
     {
         $manager = $this->createManager();
 
-        $post = $manager->find("#21:0");
+        //attention 6-th record can change
+        $post = $manager->find("#".$this->postId.":6");
     }
 
     public function testMismatchedAttributesAreConvertedIfTheMapperToleratesMismatches()
@@ -45,7 +53,7 @@ class IntegerTest extends TestCase
             'mismatches_tolerance' => true,
         ));
 
-        $post = $manager->find("#21:0");
+        $post = $manager->find("#".$this->postId.":0");
 
         $this->assertInternalType('integer', $post->title);
     }

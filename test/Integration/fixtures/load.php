@@ -44,7 +44,8 @@ class Fixtures
 
         foreach ($classes as $class) {
             $query = "CREATE CLASS " . $class;
-            $this->client->post('/command/' . $this->dbname . '/sql/' .$query, $this->contentType)->setAuth($this->dbuser,$this->dbpass)->send();
+            $result = $this->client->post('/command/' . $this->dbname . '/sql/' .$query, $this->contentType)->setAuth($this->dbuser,$this->dbpass)->send()->json();
+            $this->{$class} = $result['result'][0]['value'];
         }
 
         //create Profile properties
@@ -70,9 +71,10 @@ class Fixtures
         //Insert  City
         $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "City", "name": "Rome" }')->setAuth($this->dbuser,$this->dbpass)->send();
 
+
         //Insert  Address
         for ($i = 0 ; $i <= 40 ; $i++) {
-            $this->client->post('/document/'. $this->dbname , $this->contentType, sprintf('{"@class": "Address", "street" : "New street %d, Italy", "city":"#18:0"}',$i))->setAuth($this->dbuser,$this->dbpass)->send();
+            $this->client->post('/document/'. $this->dbname , $this->contentType, sprintf('{"@class": "Address", "street" : "New street %d, Italy", "city":"#'.$this->City.':0"}',$i))->setAuth($this->dbuser,$this->dbpass)->send();
         }
 
         //Insert countries
@@ -94,10 +96,11 @@ class Fixtures
         }
 
         //Insert Post
-        $templatePost = '{"@class": "Post", "id":"%d","title": "Title %d", "body": "Body %d", "comments":["#22:3"] }';
+        $templatePost = '{"@class": "Post", "id":"%d","title": "%d", "body": "Body %d", "comments":["#'.$this->Comment.':3"] }';
         for ($i = 0 ; $i <= 5 ; $i++) {
             $this->client->post('/document/'. $this->dbname , $this->contentType, sprintf($templatePost,$i,$i,$i))->setAuth($this->dbuser,$this->dbpass)->send();
         }
+        $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "Post", "id":"6","title": "titolo 6", "body": "Body 6", "comments":["#'.$this->Comment.':2"] }')->setAuth($this->dbuser,$this->dbpass)->send();
 
         //Insert MapPoint
         $this->client->post('/document/'. $this->dbname , $this->contentType, '{"@class": "MapPoint", "x": "42.573968", "y": "13.203125" }')->setAuth($this->dbuser,$this->dbpass)->send();
