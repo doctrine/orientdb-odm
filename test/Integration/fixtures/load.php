@@ -37,32 +37,33 @@ class Fixtures
 
     function create_classes()
     {
-        $classes = array('Address', 'Country','City','Profile','Company', 'Post','Comment', 'MapPoint');
+        $classes = array(
+            'Address'  => '{"city": {"propertyType": "STRING"}}',
+            'Country'  => null,
+            'City'     => null,
+            'Profile'  => '{ "name": {"propertyType": "STRING"} , "followers": {"propertyType": "LINKMAP","linkedClass": "Profile"} }',
+            'Company'  => null,
+            'Comment'  => null,
+            'Post'     => '{"comments": {"propertyType": "LINKLIST","linkedClass": "Comment"}}',
+            'MapPoint' => '{"x": {"propertyType": "FLOAT"}, "y":{"propertyType": "FLOAT"} }',
+        );
 
-        foreach ($classes as $class) {
+        foreach ($classes as $class => $properties) {
             $query = "CREATE CLASS " . $class;
+
             $result = $this->client->post('/command/' . $this->dbname . '/sql/' .$query, $this->contentType)->send()->json();
             $this->{$class} = $result['result'][0]['value'];
+
+            if ($properties) {
+                $this->client->post(sprintf("/property/%s/%s",$this->dbname,$class), $this->contentType, $properties)->send();
+            }
         }
-
-        //create Profile properties
-        $this->client->post('/property/'. $this->dbname . '/Profile/name', $this->contentType)->send();
-        $this->client->post('/property/'. $this->dbname . '/Profile', $this->contentType, '{"followers": {"propertyType": "LINKMAP","linkedClass": "Profile"}}')->send();
-
-        //create Post properties
-        $this->client->post('/property/'. $this->dbname . '/Post', $this->contentType, '{"comments": {"propertyType": "LINKLIST","linkedClass": "Comment"}}')->send();
-
-        //create Address properties
-        $this->client->post('/property/'. $this->dbname . '/Address/city', $this->contentType)->send();
-
-        //create MapPoint properties
-        $this->client->post('/property/'. $this->dbname . '/MapPoint', $this->contentType, '{"x": {"propertyType": "FLOAT"}, "y":{"propertyType": "FLOAT"} }')->send();
 
         return $this;
 
     }
 
-    function init()
+    function load_fixtures()
     {
 
         //Insert  City
@@ -111,6 +112,6 @@ $fixtures = new Fixtures('GratefulDeadConcerts','admin','admin');
 $fixtures
     ->clean()
     ->create_classes()
-    ->init()
+    ->load_fixtures()
     ;
 
