@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "5bc55ed1f74ecafb6e0c6c669a0820bf",
+    "hash": "64ccd51da9692dba4615a2b2b8a8862c",
     "packages": [
         {
             "name": "doctrine/common",
@@ -169,29 +169,34 @@
         },
         {
             "name": "symfony/class-loader",
-            "version": "2.1.x-dev",
+            "version": "dev-master",
             "target-dir": "Symfony/Component/ClassLoader",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ClassLoader.git",
-                "reference": "0e9d7c12151d4c9942865a049d38e97c6c7288cb"
+                "reference": "d122b8a0ef3bc0153802bbd598c0f6972657a3c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ClassLoader/zipball/0e9d7c12151d4c9942865a049d38e97c6c7288cb",
-                "reference": "0e9d7c12151d4c9942865a049d38e97c6c7288cb",
+                "url": "https://api.github.com/repos/symfony/ClassLoader/zipball/d122b8a0ef3bc0153802bbd598c0f6972657a3c3",
+                "reference": "d122b8a0ef3bc0153802bbd598c0f6972657a3c3",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "symfony/finder": "2.1.*"
+                "symfony/finder": "~2.0"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
-                    "Symfony\\Component\\ClassLoader": ""
+                    "Symfony\\Component\\ClassLoader\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -210,7 +215,7 @@
             ],
             "description": "Symfony ClassLoader Component",
             "homepage": "http://symfony.com",
-            "time": "2013-05-06 10:48:41"
+            "time": "2013-11-26 16:42:52"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -268,26 +273,31 @@
         },
         {
             "name": "symfony/finder",
-            "version": "2.1.x-dev",
+            "version": "dev-master",
             "target-dir": "Symfony/Component/Finder",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "0dbc61194b58bc513e003789853ddfe0aea8cf33"
+                "reference": "46881af03b48e942001e8e9450c2c4ccaeccfc8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/0dbc61194b58bc513e003789853ddfe0aea8cf33",
-                "reference": "0dbc61194b58bc513e003789853ddfe0aea8cf33",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/46881af03b48e942001e8e9450c2c4ccaeccfc8d",
+                "reference": "46881af03b48e942001e8e9450c2c4ccaeccfc8d",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
-                    "Symfony\\Component\\Finder": ""
+                    "Symfony\\Component\\Finder\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -306,7 +316,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "http://symfony.com",
-            "time": "2013-05-25 15:47:15"
+            "time": "2013-11-26 16:42:52"
         }
     ],
     "packages-dev": [
