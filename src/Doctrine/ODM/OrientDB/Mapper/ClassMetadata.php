@@ -32,6 +32,14 @@ class ClassMetadata implements DoctrineMetadata
     private $multipleAssociations = array('linklist', 'linkset', 'linkmap');
 
     /**
+     * The name of the custom repository class used for the document class.
+     * (Optional).
+     *
+     * @var string|null
+     */
+    protected $repositoryClassName;
+
+    /**
      * Instantiates a new Metadata for the given $className.
      *
      * @param string        $className
@@ -66,9 +74,30 @@ class ClassMetadata implements DoctrineMetadata
     }
 
     /**
+     * Registers a custom repository class for the document class.
+     *
+     * @param string $mapperClassName  The class name of the custom mapper.
+     */
+    public function setRepositoryClassName($repositoryClassName)
+    {
+        $this->repositoryClassName = $repositoryClassName;
+    }
+
+    /**
+     * Get repository class
+     *
+     * @return string|null
+     */
+    public function getRepositoryClassName()
+    {
+        $document = $this->getMapper()->getClassAnnotation($this->getName());
+        return $document->repositoryClass;
+    }
+
+    /**
      * Gets the ReflectionClass instance for this mapped class.
      *
-     * @return ReflectionClass
+     * @return \ReflectionClass
      */
     public function getReflectionClass()
     {
@@ -346,7 +375,7 @@ class ClassMetadata implements DoctrineMetadata
     /**
      * Returns the mapper associated with this Metadata.
      *
-     * @return Mapper
+     * @return DataMapper
      */
     protected function getMapper()
     {

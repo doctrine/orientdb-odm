@@ -25,6 +25,7 @@ namespace Doctrine\ODM\OrientDB\Mapper\Annotations;
 class Document extends \Doctrine\Common\Annotations\Annotation
 {
     public $class;
+    public $repositoryClass;
 
     /**
      * Given a $Doctrine\OrientDBClass, checks wheter this annotation matches it.
