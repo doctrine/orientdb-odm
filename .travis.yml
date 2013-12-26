@@ -2,9 +2,11 @@ language: php
 php:
   - 5.3
   - 5.4
+  - 5.5
 before_script:
   - ./bin/initialize-dependencies.sh
-  - sh -c ./bin/initialize-ci.sh 1.2.0
+  - sh -c ./bin/initialize-ci.sh 1.6.2
+  - php test/Integration/fixtures/load.php
 script: phpunit --group __nogroup__,integration
 notifications:
   email:
