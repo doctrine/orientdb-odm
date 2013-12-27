@@ -23,7 +23,7 @@ namespace test\Integration\Document;
 use Doctrine\ODM\OrientDB\Mapper\Annotations as ODM;
 
 /**
-* @ODM\Document(class="COMMENT")
+* @ODM\Document(class="Comment")
 */
 class Comment
 {

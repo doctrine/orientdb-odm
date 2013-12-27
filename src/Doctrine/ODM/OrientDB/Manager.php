@@ -81,10 +81,11 @@ class Manager implements ObjectManager
         $binding = $this->getBinding();
         $results = $binding->execute($query->getRaw(), $query->shouldReturn(), $fetchPlan)->getResult();
 
-        if (is_array($results)) {
+        /* @todo verify the condition*/
+        if (is_array($results) && $query->shouldReturn()) {
             $collection = $this->getMapper()->hydrateCollection($results);
             $collection = $this->finalizeCollection($collection);
-            
+
             return $collection;
         }
 

@@ -31,6 +31,15 @@
         "php": ">=5.3.3",
         "doctrine/common": ">=2.2,<2.4-dev",
         "symfony/finder": "~2.3",
-        "symfony/class-loader": "~2.3"
-    }
+        "symfony/class-loader": "~2.3",
+        "guzzle/guzzle": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.x-dev"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "minimum-stability": "dev"
+
 }

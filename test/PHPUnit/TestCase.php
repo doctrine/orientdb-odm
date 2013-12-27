@@ -56,6 +56,16 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $binding;
     }
 
+    /**
+     * @param String $className
+     * @return String
+     */
+    public function getClassId($className)
+    {
+        return $this->createHttpBinding()->getClass($className)->getData()->clusters[0];
+    }
+
+
     protected function getProxyDirectory()
     {
         return __DIR__ . '/../../test/proxies';

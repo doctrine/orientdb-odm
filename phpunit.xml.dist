@@ -46,7 +46,7 @@
         <const name="TEST_ODB_PORT" value="2480"/>
         <const name="TEST_ODB_USER" value="admin"/>
         <const name="TEST_ODB_PASSWORD" value="admin"/>
-        <const name="TEST_ODB_DATABASE" value="demo"/>
+        <const name="TEST_ODB_DATABASE" value="GratefulDeadConcerts"/>
         <const name="TEST_ODB_TIMEOUT" value="30"/>
     </php>
 </phpunit>

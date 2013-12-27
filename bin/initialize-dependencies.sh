@@ -12,7 +12,7 @@ odb_clean_dependencies () {
 odb_initialize_composer () {
   if [ ! -f "composer.phar" ]; then
     echo "Could not find composer.phar, downloading it now..."
-    odb_download "http://getcomposer.org/composer.phar"
+    odb_download_composer "http://getcomposer.org/composer.phar"
   fi
   /usr/bin/env php composer.phar install
 }

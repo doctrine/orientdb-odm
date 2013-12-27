@@ -132,7 +132,13 @@ The test suite can be launched simply by executing `phpunit` from the root direc
 By default the suite does not perform integration tests to verify the correct behaviour of our implementation against a running instance of OrientDB.
 Since integration tests are marked using the [@group](http://www.phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.annotations.group)
 annotation, they can be enabled by default via `phpunit.xml` by adding a comment to the `integration` group in the list of excluded groups or,
-if you just want to execute them on a single execution basis, by launching the suite with the additional `--group` argument:
+if you just want to execute them on a single execution basis, first load fixtures with this script
+
+```
+php ./test/Integration/fixtures/load.php
+```
+
+followeb by launching the suite with the additional `--group` argument:
 
 ```
 phpunit --group __nogroup__,integration

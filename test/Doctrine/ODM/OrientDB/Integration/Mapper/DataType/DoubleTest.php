@@ -19,11 +19,12 @@ use test\PHPUnit\TestCase;
  */
 class DoubleTest extends TestCase
 {
+
     public function testHydrationOfADoubleProperty()
     {
         $manager = $this->createManager();
         //MapPoint
-        $point = $manager->find("#86:0");
+        $point = $manager->find("#".$this->getClassId('MapPoint').":0");
 
         $this->assertInternalType('float', $point->y);
     }

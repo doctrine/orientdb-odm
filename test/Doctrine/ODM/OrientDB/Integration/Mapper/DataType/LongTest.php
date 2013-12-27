@@ -22,16 +22,18 @@ class LongTest extends TestCase
 {
     public function testHydrationOfALongProperty()
     {
+
         $manager = $this->createManager();
 
         $query = new Query();
         $query->update('Profile')
-            ->set(array('hash' => '2937480'))
-            ->where('@rid = ?', '#13:0');
+            ->set(array('hash' => 2937480 ))
+            ->where('@rid = ?', '#'.$this->getClassId('Profile').':0');
 
         $manager->execute($query);
 
-        $neoProfile = $manager->find("#13:0");
+        $neoProfile = $manager->find("#".$this->getClassId('Profile').":0");
+
         $this->assertInternalType('integer', $neoProfile->hash);
     }
 }
