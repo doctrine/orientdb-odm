@@ -91,6 +91,7 @@ class CurlClient
         curl_setopt_array($this->curl, array(
             CURLOPT_URL => $location,
             CURLOPT_COOKIE => $this->getRequestCookies(),
+            CURLOPT_CUSTOMREQUEST => $method,
         ));
 
         if (!$response = curl_exec($this->curl)) {
