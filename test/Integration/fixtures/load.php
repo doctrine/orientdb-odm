@@ -71,7 +71,7 @@ class Fixtures
 
 
         //Insert  Address
-        for ($i = 0 ; $i <= 40 ; $i++) {
+        for ($i = 0 ; $i < 40 ; $i++) {
             $this->client->post('/document/'. $this->dbname , $this->contentType, sprintf('{"@class": "Address", "street" : "New street %d, Italy", "city":"#'.$this->City.':0"}',$i))->send();
         }
 

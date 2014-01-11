@@ -80,7 +80,7 @@ class Repository implements ObjectRepository
             }
         }
         
-        return $this->$method($arguments);
+        return $this->$method(array($property => $arguments[0]));
     }
 
     /**

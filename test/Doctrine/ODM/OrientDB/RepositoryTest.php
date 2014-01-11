@@ -81,7 +81,7 @@ class RepositoryTest extends TestCase
     public function testYouCanExecuteFindByQueries()
     {
         $repository = $this->createRepository();
-        $documents  = $repository->findByUsername();
+        $documents  = $repository->findByUsername('hello');
         
         $this->assertSame(2, count($documents));
     }
@@ -89,7 +89,7 @@ class RepositoryTest extends TestCase
     public function testYouCanExecuteFindOneByQueries()
     {
         $repository = $this->createRepository();
-        $documents  = $repository->findOneByUsername();
+        $documents  = $repository->findOneByUsername('hello');
         
         $this->assertSame(1, count($documents));
     }
