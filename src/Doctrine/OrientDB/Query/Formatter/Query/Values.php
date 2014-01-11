@@ -20,13 +20,23 @@
 namespace Doctrine\OrientDB\Query\Formatter\Query;
 
 use Doctrine\OrientDB\Query\Formatter\Query;
+use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
 
 class Values extends Query implements TokenInterface
 {
     public static function format(array $values)
     {
         foreach ($values as $key => $value) {
-            if (is_array($value)) {
+            $validator      = new RidValidator;
+
+            try {
+                $rid = $validator->check($value);
+            } catch (\Exception $e) {
+                $rid = false;
+            }
+            if ($rid) {
+                $values[$key] = $value;
+            } else if (is_array($value)) {
                 $values[$key] = "[" . addslashes(self::implode($value)) . "]";
             } else if ($value === null) {
                 $values[$key] = 'NULL';
