@@ -27,13 +27,16 @@ class Values extends Query implements TokenInterface
     public static function format(array $values)
     {
         foreach ($values as $key => $value) {
-            $validator      = new RidValidator;
+            $rid = false;
 
-            try {
-                $rid = $validator->check($value);
-            } catch (\Exception $e) {
-                $rid = false;
+            if (is_string($value)) {
+                $validator      = new RidValidator;
+
+                try {
+                    $rid = $validator->check($value);
+                } catch (\Exception $e) {}
             }
+
             if ($rid) {
                 $values[$key] = $value;
             } else if (is_array($value)) {
