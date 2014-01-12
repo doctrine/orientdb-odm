@@ -55,7 +55,7 @@ odb_download_composer () {
 odb_download_server () {
   #http://www.orientdb.org/portal/function/portal/download/phpuser@unknown.com/%20/%20/%20/%20/unknown/orientdb-community-1.6.2.tar.gz/false/false
 
-  DOWN_USER=robot@travi-ci.com
+  DOWN_USER=robot-php@travi-ci.com
   ODB_VERSION=$1
   CI_DIR=$2
 
