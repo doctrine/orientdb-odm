@@ -31,6 +31,7 @@ use Doctrine\OrientDB\Binding\BindingInterface;
 use Doctrine\OrientDB\Query\Query;
 use Doctrine\OrientDB\Query\Command\Select;
 use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
+use Doctrine\OrientDB\Util\Inflector\Cached as Inflector;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;
 
@@ -48,10 +49,15 @@ class Manager implements ObjectManager
      * @param   BindingInterface $binding
      * @param   MetadataFactory  $metadataFactory
      */
-    public function __construct(Mapper $mapper, BindingInterface $binding, MetadataFactory $metadataFactory = null)
-    {
+    public function __construct(
+        Mapper $mapper,
+        BindingInterface $binding,
+        Inflector $inflector = null,
+        MetadataFactory $metadataFactory = null
+    ) {
         $this->mapper = $mapper;
         $this->binding = $binding;
+        $this->inflector = $inflector ?: new Inflector();
         $this->metadataFactory = $metadataFactory ?: new ClassMetadataFactory($mapper);
     }
 
@@ -77,7 +83,7 @@ class Manager implements ObjectManager
      */
     public function execute(Query $query, $fetchPlan = null)
     {
-        
+
         $binding = $this->getBinding();
         $results = $binding->execute($query->getRaw(), $query->shouldReturn(), $fetchPlan)->getResult();
 
@@ -200,7 +206,7 @@ class Manager implements ObjectManager
      */
     public function getRepository($className)
     {
-        $repositoryClass    = $className . "Repository";
+        $repositoryClass = $className . "Repository";
 
         if (class_exists($repositoryClass)) {
             return new $repositoryClass($className, $this, $this->getMapper());
@@ -294,9 +300,9 @@ class Manager implements ObjectManager
      */
     protected function doFind($rid, $fetchPlan = null)
     {
-        $query      = new Query(array($rid));
-        $binding    = $this->getBinding(); 
-        $results    = $binding->execute($query->getRaw(), true, $fetchPlan)->getResult();
+        $query   = new Query(array($rid));
+        $binding = $this->getBinding();
+        $results = $binding->execute($query->getRaw(), true, $fetchPlan)->getResult();
 
         if (isset($results) && count($results)) {
           $record = is_array($results) ? array_shift($results) : $results;
@@ -318,9 +324,9 @@ class Manager implements ObjectManager
     protected function finalize(Result $result)
     {
         foreach ($result->getLinkTracker()->getProperties() as $property => $value) {
-            $setter = 'set' . ucfirst($property);
-            
-            if ($value instanceOf Rid\Collection || $value instanceOf Rid) {
+            $setter = 'set' . $this->inflector->camelize($property);
+
+            if ($value instanceof Rid\Collection || $value instanceof Rid) {
                 $method = $value instanceof Rid\Collection ? 'findRecords' : 'find';
                 $value = $this->$method($value->getValue(), null, false);
                 $result->getDocument()->$setter($value);
