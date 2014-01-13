@@ -621,7 +621,7 @@ class Query implements QueryInterface
      */
     public function shouldReturn()
     {
-        if ($this->getCommand() instanceOf Select) {
+        if ($this->getCommand() instanceof Select) {
             return true;
         }
 

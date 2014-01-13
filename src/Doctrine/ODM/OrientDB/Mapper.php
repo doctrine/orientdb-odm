@@ -46,7 +46,7 @@ class Mapper
     protected $annotationReader;
     protected $inflector;
     protected $documentProxiesDirectory;
-    protected $classMap                       = array();
+    protected $classMap                  = array();
     protected $cache;
     protected $caster;
     protected $castedProperties          = array();
@@ -110,7 +110,7 @@ class Mapper
         $mappedDocumentClass = self::ANNOTATION_CLASS_CLASS;
 
         foreach ($reader->getClassAnnotations($reflClass) as $annotation) {
-            if ($annotation instanceOf $mappedDocumentClass) {
+            if ($annotation instanceof $mappedDocumentClass) {
                 return $annotation;
             }
         }
@@ -160,10 +160,10 @@ class Mapper
             $orientClass = $orientObject->$classProperty;
 
             if ($orientClass) {
-                $linkTracker    = new LinkTracker();
-                $class          = $this->findClassMappingInDirectories($orientClass);
-                $document       = $this->createDocument($class, $orientObject, $linkTracker);
-                
+                $linkTracker = new LinkTracker();
+                $class       = $this->findClassMappingInDirectories($orientClass);
+                $document    = $this->createDocument($class, $orientObject, $linkTracker);
+
                 return new Hydration\Result($document, $linkTracker);
             }
         }
@@ -233,7 +233,7 @@ class Mapper
     protected function castProperty($annotation, $propertyValue)
     {
         $propertyId = $this->getCastedPropertyCacheKey($annotation->type, $propertyValue);
-        
+
         if (!isset($this->castedProperties[$propertyId])) {
             $method = 'cast' . $this->inflector->camelize($annotation->type);
 
@@ -246,12 +246,12 @@ class Mapper
 
         return $this->castedProperties[$propertyId];
     }
-    
+
     protected function getCastedPropertyCacheKey($type, $value)
     {
         return get_class() . "_casted_property_" . $type . "_" . serialize($value);
     }
-    
+
     /**
      * Returns the caching layer of the mapper.
      *
@@ -327,7 +327,7 @@ class Mapper
     protected function findClassMappingInDirectory($OClass, $directory, $namespace)
     {
         $finder = new Finder();
-        
+
         if (isset($this->classMap[$OClass])) {
             return $this->classMap[$OClass];
         }
@@ -397,8 +397,8 @@ class Mapper
 
         foreach ($refClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
             if (!$refMethod->isStatic()) {
-                $parameters         = array();
-                $parentParameters   = array();
+                $parameters       = array();
+                $parentParameters = array();
 
                 foreach ($refMethod->getParameters() as $parameter) {
                     if ($parameter->getClass()) {
@@ -406,24 +406,24 @@ class Mapper
 use {$parameter->getClass()->getName()};
 EOT;
 
-                        $type = $parameter->getClass()->getShortName();
+                        $parameters[] = $parameter->getClass()->getShortName() . " $" . $parameter->getName();
                     } else {
-                        $type = null;
+                        $parameters[] = "$" . $parameter->getName();
                     }
-                    
-                    $parameters[]           = $type . " $" . $parameter->getName();
-                    $parentParameters[]     = "$" . $parameter->getName();
+
+                    $parentParameters[] = "$" . $parameter->getName();
                 }
 
-                $parametersAsString         = implode(', ', $parameters);
-                $parentParametersAsString   = implode(', ', $parentParameters);
+                $parametersAsString       = implode(', ', $parameters);
+                $parentParametersAsString = implode(', ', $parentParameters);
 
                 $methods .= <<<EOT
-    public function {$refMethod->getName()}($parametersAsString) {
+    public function {$refMethod->getName()}($parametersAsString)
+    {
         \$parent = parent::{$refMethod->getName()}($parentParametersAsString);
 
         if (!is_null(\$parent)) {
-            if (\$parent instanceOf \Doctrine\ODM\OrientDB\Proxy\AbstractProxy) {
+            if (\$parent instanceof \Doctrine\ODM\OrientDB\Proxy\AbstractProxy) {
                 return \$parent();
             }
 
@@ -439,21 +439,21 @@ EOT;
 <?php
 
 namespace Doctrine\OrientDB\Proxy$namespace;
-            
+
 $importedNamespaces
 
 class $proxyClassName extends $class
 {
-  $methods
+$methods
 }
 EOT;
 
         file_put_contents("$dir/$proxyClassName.php", $proxy);
     }
-    
+
     /**
      * Returns the caster instance.
-     * 
+     *
      * @return Doctrine\ODM\OrientDB\Caster\Caster
      */
     protected function getCaster()
@@ -510,8 +510,8 @@ EOT;
      */
     protected function getObjectPropertyAnnotations($document)
     {
-        $cacheKey    = "object_property_annotations_" . get_class($document);
-        
+        $cacheKey = "object_property_annotations_" . get_class($document);
+
         if (!$this->getCache()->contains($cacheKey)) {
             $refObject   = new \ReflectionObject($document);
             $annotations = array();
@@ -526,7 +526,7 @@ EOT;
 
             $this->getCache()->save($cacheKey, $annotations);
         }
-        
+
         return $this->getCache()->fetch($cacheKey);
     }
 
@@ -561,9 +561,9 @@ EOT;
                     throw $e;
                 }
             }
-            
 
-            if ($value instanceof Rid || $value instanceOf Rid\Collection || is_array($value)) {
+
+            if ($value instanceof Rid || $value instanceof Rid\Collection || is_array($value)) {
                 $linkTracker->add($property, $value);
             }
         }

@@ -295,7 +295,7 @@ class Caster implements CasterInterface
      */
     public function castLink()
     {
-        if ($this->value instanceOf \stdClass) {
+        if ($this->value instanceof \stdClass) {
             return new ValueProxy($this->getMapper()->hydrate($this->value)->getDocument());
         } else {
             try {
