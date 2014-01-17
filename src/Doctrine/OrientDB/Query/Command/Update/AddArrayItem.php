@@ -21,7 +21,7 @@ namespace Doctrine\OrientDB\Query\Command\Update;
 
 use Doctrine\OrientDB\Query\Command\Update;
 
-class RemoveArrayItem extends Update
+class AddArrayItem extends Update
 {
     /**
      * Builds a new statement setting the $values to remove in the given $class.
