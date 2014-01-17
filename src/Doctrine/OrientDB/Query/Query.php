@@ -38,7 +38,7 @@ class Query implements QueryInterface
         'update.add'        => 'Doctrine\OrientDB\Query\Command\Update\Add',
         'update.remove'     => 'Doctrine\OrientDB\Query\Command\Update\Remove',
         'update.put'        => 'Doctrine\OrientDB\Query\Command\Update\Put',
-        'update.addeai'     => 'Doctrine\OrientDB\Query\Command\Update\AddArrayItem',
+        'update.addai'     => 'Doctrine\OrientDB\Query\Command\Update\AddArrayItem',
         'update.removeai'   => 'Doctrine\OrientDB\Query\Command\Update\RemoveArrayItem',
         'grant'             => 'Doctrine\OrientDB\Query\Command\Credential\Grant',
         'revoke'            => 'Doctrine\OrientDB\Query\Command\Credential\Revoke',
