@@ -38,7 +38,7 @@ class Query implements QueryInterface
         'update.add'        => 'Doctrine\OrientDB\Query\Command\Update\Add',
         'update.remove'     => 'Doctrine\OrientDB\Query\Command\Update\Remove',
         'update.put'        => 'Doctrine\OrientDB\Query\Command\Update\Put',
-        'update.addai'     => 'Doctrine\OrientDB\Query\Command\Update\AddArrayItem',
+        'update.addai'     =>  'Doctrine\OrientDB\Query\Command\Update\AddArrayItem',
         'update.removeai'   => 'Doctrine\OrientDB\Query\Command\Update\RemoveArrayItem',
         'grant'             => 'Doctrine\OrientDB\Query\Command\Credential\Grant',
         'revoke'            => 'Doctrine\OrientDB\Query\Command\Credential\Revoke',
@@ -488,6 +488,14 @@ class Query implements QueryInterface
         return $this->command;
     }
 
+    public function addai(array $updates, $class, $append = true)
+    {
+        $commandClass = $this->getCommandClass('update.addai');
+        $this->command = new $commandClass($updates, $class, $append);
+
+        return $this->command;
+    }
+
     public function removeai(array $updates, $class, $append = true)
     {
         $commandClass = $this->getCommandClass('update.removeai');
@@ -495,6 +503,8 @@ class Query implements QueryInterface
 
         return $this->command;
     }
+
+
     /**
      * Resets the WHERE conditions.
      *
