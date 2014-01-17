@@ -41,6 +41,7 @@ class HttpBinding implements HttpBindingInterface
         $this->server = "{$parameters->getHost()}:{$parameters->getPort()}";
         $this->database = $parameters->getDatabase();
         $this->adapter = $adapter ?: new CurlClientAdapter(new CurlClient());
+        $this->adapter->getClient()->setHeader('Accept', 'application/json');
 
         $this->setAuthentication($parameters->getUsername(), $parameters->getPassword());
     }
