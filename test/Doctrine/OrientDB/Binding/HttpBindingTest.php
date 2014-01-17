@@ -138,6 +138,16 @@ class HttpBindingTest extends TestCase
         $this->assertHttpStatus(500, $binding->query("UPDATE Profile SET online = false"), 'Tries to execute an UPDATE with the query command');
     }
 
+    public function testCallFunctionMethod()
+    {
+        $binding = $this->createHttpBinding();
+
+        $this->assertHttpStatus(200, $binding->callFunction('testfunction'), 'Executes a server side function call without arguments');
+        $this->assertHttpStatus(200, $binding->callFunction('testfunction', array('arg1')), 'Executes a server side function call with arguments');
+        $this->assertHttpStatus(200, $binding->callFunction('testfunction', array('arg1'), false), 'Executes a server side function call to create/update/delete and sets idempotent to false');
+        $this->assertHttpStatus(500, $binding->callFunction('testfunction', array('arg1')), 'Executes a server side function call to create/update/delete without setting idempotent to false');
+    }
+    
     public function testSettingAuthentication()
     {
         $adapter = $this->getMock('Doctrine\OrientDB\Binding\Adapter\HttpClientAdapterInterface');

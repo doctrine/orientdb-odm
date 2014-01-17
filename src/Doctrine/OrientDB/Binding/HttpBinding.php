@@ -58,7 +58,8 @@ class HttpBinding implements HttpBindingInterface
         $location = "http://{$this->server}/$method";
 
         if ($database) {
-            $location .= '/' . rawurlencode($database);
+            $location .= '/' . str_replace("%24", "$", rawurlencode($database));
+
         }
 
         if ($arguments) {
@@ -86,6 +87,10 @@ class HttpBinding implements HttpBindingInterface
         }
 
         if (isset($fetchPlan)) {
+            if(!isset($limit)) {
+                $arguments[] = 20;
+            }
+            
             $arguments[] = $fetchPlan;
         }
 
@@ -322,6 +327,18 @@ class HttpBinding implements HttpBindingInterface
     {
         $location = $this->getQueryLocation($database ?: $this->database, $query, $limit, $fetchPlan, $language);
         $response = $this->adapter->request('GET', $location);
+
+        return $response;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function callFunction($functionName, $arguments = array(), $database = null, $idempotent = true)
+    {
+        array_unshift($arguments, $functionName);
+        $location = $this->getLocation('function', $database ?: $this->database, $arguments);
+        $response = $this->adapter->request($idempotent ? 'GET' : 'POST', $location);
 
         return $response;
     }
