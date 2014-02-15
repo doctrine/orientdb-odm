@@ -81,10 +81,10 @@ class CurlClient
     /**
      * Executes a Curl.
      *
-     * @param   String $method
-     * @param   String $location
-     * @return  CurlClientResponse
-     * @throws  Inconsistent
+     * @param  String $method
+     * @param  String $location
+     * @return CurlClientResponse
+     * @throws Inconsistent
      */
     public function execute($method, $location)
     {
@@ -129,8 +129,8 @@ class CurlClient
     /**
      * GETs a resource.
      *
-     * @param   String $location
-     * @return  CurlClientResponse
+     * @param  String $location
+     * @return CurlClientResponse
      */
     public function get($location)
     {
@@ -142,14 +142,15 @@ class CurlClient
     /**
      * Executes a POST on a location.
      *
-     * @param   String $location
-     * @param   String $body
-     * @return  CurlClientResponse
+     * @param  String $location
+     * @param  String $body
+     * @return CurlClientResponse
      */
     public function post($location, $body)
     {
         curl_setopt($this->curl, CURLOPT_POST, 1);
         curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 
         return $this->execute('POST', $location);
     }
@@ -157,9 +158,9 @@ class CurlClient
     /**
      * PUTs a resource.
      *
-     * @param   String $location
-     * @param   String $body
-     * @return  CurlClientResponse
+     * @param  String $location
+     * @param  String $body
+     * @return CurlClientResponse
      */
     public function put($location, $body)
     {
