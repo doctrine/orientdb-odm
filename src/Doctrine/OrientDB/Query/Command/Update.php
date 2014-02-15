@@ -44,7 +44,7 @@ class Update extends Command implements UpdateInterface
      */
     protected function getSchema()
     {
-        return "UPDATE :Class SET :Updates :Where RETURN :Returns";
+        return "UPDATE :Class SET :Updates :Where :Returns";
     }
 
     /**
@@ -71,7 +71,7 @@ class Update extends Command implements UpdateInterface
     {
         return array_merge(parent::getTokenFormatters(), array(
             'Updates' => "Doctrine\OrientDB\Query\Formatter\Query\Updates",
-            'Returns' => "Doctrine\OrientDB\Query\Formatter\Query\Regular"
+            'Returns' => "Doctrine\OrientDB\Query\Formatter\Query\Returns"
         ));
     }
 
