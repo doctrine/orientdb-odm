@@ -47,7 +47,7 @@ class Insert extends Command implements InsertInterface
      */
     protected function getSchema()
     {
-        return "INSERT INTO :Target (:Fields) VALUES (:Values) RETURN :Returns";
+        return "INSERT INTO :Target (:Fields) VALUES (:Values) :Returns";
     }
 
     /**
@@ -102,7 +102,7 @@ class Insert extends Command implements InsertInterface
         return array_merge(parent::getTokenFormatters(), array(
             'Fields'  => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
             'Values'  => "Doctrine\OrientDB\Query\Formatter\Query\Values",
-            'Returns' => "Doctrine\OrientDB\Query\Formatter\Query\Regular"
+            'Returns' => "Doctrine\OrientDB\Query\Formatter\Query\Returns"
         ));
     }
 
