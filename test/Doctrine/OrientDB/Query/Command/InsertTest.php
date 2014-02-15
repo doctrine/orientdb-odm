@@ -35,7 +35,7 @@ class InsertTest extends TestCase
 
     public function testConstructionOfAnObject()
     {
-        $query = 'INSERT INTO () VALUES ()';
+        $query = 'INSERT INTO () VALUES () RETURN';
 
         $this->assertCommandGives($query, $this->insert->getRaw());
     }
@@ -43,17 +43,17 @@ class InsertTest extends TestCase
     public function testInsertingFields()
     {
         $this->insert->fields(array('name'));
-        $query = 'INSERT INTO (name) VALUES ()';
+        $query = 'INSERT INTO (name) VALUES () RETURN';
 
         $this->assertCommandGives($query, $this->insert->getRaw());
 
         $this->insert->fields(array('name', 'username'), false);
-        $query = 'INSERT INTO (name, username) VALUES ()';
+        $query = 'INSERT INTO (name, username) VALUES () RETURN';
 
         $this->assertCommandGives($query, $this->insert->getRaw());
 
         $this->insert->fields(array('name'), true);
-        $query = 'INSERT INTO (name, username, name) VALUES ()';
+        $query = 'INSERT INTO (name, username, name) VALUES () RETURN';
 
         $this->assertCommandGives($query, $this->insert->getRaw());
     }
@@ -61,12 +61,12 @@ class InsertTest extends TestCase
     public function testSettingTheToToken()
     {
         $this->insert->into("city");
-        $query = 'INSERT INTO city () VALUES ()';
+        $query = 'INSERT INTO city () VALUES () RETURN';
 
         $this->assertCommandGives($query, $this->insert->getRaw());
 
         $this->insert->into('town', false);
-        $query = 'INSERT INTO town () VALUES ()';
+        $query = 'INSERT INTO town () VALUES () RETURN';
 
         $this->assertCommandGives($query, $this->insert->getRaw());
     }
@@ -74,17 +74,17 @@ class InsertTest extends TestCase
     public function testInsertValues()
     {
         $this->insert->values(array());
-        $query = 'INSERT INTO () VALUES ()';
+        $query = 'INSERT INTO () VALUES () RETURN';
 
         $this->assertCommandGives($query, $this->insert->getRaw());
 
         $this->insert->values(array('ciapa', 'ciapa2'), true);
-        $query = 'INSERT INTO () VALUES ("ciapa", "ciapa2")';
+        $query = 'INSERT INTO () VALUES ("ciapa", "ciapa2") RETURN';
 
         $this->assertCommandGives($query, $this->insert->getRaw());
 
         $this->insert->values(array('town'), false);
-        $query = 'INSERT INTO () VALUES ("town")';
+        $query = 'INSERT INTO () VALUES ("town") RETURN';
 
         $this->assertCommandGives($query, $this->insert->getRaw());
     }
