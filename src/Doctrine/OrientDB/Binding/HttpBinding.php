@@ -22,6 +22,8 @@ namespace Doctrine\OrientDB\Binding;
 use Doctrine\OrientDB\Binding\Adapter\HttpClientAdapterInterface;
 use Doctrine\OrientDB\Binding\Adapter\CurlClientAdapter;
 use Doctrine\OrientDB\Binding\Client\Http\CurlClient;
+use Doctrine\OrientDB\Query\Query;
+use Doctrine\OrientDB\Query\Command\Select;
 use Doctrine\OrientDB\Exception as OrientException;
 
 class HttpBinding implements HttpBindingInterface
@@ -89,9 +91,7 @@ class HttpBinding implements HttpBindingInterface
             $arguments[] = $fetchPlan;
         }
 
-        $location = $this->getLocation('query', $database, $arguments);
-
-        return $location;
+        return $this->getLocation('query', $database, $arguments);
     }
 
     /**
@@ -111,9 +111,7 @@ class HttpBinding implements HttpBindingInterface
             $arguments[] = $fetchPlan;
         }
 
-        $location = $this->getLocation('document', $database, $arguments);
-
-        return $location;
+        return $this->getLocation('document', $database, $arguments);
     }
 
     /**
@@ -126,9 +124,8 @@ class HttpBinding implements HttpBindingInterface
     protected function getClassLocation($database, $class)
     {
         $this->ensureDatabase($database);
-        $location = $this->getLocation('class', $database, array($class));
 
-        return $location;
+        return $this->getLocation('class', $database, array($class));
     }
 
     /**
@@ -142,9 +139,8 @@ class HttpBinding implements HttpBindingInterface
     protected function getClusterLocation($database, $cluster, $limit = null)
     {
         $this->ensureDatabase($database);
-        $location = $this->getLocation('cluster', $database, array($cluster, $limit));
 
-        return $location;
+        return $this->getLocation('cluster', $database, array($cluster, $limit));
     }
 
     /**
@@ -156,9 +152,8 @@ class HttpBinding implements HttpBindingInterface
     protected function getDatabaseLocation($database)
     {
         $this->ensureDatabase($database);
-        $location = $this->getLocation('database', $database);
 
-        return $location;
+        return $this->getLocation('database', $database);
     }
 
     /**
@@ -167,9 +162,8 @@ class HttpBinding implements HttpBindingInterface
     public function deleteClass($class, $database = null)
     {
         $location = $this->getClassLocation($database ?: $this->database, $class);
-        $response = $this->adapter->request('DELETE', $location);
 
-        return $response;
+        return $this->adapter->request('DELETE', $location);
     }
 
     /**
@@ -178,9 +172,8 @@ class HttpBinding implements HttpBindingInterface
     public function getClass($class, $database = null)
     {
         $location = $this->getClassLocation($database ?: $this->database, $class);
-        $response = $this->adapter->request('GET', $location);
 
-        return $response;
+        return $this->adapter->request('GET', $location);
     }
 
     /**
@@ -189,9 +182,8 @@ class HttpBinding implements HttpBindingInterface
     public function postClass($class, $body = null, $database = null)
     {
         $location = $this->getClassLocation($database ?: $this->database, $class);
-        $response = $this->adapter->request('POST', $location, null, $body);
 
-        return $response;
+        return $this->adapter->request('POST', $location, null, $body);
     }
 
     /**
@@ -200,9 +192,8 @@ class HttpBinding implements HttpBindingInterface
     public function cluster($cluster, $limit = null, $database = null)
     {
         $location = $this->getClusterLocation($database ?: $this->database, $cluster, $limit);
-        $response = $this->adapter->request('GET', $location);
 
-        return $response;
+        return $this->adapter->request('GET', $location);
     }
 
     /**
@@ -211,9 +202,8 @@ class HttpBinding implements HttpBindingInterface
     public function connect($database)
     {
         $location = $this->getDatabaseLocation($database);
-        $response = $this->adapter->request('GET', $location);
 
-        return $response;
+        return $this->adapter->request('GET', $location);
     }
 
     /**
@@ -222,9 +212,8 @@ class HttpBinding implements HttpBindingInterface
     public function disconnect()
     {
         $location = $this->getLocation('disconnect');
-        $response = $this->adapter->request('GET', $location);
 
-        return $response;
+        return $this->adapter->request('GET', $location);
     }
 
     /**
@@ -233,9 +222,8 @@ class HttpBinding implements HttpBindingInterface
     public function getServer()
     {
         $location = $this->getLocation('server');
-        $response = $this->adapter->request('GET', $location);
 
-        return $response;
+        return $this->adapter->request('GET', $location);
     }
 
     /**
@@ -244,9 +232,8 @@ class HttpBinding implements HttpBindingInterface
     public function getDatabase($database = null)
     {
         $location = $this->getDatabaseLocation($database ?: $this->database);
-        $response = $this->adapter->request('GET', $location);
 
-        return $response;
+        return $this->adapter->request('GET', $location);
     }
 
     /**
@@ -255,9 +242,8 @@ class HttpBinding implements HttpBindingInterface
     public function createDatabase($database, $storage = 'memory', $type = 'document')
     {
         $location = $this->getLocation('database', $database, array($storage, $type));
-        $response = $this->adapter->request('POST', $location);
 
-        return $response;
+        return $this->adapter->request('POST', $location);
     }
 
     /**
@@ -266,9 +252,8 @@ class HttpBinding implements HttpBindingInterface
     public function listDatabases()
     {
         $location = $this->getLocation('listDatabases');
-        $response = $this->adapter->request('GET', $location);
 
-        return $response;
+        return $this->adapter->request('GET', $location);
     }
 
     /**
@@ -277,28 +262,20 @@ class HttpBinding implements HttpBindingInterface
     public function deleteDatabase($database)
     {
         $location = $this->getLocation('database', $database);
-        $response = $this->adapter->request('DELETE', $location);
 
-        return $response;
+        return $this->adapter->request('DELETE', $location);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function execute($sql, $return = false, $fetchPlan = null)
+    public function execute(Query $query, $fetchPlan = null)
     {
-
-        if (is_string($return)) {
-            return $this->query($sql, -1, $fetchPlan);
+        if ($query->getCommand() instanceof Select) {
+            return $this->query($query->getRaw(), -1, $fetchPlan);
         }
 
-        if ($return == true) {
-            return $this->query($sql, -1, $fetchPlan);
-        }
-
-        $response = $this->command($sql);
-
-        return $response;
+        return $this->command($query->getRaw());
     }
 
     /**
@@ -310,9 +287,8 @@ class HttpBinding implements HttpBindingInterface
         $this->ensureDatabase($database);
 
         $location = $this->getLocation('command', $database, array($language, $query));
-        $response = $this->adapter->request('POST', $location);
 
-        return $response;
+        return $this->adapter->request('POST', $location);
     }
 
     /**
@@ -321,9 +297,8 @@ class HttpBinding implements HttpBindingInterface
     public function query($query, $limit = null, $fetchPlan = null, $language = BindingInterface::LANGUAGE_SQLPLUS, $database = null)
     {
         $location = $this->getQueryLocation($database ?: $this->database, $query, $limit, $fetchPlan, $language);
-        $response = $this->adapter->request('GET', $location);
 
-        return $response;
+        return $this->adapter->request('GET', $location);
     }
 
     /**
@@ -332,9 +307,8 @@ class HttpBinding implements HttpBindingInterface
     public function getDocument($rid, $database = null, $fetchPlan = null)
     {
         $location = $this->getDocumentLocation($database ?: $this->database, $rid, $fetchPlan);
-        $response = $this->adapter->request('GET', $location);
 
-        return $response;
+        return $this->adapter->request('GET', $location);
     }
 
     /**
@@ -343,9 +317,8 @@ class HttpBinding implements HttpBindingInterface
     public function postDocument($document, $database = null)
     {
         $location = $this->getDocumentLocation($database ?: $this->database);
-        $response = $this->adapter->request('POST', $location, null, $document);
 
-        return $response;
+        return $this->adapter->request('POST', $location, null, $document);
     }
 
     /**
@@ -354,9 +327,8 @@ class HttpBinding implements HttpBindingInterface
     public function putDocument($rid, $document, $database = null)
     {
         $location = $this->getDocumentLocation($database ?: $this->database, $rid);
-        $response = $this->adapter->request('PUT', $location, null, $document);
 
-        return $response;
+        return $this->adapter->request('PUT', $location, null, $document);
     }
 
     /**
@@ -371,9 +343,8 @@ class HttpBinding implements HttpBindingInterface
         }
 
         $location = $this->getDocumentLocation($database ?: $this->database, $rid);
-        $response = $this->adapter->request('DELETE', $location, $headers);
 
-        return $response;
+        return $this->adapter->request('DELETE', $location, $headers);
     }
 
     /**

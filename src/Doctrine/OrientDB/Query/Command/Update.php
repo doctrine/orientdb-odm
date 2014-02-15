@@ -23,6 +23,10 @@ use Doctrine\OrientDB\Query\Command;
 
 class Update extends Command implements UpdateInterface
 {
+    const RETURN_COUNT  = 'COUNT';
+    const RETURN_BEFORE = 'BEFORE';
+    const RETURN_AFTER  = 'AFTER';
+
     /**
      * Builds a new statement, setting the $class.
      *
@@ -40,16 +44,16 @@ class Update extends Command implements UpdateInterface
      */
     protected function getSchema()
     {
-        return "UPDATE :Class SET :Updates :Where";
+        return "UPDATE :Class SET :Updates :Where RETURN :Returns";
     }
 
     /**
      * Set the $values of the updates to be done.
      * You can $appnd the values.
      *
-     * @param   array   $values
-     * @param   boolean $append
-     * @return  Update
+     * @param  array   $values
+     * @param  boolean $append
+     * @return Update
      */
     public function set(array $values, $append = true)
     {
@@ -66,7 +70,37 @@ class Update extends Command implements UpdateInterface
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Updates'  => "Doctrine\OrientDB\Query\Formatter\Query\Updates",
+            'Updates' => "Doctrine\OrientDB\Query\Formatter\Query\Updates",
+            'Returns' => "Doctrine\OrientDB\Query\Formatter\Query\Regular"
         ));
+    }
+
+    /**
+     * Sets the $returns type
+     *
+     * @param  string $return
+     * @return Update
+     */
+    public function returns($returns)
+    {
+        $returns = strtoupper($returns);
+        if (!in_array($returns, $this->getValidReturnTypes())) {
+            throw new LogicException(sprintf("Unknown return type %s", $returns));
+        }
+        $this->setToken('Returns', $returns);
+    }
+
+    /**
+     * Returns the acceptable return types
+     *
+     * @return Array
+     */
+    public function getValidReturnTypes()
+    {
+        return array(
+            self::RETURN_COUNT,
+            self::RETURN_BEFORE,
+            self::RETURN_AFTER
+        );
     }
 }

@@ -21,6 +21,8 @@
 
 namespace Doctrine\OrientDB\Binding;
 
+use Doctrine\OrientDB\Query\Query;
+
 interface BindingInterface
 {
     const LANGUAGE_SQLPLUS = 'sql';
@@ -32,10 +34,9 @@ interface BindingInterface
      * The second argument specifies when to use COMMAND or QUERY as the
      * underlying command.
      *
-     * @param string $sql Raw SQL query.
-     * @param bool $results Whether to use `command` or `query` for the underlying command.
+     * @param Query $query.
      * @param string $fetchPlan Optional fetch plan for the query.
      * @return BindingResultInterface
      */
-    public function execute($sql, $return = false, $fetchPlan = null);
+    public function execute(Query $query, $fetchPlan = null);
 }
