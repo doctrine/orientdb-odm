@@ -380,8 +380,8 @@ class Query implements QueryInterface
     /**
      * Inserts the INTO clause to a query.
      *
-     * @param   string $target
-     * @return  Query
+     * @param  string $target
+     * @return Query
      */
     public function into($target)
     {
@@ -391,7 +391,7 @@ class Query implements QueryInterface
     /**
      * Adds a limit to the current query.
      *
-     * @return  $this
+     * @return $this
      */
     public function limit($limit)
     {
@@ -401,7 +401,7 @@ class Query implements QueryInterface
     /**
      * Adds a skip clause to the current query.
      *
-     * @return  $this
+     * @return $this
      */
     public function skip($records)
     {
@@ -414,11 +414,11 @@ class Query implements QueryInterface
      * You can specify if the link is one-* or two-way with the $inverse
      * parameter.
      *
-     * @param   string  $class
-     * @param   string  $property
-     * @param   string  $alias
-     * @param   boolean $inverse
-     * @return  Link
+     * @param  string  $class
+     * @param  string  $property
+     * @param  string  $alias
+     * @param  boolean $inverse
+     * @return Link
      */
     public function link($class, $property, $alias, $inverse = false)
     {
@@ -439,8 +439,8 @@ class Query implements QueryInterface
     /**
      * Sets the ON clause of a query.
      *
-     * @param   string $on
-     * @return  Query
+     * @param  string $on
+     * @return Query
      */
     public function on($on)
     {
@@ -462,8 +462,8 @@ class Query implements QueryInterface
     /**
      * Adds an OR clause to the query.
      *
-     * @param string  $condition
-     * @param mixed   $value
+     * @param string $condition
+     * @param mixed  $value
      */
     public function orWhere($condition, $value = null)
     {
@@ -473,10 +473,10 @@ class Query implements QueryInterface
     /**
      * Removes a link from a link-set|list.
      *
-     * @param   array   $updates
-     * @param   string  $class
-     * @param   boolean $append
-     * @return  Remove
+     * @param  array   $updates
+     * @param  string  $class
+     * @param  boolean $append
+     * @return Remove
      */
     public function remove(array $updates, $class, $append = true)
     {
@@ -489,7 +489,7 @@ class Query implements QueryInterface
     /**
      * Resets the WHERE conditions.
      *
-     * @rerurn  mixed
+     * @rerurn mixed
      */
     public function resetWhere()
     {
@@ -501,8 +501,8 @@ class Query implements QueryInterface
     /**
      * Converts the query into an REVOKE with the given $permission.
      *
-     * @param   string  $permission
-     * @return  Revoke
+     * @param  string $permission
+     * @return Revoke
      */
     public function revoke($permission)
     {
@@ -526,8 +526,8 @@ class Query implements QueryInterface
     /**
      * Sets the type clause of a query.
      *
-     * @param   string $type
-     * @return  Query
+     * @param  string $type
+     * @return Query
      */
     public function type($type)
     {
@@ -537,8 +537,8 @@ class Query implements QueryInterface
     /**
      * Adds a subject to the query.
      *
-     * @param   string   $to
-     * @return  Query
+     * @param  string $to
+     * @return Query
      */
     public function to($to)
     {
@@ -548,25 +548,25 @@ class Query implements QueryInterface
     /**
      * Truncates an entity.
      *
-     * @param   string   $entity
-     * @param   boolean  $andCluster
-     * @return  Query
+     * @param  string  $entity
+     * @param  boolean $andCluster
+     * @return Query
      */
     public function truncate($entity, $andCluster = false)
     {
         try {
-            $validator      = new RidValidator;
+            $validator = new RidValidator;
             $validator->check($entity);
-            $commandClass   = $this->getCommandClass('truncate.record');
+            $commandClass = $this->getCommandClass('truncate.record');
         } catch (ValidationException $e) {
-            $commandClass   = $this->getCommandClass('truncate.class');
+            $commandClass = $this->getCommandClass('truncate.class');
 
             if ($andCluster) {
-                $commandClass   = $this->getCommandClass('truncate.cluster');
+                $commandClass = $this->getCommandClass('truncate.cluster');
             }
         }
 
-        $this->command  = new $commandClass($entity);
+        $this->command = new $commandClass($entity);
 
         return $this->command;
     }
@@ -574,9 +574,9 @@ class Query implements QueryInterface
     /**
      * Sets the values to be inserted into the current query.
      *
-     * @param   array   $values
-     * @param   boolean $append
-     * @return  Insert
+     * @param  array   $values
+     * @param  boolean $append
+     * @return Insert
      */
     public function values(array $values, $append = true)
     {
@@ -586,9 +586,9 @@ class Query implements QueryInterface
     /**
      * Removes a index
      *
-     * @param   string $property
-     * @param   string $class
-     * @return  Query
+     * @param  string $property
+     * @param  string $class
+     * @return Query
      */
     public function unindex($property, $class = null)
     {
@@ -602,8 +602,8 @@ class Query implements QueryInterface
      * Changes the internal command to an PUT, setting the class to update
      * and the values to be written.
      *
-     * @param   string  $class
-     * @return  Command
+     * @param  string $class
+     * @return Command
      */
     public function put(array $values, $class, $append = true)
     {
@@ -621,18 +621,14 @@ class Query implements QueryInterface
      */
     public function shouldReturn()
     {
-        if ($this->getCommand() instanceof Select) {
-            return true;
-        }
-
-        return false;
+        return $this->getCommand() instanceof Select || $this->getCommand() instanceof Insert;
     }
 
     /**
      * Changes the internal command to an UPDATE, setting the class to update.
      *
-     * @param   string  $class
-     * @return  Command
+     * @param  string $class
+     * @return Command
      */
     public function update($class)
     {
@@ -645,8 +641,8 @@ class Query implements QueryInterface
     /**
      * Adds the WHERE clause.
      *
-     * @param string  $condition
-     * @param mixed   $value
+     * @param string $condition
+     * @param mixed  $value
      */
     public function where($condition, $value = null)
     {
@@ -656,8 +652,8 @@ class Query implements QueryInterface
     /**
      * Returns on of the commands that belong to the query.
      *
-     * @param   string $id
-     * @return  mixed
+     * @param  string $id
+     * @return mixed
      */
     protected function getCommandClass($id)
     {
@@ -703,12 +699,12 @@ class Query implements QueryInterface
      * is specified.
      * If none,  class command is executed.
      *
-     * @param   string $action
-     * @param   string $class
-     * @param   string $property
-     * @param   string $type
-     * @param   string $linked
-     * @return  mixed
+     * @param  string $action
+     * @param  string $class
+     * @param  string $property
+     * @param  string $type
+     * @param  string $linked
+     * @return mixed
      */
     protected function executeClassOrPropertyCommand($action, $class, $property = null, $type = null, $linked = null)
     {
@@ -722,8 +718,8 @@ class Query implements QueryInterface
     /**
      * Sets the internal command classes to use
      *
-     * @param   array $commands
-     * @return  true
+     * @param  array $commands
+     * @return true
      */
     protected function setCommands(array $commands)
     {
