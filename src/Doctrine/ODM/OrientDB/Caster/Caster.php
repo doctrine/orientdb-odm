@@ -128,9 +128,9 @@ class Caster implements CasterInterface
 
         if (is_numeric($this->value) && $this->value >= $min && $this->value <= $max) {
             return $this->value;
-        } else {
-            return $this->handleMismatch($castFunction, 'byte');
         }
+
+        return $this->handleMismatch($castFunction, 'byte');
     }
 
     /**
@@ -182,7 +182,6 @@ class Caster implements CasterInterface
         }
 
         $castFunction = function($value) use ($min,$max) {
-
             if ($value < $min ) {
                 return $min;
             }
@@ -196,9 +195,9 @@ class Caster implements CasterInterface
 
         if (is_numeric($this->value)) {
             return $castFunction($this->value);
-        } else {
-            return $this->handleMismatch($castFunction, 'decimal');
         }
+
+        return $this->handleMismatch($castFunction, 'decimal');
     }
 
     /**
@@ -266,9 +265,9 @@ class Caster implements CasterInterface
 
         if (is_numeric($this->value)) {
             return $castFunction($this->value);
-        } else {
-            return $this->handleMismatch($castFunction, 'double');
         }
+
+        return $this->handleMismatch($castFunction, 'double');
     }
 
     /**
@@ -284,9 +283,9 @@ class Caster implements CasterInterface
 
         if (is_numeric($this->value)) {
             return $castFunction($this->value);
-        } else {
-            return $this->handleMismatch($castFunction, 'integer');
         }
+
+        return $this->handleMismatch($castFunction, 'integer');
     }
 
     /**
@@ -374,9 +373,20 @@ class Caster implements CasterInterface
 
         if (is_numeric($this->value) && abs($this->value) < $limit) {
             return $castFunction($this->value);
-        } else {
-            return $this->handleMismatch($castFunction, $type);
         }
+
+        return $this->handleMismatch($castFunction, $type);
+    }
+
+    /**
+     * This function is mostly for embedded arrays of mixed type as it is
+     * primarily just a way to bypass the caster
+     *
+     * @return mixed
+     */
+    public function castNone()
+    {
+        return $this->value;
     }
 
     /**
@@ -392,9 +402,9 @@ class Caster implements CasterInterface
 
         if (is_string($this->value)) {
             return $castFunction($this->value);
-        } else {
-            return $this->handleMismatch($castFunction, 'string');
         }
+
+        return $this->handleMismatch($castFunction, 'string');
     }
 
     /**
@@ -473,7 +483,7 @@ class Caster implements CasterInterface
     }
 
     /**
-     * Casts embedded entities, given the $cast property of the internal
+     * Casts embedded arrays, given the $cast property of the internal
      * annotation.
      *
      * @return Array

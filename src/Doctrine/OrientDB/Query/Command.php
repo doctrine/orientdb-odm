@@ -36,6 +36,13 @@ abstract class Command implements CommandInterface
     protected $tokens = array();
 
     /**
+     * These are the valid return types for commands
+     */
+    const RETURN_COUNT  = 'COUNT';
+    const RETURN_BEFORE = 'BEFORE';
+    const RETURN_AFTER  = 'AFTER';
+
+    /**
      * Builds a new object, creating the SQL statement from the class SCHEMA
      * and initializing the tokens.
      */
@@ -58,9 +65,9 @@ abstract class Command implements CommandInterface
      * Sets a where token using the AND operator.
      * If the $condition contains a "?", it will be replaced by the $value.
      *
-     * @param   string $condition
-     * @param   string $value
-     * @return  Command
+     * @param  string $condition
+     * @param  string $value
+     * @return Command
      */
     public function andWhere($condition, $value = null)
     {
@@ -111,8 +118,8 @@ abstract class Command implements CommandInterface
     /**
      * Returns the value of a token.
      *
-     * @param   string $token
-     * @return  mixed
+     * @param  string $token
+     * @return mixed
      */
     public function getTokenValue($token)
     {
@@ -123,9 +130,9 @@ abstract class Command implements CommandInterface
      * Sets a where token using the OR operator.
      * If the $condition contains a "?", it will be replaced by the $value.
      *
-     * @param   string $condition
-     * @param   string $value
-     * @return  Command
+     * @param  string $condition
+     * @param  string $value
+     * @return Command
      */
     public function orWhere($condition, $value = null)
     {
@@ -192,6 +199,17 @@ abstract class Command implements CommandInterface
     }
 
     /**
+     * Returns whether this query, when executed, should return some results.
+     * The default is false
+     *
+     * @return boolean
+     */
+    public function shouldReturn()
+    {
+        return false;
+    }
+
+    /**
      * Appends a token to the query, without deleting existing values for the
      * given $token.
      *
@@ -216,9 +234,9 @@ abstract class Command implements CommandInterface
      * the token array.
      * With this method you set a token value and can retrieve it by its key.
      *
-     * @param string  $token
-     * @param string  $key
-     * @param mixed   $value
+     * @param string $token
+     * @param string $key
+     * @param mixed  $value
      */
     protected function appendTokenAsString($token, $key, $value)
     {
@@ -228,9 +246,9 @@ abstract class Command implements CommandInterface
     /**
      * Appends $value to the query $token.
      *
-     * @param string  $token
-     * @param string  $key
-     * @param mixed   $value
+     * @param string $token
+     * @param string $key
+     * @param mixed  $value
      */
     protected function appendTokenAsInteger($token, $key, $value)
     {
@@ -240,9 +258,9 @@ abstract class Command implements CommandInterface
     /**
      * Checks if a token is set, returning it if it is.
      *
-     * @param   string $token
-     * @return  mixed
-     * @throws  TokenNotFoundException
+     * @param  string $token
+     * @return mixed
+     * @throws TokenNotFoundException
      */
     protected function checkToken($token)
     {
@@ -269,7 +287,7 @@ abstract class Command implements CommandInterface
      * Returns a brand new instance of a Formatter in order to format query
      * tokens.
      *
-     * @return  QueryFormatterInterface
+     * @return QueryFormatterInterface
      */
     protected function getFormatter()
     {
@@ -284,12 +302,12 @@ abstract class Command implements CommandInterface
     protected function getTokenFormatters()
     {
         return array(
-            'Target'    => "Doctrine\OrientDB\Query\Formatter\Query\Target",
-            'Where'     => "Doctrine\OrientDB\Query\Formatter\Query\Where",
-            'Class'     => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
-            'Property'  => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
-            'Type'      => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
-            'Rid'       => "Doctrine\OrientDB\Query\Formatter\Query\Rid",
+            'Target'   => "Doctrine\OrientDB\Query\Formatter\Query\Target",
+            'Where'    => "Doctrine\OrientDB\Query\Formatter\Query\Where",
+            'Class'    => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Property' => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Type'     => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Rid'      => "Doctrine\OrientDB\Query\Formatter\Query\Rid"
         );
     }
 
@@ -317,16 +335,16 @@ abstract class Command implements CommandInterface
     /**
      * Returns the values to replace command's schema tokens.
      *
-     * @return  array
+     * @return array
      */
     protected function getTokenReplaces()
     {
         $replaces = array();
 
         foreach ($this->tokens as $token => $value) {
-            $key                = $this->getFormatter()->untokenize($token);
-            $formatter          = $this->getTokenFormatter($key);
-            $replaces[$token]   = $formatter::format($value);
+            $key              = $this->getFormatter()->untokenize($token);
+            $formatter        = $this->getTokenFormatter($key);
+            $replaces[$token] = $formatter::format($value);
         }
 
         return $replaces;
@@ -336,7 +354,7 @@ abstract class Command implements CommandInterface
      * Build the command replacing schema tokens with actual values and cleaning
      * the command synthax.
      *
-     * @return  string
+     * @return string
      */
     protected function getValidStatement()
     {
@@ -350,10 +368,10 @@ abstract class Command implements CommandInterface
     /**
      * Substitutes multiple tokens ($values) in the WHERE $condition.
      *
-     * @param   string $condition
-     * @param   array $values
-     * @return  string
-     * @throws  LogicException
+     * @param  string $condition
+     * @param  array $values
+     * @return string
+     * @throws LogicException
      */
     protected function formatWhereConditionWithMultipleTokens(
         $condition,
@@ -375,8 +393,8 @@ abstract class Command implements CommandInterface
      * Replaces the tokens in the command's schema with their actual values in
      * the current object.
      *
-     * @param   string  $statement
-     * @return  string
+     * @param  string $statement
+     * @return string
      */
     protected function replaceTokens($statement)
     {
@@ -388,11 +406,11 @@ abstract class Command implements CommandInterface
     /**
      * Sets a single value for a token,
      *
-     * @param   string  $token
-     * @param   string  $tokenValue
-     * @param   boolean $append
-     * @param   boolean $first
-     * @return  true
+     * @param  string  $token
+     * @param  string  $tokenValue
+     * @param  boolean $append
+     * @param  boolean $first
+     * @return true
      */
     public function setToken($token, $tokenValue, $append = false, $first = false)
     {
@@ -402,12 +420,12 @@ abstract class Command implements CommandInterface
     /**
      * Sets the values of a token, and can be appended with the given $append.
      *
-     * @param   string   $token
-     * @param   array    $tokenValues
-     * @param   boolean  $append
-     * @param   boolean  $first
-     * @param   boolean  $filter
-     * @return  true
+     * @param  string  $token
+     * @param  array   $tokenValues
+     * @param  boolean $append
+     * @param  boolean $first
+     * @param  boolean $filter
+     * @return true
      */
     protected function setTokenValues($token, array $tokenValues, $append = true, $first = false)
     {
@@ -439,8 +457,8 @@ abstract class Command implements CommandInterface
     /**
      * Tokenizes a string.
      *
-     * @param   string $token
-     * @return  string
+     * @param  string $token
+     * @return string
      */
     protected function tokenize($token)
     {

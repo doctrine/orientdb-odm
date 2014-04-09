@@ -24,10 +24,6 @@ use Doctrine\OrientDB\Query\Command;
 
 class Insert extends Command implements InsertInterface
 {
-    const RETURN_COUNT  = 'COUNT';
-    const RETURN_BEFORE = 'BEFORE';
-    const RETURN_AFTER  = 'AFTER';
-
     /**
      * Sets the fields to insert within the query.
      *
@@ -118,5 +114,13 @@ class Insert extends Command implements InsertInterface
             self::RETURN_BEFORE,
             self::RETURN_AFTER
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function shouldReturn()
+    {
+        return true;
     }
 }

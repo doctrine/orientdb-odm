@@ -23,10 +23,6 @@ use Doctrine\OrientDB\Query\Command;
 
 class Update extends Command implements UpdateInterface
 {
-    const RETURN_COUNT  = 'COUNT';
-    const RETURN_BEFORE = 'BEFORE';
-    const RETURN_AFTER  = 'AFTER';
-
     /**
      * Builds a new statement, setting the $class.
      *
@@ -102,5 +98,13 @@ class Update extends Command implements UpdateInterface
             self::RETURN_BEFORE,
             self::RETURN_AFTER
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function shouldReturn()
+    {
+        return true;
     }
 }

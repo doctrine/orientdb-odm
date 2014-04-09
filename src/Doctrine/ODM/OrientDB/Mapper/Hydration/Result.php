@@ -31,8 +31,8 @@ class Result
     /**
      * Instantiates a new hydration result.
      *
-     * @param Proxy         $document
-     * @param LinkTracker   $linkTracker
+     * @param Proxy       $document
+     * @param LinkTracker $linkTracker
      */
     public function __construct($document, LinkTracker $linkTracker)
     {
