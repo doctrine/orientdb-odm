@@ -24,7 +24,7 @@ namespace Doctrine\ODM\OrientDB;
 
 use Doctrine\ODM\OrientDB\Caster\Caster;
 use Doctrine\ODM\OrientDB\Caster\CasterInterface;
-use Doctrine\ODM\OrientDB\Mapper\Hydration;
+use Doctrine\ODM\OrientDB\Mapper\Hydration\Result;
 use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Reader;
@@ -65,8 +65,8 @@ class Mapper
     public function __construct(
         $documentProxyDirectory,
         AnnotationReaderInterface $annotationReader = null,
-        Inflector $inflector = null,
         Cache $cache = null,
+        Inflector $inflector = null,
         Caster $caster = null
     ) {
         $this->documentProxyDirectory = $documentProxyDirectory;
@@ -145,11 +145,11 @@ class Mapper
     /**
      * Takes an Doctrine\OrientDB JSON object and finds the class responsible to map that
      * object.
-     * If it finds it, he istantiates a new POPO, filling it with the properties
-     * inside the JSON object.
+     * If the class is found, a new POPO is instantiated and the properties inside the
+     * JSON object are filled accordingly.
      *
      * @param  StdClass $orientObject
-     * @return Hydration\Result
+     * @return Result
      * @throws DocumentNotFoundException
      */
     public function hydrate(\StdClass $orientObject)
@@ -164,7 +164,7 @@ class Mapper
                 $class       = $this->findClassMappingInDirectories($orientClass);
                 $document    = $this->createDocument($class, $orientObject, $linkTracker);
 
-                return new Hydration\Result($document, $linkTracker);
+                return new Result($document, $linkTracker);
             }
         }
 
@@ -393,7 +393,9 @@ class Mapper
         $refClass           = new \ReflectionClass($class);
         $methods            = "";
         $namespace          = substr($class, 0, strlen($class) - strlen($proxyClassName) - 1);
-        $importedNamespaces = "";
+        $importedNamespaces = "use Doctrine\ODM\OrientDB\Proxy\AbstractProxy;\n";
+        $namespaceCollision = 1;
+        $namespaceClasses   = [];
 
         foreach ($refClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
             if (!$refMethod->isStatic()) {
@@ -406,18 +408,33 @@ class Mapper
                     $parameterDefault = '';
 
                     if ($parameter->isDefaultValueAvailable()) {
-                        $defaultValue     = $parameter->getDefaultValue();
-                        $parameterDefault = is_string($defaultValue) ? " = '$defaultValue'" : ' = ' . $defaultValue;
+                        $defaultValue = $parameter->getDefaultValue();
+                        if (is_string($defaultValue)) {
+                            $parameterDefault = " = '$defaultValue'";
+                        } elseif ($defaultValue === null) {
+                            $parameterDefault = ' = null';
+                        } else {
+                            $parameterDefault = ' = '.$defaultValue;
+                        }
                     }
 
                     if ($parameterClass) {
-                        $importedNamespaces .= <<<EOT
-use {$parameterClass->getName()};
-EOT;
+                        $parameterClassName = $parameterClass->getShortName();
+                        if ($parameterClassName == $refClass->getShortName()) {
+                            $parameterClassName .= $namespaceCollision++;
+                            $importedNamespaces .= "use {$parameterClass->getName()} as $parameterClassName;\n";
+                        } elseif (strlen($parameterClass->getNamespaceName()) > 0) {
+                            if (!in_array($parameterClassName, $namespaceClasses)) {
+                                $namespaceClasses[] = $parameterClassName;
+                                $importedNamespaces .= "use {$parameterClass->getName()};\n";
+                            }
+                        } else {
+                            $parameterClassName = '\\'.$parameterClassName;
+                        }
 
-                        $parameters[] = $parameterClass->getShortName(). ' $'. $parameterName . $parameterDefault;
+                        $parameters[] = $parameterClassName . ' $' . $parameterName . $parameterDefault;
                     } else {
-                        $parameters[] = '$' . $parameterName . $parameterDefault;
+                        $parameters[] = ($parameter->isArray() ? 'array ' : '' ) . '$' . $parameterName . $parameterDefault;
                     }
 
                     $parentParameters[] = '$' . $parameterName;
@@ -432,7 +449,7 @@ EOT;
         \$parent = parent::{$refMethod->getName()}($parentParametersAsString);
 
         if (!is_null(\$parent)) {
-            if (\$parent instanceof \Doctrine\ODM\OrientDB\Proxy\AbstractProxy) {
+            if (\$parent instanceof AbstractProxy) {
                 return \$parent();
             }
 
@@ -450,7 +467,6 @@ EOT;
 namespace Doctrine\OrientDB\Proxy$namespace;
 
 $importedNamespaces
-
 class $proxyClassName extends $class
 {
 $methods

@@ -25,10 +25,6 @@ class Returns extends Query implements TokenInterface
 {
     public static function format(array $values)
     {
-        if ($values) {
-            return "RETURN " . self::implodeRegular($values, " ");
-        }
-
-        return null;
+        return count($values) > 0 ? "RETURN " . $values[0] : null;
     }
 }

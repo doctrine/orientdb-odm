@@ -164,10 +164,11 @@ class CurlClient
      */
     public function put($location, $body)
     {
-        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'PUT');
         curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 
-        return $this->execute('POST', $location);
+        return $this->execute('PUT', $location);
     }
 
     /**

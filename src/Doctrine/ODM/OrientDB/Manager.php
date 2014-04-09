@@ -79,7 +79,7 @@ class Manager implements ObjectManager
      * single record look at ->find*() methods.
      *
      * @param  Query $query
-     * @return Array
+     * @return array|Mixed
      */
     public function execute(Query $query, $fetchPlan = null)
     {
@@ -146,7 +146,7 @@ class Manager implements ObjectManager
      * @return Proxy\Collection|array
      * @throws Doctrine\OrientDB\Binding\InvalidQueryException
      */
-    public function findRecords(Array $rids, $fetchPlan = null, $lazy = true)
+    public function findRecords(array $rids, $fetchPlan = '*:0', $lazy = true)
     {
         if ($lazy === false) {
             return new Proxy\Collection($this, $rids);
@@ -200,8 +200,8 @@ class Manager implements ObjectManager
     /**
      * Returns the Repository class associated with the $class.
      *
-     * @param   string $className
-     * @return  Repository
+     * @param  string $className
+     * @return Repository
      */
     public function getRepository($className)
     {
@@ -220,7 +220,7 @@ class Manager implements ObjectManager
      * This method is a no-op for other objects.
      *
      * @param object $obj
-     * @todo implement and test
+     * @todo  implement and test
      */
     public function initializeObject($obj)
     {
@@ -314,11 +314,11 @@ class Manager implements ObjectManager
     }
 
     /**
-     * Given an Hydration\Result, it implements lazy-loading for all its'
+     * Given an Result, it implements lazy-loading for all its'
      * document's related links.
      *
-     * @param   Result $result
-     * @return  object
+     * @param  Result $result
+     * @return object
      */
     protected function finalize(Result $result)
     {
@@ -327,10 +327,12 @@ class Manager implements ObjectManager
 
             if ($value instanceof Rid\Collection || $value instanceof Rid) {
                 $method = $value instanceof Rid\Collection ? 'findRecords' : 'find';
-                $value = $this->$method($value->getValue(), null, false);
+                $value = $this->$method($value->getValue(), '*:0', false);
                 $result->getDocument()->$setter($value);
             } elseif (is_array($value)) {
-                $value = $this->finalizeCollection($value);
+                //at this point its unclear how to cast embedded inside another embedded
+                //also this makes it impossible to have a simple embedded array
+                //$value = $this->finalizeCollection($value);
                 $result->getDocument()->$setter($value);
             }
         }
@@ -339,12 +341,12 @@ class Manager implements ObjectManager
     }
 
     /**
-     * Given a collection of Hydration\Result, it returns an array of POPOs.
+     * Given a collection of Result, it returns an array of POPOs.
      *
-     * @param   Array $collection
-     * @return  Array
+     * @param  array $collection
+     * @return array
      */
-    protected function finalizeCollection(Array $collection)
+    protected function finalizeCollection(array $collection)
     {
         foreach ($collection as $key => $hydrationResult) {
             $collection[$key] = $this->finalize($hydrationResult);

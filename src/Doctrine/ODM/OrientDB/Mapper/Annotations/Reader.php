@@ -29,7 +29,7 @@ use ReflectionProperty;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Annotations\Parser;
 use Doctrine\Common\Annotations\CachedReader;
-use Doctrine\Common\Cache\ApcCache;
+use Doctrine\Common\Cache\XcacheCache;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
@@ -147,6 +147,6 @@ class Reader implements ReaderInterface
      */
     protected function createCacheProvider()
     {
-        return extension_loaded('apc') ? new ApcCache() : new ArrayCache();
+        return extension_loaded('xcache') ? new XcacheCache() : new ArrayCache();
     }
 }

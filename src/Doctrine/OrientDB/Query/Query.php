@@ -607,8 +607,8 @@ class Query implements QueryInterface
      */
     public function put(array $values, $class, $append = true)
     {
-        $commandClass   = $this->getCommandClass('update.put');
-        $this->command  = new $commandClass($values, $class, $append);
+        $commandClass  = $this->getCommandClass('update.put');
+        $this->command = new $commandClass($values, $class, $append);
 
         return $this->command;
     }
@@ -621,7 +621,7 @@ class Query implements QueryInterface
      */
     public function shouldReturn()
     {
-        return $this->getCommand() instanceof Select || $this->getCommand() instanceof Insert;
+        return $this->getCommand()->shouldReturn();
     }
 
     /**
