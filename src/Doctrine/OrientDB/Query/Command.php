@@ -365,7 +365,15 @@ abstract class Command implements CommandInterface
         }
 
         foreach ($values as $replacement) {
-            $condition = preg_replace("/\?/", '"' . $validator->check($replacement, 1) . '"', $condition, 1);
+            if(is_float($replacement)) {
+                $condition = preg_replace("/\?/", $validator->check($replacement, 1), $condition, 1);
+            }
+            else if (is_integer($replacement)) {
+                $condition = preg_replace("/\?/", $validator->check($replacement, 1), $condition, 1);            
+            }
+            else {
+                $condition = preg_replace("/\?/", '"' . $validator->check($replacement, 1) . '"', $condition, 1);
+            }
         }
 
         return $condition;
