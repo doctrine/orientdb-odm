@@ -29,6 +29,9 @@
     </testsuites>
 
     <groups>
+        <exclude>
+             <group>integration</group>
+        </exclude>
     </groups>
 
     <filter>
