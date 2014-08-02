@@ -52,7 +52,7 @@ class ManagerTest extends TestCase
         $query = new Query(array('Address'));
         $addresses = $manager->execute($query);
 
-        $this->assertEquals(41, count($addresses));
+        $this->assertEquals(40, count($addresses));
         $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
     }
 

@@ -15,3 +15,4 @@ composer.phar
 phpunit.xml
 bin/phpunit
 bin/phpunit.phar
+*.php~

@@ -302,7 +302,7 @@ class QueryBuilderTest extends TestCase
         $this->assertHttpStatus(500, $this->doQuery($query));
 
         $query->unindex('in', 'OGraphEdge');
-        $this->assertHttpStatus(204, $this->doQuery($query));
+        $this->assertHttpStatus(200, $this->doQuery($query));
     }
 
     public function testRebuildIndex()
