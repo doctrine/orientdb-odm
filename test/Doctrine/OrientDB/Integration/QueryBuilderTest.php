@@ -296,7 +296,7 @@ class QueryBuilderTest extends TestCase
         $this->assertHttpStatus(200, $this->doQuery($query));
 
         $query->unindex('index_name_2');
-        $this->assertHttpStatus(204, $this->doQuery($query));
+        $this->assertHttpStatus(200, $this->doQuery($query));
 
         $query->indexCount('index_name_2');
         $this->assertHttpStatus(500, $this->doQuery($query));

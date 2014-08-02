@@ -395,7 +395,7 @@ class Mapper
         $namespace          = substr($class, 0, strlen($class) - strlen($proxyClassName) - 1);
         $importedNamespaces = "use Doctrine\ODM\OrientDB\Proxy\AbstractProxy;\n";
         $namespaceCollision = 1;
-        $namespaceClasses   = [];
+        $namespaceClasses   = array();
 
         foreach ($refClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
             if (!$refMethod->isStatic()) {

@@ -217,7 +217,7 @@ class HttpBindingTest extends TestCase
         $document = json_encode(array('@rid' => $rid, '@class' => 'Address','name' => 'Test','@version' => $_document['@version']));
         $putResult = $binding->putDocument($rid, $document);
 
-        $this->assertEquals(201, $putResult->getInnerResponse()->getStatusCode(), "Wrong Status Code");
+        $this->assertEquals(200, $putResult->getInnerResponse()->getStatusCode(), "Wrong Status Code");
         $document = json_encode(array('@rid' => 898989, '@class' => 'Address','name' => 'Test','@version' => $_document['@version']));
         $this->assertHttpStatus(500, $binding->putDocument('9991', $document), 'Updates an invalid document');
 
