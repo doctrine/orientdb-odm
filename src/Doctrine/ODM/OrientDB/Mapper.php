@@ -148,11 +148,11 @@ class Mapper
      * If the class is found, a new POPO is instantiated and the properties inside the
      * JSON object are filled accordingly.
      *
-     * @param  StdClass $orientObject
+     * @param  stdClass $orientObject
      * @return Result
      * @throws DocumentNotFoundException
      */
-    public function hydrate(\StdClass $orientObject)
+    public function hydrate(\stdClass $orientObject)
     {
         $classProperty = self::ORIENT_PROPERTY_CLASS;
 
@@ -166,9 +166,11 @@ class Mapper
 
                 return new Result($document, $linkTracker);
             }
+
+            throw new DocumentNotFoundException(self::ORIENT_PROPERTY_CLASS.' property empty.');
         }
 
-        throw new DocumentNotFoundException();
+        throw new DocumentNotFoundException(self::ORIENT_PROPERTY_CLASS.' property not found.');
     }
 
     /**
