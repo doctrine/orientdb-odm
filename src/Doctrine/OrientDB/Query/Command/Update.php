@@ -105,6 +105,6 @@ class Update extends Command implements UpdateInterface
      */
     public function shouldReturn()
     {
-        return true;
+        return self::RETURN_COUNT != $this->getTokenValue('Returns');
     }
 }

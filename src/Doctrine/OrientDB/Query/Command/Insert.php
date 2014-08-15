@@ -121,6 +121,6 @@ class Insert extends Command implements InsertInterface
      */
     public function shouldReturn()
     {
-        return true;
+        return self::RETURN_COUNT != $this->getTokenValue('Returns');
     }
 }
