@@ -43,7 +43,7 @@ class Insert extends Command implements InsertInterface
      */
     protected function getSchema()
     {
-        return "INSERT INTO :Target (:Fields) VALUES (:Values) :Returns";
+        return "INSERT INTO :Target (:Fields) VALUES (:Values)";
     }
 
     /**
@@ -74,21 +74,6 @@ class Insert extends Command implements InsertInterface
     }
 
     /**
-     * Sets the $returns type
-     *
-     * @param  string $return
-     * @return Insert
-     */
-    public function returns($returns)
-    {
-        $returns = strtoupper($returns);
-        if (!in_array($returns, $this->getValidReturnTypes())) {
-            throw new LogicException(sprintf("Unknown return type %s", $returns));
-        }
-        $this->setToken('Returns', $returns);
-    }
-
-    /**
      * Returns the formatters for this query's tokens.
      *
      * @return Array
@@ -97,30 +82,7 @@ class Insert extends Command implements InsertInterface
     {
         return array_merge(parent::getTokenFormatters(), array(
             'Fields'  => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
-            'Values'  => "Doctrine\OrientDB\Query\Formatter\Query\Values",
-            'Returns' => "Doctrine\OrientDB\Query\Formatter\Query\Returns"
+            'Values'  => "Doctrine\OrientDB\Query\Formatter\Query\Values"
         ));
-    }
-
-    /**
-     * Returns the acceptable return types
-     *
-     * @return Array
-     */
-    public function getValidReturnTypes()
-    {
-        return array(
-            self::RETURN_COUNT,
-            self::RETURN_BEFORE,
-            self::RETURN_AFTER
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function shouldReturn()
-    {
-        return self::RETURN_COUNT != $this->getTokenValue('Returns');
     }
 }

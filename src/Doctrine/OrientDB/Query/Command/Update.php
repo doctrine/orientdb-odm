@@ -72,21 +72,6 @@ class Update extends Command implements UpdateInterface
     }
 
     /**
-     * Sets the $returns type
-     *
-     * @param  string $return
-     * @return Update
-     */
-    public function returns($returns)
-    {
-        $returns = strtoupper($returns);
-        if (!in_array($returns, $this->getValidReturnTypes())) {
-            throw new LogicException(sprintf("Unknown return type %s", $returns));
-        }
-        $this->setToken('Returns', $returns);
-    }
-
-    /**
      * Returns the acceptable return types
      *
      * @return Array
@@ -103,8 +88,10 @@ class Update extends Command implements UpdateInterface
     /**
      * @inheritdoc
      */
-    public function shouldReturn()
+    public function canHydrate()
     {
-        return self::RETURN_COUNT != $this->getTokenValue('Returns');
+        //return self::RETURN_COUNT !== $this->getTokenValue('Returns');
+        return self::RETURN_BEFORE === $this->getTokenValue('Returns') ||
+            self::RETURN_AFTER === $this->getTokenValue('Returns');
     }
 }

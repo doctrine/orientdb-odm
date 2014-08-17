@@ -614,14 +614,13 @@ class Query implements QueryInterface
     }
 
     /**
-     * Checks whether the current query, when executed against OrientDB,
-     * should return some results.
+     * Checks whether the current query returns records that can be hydrated
      *
      * @return boolean
      */
-    public function shouldReturn()
+    public function canHydrate()
     {
-        return $this->getCommand()->shouldReturn();
+        return $this->getCommand()->canHydrate();
     }
 
     /**

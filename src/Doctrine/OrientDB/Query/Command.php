@@ -199,14 +199,45 @@ abstract class Command implements CommandInterface
     }
 
     /**
-     * Returns whether this query, when executed, should return some results.
+     * Returns whether this query, when executed, should have the collection hydrated.
      * The default is false
      *
      * @return boolean
      */
-    public function shouldReturn()
+    public function canHydrate()
     {
-        return false;
+        return true;
+    }
+
+    /**
+     * Sets the Returns token
+     *
+     * @param string $return
+     */
+    public function returns($returns)
+    {
+        //check if the Return clause is even supported
+        $returnTypes = $this->getValidReturnTypes();
+        if (count($returnTypes) <= 0) {
+            throw new LogicException("Return clause not supported for this statement");
+        }
+
+        $returns = strtoupper($returns);
+        if (!in_array($returns, $returnTypes)) {
+            throw new LogicException(sprintf("Unknown return type %s", $returns));
+        }
+        $this->setToken('Returns', $returns);
+    }
+
+    /**
+     * Returns the array of valid params for the Return clause.
+     * Use this function to support the Return clause by overriding and returing a list in the subclass
+     *
+     * @return array()
+     */
+    public function getValidReturnTypes()
+    {
+        return array();
     }
 
     /**

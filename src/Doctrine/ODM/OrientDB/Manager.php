@@ -74,7 +74,7 @@ class Manager implements ObjectManager
     /**
      * Executes a $query against OrientDB.
      *
-     * This method should be used to executes query which should not return a
+     * This method should be used to execute queries which should not return a
      * result (UPDATE, INSERT) or to retrieve multiple objects: to retrieve a
      * single record look at ->find*() methods.
      *
@@ -86,8 +86,7 @@ class Manager implements ObjectManager
         $binding = $this->getBinding();
         $results = $binding->execute($query, $fetchPlan)->getResult();
 
-        /* @todo verify the condition*/
-        if (is_array($results) && $query->shouldReturn()) {
+        if (is_array($results) && $query->canHydrate()) {
             $collection = $this->getMapper()->hydrateCollection($results);
             $collection = $this->finalizeCollection($collection);
 

@@ -26,8 +26,7 @@ class InsertTest extends TestCase
         $tokens = array(
             ':Target'  => array(),
             ':Fields'  => array(),
-            ':Values'  => array(),
-            ':Returns' => array()
+            ':Values'  => array()
         );
 
         $this->assertTokens($tokens, $this->insert->getTokens());
@@ -94,10 +93,9 @@ class InsertTest extends TestCase
         $this->insert
              ->into("myClass")
              ->fields(array('name', 'relation', 'links'))
-             ->values(array('hello', array('10:1'), array('10:1', '11:1')))
-             ->returns(Insert::RETURN_AFTER);
+             ->values(array('hello', array('10:1'), array('10:1', '11:1')));
 
-        $sql = 'INSERT INTO myClass (name, relation, links) VALUES ("hello", [10:1], [10:1, 11:1]) RETURN AFTER';
+        $sql = 'INSERT INTO myClass (name, relation, links) VALUES ("hello", [10:1], [10:1, 11:1])';
 
         $this->assertCommandGives($sql, $this->insert->getRaw());
     }

@@ -42,7 +42,7 @@ class Delete extends Command
      */
     protected function getSchema()
     {
-        return "DELETE FROM :Class :Where";
+        return "DELETE FROM :Class :Returns :Where";
     }
 
     /**
@@ -53,5 +53,38 @@ class Delete extends Command
     protected function setClass($class)
     {
         $this->setToken('Class', $class);
+    }
+
+    /**
+     * Returns the formatters for this query's tokens.
+     *
+     * @return Array
+     */
+    protected function getTokenFormatters()
+    {
+        return array_merge(parent::getTokenFormatters(), array(
+            'Returns' => "Doctrine\OrientDB\Query\Formatter\Query\Returns"
+        ));
+    }
+
+    /**
+     * Returns the acceptable return types
+     *
+     * @return Array
+     */
+    public function getValidReturnTypes()
+    {
+        return array(
+            self::RETURN_COUNT,
+            self::RETURN_BEFORE
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function canHydrate()
+    {
+        return self::RETURN_BEFORE === $this->getTokenValue('Returns');
     }
 }

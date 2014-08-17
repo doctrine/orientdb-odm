@@ -41,7 +41,7 @@ class ManagerTest extends TestCase
 
         $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
     }
-    
+
     /**
      * @group integration
      */

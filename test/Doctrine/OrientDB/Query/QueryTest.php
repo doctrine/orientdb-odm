@@ -41,8 +41,8 @@ class QueryTest extends TestCase
 
         $this->assertCommandGives($sql, $this->query->getRaw());
 
-        $this->query->insert(array('field'))->values(array('value'))->into('class')->returns(Insert::RETURN_COUNT);
-        $sql = 'INSERT INTO class () VALUES ("value") RETURN COUNT';
+        $this->query->insert(array('field'))->values(array('value'))->into('class');
+        $sql = 'INSERT INTO class () VALUES ("value")';
 
         $this->assertCommandGives($sql, $this->query->getRaw());
 
@@ -301,10 +301,9 @@ class QueryTest extends TestCase
         $this->query
             ->update('class')
             ->set(array('first' => 'uno', 'nano' => 'due', 'linklist' => array(1, 2, 3)))
-            ->where('prop = ?', 'val')
-            ->returns(Update::RETURN_COUNT);
+            ->where('prop = ?', 'val');
 
-        $sql = 'UPDATE class SET first = "uno", nano = "due", linklist = [1,2,3] WHERE prop = "val" RETURN COUNT';
+        $sql = 'UPDATE class SET first = "uno", nano = "due", linklist = [1,2,3] WHERE prop = "val"';
 
         $this->assertCommandGives($sql, $this->query->getRaw());
 

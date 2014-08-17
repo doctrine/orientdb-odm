@@ -6,6 +6,8 @@ cd $PARENT_DIR
 
 rm -rf composer.lock
 
+rm -rf bin/phpunit
+
 odb_clean_dependency () {
   # find "$1" -maxdepth 1 -not -wholename "$1" -iname "*" -exec rm -rf '{}' \;
   rm -rf "$1"
