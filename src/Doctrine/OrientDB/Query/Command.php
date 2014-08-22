@@ -200,7 +200,7 @@ abstract class Command implements CommandInterface
 
     /**
      * Returns whether this query, when executed, should have the collection hydrated.
-     * The default is false
+     * The default is true
      *
      * @return boolean
      */

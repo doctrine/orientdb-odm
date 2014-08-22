@@ -90,7 +90,6 @@ class Update extends Command implements UpdateInterface
      */
     public function canHydrate()
     {
-        //return self::RETURN_COUNT !== $this->getTokenValue('Returns');
         return self::RETURN_BEFORE === $this->getTokenValue('Returns') ||
             self::RETURN_AFTER === $this->getTokenValue('Returns');
     }

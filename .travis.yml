@@ -7,7 +7,7 @@ before_script:
   - ./bin/initialize-dependencies.sh
   - sh -c ./bin/initialize-ci.sh 1.7.7
   - php ./test/Integration/fixtures/load.php
-script: phpunit --group __nogroup__,integration
+script: bin/phpunit --group __nogroup__,integration
 notifications:
   email:
     - alessandro.nadalin@gmail.com

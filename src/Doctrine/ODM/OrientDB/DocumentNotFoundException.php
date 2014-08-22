@@ -27,6 +27,9 @@ class DocumentNotFoundException extends Exception
 
     public function __construct($explanation = '')
     {
-        $this->message = self::MESSAGE.' '.$explanation;
+        $this->message = self::MESSAGE;
+        if (strlen($explanation) > 0) {
+            $this->message .= ' ' . $explanation;
+        }
     }
 }

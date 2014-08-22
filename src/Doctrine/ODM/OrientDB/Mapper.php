@@ -404,11 +404,13 @@ class Mapper
                 $parameters       = array();
                 $parentParameters = array();
 
+                //loop through each parameter
                 foreach ($refMethod->getParameters() as $parameter) {
                     $parameterClass   = $parameter->getClass();
                     $parameterName    = $parameter->getName();
                     $parameterDefault = '';
 
+                    //by checking isDefaultValueAvailable, we can allow for default values in the entities
                     if ($parameter->isDefaultValueAvailable()) {
                         $defaultValue = $parameter->getDefaultValue();
                         if (is_string($defaultValue)) {
@@ -420,17 +422,25 @@ class Mapper
                         }
                     }
 
+                    //if we have a parameterClass then lets implement typehinting
                     if ($parameterClass) {
+                        //find the name of the class without its namespace
                         $parameterClassName = $parameterClass->getShortName();
+
+                        //if the parameter class name is somehow the same as the class itself, we a have a collision
+                        //right now we'll just suffix the class name with a number.
                         if ($parameterClassName == $refClass->getShortName()) {
                             $parameterClassName .= $namespaceCollision++;
                             $importedNamespaces .= "use {$parameterClass->getName()} as $parameterClassName;\n";
                         } elseif (strlen($parameterClass->getNamespaceName()) > 0) {
+                            //if we have a parameterClassName that is not in the array of namespaces,
+                            //then add it to the list
                             if (!in_array($parameterClassName, $namespaceClasses)) {
                                 $namespaceClasses[] = $parameterClassName;
                                 $importedNamespaces .= "use {$parameterClass->getName()};\n";
                             }
                         } else {
+                            //here we've found a standard php class that needs no namespace
                             $parameterClassName = '\\'.$parameterClassName;
                         }
 

@@ -131,14 +131,6 @@ class Select extends Command implements SelectInterface
     }
 
     /**
-     * @inheritdoc
-     */
-    public function shouldReturn()
-    {
-        return true;
-    }
-
-    /**
      * Returns the formatters for this query tokens
      *
      * @return array

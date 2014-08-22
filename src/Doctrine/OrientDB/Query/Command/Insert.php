@@ -81,8 +81,8 @@ class Insert extends Command implements InsertInterface
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Fields'  => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
-            'Values'  => "Doctrine\OrientDB\Query\Formatter\Query\Values"
+            'Fields' => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Values' => "Doctrine\OrientDB\Query\Formatter\Query\Values"
         ));
     }
 }

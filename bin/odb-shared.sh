@@ -53,7 +53,7 @@ odb_download_composer () {
 }
 
 odb_download_server () {
-  #http://www.orientdb.org/portal/function/portal/download/robot-php@travi-ci.com/%20/%20/%20/%20/unknown/orientdb-community-1.7.7.tar.gz/false/false
+  #http://www.orientdb.org/portal/function/portal/download/robot-php@travi-ci.com/%20/%20/%20/%20/unknown/orientdb-community-1.7.7.tar.gz/false/false/mac
 
   DOWN_USER=robot-php@travi-ci.com
   ODB_VERSION=$1
@@ -67,7 +67,7 @@ odb_download_server () {
   # are smart enough to cope with that... at least until the next change.
   if [ $(odb_compare_version $ODB_VERSION 1.6.1) -ge 0 ]; then
     ODB_PACKAGE_EXT="tar.gz"
-    ODB_PACKAGE_URL="http://www.orientdb.org/portal/function/portal/download/${DOWN_USER}/%20/%20/%20/%20/unknown/${ODB_PACKAGE}.${ODB_PACKAGE_EXT}/false/false"
+    ODB_PACKAGE_URL="http://www.orientdb.org/portal/function/portal/download/${DOWN_USER}/%20/%20/%20/%20/unknown/${ODB_PACKAGE}.${ODB_PACKAGE_EXT}/false/false/mac"
     ODB_C_PACKAGE=${ODB_PACKAGE}.${ODB_PACKAGE_EXT}
   else
     ODB_PACKAGE_EXT="zip"
