@@ -523,7 +523,6 @@ class Caster implements CasterInterface
     {
         foreach ($this->value as $key => $value) {
             if (is_object($value)) {
-
                 /**
                  * OrientDB bug
                  *
@@ -538,7 +537,6 @@ class Caster implements CasterInterface
 
                 return $this->getMapper()->hydrateCollection($collection);
             }
-
             try {
                 $ridCollection = new Rid\Collection(array_map(function ($rid) {
                     new Rid($rid);

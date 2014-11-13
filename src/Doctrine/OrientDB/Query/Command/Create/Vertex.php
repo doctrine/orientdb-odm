@@ -14,25 +14,28 @@
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query
- * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     Erik Weinmaster <weinmaster@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Query\Command;
+namespace Doctrine\OrientDB\Query\Command\Create;
 
 use Doctrine\OrientDB\Query\Command;
+use Doctrine\OrientDB\Query\Command\UpdateInterface;
 
-class Update extends Command implements UpdateInterface
+class Vertex extends Command implements UpdateInterface
 {
     /**
      * Builds a new statement, setting the $class.
      *
      * @param string $class
+     * @param string $cluster
      */
-    public function __construct($class)
+    public function __construct($class, $cluster = '')
     {
         parent::__construct();
 
         $this->setToken('Class', $class);
+        $this->setToken('Cluster', $cluster);
     }
 
     /**
@@ -40,7 +43,7 @@ class Update extends Command implements UpdateInterface
      */
     protected function getSchema()
     {
-        return "UPDATE :Class SET :Updates :Where :Returns";
+        return "CREATE VERTEX :Class :Cluster SET :Fields";
     }
 
     /**
@@ -53,7 +56,7 @@ class Update extends Command implements UpdateInterface
      */
     public function set(array $values, $append = true)
     {
-        $this->setTokenValues('Updates', $values, $append);
+        $this->setTokenValues('Fields', $values, $append);
 
         return $this;
     }
@@ -66,31 +69,8 @@ class Update extends Command implements UpdateInterface
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Updates' => "Doctrine\OrientDB\Query\Formatter\Query\Updates",
-            'Returns' => "Doctrine\OrientDB\Query\Formatter\Query\Returns"
+            'Cluster' => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Fields'  => "Doctrine\OrientDB\Query\Formatter\Query\Updates"
         ));
-    }
-
-    /**
-     * Returns the acceptable return types
-     *
-     * @return Array
-     */
-    public function getValidReturnTypes()
-    {
-        return array(
-            self::RETURN_COUNT,
-            self::RETURN_BEFORE,
-            self::RETURN_AFTER
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function canHydrate()
-    {
-        return self::RETURN_BEFORE === $this->getTokenValue('Returns') ||
-            self::RETURN_AFTER === $this->getTokenValue('Returns');
     }
 }

@@ -14,25 +14,30 @@
  *
  * @package    Doctrine\OrientDB
  * @subpackage Query
- * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     Erik Weinmaster <weinmaster@gmail.com>
  */
 
-namespace Doctrine\OrientDB\Query\Command;
+namespace Doctrine\OrientDB\Query\Command\Create;
 
 use Doctrine\OrientDB\Query\Command;
+use Doctrine\OrientDB\Query\Command\UpdateInterface;
 
-class Update extends Command implements UpdateInterface
+class Edge extends Command implements UpdateInterface
 {
     /**
      * Builds a new statement, setting the $class.
      *
      * @param string $class
+     * @param string $from
+     * @param string $to
      */
-    public function __construct($class)
+    public function __construct($class, $from, $to)
     {
         parent::__construct();
 
         $this->setToken('Class', $class);
+        $this->setToken('From', $from);
+        $this->setToken('To', $to);
     }
 
     /**
@@ -40,7 +45,7 @@ class Update extends Command implements UpdateInterface
      */
     protected function getSchema()
     {
-        return "UPDATE :Class SET :Updates :Where :Returns";
+        return "CREATE EDGE :Class FROM :From TO :To SET :Fields";
     }
 
     /**
@@ -53,7 +58,7 @@ class Update extends Command implements UpdateInterface
      */
     public function set(array $values, $append = true)
     {
-        $this->setTokenValues('Updates', $values, $append);
+        $this->setTokenValues('Fields', $values, $append);
 
         return $this;
     }
@@ -66,31 +71,9 @@ class Update extends Command implements UpdateInterface
     protected function getTokenFormatters()
     {
         return array_merge(parent::getTokenFormatters(), array(
-            'Updates' => "Doctrine\OrientDB\Query\Formatter\Query\Updates",
-            'Returns' => "Doctrine\OrientDB\Query\Formatter\Query\Returns"
+            'From'   => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'To'     => "Doctrine\OrientDB\Query\Formatter\Query\Regular",
+            'Fields' => "Doctrine\OrientDB\Query\Formatter\Query\Updates"
         ));
-    }
-
-    /**
-     * Returns the acceptable return types
-     *
-     * @return Array
-     */
-    public function getValidReturnTypes()
-    {
-        return array(
-            self::RETURN_COUNT,
-            self::RETURN_BEFORE,
-            self::RETURN_AFTER
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function canHydrate()
-    {
-        return self::RETURN_BEFORE === $this->getTokenValue('Returns') ||
-            self::RETURN_AFTER === $this->getTokenValue('Returns');
     }
 }

@@ -329,9 +329,7 @@ class Manager implements ObjectManager
                 $value = $this->$method($value->getValue(), '*:0', false);
                 $result->getDocument()->$setter($value);
             } elseif (is_array($value)) {
-                //at this point its unclear how to cast embedded inside another embedded
-                //also this makes it impossible to have a simple embedded array
-                //$value = $this->finalizeCollection($value);
+                $value = $this->finalizeCollection($value);
                 $result->getDocument()->$setter($value);
             }
         }
