@@ -57,7 +57,7 @@ class Query implements QueryInterface
         'index.remove'      => 'Doctrine\OrientDB\Query\Command\Index\Remove',
         'index.lookup'      => 'Doctrine\OrientDB\Query\Command\Index\Lookup',
         'index.rebuild'     => 'Doctrine\OrientDB\Query\Command\Index\Rebuild',
-        'link'              => 'Doctrine\OrientDB\Query\Command\Link',
+        'link'              => 'Doctrine\OrientDB\Query\Command\Create\Link',
     );
 
     /**
