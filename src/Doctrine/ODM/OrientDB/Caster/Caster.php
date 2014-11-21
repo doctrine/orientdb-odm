@@ -29,7 +29,6 @@ use Doctrine\ODM\OrientDB\Proxy;
 use Doctrine\ODM\OrientDB\Proxy\Collection as CollectionProxy;
 use Doctrine\ODM\OrientDB\Proxy\Value as ValueProxy;
 use Doctrine\ODM\OrientDB\Types\Rid;
-use Exception as PhpException;
 
 class Caster implements CasterInterface
 {
