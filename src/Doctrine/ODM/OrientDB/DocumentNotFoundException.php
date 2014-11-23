@@ -25,8 +25,11 @@ class DocumentNotFoundException extends Exception
 {
     const MESSAGE = 'The object can not be converted to a POPO mapped by the ODM.';
 
-    public function __construct()
+    public function __construct($explanation = '')
     {
         $this->message = self::MESSAGE;
+        if (strlen($explanation) > 0) {
+            $this->message .= ' ' . $explanation;
+        }
     }
 }

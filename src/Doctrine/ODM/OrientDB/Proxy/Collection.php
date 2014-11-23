@@ -34,7 +34,7 @@ class Collection extends AbstractProxy
      * @param Manager   $manager
      * @param array     $rids
      */
-    public function __construct(Manager $manager, Array $rids)
+    public function __construct(Manager $manager, array $rids)
     {
         $this->manager = $manager;
         $this->rids = $rids;
@@ -48,8 +48,7 @@ class Collection extends AbstractProxy
     public function __invoke()
     {
         if (!$this->collection) {
-            $rids = $this->getRids();
-            $this->collection = $this->getManager()->findRecords($rids);
+            $this->collection = $this->getManager()->findRecords($this->getRids());
         }
 
         return $this->collection;
@@ -60,7 +59,7 @@ class Collection extends AbstractProxy
      *
      * @return array
      */
-    protected function getRids()
+    public function getRids()
     {
         return $this->rids;
     }

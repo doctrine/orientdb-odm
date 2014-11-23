@@ -24,9 +24,9 @@ class InsertTest extends TestCase
     public function testTheSchemaIsValid()
     {
         $tokens = array(
-            ':Target' => array(),
-            ':Fields' => array(),
-            ':Values' => array(),
+            ':Target'  => array(),
+            ':Fields'  => array(),
+            ':Values'  => array()
         );
 
         $this->assertTokens($tokens, $this->insert->getTokens());

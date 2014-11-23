@@ -47,14 +47,14 @@ class Repository implements ObjectRepository
         $this->manager = $manager;
         $this->mapper = $mapper;
     }
-    
+
     /**
      * Convenient method that intercepts the find*By*() calls.
-     * 
+     *
      * @param string $method
      * @param array $arguments
      * @return method
-     * @throws RuntimeException 
+     * @throws RuntimeException
      */
     public function __call($method, $arguments)
     {
@@ -72,24 +72,23 @@ class Repository implements ObjectRepository
 
         foreach ($arguments as $position => $argument) {
             if (is_object($argument)) {
-                if (method_exists($argument, 'getRid')) {
-                    $arguments[$position] = $argument->getRid();
-                } else {
+                if (!method_exists($argument, 'getRid')) {
                     throw new RuntimeException("When calling \$repository->find*By*(), you can only pass, as arguments, objects that have the getRid() method (shortly, entitites)");
                 }
+                $arguments[$position] = $argument->getRid();
             }
         }
-        
+
         return $this->$method(array($property => $arguments[0]));
     }
 
     /**
      * Finds an object by its primary key / identifier.
      *
-     * @param   $rid The identifier.
-     * @return  object The object.
+     * @param  $rid The identifier.
+     * @return object The object.
      */
-    public function find($rid, $fetchPlan = '*:-1')
+    public function find($rid, $fetchPlan = '*:0')
     {
         $document = $this->getManager()->find($rid, $fetchPlan);
 
@@ -130,7 +129,7 @@ class Repository implements ObjectRepository
      * @param int|null $offset
      * @return mixed The objects.
      */
-    public function findBy(array $criteria, array $orderBy = array(), $limit = null, $offset = null, $fetchPlan = '*:-1')
+    public function findBy(array $criteria, array $orderBy = array(), $limit = null, $offset = null, $fetchPlan = '*:0')
     {
         $results = array();
 
@@ -194,8 +193,8 @@ class Repository implements ObjectRepository
     /**
      * Verifies if the $document should belog to this repository.
      *
-     * @param   object  $document
-     * @return  boolean
+     * @param  object  $document
+     * @return boolean
      */
     protected function contains($document)
     {

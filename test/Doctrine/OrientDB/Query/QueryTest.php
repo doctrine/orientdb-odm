@@ -13,7 +13,9 @@ namespace test\Doctrine\OrientDB\Query;
 
 use test\PHPUnit\TestCase;
 use Doctrine\OrientDB\Query\Query;
+use Doctrine\OrientDB\Query\Command\Insert;
 use Doctrine\OrientDB\Query\Command\Select;
+use Doctrine\OrientDB\Query\Command\Update;
 
 class QueryTest extends TestCase
 {
@@ -264,9 +266,9 @@ class QueryTest extends TestCase
     public function testDeleteSQLQuery()
     {
         $this->query
-                ->delete("Profile")
-                ->where("1 = ?", 1)
-                ->andWhere("links = ?", "1");
+            ->delete("Profile")
+            ->where("1 = ?", 1)
+            ->andWhere("links = ?", "1");
 
         $sql = 'DELETE FROM Profile WHERE 1 = 1 AND links = "1"';
 
@@ -297,16 +299,16 @@ class QueryTest extends TestCase
     public function testUpdating()
     {
         $this->query
-                ->update('class')
-                ->set(array('first' => 'uno', 'nano' => 'due', 'linklist' => array(1, 2, 3)))
-                ->where('prop = ?', 'val');
+            ->update('class')
+            ->set(array('first' => 'uno', 'nano' => 'due', 'linklist' => array(1, 2, 3)))
+            ->where('prop = ?', 'val');
 
         $sql = 'UPDATE class SET first = "uno", nano = "due", linklist = [1,2,3] WHERE prop = "val"';
-        
+
         $this->assertCommandGives($sql, $this->query->getRaw());
 
         $this->query
-                ->put(array('first' => array('1' => '12:0'), 'second' => array('2' => '13:0')), 'puttedClass');
+            ->put(array('first' => array('1' => '12:0'), 'second' => array('2' => '13:0')), 'puttedClass');
 
         $sql = 'UPDATE puttedClass PUT first = \'1\', #12:0, second = \'2\', #13:0';
 

@@ -22,19 +22,20 @@ namespace Doctrine\ODM\OrientDB\Caster;
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
 use Doctrine\OrientDB\Query\Validator\ValidationException;
+use Doctrine\OrientDB\Util\Inflector\Cached as Inflector;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
 use Doctrine\ODM\OrientDB\Proxy;
 use Doctrine\ODM\OrientDB\Proxy\Collection as CollectionProxy;
 use Doctrine\ODM\OrientDB\Proxy\Value as ValueProxy;
 use Doctrine\ODM\OrientDB\Types\Rid;
-use Exception as PhpException;
 
 class Caster implements CasterInterface
 {
     protected $value;
     protected $mapper;
     protected $dateClass;
+    protected $inflector;
     protected $properties   = array();
     protected $trueValues   = array(1, '1', 'true');
     protected $falseValues  = array(0, '0', 'false');
@@ -51,10 +52,16 @@ class Caster implements CasterInterface
      * @param Mapper    $mapper
      * @param mixed     $value
      * @param string    $dateClass  The class used to cast dates and datetimes
+     * @param Inflector $inflector
      */
-    public function __construct(Mapper $mapper, $value = null, $dateClass = "\DateTime")
-    {
+    public function __construct(
+        Mapper $mapper,
+        $value = null,
+        $dateClass = "\DateTime",
+        Inflector $inflector = null
+    ) {
         $this->mapper = $mapper;
+        $this->inflector = $inflector ?: new Inflector();
         $this->assignDateClass($dateClass);
 
         if ($value) {
@@ -120,9 +127,9 @@ class Caster implements CasterInterface
 
         if (is_numeric($this->value) && $this->value >= $min && $this->value <= $max) {
             return $this->value;
-        } else {
-            return $this->handleMismatch($castFunction, 'byte');
         }
+
+        return $this->handleMismatch($castFunction, 'byte');
     }
 
     /**
@@ -165,17 +172,15 @@ class Caster implements CasterInterface
      */
     public function castDecimal()
     {
-        $min    = (float) 4.9E-324;
-        $max    = (float) 1.7976931348623157E+308;
-        $value  = (float) $this->value;
+        $min   = (float) 4.9E-324;
+        $max   = (float) 1.7976931348623157E+308;
+        $value = (float) $this->value;
 
         if ($value >= $min && $value <= $max) {
             return $value;
         }
 
-
         $castFunction = function($value) use ($min,$max) {
-
             if ($value < $min ) {
                 return $min;
             }
@@ -189,9 +194,9 @@ class Caster implements CasterInterface
 
         if (is_numeric($this->value)) {
             return $castFunction($this->value);
-        } else {
-            return $this->handleMismatch($castFunction, 'decimal');
         }
+
+        return $this->handleMismatch($castFunction, 'decimal');
     }
 
     /**
@@ -221,7 +226,7 @@ class Caster implements CasterInterface
      */
     public function castEmbeddedList()
     {
-         return $this->castEmbeddedArrays();
+        return $this->castEmbeddedArrays();
     }
 
     /**
@@ -243,7 +248,7 @@ class Caster implements CasterInterface
      */
     public function castEmbeddedSet()
     {
-         return $this->castEmbeddedArrays();
+        return $this->castEmbeddedArrays();
     }
 
     /**
@@ -259,9 +264,9 @@ class Caster implements CasterInterface
 
         if (is_numeric($this->value)) {
             return $castFunction($this->value);
-        } else {
-            return $this->handleMismatch($castFunction, 'double');
         }
+
+        return $this->handleMismatch($castFunction, 'double');
     }
 
     /**
@@ -277,9 +282,9 @@ class Caster implements CasterInterface
 
         if (is_numeric($this->value)) {
             return $castFunction($this->value);
-        } else {
-            return $this->handleMismatch($castFunction, 'integer');
         }
+
+        return $this->handleMismatch($castFunction, 'integer');
     }
 
     /**
@@ -290,8 +295,8 @@ class Caster implements CasterInterface
      * If the internal value is not a rid but an already decoded orient
      * object, it simply hydrates it through the mapper.
      *
-     * @see     http://code.google.com/p/orient/wiki/FetchingStrategies
-     * @return  ValueProxy|Rid
+     * @see    http://code.google.com/p/orient/wiki/FetchingStrategies
+     * @return ValueProxy|Rid
      */
     public function castLink()
     {
@@ -354,8 +359,8 @@ class Caster implements CasterInterface
      * Casts the current value into an integer verifying it belongs to a certain
      * range ( -$limit < $value > + $limit ).
      *
-     * @param integer   $limit
-     * @param string    $type
+     * @param integer $limit
+     * @param string  $type
      * @return integer
      * @throws CastingMismatchException
      */
@@ -367,9 +372,20 @@ class Caster implements CasterInterface
 
         if (is_numeric($this->value) && abs($this->value) < $limit) {
             return $castFunction($this->value);
-        } else {
-            return $this->handleMismatch($castFunction, $type);
         }
+
+        return $this->handleMismatch($castFunction, $type);
+    }
+
+    /**
+     * This function is mostly for embedded arrays of mixed type as it is
+     * primarily just a way to bypass the caster
+     *
+     * @return mixed
+     */
+    public function castNone()
+    {
+        return $this->value;
     }
 
     /**
@@ -385,9 +401,9 @@ class Caster implements CasterInterface
 
         if (is_string($this->value)) {
             return $castFunction($this->value);
-        } else {
-            return $this->handleMismatch($castFunction, 'string');
         }
+
+        return $this->handleMismatch($castFunction, 'string');
     }
 
     /**
@@ -403,8 +419,8 @@ class Caster implements CasterInterface
     /**
      * Defines properties that can be internally used by the caster.
      *
-     * @param string    $key
-     * @param mixed     $property
+     * @param string $key
+     * @param mixed  $property
      */
     public function setProperty($key, $property)
     {
@@ -444,13 +460,13 @@ class Caster implements CasterInterface
     /**
      * Given a $type, it casts each element of the value array with a method.
      *
-     * @param   string $type
-     * @return  Array
+     * @param  string $type
+     * @return Array
      */
     protected function castArrayOf($type)
     {
         $results = array();
-        $method = 'cast' . ucfirst($type);
+        $method  = 'cast' . $this->inflector->camelize($type);
         $innerCaster = new self($this->getMapper());
 
         if (!method_exists($innerCaster, $method)) {
@@ -466,7 +482,7 @@ class Caster implements CasterInterface
     }
 
     /**
-     * Casts embedded entities, given the $cast property of the internal
+     * Casts embedded arrays, given the $cast property of the internal
      * annotation.
      *
      * @return Array
@@ -499,18 +515,17 @@ class Caster implements CasterInterface
      * Given the internl value of the caster (an array), it iterates over each
      * element of the array and hydrates it.
      *
-     * @see     Caster::castLink for more insights
-     * @return  Array|null
+     * @see    Caster::castLink for more insights
+     * @return Array|null
      */
     protected function castLinkCollection()
     {
         foreach ($this->value as $key => $value) {
             if (is_object($value)) {
-                
                 /**
                  * OrientDB bug
-                 * 
-                 * @see https://github.com/nuvolabase/orientdb/issues/1277 
+                 *
+                 * @see https://github.com/nuvolabase/orientdb/issues/1277
                  */
                 $collection = array();
                 foreach ($this->value as $key => $value) {
@@ -518,10 +533,9 @@ class Caster implements CasterInterface
                         $collection[$key] = $value;
                     }
                 }
-                
+
                 return $this->getMapper()->hydrateCollection($collection);
             }
-
             try {
                 $ridCollection = new Rid\Collection(array_map(function ($rid) {
                     new Rid($rid);
@@ -582,8 +596,8 @@ class Caster implements CasterInterface
     /**
      * Returns a property of the Caster, given its $key.
      *
-     * @param   string $key
-     * @return  mixed
+     * @param  string $key
+     * @return mixed
      */
     protected function getProperty($key)
     {

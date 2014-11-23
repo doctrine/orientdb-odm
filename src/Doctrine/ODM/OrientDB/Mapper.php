@@ -24,7 +24,7 @@ namespace Doctrine\ODM\OrientDB;
 
 use Doctrine\ODM\OrientDB\Caster\Caster;
 use Doctrine\ODM\OrientDB\Caster\CasterInterface;
-use Doctrine\ODM\OrientDB\Mapper\Hydration;
+use Doctrine\ODM\OrientDB\Mapper\Hydration\Result;
 use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Reader;
@@ -60,20 +60,20 @@ class Mapper
      *
      * @param string                    $documentProxyDirectory
      * @param AnnotationReaderInterface $annotationReader
-     * @param Inflector         $inflector
+     * @param Inflector                 $inflector
      */
     public function __construct(
         $documentProxyDirectory,
         AnnotationReaderInterface $annotationReader = null,
-        Inflector $inflector = null,
         Cache $cache = null,
+        Inflector $inflector = null,
         Caster $caster = null
     ) {
-        $this->documentProxyDirectory   = $documentProxyDirectory;
-        $this->annotationReader         = $annotationReader ?: new Reader;
-        $this->cache                    = $cache ?: new ArrayCache;
-        $this->inflector                = $inflector ?: new Inflector();
-        $this->caster                   = $caster ?: new Caster($this);
+        $this->documentProxyDirectory = $documentProxyDirectory;
+        $this->annotationReader       = $annotationReader ?: new Reader;
+        $this->cache                  = $cache ?: new ArrayCache;
+        $this->inflector              = $inflector ?: new Inflector();
+        $this->caster                 = $caster ?: new Caster($this);
     }
 
     /**
@@ -100,8 +100,8 @@ class Mapper
     /**
      * Returns the annotation of a class.
      *
-     * @param   string   $class
-     * @return  Doctrine\ODM\OrientDB\Mapper\Class
+     * @param  string   $class
+     * @return Doctrine\ODM\OrientDB\Mapper\Class
      */
     public function getClassAnnotation($class)
     {
@@ -145,14 +145,14 @@ class Mapper
     /**
      * Takes an Doctrine\OrientDB JSON object and finds the class responsible to map that
      * object.
-     * If it finds it, he istantiates a new POPO, filling it with the properties
-     * inside the JSON object.
+     * If the class is found, a new POPO is instantiated and the properties inside the
+     * JSON object are filled accordingly.
      *
-     * @param   StdClass    $orientObject
-     * @return  Hydration\Result
-     * @throws  DocumentNotFoundException
+     * @param  stdClass $orientObject
+     * @return Result
+     * @throws DocumentNotFoundException
      */
-    public function hydrate(\StdClass $orientObject)
+    public function hydrate(\stdClass $orientObject)
     {
         $classProperty = self::ORIENT_PROPERTY_CLASS;
 
@@ -164,18 +164,20 @@ class Mapper
                 $class       = $this->findClassMappingInDirectories($orientClass);
                 $document    = $this->createDocument($class, $orientObject, $linkTracker);
 
-                return new Hydration\Result($document, $linkTracker);
+                return new Result($document, $linkTracker);
             }
+
+            throw new DocumentNotFoundException(self::ORIENT_PROPERTY_CLASS.' property empty.');
         }
 
-        throw new DocumentNotFoundException();
+        throw new DocumentNotFoundException(self::ORIENT_PROPERTY_CLASS.' property not found.');
     }
 
     /**
      * Hydrates an array of documents.
      *
-     * @param   Array $json
-     * @return  Array
+     * @param  Array $json
+     * @return Array
      */
     public function hydrateCollection(array $collection)
     {
@@ -208,10 +210,10 @@ class Mapper
      * The proxy class extends from $class and is used to implement
      * lazy-loading.
      *
-     * @param   string      $class
-     * @param   \stdClass   $orientObject
-     * @param   LinkTracker $linkTracker
-     * @return  object of type $class
+     * @param  string      $class
+     * @param  \stdClass   $orientObject
+     * @param  LinkTracker $linkTracker
+     * @return object of type $class
      */
     protected function createDocument($class, \stdClass $orientObject, LinkTracker $linkTracker)
     {
@@ -226,9 +228,9 @@ class Mapper
     /**
      * Casts a value according to how it was annotated.
      *
-     * @param   Doctrine\ODM\OrientDB\Mapper\Annotations\Property  $annotation
-     * @param   mixed                                          $propertyValue
-     * @return  mixed
+     * @param  Doctrine\ODM\OrientDB\Mapper\Annotations\Property  $annotation
+     * @param  mixed                                              $propertyValue
+     * @return mixed
      */
     protected function castProperty($annotation, $propertyValue)
     {
@@ -266,10 +268,10 @@ class Mapper
      * Given an object and an Orient-object, it fills the former with the
      * latter.
      *
-     * @param   object      $document
-     * @param   \stdClass   $object
-     * @param   LinkTracker $linkTracker
-     * @return  object
+     * @param  object      $document
+     * @param  \stdClass   $object
+     * @param  LinkTracker $linkTracker
+     * @return object
      */
     protected function fill($document, \stdClass $object, LinkTracker $linkTracker)
     {
@@ -300,9 +302,9 @@ class Mapper
      * Tries to find the PHP class mapping Doctrine\OrientDB's $OClass in each of the
      * directories where the documents are stored.
      *
-     * @param   string $OClass
-     * @return  string
-     * @throws  Doctrine\ODM\OrientDB\OClassNotFoundException
+     * @param  string $OClass
+     * @return string
+     * @throws Doctrine\ODM\OrientDB\OClassNotFoundException
      */
     protected function findClassMappingInDirectories($OClass)
     {
@@ -319,10 +321,10 @@ class Mapper
      * Searches a PHP class mapping Doctrine\OrientDB's $OClass in $directory,
      * which uses the given $namespace.
      *
-     * @param   string                      $OClass
-     * @param   string                      $directory
-     * @param   string                      $namespace
-     * @return  string|null
+     * @param  string $OClass
+     * @param  string $directory
+     * @param  string $namespace
+     * @return string|null
      */
     protected function findClassMappingInDirectory($OClass, $directory, $namespace)
     {
@@ -393,25 +395,61 @@ class Mapper
         $refClass           = new \ReflectionClass($class);
         $methods            = "";
         $namespace          = substr($class, 0, strlen($class) - strlen($proxyClassName) - 1);
-        $importedNamespaces = "";
+        $importedNamespaces = "use Doctrine\ODM\OrientDB\Proxy\AbstractProxy;\n";
+        $namespaceCollision = 1;
+        $namespaceClasses   = array();
 
         foreach ($refClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
             if (!$refMethod->isStatic()) {
                 $parameters       = array();
                 $parentParameters = array();
 
+                //loop through each parameter
                 foreach ($refMethod->getParameters() as $parameter) {
-                    if ($parameter->getClass()) {
-                        $importedNamespaces .= <<<EOT
-use {$parameter->getClass()->getName()};
-EOT;
+                    $parameterClass   = $parameter->getClass();
+                    $parameterName    = $parameter->getName();
+                    $parameterDefault = '';
 
-                        $parameters[] = $parameter->getClass()->getShortName() . " $" . $parameter->getName();
-                    } else {
-                        $parameters[] = "$" . $parameter->getName();
+                    //by checking isDefaultValueAvailable, we can allow for default values in the entities
+                    if ($parameter->isDefaultValueAvailable()) {
+                        $defaultValue = $parameter->getDefaultValue();
+                        if (is_string($defaultValue)) {
+                            $parameterDefault = " = '$defaultValue'";
+                        } elseif ($defaultValue === null) {
+                            $parameterDefault = ' = null';
+                        } else {
+                            $parameterDefault = ' = '.$defaultValue;
+                        }
                     }
 
-                    $parentParameters[] = "$" . $parameter->getName();
+                    //if we have a parameterClass then lets implement typehinting
+                    if ($parameterClass) {
+                        //find the name of the class without its namespace
+                        $parameterClassName = $parameterClass->getShortName();
+
+                        //if the parameter class name is somehow the same as the class itself, we a have a collision
+                        //right now we'll just suffix the class name with a number.
+                        if ($parameterClassName == $refClass->getShortName()) {
+                            $parameterClassName .= $namespaceCollision++;
+                            $importedNamespaces .= "use {$parameterClass->getName()} as $parameterClassName;\n";
+                        } elseif (strlen($parameterClass->getNamespaceName()) > 0) {
+                            //if we have a parameterClassName that is not in the array of namespaces,
+                            //then add it to the list
+                            if (!in_array($parameterClassName, $namespaceClasses)) {
+                                $namespaceClasses[] = $parameterClassName;
+                                $importedNamespaces .= "use {$parameterClass->getName()};\n";
+                            }
+                        } else {
+                            //here we've found a standard php class that needs no namespace
+                            $parameterClassName = '\\'.$parameterClassName;
+                        }
+
+                        $parameters[] = $parameterClassName . ' $' . $parameterName . $parameterDefault;
+                    } else {
+                        $parameters[] = ($parameter->isArray() ? 'array ' : '' ) . '$' . $parameterName . $parameterDefault;
+                    }
+
+                    $parentParameters[] = '$' . $parameterName;
                 }
 
                 $parametersAsString       = implode(', ', $parameters);
@@ -423,7 +461,7 @@ EOT;
         \$parent = parent::{$refMethod->getName()}($parentParametersAsString);
 
         if (!is_null(\$parent)) {
-            if (\$parent instanceof \Doctrine\ODM\OrientDB\Proxy\AbstractProxy) {
+            if (\$parent instanceof AbstractProxy) {
                 return \$parent();
             }
 
@@ -432,16 +470,15 @@ EOT;
     }
 
 EOT;
-                }
             }
+        }
 
-            $proxy = <<<EOT
+        $proxy = <<<EOT
 <?php
 
 namespace Doctrine\OrientDB\Proxy$namespace;
 
 $importedNamespaces
-
 class $proxyClassName extends $class
 {
 $methods
@@ -505,8 +542,8 @@ EOT;
     /**
      * Returns all the annotations in the $document's properties.
      *
-     * @param   mixed $document
-     * @return  array
+     * @param  mixed $document
+     * @return array
      */
     protected function getObjectPropertyAnnotations($document)
     {
@@ -543,11 +580,11 @@ EOT;
      * ->hydrate() method of its mapper, to verify that the object is ready to
      * be used in the userland application.
      *
-     * @param mixed                 $document
-     * @param string                $property
-     * @param string                $value
-     * @param PropertyAnnotation    $annotation
-     * @param LinkTracker           $linkTracker
+     * @param mixed              $document
+     * @param string             $property
+     * @param string             $value
+     * @param PropertyAnnotation $annotation
+     * @param LinkTracker        $linkTracker
      */
     protected function mapProperty($document, $property, $value, PropertyAnnotation $annotation, LinkTracker $linkTracker)
     {
@@ -561,7 +598,6 @@ EOT;
                     throw $e;
                 }
             }
-
 
             if ($value instanceof Rid || $value instanceof Rid\Collection || is_array($value)) {
                 $linkTracker->add($property, $value);
@@ -605,10 +641,10 @@ EOT;
      * Verifies if the given $caster supports casting with $method.
      * If not, an exception is raised.
      *
-     * @param   Caster $caster
-     * @param   string $method
-     * @param   string $annotationType
-     * @throws  Doctrine\OrientDB\Exception
+     * @param  Caster $caster
+     * @param  string $method
+     * @param  string $annotationType
+     * @throws Doctrine\OrientDB\Exception
      */
     protected function verifyCastingSupport(Caster $caster, $method, $annotationType)
     {

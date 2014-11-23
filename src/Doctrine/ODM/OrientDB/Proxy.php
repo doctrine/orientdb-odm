@@ -60,7 +60,7 @@ class Proxy extends AbstractProxy
      *
      * @return string
      */
-    protected function getRid()
+    public function getRid()
     {
         return $this->rid;
     }

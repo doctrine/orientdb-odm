@@ -45,9 +45,9 @@ class Manager implements ObjectManager
      * Instatiates a new Mapper, injecting the $mapper that will be used to
      * hydrate record retrieved through the $binding.
      *
-     * @param   Mapper           $mapper
-     * @param   BindingInterface $binding
-     * @param   MetadataFactory  $metadataFactory
+     * @param Mapper           $mapper
+     * @param BindingInterface $binding
+     * @param MetadataFactory  $metadataFactory
      */
     public function __construct(
         Mapper $mapper,
@@ -74,21 +74,19 @@ class Manager implements ObjectManager
     /**
      * Executes a $query against OrientDB.
      *
-     * This method should be used to executes query which should not return a
+     * This method should be used to execute queries which should not return a
      * result (UPDATE, INSERT) or to retrieve multiple objects: to retrieve a
      * single record look at ->find*() methods.
      *
-     * @param   Query $query
-     * @return  Array
+     * @param  Query $query
+     * @return array|Mixed
      */
     public function execute(Query $query, $fetchPlan = null)
     {
-
         $binding = $this->getBinding();
-        $results = $binding->execute($query->getRaw(), $query->shouldReturn(), $fetchPlan)->getResult();
+        $results = $binding->execute($query, $fetchPlan)->getResult();
 
-        /* @todo verify the condition*/
-        if (is_array($results) && $query->shouldReturn()) {
+        if (is_array($results) && $query->canHydrate()) {
             $collection = $this->getMapper()->hydrateCollection($results);
             $collection = $this->finalizeCollection($collection);
 
@@ -110,12 +108,12 @@ class Manager implements ObjectManager
      *   $record = $lazyLoadedRecord();
      * </code>
      *
-     * @param   string    $rid
-     * @param   string    $fetchPlan
-     * @return  Proxy|object
-     * @throws  OClassNotFoundException|CastingMismatchException|Exception
+     * @param  string $rid
+     * @param  string $fetchPlan
+     * @return Proxy|object
+     * @throws OClassNotFoundException|CastingMismatchException|Exception
      */
-    public function find($rid, $fetchPlan = '*:1', $lazy = true)
+    public function find($rid, $fetchPlan = '*:0', $lazy = true)
     {
         $validator = new RidValidator;
         $rid = $validator->check($rid);
@@ -141,13 +139,13 @@ class Manager implements ObjectManager
      * If $lazy loading is used, all of this won't be executed unless the
      * returned Proxy object is called via __invoke.
      *
-     * @see     ->find()
-     * @param   string      $rid
-     * @param   mixed       $fetchPlan
-     * @return  Proxy\Collection|array
-     * @throws  Doctrine\OrientDB\Binding\InvalidQueryException
+     * @see    ->find()
+     * @param  string $rid
+     * @param  mixed  $fetchPlan
+     * @return Proxy\Collection|array
+     * @throws Doctrine\OrientDB\Binding\InvalidQueryException
      */
-    public function findRecords(Array $rids, $fetchPlan = null, $lazy = true)
+    public function findRecords(array $rids, $fetchPlan = '*:0', $lazy = true)
     {
         if ($lazy === false) {
             return new Proxy\Collection($this, $rids);
@@ -155,7 +153,7 @@ class Manager implements ObjectManager
 
         $query = new Query($rids);
         $binding = $this->getBinding();
-        $results = $binding->execute($query->getRaw(), true, $fetchPlan)->getResult();
+        $results = $binding->execute($query, $fetchPlan)->getResult();
 
         if (is_array($results)) {
             $collection = $this->getMapper()->hydrateCollection($results);
@@ -201,8 +199,8 @@ class Manager implements ObjectManager
     /**
      * Returns the Repository class associated with the $class.
      *
-     * @param   string $className
-     * @return  Repository
+     * @param  string $className
+     * @return Repository
      */
     public function getRepository($className)
     {
@@ -221,7 +219,7 @@ class Manager implements ObjectManager
      * This method is a no-op for other objects.
      *
      * @param object $obj
-     * @todo implement and test
+     * @todo  implement and test
      */
     public function initializeObject($obj)
     {
@@ -294,32 +292,32 @@ class Manager implements ObjectManager
      *
      * Optionally the query can be executed using the specified fetch plan.
      *
-     * @param   type        $rid
-     * @param   mixed       $fetchPlan
-     * @return  object|null
+     * @param  type  $rid
+     * @param  mixed $fetchPlan
+     * @return object|null
      */
     protected function doFind($rid, $fetchPlan = null)
     {
         $query   = new Query(array($rid));
         $binding = $this->getBinding();
-        $results = $binding->execute($query->getRaw(), true, $fetchPlan)->getResult();
+        $results = $binding->execute($query, $fetchPlan)->getResult();
 
         if (isset($results) && count($results)) {
-          $record = is_array($results) ? array_shift($results) : $results;
-          $results = $this->getMapper()->hydrate($record);
+            $record = is_array($results) ? array_shift($results) : $results;
+            $results = $this->getMapper()->hydrate($record);
 
-          return $this->finalize($results);
+            return $this->finalize($results);
         }
 
         return null;
     }
 
     /**
-     * Given an Hydration\Result, it implements lazy-loading for all its'
+     * Given an Result, it implements lazy-loading for all its'
      * document's related links.
      *
-     * @param   Result $result
-     * @return  object
+     * @param  Result $result
+     * @return object
      */
     protected function finalize(Result $result)
     {
@@ -328,7 +326,7 @@ class Manager implements ObjectManager
 
             if ($value instanceof Rid\Collection || $value instanceof Rid) {
                 $method = $value instanceof Rid\Collection ? 'findRecords' : 'find';
-                $value = $this->$method($value->getValue(), null, false);
+                $value = $this->$method($value->getValue(), '*:0', false);
                 $result->getDocument()->$setter($value);
             } elseif (is_array($value)) {
                 $value = $this->finalizeCollection($value);
@@ -340,12 +338,12 @@ class Manager implements ObjectManager
     }
 
     /**
-     * Given a collection of Hydration\Result, it returns an array of POPOs.
+     * Given a collection of Result, it returns an array of POPOs.
      *
-     * @param   Array $collection
-     * @return  Array
+     * @param  array $collection
+     * @return array
      */
-    protected function finalizeCollection(Array $collection)
+    protected function finalizeCollection(array $collection)
     {
         foreach ($collection as $key => $hydrationResult) {
             $collection[$key] = $this->finalize($hydrationResult);

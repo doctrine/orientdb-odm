@@ -55,7 +55,7 @@ class RepositoryTest extends TestCase
         $repository = $this->createRepository($class);
 
         $this->assertInstanceOf('Doctrine\ODM\OrientDB\Proxy\Collection', $repository->find($this->postId . ':0', '*:0')->comments);
-        $this->assertinternalType('array', $repository->find($this->postId.':0')->comments);
+        $this->assertinternalType('array', $repository->find($this->postId . ':0', '*:-1')->comments);
     }
 
     /**
