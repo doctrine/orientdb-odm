@@ -20,7 +20,6 @@
 
 namespace Doctrine\ODM\OrientDB;
 
-use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Proxy\AbstractProxy;
 
 class Proxy extends AbstractProxy
@@ -32,7 +31,7 @@ class Proxy extends AbstractProxy
     /**
      * Istantiates a new Proxy.
      *
-     * @param Mapper $manager
+     * @param Manager $manager
      * @param string $rid
      */
     public function __construct(Manager $manager, $rid)

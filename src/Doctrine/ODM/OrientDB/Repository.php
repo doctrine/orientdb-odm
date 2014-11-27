@@ -20,8 +20,6 @@
 
 namespace Doctrine\ODM\OrientDB;
 
-use Doctrine\ODM\OrientDB\Manager;
-use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\OrientDB\Query\Query;
 use Doctrine\OrientDB\Exception;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -31,21 +29,18 @@ use RuntimeException;
 class Repository implements ObjectRepository
 {
     protected $manager;
-    protected $mapper;
     protected $className;
 
     /**
      * Instantiates a new repository.
      *
-     * @param type $className
+     * @param string $className type
      * @param Manager $manager
-     * @param Mapper $mapper
      */
-    public function __construct($className, Manager $manager, Mapper $mapper)
+    public function __construct($className, Manager $manager)
     {
         $this->className = $className;
         $this->manager = $manager;
-        $this->mapper = $mapper;
     }
 
     /**
@@ -212,16 +207,6 @@ class Repository implements ObjectRepository
     }
 
     /**
-     * Returns the mapper associated with this repository.
-     *
-     * @return Mapper
-     */
-    protected function getMapper()
-    {
-        return $this->mapper;
-    }
-
-    /**
      * Returns the OrientDB classes which are mapper by the
      * Repository's $className.
      *
@@ -229,7 +214,7 @@ class Repository implements ObjectRepository
      */
     protected function getOrientClasses()
     {
-        $classAnnotation = $this->getMapper()->getClassAnnotation($this->getClassName());
+        $classAnnotation = $this->getManager()->getMetadataFactory()->getClassAnnotation($this->getClassName());
 
         return explode(',', $classAnnotation->class);
     }

@@ -9,6 +9,7 @@
 
 namespace test\PHPUnit;
 
+use Doctrine\ODM\OrientDB\Configuration;
 use Doctrine\ODM\OrientDB\Manager;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\OrientDB\Binding\HttpBinding;
@@ -68,11 +69,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     protected function getProxyDirectory()
     {
-        return __DIR__ . '/../../test/proxies';
+        return __DIR__ . '/../../test/proxies/Doctrine/OrientDB/Proxy/test';
     }
 
     protected function createMapper(Array $opts = array())
     {
+        $manager = $this->createManager();
+        return $manager->getMapper();
         $opts = array_merge(array(
             'mismatches_tolerance' => false,
             'proxies_dir' => $this->getProxyDirectory(),
@@ -91,11 +94,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     protected function createManager(Array $opts = array())
     {
-        $mapper = $this->createMapper($opts);
+        $config = new Configuration(array(
+            'proxyDirectory' => $this->getProxyDirectory(),
+            'documentDirectories' => array(__DIR__.'/../../test/Integration/Document' => 'test')
+        ));
 
         $parameters = new BindingParameters(TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
         $binding = new HttpBinding($parameters);
-        $manager = new Manager($mapper, $binding);
+        $manager = new Manager($binding, $config);
 
         return $manager;
     }

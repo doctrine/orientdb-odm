@@ -27,20 +27,17 @@ class ClassMetadata implements DoctrineMetadata
 {
     protected $class;
     protected $refClass;
-    protected $mapper;
-    private $singleAssociations = array('link');
-    private $multipleAssociations = array('linklist', 'linkset', 'linkmap');
+    protected $associations;
+    protected $fields;
 
     /**
      * Instantiates a new Metadata for the given $className.
      *
      * @param string        $className
-     * @param DataMapper    $mapper
      */
-    public function __construct($className, DataMapper $mapper)
+    public function __construct($className)
     {
         $this->class = $className;
-        $this->mapper = $mapper;
     }
 
     /**
@@ -68,7 +65,7 @@ class ClassMetadata implements DoctrineMetadata
     /**
      * Gets the ReflectionClass instance for this mapped class.
      *
-     * @return ReflectionClass
+     * @return \ReflectionClass
      */
     public function getReflectionClass()
     {
@@ -199,6 +196,11 @@ class ClassMetadata implements DoctrineMetadata
         return null;
     }
 
+    public function getReflectionProperties()
+    {
+        return $this->getReflectionClass()->getProperties();
+    }
+
     /**
      * @todo to implement/test
      *
@@ -206,7 +208,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function getIdentifierFieldNames()
     {
-        throw new \Exception('to be implemented');
+        return array('@rid');
     }
 
     /**
@@ -259,6 +261,16 @@ class ClassMetadata implements DoctrineMetadata
         return null;
     }
 
+    public function setAssociations(array $associations)
+    {
+        $this->associations = $associations;
+    }
+
+    public function setFields(array $fields)
+    {
+        $this->fields = $fields;
+    }
+
     /**
      * Returns all the possible associations mapped in the introspected class.
      *
@@ -266,28 +278,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     protected function getAssociations()
     {
-        $associations = array();
-
-        foreach ($this->getReflectionClass()->getProperties() as $refProperty) {
-            $association = $this->getMapper()->getPropertyAnnotation($refProperty);
-
-            if ($association && in_array($association->type, $this->getAssociationTypes())) {
-                $associations[] = $association;
-            }
-        }
-
-        return $associations;
-    }
-
-    /**
-     * Returns all the possible association types.
-     * e.g. linklist, linkmap, link...
-     *
-     * @return Array
-     */
-    protected function getAssociationTypes()
-    {
-        return array_merge($this->singleAssociations, $this->multipleAssociations);
+        return $this->associations;
     }
 
     /**
@@ -314,17 +305,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     protected function getFields()
     {
-        $fields = array();
-
-        foreach ($this->getReflectionClass()->getProperties() as $refProperty) {
-            $field = $this->getMapper()->getPropertyAnnotation($refProperty);
-
-            if ($field && !in_array($field->type, $this->getAssociationTypes())) {
-                 $fields[] = $field;
-            }
-        }
-
-         return $fields;
+        return $this->fields;
     }
 
     /**
@@ -343,13 +324,4 @@ class ClassMetadata implements DoctrineMetadata
         }
     }
 
-    /**
-     * Returns the mapper associated with this Metadata.
-     *
-     * @return Mapper
-     */
-    protected function getMapper()
-    {
-        return $this->mapper;
-    }
 }

@@ -19,21 +19,18 @@
 
 namespace Doctrine\ODM\OrientDB\Caster;
 
+use Doctrine\ODM\OrientDB\Hydration\Hydrator;
 use Doctrine\OrientDB\Exception;
-use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
 use Doctrine\OrientDB\Query\Validator\ValidationException;
 use Doctrine\OrientDB\Util\Inflector\Cached as Inflector;
 use Doctrine\ODM\OrientDB\Mapper;
-use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
 use Doctrine\ODM\OrientDB\Proxy;
-use Doctrine\ODM\OrientDB\Proxy\Collection as CollectionProxy;
 use Doctrine\ODM\OrientDB\Proxy\Value as ValueProxy;
 use Doctrine\ODM\OrientDB\Types\Rid;
 
 class Caster implements CasterInterface
 {
     protected $value;
-    protected $mapper;
     protected $dateClass;
     protected $inflector;
     protected $properties   = array();
@@ -49,19 +46,19 @@ class Caster implements CasterInterface
     /**
      * Instantiates a new Caster.
      *
-     * @param Mapper    $mapper
+     * @param Hydrator  $hydrator
+     * @param Inflector $inflector
      * @param mixed     $value
      * @param string    $dateClass  The class used to cast dates and datetimes
-     * @param Inflector $inflector
      */
     public function __construct(
-        Mapper $mapper,
+        Hydrator $hydrator,
+        Inflector $inflector,
         $value = null,
-        $dateClass = "\DateTime",
-        Inflector $inflector = null
+        $dateClass = "\DateTime"
     ) {
-        $this->mapper = $mapper;
-        $this->inflector = $inflector ?: new Inflector();
+        $this->hydrator = $hydrator;
+        $this->inflector = $inflector;
         $this->assignDateClass($dateClass);
 
         if ($value) {
@@ -216,7 +213,7 @@ class Caster implements CasterInterface
      */
     public function castEmbedded()
     {
-        return $this->getMapper()->hydrate($this->value);
+        return $this->getHydrator()->hydrate($this->value);
     }
 
     /**
@@ -301,7 +298,7 @@ class Caster implements CasterInterface
     public function castLink()
     {
         if ($this->value instanceof \stdClass) {
-            return new ValueProxy($this->getMapper()->hydrate($this->value)->getDocument());
+            return new ValueProxy($this->getHydrator()->hydrate($this->value)->getDocument());
         } else {
             try {
                 return new Rid($this->value);
@@ -467,7 +464,7 @@ class Caster implements CasterInterface
     {
         $results = array();
         $method  = 'cast' . $this->inflector->camelize($type);
-        $innerCaster = new self($this->getMapper());
+        $innerCaster = new self($this->getHydrator(), $this->inflector);
 
         if (!method_exists($innerCaster, $method)) {
             throw new Exception(sprintf('Method %s for %s not found', $method, get_class($innerCaster)));
@@ -498,7 +495,7 @@ class Caster implements CasterInterface
         $listType = $annotation->getCast();
 
         if ($listType == "link") {
-            return $this->getMapper()->hydrateCollection($this->value);
+            return $this->getHydrator()->hydrateCollection($this->value);
         }
 
         try {
@@ -534,7 +531,7 @@ class Caster implements CasterInterface
                     }
                 }
 
-                return $this->getMapper()->hydrateCollection($collection);
+                return $this->getHydrator()->hydrateCollection($collection);
             }
             try {
                 $ridCollection = new Rid\Collection(array_map(function ($rid) {
@@ -584,13 +581,13 @@ class Caster implements CasterInterface
     }
 
     /**
-     * Returns the internl manager.
+     * Returns the hydrator.
      *
-     * @return Mapper
+     * @return Hydrator
      */
-    protected function getMapper()
+    protected function getHydrator()
     {
-        return $this->mapper;
+        return $this->hydrator;
     }
 
     /**
@@ -609,7 +606,7 @@ class Caster implements CasterInterface
      */
     protected function handleMismatch(\Closure $castFunction, $expectedType)
     {
-        if ($this->mapper->toleratesMismatches()) {
+        if ($this->getHydrator()->toleratesMismatches()) {
             return $castFunction($this->value);
         }
 
