@@ -21,8 +21,10 @@
 
 namespace Doctrine\ODM\OrientDB;
 
-use Doctrine\ODM\OrientDB\Hydration\Hydrator;
+use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ODM\OrientDB\Mapper\Hydration\Result;
+use Doctrine\ODM\OrientDB\Proxy\Collection;
+use Doctrine\ODM\OrientDB\Proxy\Proxy;
 use Doctrine\ODM\OrientDB\Proxy\ProxyFactory;
 use Doctrine\ODM\OrientDB\Types\Rid;
 use Doctrine\ODM\OrientDB\Caster\CastingMismatchException;
@@ -38,7 +40,6 @@ class Manager implements ObjectManager
     protected $binding;
     protected $metadataFactory;
     protected $proxyFactory;
-    protected $hydrator;
     protected $uow;
 
     /**
@@ -56,13 +57,18 @@ class Manager implements ObjectManager
         $this->binding         = $binding;
         $this->inflector       = $configuration->getInflector();
         $this->metadataFactory = $configuration->getMetadataFactory();
-        $this->proxyFactory    = new ProxyFactory($this->metadataFactory,
+        $this->uow             = new UnitOfWork($this);
+        /**
+         * this must be the last since it will require the Manager to be constructed already.
+         * TODO fixthis
+         */
+        $this->proxyFactory    = new ProxyFactory(
+            $this,
             $configuration->getProxyDirectory(),
             $configuration->getProxyNamespace(),
             $configuration->getAutoGenerateProxyClasses()
         );
-        $this->hydrator        = new Hydrator($this->proxyFactory, $this->metadataFactory, $this->inflector);
-        $this->uow = new UnitOfWork();
+
     }
 
     /**
@@ -92,13 +98,31 @@ class Manager implements ObjectManager
         $results = $binding->execute($query, $fetchPlan)->getResult();
 
         if (is_array($results) && $query->canHydrate()) {
-            $collection = $this->getHydrator()->hydrateCollection($results);
+            $collection = $this->uow->getHydrator()->hydrateCollection($results);
             $collection = $this->finalizeCollection($collection);
 
             return $collection;
         }
 
         return true;
+    }
+
+    /**
+     * Returns a reference to an entity. It will be lazily and transparently
+     * loaded if anything other than the identifier is touched.
+     *
+     * @param $class
+     * @param $rid
+     *
+     * @return Proxy
+     */
+    public function getReference($class, $rid)
+    {
+        $validator = new RidValidator;
+        $rid       = $validator->check($rid);
+        $metadata = $this->getClassMetadata($class);
+
+        return $this->getProxyFactory()->getProxy($class, array($metadata->getIdentifierFieldNames()[0] => $rid));
     }
 
     /**
@@ -119,14 +143,10 @@ class Manager implements ObjectManager
      * @return Proxy|object
      * @throws OClassNotFoundException|CastingMismatchException|Exception
      */
-    public function find($rid, $fetchPlan = '*:0', $lazy = true)
+    public function find($rid, $fetchPlan = '*:0')
     {
         $validator = new RidValidator;
         $rid       = $validator->check($rid);
-
-        if ($lazy === false) {
-            return new Proxy($this, $rid);
-        }
 
         try {
             return $this->doFind($rid, $fetchPlan);
@@ -150,21 +170,19 @@ class Manager implements ObjectManager
      * @param  string $rid
      * @param  mixed $fetchPlan
      *
-     * @return Proxy\Collection|array
+     * @return Collection|array
      * @throws \Doctrine\OrientDB\Binding\InvalidQueryException
      */
     public function findRecords(array $rids, $fetchPlan = '*:0', $lazy = true)
     {
         if ($lazy === false) {
-            return new Proxy\Collection($this, $rids);
+            return new Collection($this, $rids);
         }
 
-        $query   = new Query($rids);
-        $binding = $this->getBinding();
-        $results = $binding->execute($query, $fetchPlan)->getResult();
+        $results = $this->uow->getHydrator()->load($rids, $fetchPlan);
 
         if (is_array($results)) {
-            $collection = $this->getHydrator()->hydrateCollection($results);
+            $collection = $this->uow->getHydrator()->hydrateCollection($results);
             $collection = $this->finalizeCollection($collection);
 
             return $collection;
@@ -215,14 +233,15 @@ class Manager implements ObjectManager
         return $this->proxyFactory;
     }
 
+
     /**
-     * Returns the Hydrator associated with this manager.
+     * Returns the Inflector associated with this manager.
      *
-     * @return Hydrator
+     * @return Inflector
      */
-    public function getHydrator()
+    public function getInflector()
     {
-        return $this->hydrator;
+        return $this->inflector;
     }
 
     public function getUnitOfWork()
@@ -332,13 +351,11 @@ class Manager implements ObjectManager
      */
     protected function doFind($rid, $fetchPlan = null)
     {
-        $query   = new Query(array($rid));
-        $binding = $this->getBinding();
-        $results = $binding->execute($query, $fetchPlan)->getResult();
+        $results = $this->uow->getHydrator()->load(array($rid), $fetchPlan);
 
         if (isset($results) && count($results)) {
             $record = is_array($results) ? array_shift($results) : $results;
-            $results = $this->getHydrator()->hydrate($record);
+            $results = $this->uow->getHydrator()->hydrate($record);
 
             return $this->finalize($results);
         }
@@ -391,7 +408,7 @@ class Manager implements ObjectManager
      *
      * @return BindingInterface
      */
-    protected function getBinding()
+    public function getBinding()
     {
         return $this->binding;
     }

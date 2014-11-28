@@ -19,7 +19,7 @@
 
 namespace Doctrine\ODM\OrientDB\Caster;
 
-use Doctrine\ODM\OrientDB\Hydration\Hydrator;
+use Doctrine\ODM\OrientDB\Mapper\Hydration\Hydrator;
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Query\Validator\ValidationException;
 use Doctrine\OrientDB\Util\Inflector\Cached as Inflector;

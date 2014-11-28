@@ -8,7 +8,11 @@ use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\Common\Proxy\ProxyDefinition;
 use Doctrine\Common\Proxy\ProxyGenerator;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ODM\OrientDB\DocumentNotFoundException;
+use Doctrine\ODM\OrientDB\Mapper\Hydration\Hydrator;
+use Doctrine\ODM\OrientDB\Manager;
 use Doctrine\ODM\OrientDB\Mapper\ClassMetadataFactory;
+use Doctrine\Common\Proxy\Proxy as BaseProxy;
 
 /**
  * Class ProxyFactory
@@ -19,8 +23,12 @@ use Doctrine\ODM\OrientDB\Mapper\ClassMetadataFactory;
  */
 class ProxyFactory extends AbstractProxyFactory
 {
+
+    /** @var Hydrator  */
+    private $hydrator;
+
     /**
-     * @var \Doctrine\ODM\OrientDB\Mapper\ClassMetadataFactory
+     * @var ClassMetadataFactory
      */
     private $metadataFactory;
 
@@ -38,15 +46,16 @@ class ProxyFactory extends AbstractProxyFactory
      * Initializes a new instance of the <tt>ProxyFactory</tt> class that is
      * connected to the given <tt>DocumentManager</tt>.
      *
-     * @param \Doctrine\ODM\OrientDB\Manager        $documentManager The DocumentManager the new factory works for.
-     * @param string                                $proxyDir        The directory to use for the proxy classes. It
+     * @param \Doctrine\ODM\OrientDB\Manager $documentManager The DocumentManager the new factory works for.
+     * @param string $proxyDir The directory to use for the proxy classes. It
      *                                                               must exist.
-     * @param string                                $proxyNamespace  The namespace to use for the proxy classes.
-     * @param integer                               $autoGenerate    Whether to automatically generate proxy classes.
+     * @param string $proxyNamespace The namespace to use for the proxy classes.
+     * @param integer $autoGenerate Whether to automatically generate proxy classes.
      */
-    public function __construct(ClassMetadataFactory $metadataFactory, $proxyDir, $proxyNamespace, $autoGenerate = AbstractProxyFactory::AUTOGENERATE_NEVER)
+    public function __construct(Manager $manager, $proxyDir, $proxyNamespace, $autoGenerate = AbstractProxyFactory::AUTOGENERATE_NEVER)
     {
-        $this->metadataFactory = $metadataFactory;
+        $this->metadataFactory = $manager->getMetadataFactory();
+        $this->uow        = $manager->getUnitOfWork();
         $this->proxyNamespace  = $proxyNamespace;
         $proxyGenerator        = new ProxyGenerator($proxyDir, $proxyNamespace);
         $proxyGenerator->setPlaceholder('baseProxyInterface', 'Doctrine\ODM\OrientDB\Proxy\Proxy');
@@ -60,14 +69,82 @@ class ProxyFactory extends AbstractProxyFactory
 
     public function createProxyDefinition($className)
     {
-        $classMetadata     = $this->metadataFactory->getMetadataFor($className);
+        $classMetadata = $this->metadataFactory->getMetadataFor($className);
+        $reflectionId = $classMetadata->getReflectionFields()[$classMetadata->getIdentifier()[0]];
+
         return new ProxyDefinition(
             ClassUtils::generateProxyClassName($className, $this->proxyNamespace),
             $classMetadata->getIdentifierFieldNames(),
-            $classMetadata->getReflectionProperties(),
-            function() { throw new \Exception('To be implemented'); },
-            function() { throw new \Exception('To be implemented'); }
+            $classMetadata->getReflectionFields(),
+            $this->createInitializer($classMetadata, $this->uow->getHydrator(), $reflectionId),
+            function () { throw new \Exception('To be implemented __cloner'); }
         );
     }
 
-} 
+    /**
+     * Generates a closure capable of initializing a proxy
+     *
+     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $classMetadata
+     * @param \ReflectionProperty $reflectionId
+     *
+     * @return \Closure
+     *
+     * @throws \Doctrine\ODM\OrientDB\DocumentNotFoundException
+     */
+    private function createInitializer(
+        BaseClassMetadata $classMetadata,
+        Hydrator $hydrator,
+        \ReflectionProperty $reflectionId
+    )
+    {
+        if ($classMetadata->getReflectionClass()->hasMethod('__wakeup')) {
+            return function (BaseProxy $proxy) use ($reflectionId, $hydrator) {
+                $proxy->__setInitializer(null);
+                $proxy->__setCloner(null);
+                if ($proxy->__isInitialized()) {
+                    return;
+                }
+                $properties = $proxy->__getLazyProperties();
+                foreach ($properties as $propertyName => $property) {
+                    if (!isset($proxy->$propertyName)) {
+                        $proxy->$propertyName = $properties[$propertyName];
+                    }
+                }
+                $proxy->__setInitialized(true);
+                $proxy->__wakeup();
+
+                $rid = $reflectionId->getValue($proxy);
+                $loaded = $hydrator->load(array($rid));
+                if (null === $loaded) {
+                    throw DocumentNotFoundException::documentNotFound(get_class($proxy), $rid);
+                } else {
+                    $hydrator->hydrate($loaded[0], $proxy);
+                }
+
+            };
+        }
+
+        return function (BaseProxy $proxy) use ($reflectionId, $hydrator) {
+            $proxy->__setInitializer(null);
+            $proxy->__setCloner(null);
+            if ($proxy->__isInitialized()) {
+                return;
+            }
+            $properties = $proxy->__getLazyProperties();
+            foreach ($properties as $propertyName => $property) {
+                if (!isset($proxy->$propertyName)) {
+                    $proxy->$propertyName = $properties[$propertyName];
+                }
+            }
+            $proxy->__setInitialized(true);
+
+            $rid = $reflectionId->getValue($proxy);
+            $loaded = $hydrator->load(array($rid));
+            if (null === $loaded) {
+                throw DocumentNotFoundException::documentNotFound(get_class($proxy), $rid);
+            } else {
+                $hydrator->hydrate($loaded[0], $proxy);
+            }
+        };
+    }
+}

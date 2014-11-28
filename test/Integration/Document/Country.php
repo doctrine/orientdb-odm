@@ -27,6 +27,11 @@ use Doctrine\ODM\OrientDB\Mapper\Annotations as ODM;
 */
 class Country
 {
+    /**
+     * @ODM\Property(name="@rid", type="string")
+     */
+    public $rid;
+
 	/**
 	 * @ODM\Property(name="name", type="string")
 	 */

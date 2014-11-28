@@ -27,6 +27,9 @@ class ClassMetadata implements DoctrineMetadata
 {
     protected $class;
     protected $refClass;
+    protected $reflFields;
+
+    protected $identifierPropertyName;
     protected $associations;
     protected $fields;
 
@@ -50,6 +53,11 @@ class ClassMetadata implements DoctrineMetadata
         return $this->class;
     }
 
+    public function setIdentifier($property)
+    {
+        $this->identifierPropertyName = $property;
+    }
+
     /**
      * Gets the mapped identifier field name.
      *
@@ -59,7 +67,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function getIdentifier()
     {
-        return array('@rid');
+        return array($this->identifierPropertyName);
     }
 
     /**
@@ -84,7 +92,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function isIdentifier($fieldName)
     {
-        return ($fieldName === "@rid");
+        return ($fieldName === $this->identifierPropertyName);
     }
 
     /**
@@ -201,6 +209,23 @@ class ClassMetadata implements DoctrineMetadata
         return $this->getReflectionClass()->getProperties();
     }
 
+    public function getReflectionFields()
+    {
+        if (! $this->reflFields) {
+            $this->discoverReflectionFields();
+        }
+
+        return $this->reflFields;
+    }
+
+    protected function discoverReflectionFields()
+    {
+        $this->reflFields = array();
+        foreach ($this->getReflectionProperties() as $property) {
+            $this->reflFields[$property->getName()] = $property;
+        }
+    }
+
     /**
      * @todo to implement/test
      *
@@ -208,7 +233,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function getIdentifierFieldNames()
     {
-        return array('@rid');
+        return array($this->identifierPropertyName);
     }
 
     /**
@@ -234,14 +259,14 @@ class ClassMetadata implements DoctrineMetadata
     }
 
     /**
-     * @todo to implement/test
+     * @todo to test
      *
      * @param object $object
      * @return array
      */
     public function getIdentifierValues($object)
     {
-        throw new \Exception('to be implemented');
+        return $this->getReflectionProperties()[$this->identifierPropertyName]->getValue($object);
     }
 
     /**

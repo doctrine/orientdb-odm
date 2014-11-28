@@ -33,6 +33,7 @@ use Symfony\Component\Finder\Finder;
  */
 class ClassMetadataFactory implements ClassMetadataFactoryInterface
 {
+    const ANNOTATION_RID_CLASS      = 'Doctrine\ODM\OrientDB\Mapper\Annotations\RID';
     const ANNOTATION_PROPERTY_CLASS = 'Doctrine\ODM\OrientDB\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Doctrine\ODM\OrientDB\Mapper\Annotations\Document';
 
@@ -241,17 +242,26 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
     {
         $associations = array();
         $fields = array();
+        $foundIdentifier = false;
 
         foreach ($metadata->getReflectionClass()->getProperties() as $refProperty) {
             $annotation = $this->getPropertyAnnotation($refProperty);
 
-            if ($annotation && in_array($annotation->type, $this->getAssociationTypes())) {
-                $associations[] = $annotation;
-            } else {
-                $fields[] = $annotation;
+            if ($annotation) {
+                if ('@rid' === $annotation->name) {
+                    $foundIdentifier = true;
+                    $metadata->setIdentifier($refProperty->getName());
+                } elseif (in_array($annotation->type, $this->getAssociationTypes())) {
+                    $associations[] = $annotation;
+                } else {
+                    $fields[] = $annotation;
+                }
             }
         }
 
+        if (! $foundIdentifier) {
+            throw MappingException::missingRid($metadata->getName());
+        }
         $metadata->setFields($fields);
         $metadata->setAssociations($associations);
 

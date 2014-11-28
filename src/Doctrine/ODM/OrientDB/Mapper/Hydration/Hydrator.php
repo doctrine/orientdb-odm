@@ -1,17 +1,18 @@
 <?php
 
-namespace Doctrine\ODM\OrientDB\Hydration;
+namespace Doctrine\ODM\OrientDB\Mapper\Hydration;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\ODM\OrientDB\Manager;
+use Doctrine\ODM\OrientDB\Proxy\Proxy;
 use Doctrine\OrientDB\Exception;
 use Doctrine\ODM\OrientDB\Caster\Caster;
 use Doctrine\ODM\OrientDB\Types\Rid;
 use Doctrine\ODM\OrientDB\DocumentNotFoundException;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
-use Doctrine\ODM\OrientDB\Mapper\Hydration\Result;
 use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
 use Doctrine\ODM\OrientDB\Mapper\ClassMetadataFactory;
 use Doctrine\ODM\OrientDB\Proxy\ProxyFactory;
+use Doctrine\OrientDB\Query\Query;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -32,22 +33,30 @@ class Hydrator
     protected $enableMismatchesTolerance = false;
     protected $annotationReader;
     protected $inflector;
+    protected $binding;
     protected $cache;
     protected $caster;
     protected $castedProperties          = array();
 
     /**
-     * @param ProxyFactory         $proxyFactory
-     * @param ClassMetadataFactory $metadataFactory
-     * @param Inflector            $inflector
+     * @param Manager $manager
      */
-    public function __construct(ProxyFactory $proxyFactory, ClassMetadataFactory $metadataFactory, Inflector $inflector)
+    public function __construct(Manager $manager)
     {
-        $this->proxyFactory = $proxyFactory;
-        $this->metadataFactory = $metadataFactory;
-        $this->inflector = $inflector;
+        $this->proxyFactory    = $manager->getProxyFactory();
+        $this->metadataFactory = $manager->getMetadataFactory();
+        $this->inflector       = $manager->getInflector();
+        $this->binding         = $manager->getBinding();
+        $this->caster          = new Caster($this, $this->inflector);
     }
 
+    public function load(array $rids, $fetchPlan = null)
+    {
+        $query   = new Query($rids);
+        $results = $this->binding->execute($query, $fetchPlan)->getResult();
+
+        return $results;
+    }
 
     /**
      * Takes an Doctrine\OrientDB JSON object and finds the class responsible to map that
@@ -56,14 +65,21 @@ class Hydrator
      * JSON object are filled accordingly.
      *
      * @param  \stdClass $orientObject
+     * @param  Proxy     $proxy
      * @return Result
      * @throws DocumentNotFoundException
      */
-    public function hydrate(\stdClass $orientObject)
+    public function hydrate(\stdClass $orientObject, Proxy $proxy = null)
     {
         $classProperty = static::ORIENT_PROPERTY_CLASS;
 
-        if (property_exists($orientObject, $classProperty)) {
+        if ($proxy) {
+            $linkTracker = new LinkTracker();
+            $this->fill($proxy, $orientObject, $linkTracker);
+
+            return new Result($proxy, $linkTracker);
+
+        } elseif (property_exists($orientObject, $classProperty)) {
             $orientClass = $orientObject->$classProperty;
 
             if ($orientClass) {
@@ -127,7 +143,8 @@ class Hydrator
      */
     protected function createDocument($class, \stdClass $orientObject, LinkTracker $linkTracker)
     {
-        $document = $this->getProxyFactory()->getProxy($class, array('@rid' => $orientObject->{'@rid'}));
+        $metadata = $this->getMetadataFactory()->getMetadataFor($class);
+        $document = $this->getProxyFactory()->getProxy($class, array($metadata->getIdentifier()[0] => $orientObject->{'@rid'}));
 
         $this->fill($document, $orientObject, $linkTracker);
 

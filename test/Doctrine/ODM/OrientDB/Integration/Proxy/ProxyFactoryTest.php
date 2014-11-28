@@ -28,4 +28,26 @@ class ProxyFactoryTest extends TestCase
         $filename = $this->getProxyDirectory().'/__CG__testIntegrationDocumentCountry.php';
         $this->assertFileExists($filename);
     }
+
+    public function testLazyLoad()
+    {
+        $manager = $this->createManager();
+
+        $rid = '#'.$this->getClassId('City').':0';
+        $proxy = $manager->getReference('test\Integration\Document\Country', $rid);
+        $this->assertEquals($rid, $proxy->rid);
+        $this->assertFalse($proxy->__isInitialized());
+        $this->assertEquals('Rome1', $proxy->name);
+        $this->assertTrue($proxy->__isInitialized());
+    }
+
+    public function testEagerLoad()
+    {
+        $manager = $this->createManager();
+        $rid = '#'.$this->getClassId('City').':0';
+        $proxy = $manager->find($rid);
+        $this->assertTrue($proxy->__isInitialized());
+        $this->assertEquals($rid, $proxy->rid);
+        $this->assertEquals('Rome1', $proxy->name);
+    }
 }
