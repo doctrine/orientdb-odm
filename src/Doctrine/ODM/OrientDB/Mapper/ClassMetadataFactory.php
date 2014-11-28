@@ -33,7 +33,6 @@ use Symfony\Component\Finder\Finder;
  */
 class ClassMetadataFactory implements ClassMetadataFactoryInterface
 {
-    const ANNOTATION_RID_CLASS      = 'Doctrine\ODM\OrientDB\Mapper\Annotations\RID';
     const ANNOTATION_PROPERTY_CLASS = 'Doctrine\ODM\OrientDB\Mapper\Annotations\Property';
     const ANNOTATION_CLASS_CLASS    = 'Doctrine\ODM\OrientDB\Mapper\Annotations\Document';
 
