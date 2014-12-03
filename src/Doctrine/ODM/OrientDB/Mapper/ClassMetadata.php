@@ -71,6 +71,16 @@ class ClassMetadata implements DoctrineMetadata
     }
 
     /**
+     * PHP 5.3, no array dereferencing..
+     *
+     * @return string
+     */
+    public function getRidPropertyName()
+    {
+        return $this->identifierPropertyName;
+    }
+
+    /**
      * Gets the ReflectionClass instance for this mapped class.
      *
      * @return \ReflectionClass
@@ -266,7 +276,8 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function getIdentifierValues($object)
     {
-        return $this->getReflectionFields()[$this->identifierPropertyName]->getValue($object);
+        $fields = $this->getReflectionFields();
+        return $fields[$this->identifierPropertyName]->getValue($object);
     }
 
     /**

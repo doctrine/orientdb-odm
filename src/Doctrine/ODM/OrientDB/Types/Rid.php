@@ -33,8 +33,7 @@ class Rid
     public function __construct($rid)
     {
         $validator = new RidValidator();
-        $validator->check($rid);
-        $this->rid = $rid;
+        $this->rid = $validator->check($rid);
     }
 
     /**

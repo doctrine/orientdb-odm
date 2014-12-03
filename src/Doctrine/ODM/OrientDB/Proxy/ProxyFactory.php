@@ -70,7 +70,8 @@ class ProxyFactory extends AbstractProxyFactory
     public function createProxyDefinition($className)
     {
         $classMetadata = $this->metadataFactory->getMetadataFor($className);
-        $reflectionId = $classMetadata->getReflectionFields()[$classMetadata->getIdentifier()[0]];
+        $reflectionFields = $classMetadata->getReflectionFields();
+        $reflectionId = $reflectionFields[$classMetadata->getRidPropertyName()];
 
         return new ProxyDefinition(
             ClassUtils::generateProxyClassName($className, $this->proxyNamespace),

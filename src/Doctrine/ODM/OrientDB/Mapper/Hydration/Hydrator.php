@@ -133,7 +133,7 @@ class Hydrator
         $class       = $this->getMetadataFactory()->findClassMappingInDirectories($orientClass);
         $metadata    = $this->getMetadataFactory()->getMetadataFor($class);
 
-        return $this->getProxyFactory()->getProxy($class, array($metadata->getIdentifierFieldNames()[0] => $rid->getValue()));
+        return $this->getProxyFactory()->getProxy($class, array($metadata->getRidPropertyName() => $rid->getValue()));
     }
 
     /**
@@ -183,7 +183,7 @@ class Hydrator
             if ($this->getUnitOfWork()->hasProxyFor($rid)) {
                 $document = $this->getUnitOfWork()->getProxyFor($rid);
             } else {
-                $document = $this->getProxyFactory()->getProxy($class, array($metadata->getIdentifier()[0] => $rid->getValue()));
+                $document = $this->getProxyFactory()->getProxy($class, array($metadata->getRidPropertyName() => $rid->getValue()));
             }
         } else {
             $class = $metadata->getName();

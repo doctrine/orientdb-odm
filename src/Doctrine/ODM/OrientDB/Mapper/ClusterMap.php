@@ -54,7 +54,8 @@ class ClusterMap
     public function identifyClass(Rid $rid)
     {
         $map = $this->getMap();
-        $clusterId = explode(':', explode('#', $rid->getValue())[1])[0];
+        $splitRid = explode(':', ltrim($rid->getValue(), '#'));
+        $clusterId = $splitRid[0];
 
         foreach ($map as $class => $clusters) {
             if (in_array($clusterId, $clusters)) {
