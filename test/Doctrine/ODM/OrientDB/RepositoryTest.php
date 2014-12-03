@@ -47,14 +47,14 @@ class RepositoryTest extends TestCase
                 ->method('execute')
                 ->will($this->returnValue($result));
 
-        $manager = $this->createManager($binding);
+        $manager = $this->prepareManager($binding);
 
         $repository = new Repository('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address', $manager);
 
         return $repository;
     }
 
-    protected function createManager($binding)
+    protected function prepareManager($binding)
     {
         $configuration = $this->getConfiguration(array('document_dirs' => array('test/Doctrine/ODM/OrientDB/Document/Stub' => 'test')));
         return new Manager($binding, $configuration);
@@ -89,7 +89,7 @@ class RepositoryTest extends TestCase
      */
     public function testYouCantCallWhateverMethodOfARepository()
     {
-        $repository = new Repository('My\\Class', $this->createManager(new \Doctrine\OrientDB\Binding\HttpBinding(new \Doctrine\OrientDB\Binding\BindingParameters())));
+        $repository = new Repository('My\\Class', $this->prepareManager(new \Doctrine\OrientDB\Binding\HttpBinding(new \Doctrine\OrientDB\Binding\BindingParameters())));
         $documents  = $repository->findOn();
     }
 
@@ -98,7 +98,7 @@ class RepositoryTest extends TestCase
      */
     public function testYouCanOnlyPassObjectsHavingGetRidMethodAsArgumentsOfFindSomeBySomething()
     {
-        $repository = new Repository('My\\Class', $this->createManager(new \Doctrine\OrientDB\Binding\HttpBinding(new \Doctrine\OrientDB\Binding\BindingParameters())));
+        $repository = new Repository('My\\Class', $this->prepareManager(new \Doctrine\OrientDB\Binding\HttpBinding(new \Doctrine\OrientDB\Binding\BindingParameters())));
         $documents  = $repository->findOneByJeex(new \stdClass());
     }
 }
