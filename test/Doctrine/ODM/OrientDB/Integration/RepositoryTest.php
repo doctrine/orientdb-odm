@@ -11,10 +11,6 @@
 namespace test\Doctrine\ODM\OrientDB\Integration;
 
 use test\PHPUnit\TestCase;
-use Doctrine\OrientDB\Query\Query;
-use Doctrine\OrientDB\ODM\Manager;
-use Doctrine\OrientDB\ODM\Mapper;
-use Doctrine\OrientDB\ODM\Repository;
 
 /**
  * @group integration
@@ -54,12 +50,12 @@ class RepositoryTest extends TestCase
         $class = 'test\Integration\Document\Post';
         $repository = $this->createRepository($class);
 
-        $this->assertInstanceOf('Doctrine\ODM\OrientDB\Proxy\Collection', $repository->find($this->postId . ':0', '*:0')->comments);
-        $this->assertinternalType('array', $repository->find($this->postId . ':0', '*:-1')->comments);
+        $this->assertInstanceOf(static::COLLECTION_CLASS, $repository->find($this->postId . ':0', '*:0')->comments);
+        $this->assertInstanceOf(static::COLLECTION_CLASS, $repository->find($this->postId . ':0', '*:-1')->comments);
     }
 
     /**
-     * @expectedException Doctrine\OrientDB\Exception
+     * @expectedException \Doctrine\OrientDB\Exception
      */
     public function testFindingADocumentOfAnotherRepoRaisesAnException()
     {
@@ -105,16 +101,7 @@ class RepositoryTest extends TestCase
     {
         $repository = $this->createRepository('test\Integration\Document\Post');
 
-        $post = $repository->findOneBy(array('title' => 'aaaa'), array('@rid' => 'DESC'));
-        $this->assertNull(null, $post);
-
-        $post = $repository->findOneBy(array());
-        $this->assertInstanceOf("test\Integration\Document\Post", $post);
-
-        $post = $repository->findOneBy(array());
-        $this->assertInstanceOf("test\Integration\Document\Post", $post);
-
-        $post = $repository->findOneBy(array());
+        $post = $repository->findOneBy(array('title' => 0), array('@rid' => 'DESC'));
         $this->assertInstanceOf("test\Integration\Document\Post", $post);
     }
 }

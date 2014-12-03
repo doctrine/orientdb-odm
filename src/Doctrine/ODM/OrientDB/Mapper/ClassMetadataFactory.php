@@ -38,11 +38,11 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
 
     protected $annotationReader;
     protected $cache;
-    protected $documentDirectories = array();
-    protected $metadata            = array();
-    protected $classMap            = array();
-    private $singleAssociations = array('link');
-    private $multipleAssociations = array('linklist', 'linkset', 'linkmap');
+    protected $documentDirectories       = array();
+    protected $metadata                  = array();
+    protected $classMap                  = array();
+    public static $singleAssociations    = array('link');
+    public static $multipleAssociations  = array('linklist', 'linkset', 'linkmap');
 
     /**
      * @param AnnotationReaderInterface $annotationReader
@@ -275,7 +275,7 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
      */
     protected function getAssociationTypes()
     {
-        return array_merge($this->singleAssociations, $this->multipleAssociations);
+        return array_merge(static::$singleAssociations, static::$multipleAssociations);
     }
 
     /**

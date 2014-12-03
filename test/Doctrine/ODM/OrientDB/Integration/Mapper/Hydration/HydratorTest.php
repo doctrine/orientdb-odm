@@ -1,30 +1,20 @@
 <?php
 
-/**
- * QueryTest
- *
- * @package    Doctrine\ODM\OrientDB
- * @subpackage Test
- * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
- * @author     David Funaro <ing.davidino@gmail.com>
- * @version
- */
+namespace test\Doctrine\ODM\OrientDB\Integration\Mapper\Hydration;
 
-namespace test\Doctrine\ODM\OrientDB;
 
 use test\PHPUnit\TestCase;
-use Doctrine\ODM\OrientDB\Manager;
-use Doctrine\ODM\OrientDB\Mapper;
-use Doctrine\ODM\OrientDB\Mapper\Annotations\Reader as AnnotationReader;
 
-class MapperTest extends TestCase
+class HydratorTest extends TestCase
 {
     const BINARY_64_ENCODED = "data:;base64,/9j/4AAQSkZJRgABAgAAZABkAAD/7AARRHVja3kAAQAEAAAAWAAA/+4ADkFkb2JlAGTAAAAAAf/bAEMAAQEBAQEBAQEBAQIBAQECAgIBAQICAwICAgICAwQDAwMDAwMEBAQEBQQEBAYGBgYGBggICAgICQkJCQkJCQkJCf/bAEMBAgICAwMDBQQEBQgGBQYICQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCf/CABEIADAAMAMBEQACEQEDEQH/xAAZAAEBAQEBAQAAAAAAAAAAAAAABwkIBAb/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAHYQAAAnB9We4nBVQYsnfpVDFk37AAABxYQAFVO/QAAD//EAB0QAAMBAAIDAQAAAAAAAAAAAAUGBwQAFwgQIDD/2gAIAQEAAQUC+y7gor+kaTGmcWnTmxZhr0kGdvryNktBfHeJrZpRmL0N2mUiJxOnKNO/CjTFudDfQVJ50FSeJMhd1dn+/wD/xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAEDAQE/ARP/xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAECAQE/ARP/xAArEAABBAAFAgQHAQAAAAAAAAABAgMEBQAGERIUE0EHFSIxECAhMDiR1DL/2gAIAQEABj8C+dEO+zTXUkxxAdbiy5rMZxTZJAUEuKB01B+uGbKosGLWukbuPPjOpfZXsJSdq0Eg6EaYkTJkhESHEQp2VKdUENttoGqlKUfoAB7nDNbUZxqrWxkbuPAjWDD7y9gKjtQhZJ0A1+NXb5UoPNa6PVMxnpHKjMaPIffWU6POIPssYyzl7MMPy+4r+Zy4nUQ7t6sp1xPqbKknVKh3xnGorWeRY2tVYRoEfcEb3n2FoQnVRAGpPfGWcw5hyz5fT1/M5cvmRXdvViutp9LbqlHVSh2+zFtKHxWscjQ2IqGHKmIHum44la1F09OQ0NSFAe3bH5E3n6lf3Y/Im8/Ur+7FZe2/jPa5sroPW5FBJD/Rf6jSmxu3ynB6Srd/nt9j/8QAHhABAAEEAwEBAAAAAAAAAAAAAREAITFRECBBkTD/2gAIAQEAAT8h7uu2eWVZiIRI6raDENrRJQ2RKdNu18/g5UYCtoMQ2tElBYF59B5RNKsNkIvnNfQCO/8ApLLO61DIhaWSJQHrXwAD/wD6Syzr8Xbb+Xvptb2Dfw46dLIICdfT4SrjGTv/AP/aAAwDAQACAAMAAAAQAAAEAgAEgAAAAkAAAA//xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAEDAQE/EBP/xAAUEQEAAAAAAAAAAAAAAAAAAABQ/9oACAECAQE/EBP/xAAeEAEAAQQCAwAAAAAAAAAAAAABEQAQIWEwwSBBcf/aAAgBAQABPxDzFuqfDtNkkEMqNkhWCkv6SiESjvgt1rWNICqBWwQrBSX9JRALfchqwCRIrwEgOhPfKDCzBgIfQDRqEn5VIAtdCa/UCFmTAU4HVKT0rz5DIDIuVq3sQj0atSu5KOA//9k=";
 
+    protected $hydrator;
+
     public function setup()
     {
-        $this->mapper = new Mapper(__DIR__."/../../../proxies");
-        $this->mapper->setDocumentDirectories(array('test/Doctrine/ODM/OrientDB/Document/Stub' => 'test'));
+        $manager = $this->createManager(array('document_dirs' => array('test/Doctrine/ODM/OrientDB/Document/Stub' => 'test')));
+        $this->hydrator = $manager->getUnitOfWork()->getHydrator();
 
         $this->emptyJsonRecord = json_decode('{
             "@type":          "d",
@@ -35,7 +25,7 @@ class MapperTest extends TestCase
             "@class":         "EmptyAddress",
             "string":          null,
             "integer":         null,
-            "image":          "' . base64_encode(fread(fopen(__DIR__ . '/bin/image.jpg', "r"), filesize(__DIR__ . '/bin/image.jpg'))) . '",
+            "image":          "' . base64_encode(fread(fopen(__DIR__ . '/../../../bin/image.jpg', "r"), filesize(__DIR__ . '/../../../bin/image.jpg'))) . '",
               "embedded":      {
                                 "@type": "d", "@version": 99, "@class": "OCity",
                                 "name": "Rome"
@@ -64,7 +54,7 @@ class MapperTest extends TestCase
             "positive_byte":  "32",
             "negative_byte":  "-32",
             "floating":       "10.5",
-            "image":          "' . base64_encode(fread(fopen(__DIR__ . '/bin/image.jpg', "r"), filesize(__DIR__ . '/bin/image.jpg'))) . '",
+            "image":          "' . base64_encode(fread(fopen(__DIR__ . '/../../../bin/image.jpg', "r"), filesize(__DIR__ . '/../../../bin/image.jpg'))) . '",
               "embedded":      {
                                 "@type": "d", "@version": 99, "@class": "OCity",
                                 "name": "Rome"
@@ -124,7 +114,7 @@ class MapperTest extends TestCase
          }');
 
 
-         $this->jsonEmbeddedMapRecord = json_decode('{
+        $this->jsonEmbeddedMapRecord = json_decode('{
              "@type":          "d",
              "@rid":           "#12:0",
              "@version":        0,
@@ -151,7 +141,7 @@ class MapperTest extends TestCase
             "embeddedbooleans": ["0", "1"]
          }');
 
-     $this->jsonEmbeddedSetRecord = json_decode('{
+        $this->jsonEmbeddedSetRecord = json_decode('{
          "@type":    "d",
          "@rid":     "#12:0",
          "@version":  0,
@@ -192,7 +182,7 @@ class MapperTest extends TestCase
             "city":     "#13:0"
          }');
 
-         $this->jsonCollection = array(
+        $this->jsonCollection = array(
             json_decode('{
                 "@type":    "d",
                 "@rid":     "#12:0",
@@ -218,99 +208,77 @@ class MapperTest extends TestCase
                   "type":     "Residence",
                   "city":     "#13:0"
               }'),
-         );
+        );
 
     }
-    
+
     public function testHydratingNullableAttributes()
     {
-        $result = $this->mapper->hydrate($this->emptyJsonRecord);
+        $result = $this->hydrator->hydrate($this->emptyJsonRecord);
 
-        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\EmptyAddress', $result->getDocument());        
-    }
-
-    public function testConvertPathToClassName()
-    {
-        $className = $this->mapper->getClassByPath('./test/Doctrine/ODM/OrientDB/Document/Stub/City.php', 'test');
-        $this->assertEquals('\test\Doctrine\ODM\OrientDB\Document\Stub\City', $className);
-    }
-
-    public function testConvertPathToClassNameWhenProvidingNestedNamespaces()
-    {
-        $className = $this->mapper->getClassByPath('./test/Doctrine/ODM/OrientDB/Document/Stub/City.php', 'test\Doctrine\ODM\OrientDB');
-        $this->assertEquals('\test\Doctrine\ODM\OrientDB\Document\Stub\City', $className);
+        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\EmptyAddress', $result);
     }
 
     public function testAJsonGetsConvertedToAnObject()
     {
-        $result = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->hydrator->hydrate($this->jsonRecord);
 
-        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address', $result->getDocument());
+        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address', $result);
     }
 
     /**
-     * @expectedException Doctrine\ODM\OrientDB\DocumentNotFoundException
+     * @expectedException \Doctrine\ODM\OrientDB\DocumentNotFoundException
      */
     public function testAnExceptionIsRaisedWhenAnObjectGetsPersistedWithoutAClass()
     {
-        $object = $this->mapper->hydrate($this->jsonRecordNoClass);
+        $object = $this->hydrator->hydrate($this->jsonRecordNoClass);
     }
 
     /**
-     * @expectedException Doctrine\ODM\OrientDB\OClassNotFoundException
+     * @expectedException \Doctrine\ODM\OrientDB\OClassNotFoundException
      */
     public function testAnExceptionIsRaisedWhenAnObjectGetsPersistedWithAWrongClass()
     {
-        $object = $this->mapper->hydrate($this->jsonRecordWrongClass);
+        $object = $this->hydrator->hydrate($this->jsonRecordWrongClass);
     }
 
     public function testPropertiesCanHaveDifferentNamesInCongowOrientAndPopo()
     {
-        $result = $this->mapper->hydrate($this->jsonRecord);
+        $result = $this->hydrator->hydrate($this->jsonRecord);
 
-        $this->assertEquals('ok', $result->getDocument()->getExampleProperty());
+        $this->assertEquals('ok', $result->getExampleProperty());
     }
 
     public function testAnAnnotatedPropertyNotPassedWithTheJSONIsNullByDefault()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->hydrator->hydrate($this->jsonRecord);
 
-        $this->assertEquals(null, $object->getDocument()->getAnnotatedButNotInJson());
+        $this->assertEquals(null, $object->getAnnotatedButNotInJson());
     }
 
     public function testPropertiesGetsMappedInTheObjectOnlyIfAnnotated()
     {
-        $object = $this->mapper->hydrate($this->jsonRecord);
+        $object = $this->hydrator->hydrate($this->jsonRecord);
 
-        $this->assertEquals(null, $object->getDocument()->getStreet());
-    }
-
-    public function testGettingTheDirectoriesInWhichTheMapperLooksForPOPOs()
-    {
-        $directories = array('dir' => 'namespace', 'dir2' => 'namespace2');
-
-        $this->mapper = new Mapper('', new AnnotationReader());
-        $object = $this->mapper->setDocumentDirectories($directories);
-
-        $this->assertEquals($directories, $this->mapper->getDocumentDirectories());
+        $this->assertEquals(null, $object->getStreet());
     }
 
     public function testNoRecordsIsLostWhenHydratingACollection()
     {
-        $collection = $this->mapper->hydrateCollection($this->jsonCollection);
+        $collection = $this->hydrator->hydrateCollection($this->jsonCollection);
         $this->assertEquals(3, count($collection));
     }
 
     public function testHidratedCollectionsContainPopo()
     {
-        $collection = $this->mapper->hydrateCollection($this->jsonCollection);
-        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address', $collection[0]->getDocument() );
-        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\City', $collection[1]->getDocument() );
+        $collection = $this->hydrator->hydrateCollection($this->jsonCollection);
+        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address', $collection[0] );
+        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\City', $collection[1] );
     }
 
     public function testCongowOrientObjectsOfDifferentClassesCanBeMappedByASinglePopo()
     {
-        $collection = $this->mapper->hydrateCollection($this->jsonCollection);
-        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address', $collection[2]->getDocument() );
+        $collection = $this->hydrator->hydrateCollection($this->jsonCollection);
+        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address', $collection[2] );
     }
 }

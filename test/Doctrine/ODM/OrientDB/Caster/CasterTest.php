@@ -12,22 +12,25 @@
 
 namespace test\Doctrine\ODM\OrientDB\Caster;
 
+use Doctrine\ODM\OrientDB\Collections\ArrayCollection;
 use test\PHPUnit\TestCase;
 use Doctrine\ODM\OrientDB\Mapper;
-use Doctrine\ODM\OrientDB\Manager;
 use Doctrine\ODM\OrientDB\Caster\Caster;
 use Doctrine\ODM\OrientDB\Types\Rid;
 use Doctrine\ODM\OrientDB\Types\Rid\Collection;
 
 class CasterTest extends TestCase
 {
-    private $mapper;
+    private $hydrator;
+    private $inflector;
     private $caster;
 
     public function setup()
     {
-        $this->mapper = $this->createMapper();
-        $this->caster = new Caster($this->mapper);
+        $manager = $this->createManager();
+        $this->inflector = $manager->getInflector();
+        $this->hydrator = $manager->getUnitOfWork()->getHydrator();
+        $this->caster = new Caster($this->hydrator, $this->inflector);
     }
 
     /**
@@ -57,13 +60,13 @@ class CasterTest extends TestCase
      */
     public function testForcedBooleanCasting($expected, $input)
     {
-        $this->mapper->enableMismatchesTolerance(true);
+        $this->hydrator->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($input)->castBoolean());
     }
 
     /**
      * @dataProvider getForcedBooleans
-     * @expectedException Doctrine\ODM\OrientDB\Caster\CastingMismatchException
+     * @expectedException \Doctrine\ODM\OrientDB\Caster\CastingMismatchException
      */
     public function testForcedBooleanCastingRaisesAnException($expected, $input)
     {
@@ -112,13 +115,13 @@ class CasterTest extends TestCase
      */
     public function testForcedBytesCasting($expected, $byte)
     {
-        $this->mapper->enableMismatchesTolerance(true);
+        $this->hydrator->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($byte)->castByte());
     }
 
     /**
      * @dataProvider getForcedBytes
-     * @expectedException Doctrine\ODM\OrientDB\Caster\CastingMismatchException
+     * @expectedException \Doctrine\ODM\OrientDB\Caster\CastingMismatchException
      */
     public function testForcedBytesCastingRaisesAnException($expected, $byte)
     {
@@ -168,13 +171,13 @@ class CasterTest extends TestCase
      */
     public function testForcedLongsCasting($expected, $long)
     {
-        $this->mapper->enableMismatchesTolerance(true);
+        $this->hydrator->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($long)->castLong());
     }
 
     /**
      * @dataProvider getForcedLongs
-     * @expectedException Doctrine\ODM\OrientDB\Caster\CastingMismatchException
+     * @expectedException \Doctrine\ODM\OrientDB\Caster\CastingMismatchException
      */
     public function testForcedLongsCastingRaisesAnException($expected, $long)
     {
@@ -218,13 +221,13 @@ class CasterTest extends TestCase
      */
     public function testForcedIntegerCasting($expected, $integer)
     {
-        $this->mapper->enableMismatchesTolerance(true);
+        $this->hydrator->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($integer)->castInteger());
     }
 
     /**
      * @dataProvider getForcedIntegers
-     * @expectedException Doctrine\ODM\OrientDB\Caster\CastingMismatchException
+     * @expectedException \Doctrine\ODM\OrientDB\Caster\CastingMismatchException
      */
     public function testForcedIntegersCastingRaisesAnException($expected, $integer)
     {
@@ -253,13 +256,13 @@ class CasterTest extends TestCase
      */
     public function testForcedDecimalCasting($expected, $decimal)
     {
-        $this->mapper->enableMismatchesTolerance(true);
+        $this->hydrator->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($decimal)->castDecimal());
     }
 
     /**
      * @dataProvider getForcedDecimals
-     * @expectedException Doctrine\ODM\OrientDB\Caster\CastingMismatchException
+     * @expectedException \Doctrine\ODM\OrientDB\Caster\CastingMismatchException
      */
     public function testForcedDecimalCastingRaisesAnException($expected, $decimal)
     {
@@ -309,13 +312,13 @@ class CasterTest extends TestCase
      */
     public function testForcedDoublesCasting($expected, $double)
     {
-        $this->mapper->enableMismatchesTolerance(true);
+        $this->hydrator->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($double)->castDouble());
     }
 
     /**
      * @dataProvider getForcedDoubles
-     * @expectedException Doctrine\ODM\OrientDB\Caster\CastingMismatchException
+     * @expectedException \Doctrine\ODM\OrientDB\Caster\CastingMismatchException
      */
     public function testForcedDoublesCastingRaisesAnException($expected, $ddouble)
     {
@@ -346,13 +349,13 @@ class CasterTest extends TestCase
      */
     public function testForcedFloatsCasting($expected, $float)
     {
-        $this->mapper->enableMismatchesTolerance(true);
+        $this->hydrator->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($float)->castFloat());
     }
 
     /**
      * @dataProvider getForcedDoubles
-     * @expectedException Doctrine\ODM\OrientDB\Caster\CastingMismatchException
+     * @expectedException \Doctrine\ODM\OrientDB\Caster\CastingMismatchException
      */
     public function testForcedFloatsCastingRaisesAnException($expected, $float)
     {
@@ -381,13 +384,13 @@ class CasterTest extends TestCase
      */
     public function testForcedStringsCasting($expected, $string)
     {
-        $this->mapper->enableMismatchesTolerance(true);
+        $this->hydrator->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($string)->castString());
     }
 
     /**
      * @dataProvider getForcedStrings
-     * @expectedException Doctrine\ODM\OrientDB\Caster\CastingMismatchException
+     * @expectedException \Doctrine\ODM\OrientDB\Caster\CastingMismatchException
      */
     public function testForcedStringsCastingRaisesAnException($expected, $string)
     {
@@ -406,7 +409,7 @@ class CasterTest extends TestCase
 
     public function testInjectingTheValueInTheConstructor()
     {
-        $this->caster = new Caster(new Mapper('/'),'v');
+        $this->caster = new Caster($this->hydrator, $this->inflector, 'v');
         $this->assertEquals('v', $this->caster->castString());
     }
 
@@ -438,13 +441,13 @@ class CasterTest extends TestCase
      */
     public function testForcedShortsCasting($expected, $short)
     {
-        $this->mapper->enableMismatchesTolerance(true);
+        $this->hydrator->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($short)->castShort());
     }
 
     /**
      * @dataProvider getForcedShorts
-     * @expectedException Doctrine\ODM\OrientDB\Caster\CastingMismatchException
+     * @expectedException \Doctrine\ODM\OrientDB\Caster\CastingMismatchException
      */
     public function testForcedShortsCastingRaisesAnException($expected, $short)
     {
@@ -482,7 +485,7 @@ class CasterTest extends TestCase
      */
     public function testDatesCasting($expected,$date)
     {
-        $this->mapper->enableMismatchesTolerance(true);
+        $this->hydrator->enableMismatchesTolerance(true);
         $this->assertEquals($expected, $this->caster->setValue($date)->castDate());
     }
 
@@ -535,16 +538,16 @@ class CasterTest extends TestCase
 
     public function getLinks()
     {
+        $addressId = '#'.$this->getClassId('Address').':0';
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
+        $orientDocument->{"@rid"} = $addressId;
 
-        $this->ensureProxy($orientDocument);
-
-        $address = new \Doctrine\OrientDB\Proxy\test\Integration\Document\Address();
+        $address = $this->ensureProxy($orientDocument);
 
         return array(
-            array(new \Doctrine\ODM\OrientDB\Proxy\Value($address), $orientDocument),
-            array(new Rid('#10:3'), '#10:3'),
+            array($address, $orientDocument),
+            array($address, $addressId),
             array(null, 'pete')
         );
     }
@@ -570,6 +573,7 @@ class CasterTest extends TestCase
      */
     public function testLinkMapCasting($expected,$linkCollection)
     {
+
         $this->assertEquals($expected, $this->caster->setValue($linkCollection)->castLinkMap());
     }
 
@@ -577,16 +581,16 @@ class CasterTest extends TestCase
     {
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
+        $orientDocument->{"@rid"} = '#'.$this->getClassId('Address').':0';;
 
-        $this->ensureProxy($orientDocument);
 
-        $address = new \Doctrine\OrientDB\Proxy\test\Integration\Document\Address();
-        $result  = new \Doctrine\ODM\OrientDB\Mapper\Hydration\Result($address, new \Doctrine\ODM\OrientDB\Mapper\LinkTracker);
+        $address = $this->ensureProxy($orientDocument);
 
-        $collection = new Collection(array('hello' => '#10:4'));
+        $countryRid = '#'.$this->getClassId('Country').':0';;
+
         return array(
-            array($collection, array('hello' => '#10:4')),
-            array(array('hello' => $result), array('hello' => $orientDocument)),
+            array(new ArrayCollection(array('hello' => $this->createManager()->getReference($countryRid))), array('hello' => $countryRid)),
+            array(new ArrayCollection(array('hello' => $address)), array('hello' => $orientDocument)),
         );
     }
 
@@ -602,14 +606,12 @@ class CasterTest extends TestCase
     {
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
+        $orientDocument->{"@rid"} = '#'.$this->getClassId('Address').':0';
 
-        $this->ensureProxy($orientDocument);
-
-        $address = new \Doctrine\OrientDB\Proxy\test\Integration\Document\Address();
-        $result  = new \Doctrine\ODM\OrientDB\Mapper\Hydration\Result($address, new \Doctrine\ODM\OrientDB\Mapper\LinkTracker);
+        $address = $this->ensureProxy($orientDocument);
 
         return array(
-            array($result, $orientDocument),
+            array($address, $orientDocument),
         );
     }
 
@@ -653,14 +655,12 @@ class CasterTest extends TestCase
     {
         $orientDocument = new \stdClass();
         $orientDocument->{"@class"} = 'Address';
+        $orientDocument->{"@rid"} = '#'.$this->getClassId('Address').':0';
 
-        $this->ensureProxy($orientDocument);
-
-        $address = new \Doctrine\OrientDB\Proxy\test\Integration\Document\Address();
-        $result  = new \Doctrine\ODM\OrientDB\Mapper\Hydration\Result($address, new \Doctrine\ODM\OrientDB\Mapper\LinkTracker);
+        $address = $this->ensureProxy($orientDocument);
 
         return array(
-            array(array('hello' => $result), array('hello' => $orientDocument)),
+            array(array('hello' => $address), array('hello' => $orientDocument)),
         );
     }
 }

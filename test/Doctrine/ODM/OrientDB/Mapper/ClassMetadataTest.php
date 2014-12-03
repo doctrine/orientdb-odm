@@ -12,6 +12,7 @@
 
 namespace test\Doctrine\ODM\OrientDB\Mapper;
 
+use Doctrine\ODM\OrientDB\Mapper\Annotations\Property;
 use test\PHPUnit\TestCase;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Mapper\ClassMetadata;
@@ -22,6 +23,11 @@ use Doctrine\ODM\OrientDB\Mapper\Annotations as ODM;
 */
 class Mapped
 {
+    /**
+     * @ODM\Property(name="@rid",type="string")
+     */
+    protected $rid;
+
     /**
      * @ODM\Property(name="field",type="string")
      */
@@ -42,9 +48,16 @@ class ClassMetadataTest extends TestCase
 {
     public function setup()
     {
-        $mapper = $this->getMock('Doctrine\ODM\OrientDB\Mapper', null, array(null));
+        $this->metadata = new ClassMetadata('test\Doctrine\ODM\OrientDB\Mapper\Mapped');
 
-        $this->metadata = new ClassMetadata('test\Doctrine\ODM\OrientDB\Mapper\Mapped', $mapper);
+        $this->metadata->setIdentifier('rid');
+        $this->metadata->setFields(array(
+            'field' => new Property(array('name' => 'field', 'type' => 'string'))
+        ));
+        $this->metadata->setAssociations(array(
+            'assoc'      => new Property(array('name' => 'assoc', 'type' => 'link')),
+            'multiassoc' => new Property(array('name' => 'multiassoc', 'type' => 'linkset'))
+        ));
     }
 
     function testGetName()
@@ -54,7 +67,7 @@ class ClassMetadataTest extends TestCase
 
     function testGetIdentifier()
     {
-        $this->assertEquals(array('@rid'), $this->metadata->getIdentifier());
+        $this->assertEquals(array('rid'), $this->metadata->getIdentifier());
     }
 
     function testGetReflectionClass()

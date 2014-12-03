@@ -16,10 +16,7 @@ use test\PHPUnit\TestCase;
 use Doctrine\ODM\OrientDB\Manager;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Repository;
-use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
 use Doctrine\ODM\OrientDB\Types\Rid;
-use Doctrine\ODM\OrientDB\Mapper\Hydration\Result as HydrationResult;
-use test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address;
 
 class RepositoryTest extends TestCase
 {
@@ -50,24 +47,17 @@ class RepositoryTest extends TestCase
                 ->method('execute')
                 ->will($this->returnValue($result));
 
+        $manager = $this->createManager($binding);
 
-        $hydrationResultCallback = function($document) {
-            $linktracker = new LinkTracker();
-            $linktracker->add('capital', new Rid('20:1'));
-
-            return new HydrationResult(new Address(), $linktracker);
-        };
-
-        $mapper = $this->getMock('Doctrine\ODM\OrientDB\Mapper', array('hydrate'), array(__DIR__ . '/../../../../../proxies'));
-        $mapper->expects($this->any())
-               ->method('hydrate')
-               ->will($this->returnCallback($hydrationResultCallback));
-
-        $manager = new Manager($mapper, $binding);
-
-        $repository = new Repository('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address', $manager, $mapper);
+        $repository = new Repository('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address', $manager);
 
         return $repository;
+    }
+
+    protected function createManager($binding)
+    {
+        $configuration = $this->getConfiguration(array('document_dirs' => array('test/Doctrine/ODM/OrientDB/Document/Stub' => 'test')));
+        return new Manager($binding, $configuration);
     }
 
     public function testFindAll()
@@ -95,20 +85,20 @@ class RepositoryTest extends TestCase
     }
 
     /**
-     * @expectedException RuntimeException 
+     * @expectedException \RuntimeException
      */
     public function testYouCantCallWhateverMethodOfARepository()
     {
-        $repository = new Repository('My\\Class', new Manager(new Mapper('.'), new \Doctrine\OrientDB\Binding\HttpBinding(new \Doctrine\OrientDB\Binding\BindingParameters())), new Mapper('.'));
+        $repository = new Repository('My\\Class', $this->createManager(new \Doctrine\OrientDB\Binding\HttpBinding(new \Doctrine\OrientDB\Binding\BindingParameters())));
         $documents  = $repository->findOn();
     }
 
     /**
-     * @expectedException RuntimeException 
+     * @expectedException \RuntimeException
      */
     public function testYouCanOnlyPassObjectsHavingGetRidMethodAsArgumentsOfFindSomeBySomething()
     {
-        $repository = new Repository('My\\Class', new Manager(new Mapper('.'), new \Doctrine\OrientDB\Binding\HttpBinding(new \Doctrine\OrientDB\Binding\BindingParameters())), new Mapper('.'));
+        $repository = new Repository('My\\Class', $this->createManager(new \Doctrine\OrientDB\Binding\HttpBinding(new \Doctrine\OrientDB\Binding\BindingParameters())));
         $documents  = $repository->findOneByJeex(new \stdClass());
     }
 }

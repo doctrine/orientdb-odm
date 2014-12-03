@@ -92,7 +92,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function isIdentifier($fieldName)
     {
-        return ($fieldName === $this->identifierPropertyName);
+        return ($fieldName === '@rid');
     }
 
     /**
@@ -125,7 +125,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function isSingleValuedAssociation($fieldName)
     {
-        return $this->isValuedAssociation($fieldName, $this->singleAssociations);
+        return $this->isValuedAssociation($fieldName, ClassMetadataFactory::$singleAssociations);
     }
 
     /**
@@ -136,7 +136,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function isCollectionValuedAssociation($fieldName)
     {
-        return $this->isValuedAssociation($fieldName, $this->multipleAssociations);
+        return $this->isValuedAssociation($fieldName, ClassMetadataFactory::$multipleAssociations);
     }
 
     /**
@@ -266,7 +266,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function getIdentifierValues($object)
     {
-        return $this->getReflectionProperties()[$this->identifierPropertyName]->getValue($object);
+        return $this->getReflectionFields()[$this->identifierPropertyName]->getValue($object);
     }
 
     /**
@@ -286,6 +286,9 @@ class ClassMetadata implements DoctrineMetadata
         return null;
     }
 
+    /**
+     * @param \Doctrine\ODM\OrientDB\Mapper\Annotations\Property[] $associations
+     */
     public function setAssociations(array $associations)
     {
         $this->associations = $associations;

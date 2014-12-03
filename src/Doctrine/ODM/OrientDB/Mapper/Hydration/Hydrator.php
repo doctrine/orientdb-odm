@@ -2,14 +2,15 @@
 
 namespace Doctrine\ODM\OrientDB\Mapper\Hydration;
 
-use Doctrine\ODM\OrientDB\Manager;
+use Doctrine\ODM\OrientDB\Collections\ArrayCollection;
+use Doctrine\ODM\OrientDB\Mapper\ClusterMap;
 use Doctrine\ODM\OrientDB\Proxy\Proxy;
+use Doctrine\ODM\OrientDB\UnitOfWork;
 use Doctrine\OrientDB\Exception;
 use Doctrine\ODM\OrientDB\Caster\Caster;
 use Doctrine\ODM\OrientDB\Types\Rid;
 use Doctrine\ODM\OrientDB\DocumentNotFoundException;
 use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
-use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
 use Doctrine\ODM\OrientDB\Mapper\ClassMetadataFactory;
 use Doctrine\ODM\OrientDB\Proxy\ProxyFactory;
 use Doctrine\OrientDB\Query\Query;
@@ -31,25 +32,36 @@ class Hydrator
     protected $proxyFactory;
     protected $metadataFactory;
     protected $enableMismatchesTolerance = false;
-    protected $annotationReader;
     protected $inflector;
     protected $binding;
+    protected $uow;
     protected $cache;
     protected $caster;
     protected $castedProperties          = array();
+    protected $clusterMap;
 
     /**
-     * @param Manager $manager
+     * @param UnitOfWork $uow
      */
-    public function __construct(Manager $manager)
+    public function __construct(UnitOfWork $uow)
     {
-        $this->proxyFactory    = $manager->getProxyFactory();
-        $this->metadataFactory = $manager->getMetadataFactory();
-        $this->inflector       = $manager->getInflector();
-        $this->binding         = $manager->getBinding();
+        $this->proxyFactory    = $uow->getManager()->getProxyFactory();
+        $this->metadataFactory = $uow->getManager()->getMetadataFactory();
+        $this->inflector       = $uow->getManager()->getInflector();
+        $this->binding         = $uow->getManager()->getBinding();
+        $this->uow             = $uow;
+        $this->clusterMap      = new ClusterMap($this->binding, $uow->getManager()->getCache());
         $this->caster          = new Caster($this, $this->inflector);
+
+        $this->enableMismatchesTolerance($uow->getManager()->getConfiguration()->getMismatchesTolerance());
     }
 
+    /**
+     * @param string[] $rids
+     * @param string   $fetchPlan
+     *
+     * @return mixed
+     */
     public function load(array $rids, $fetchPlan = null)
     {
         $query   = new Query($rids);
@@ -74,20 +86,18 @@ class Hydrator
         $classProperty = static::ORIENT_PROPERTY_CLASS;
 
         if ($proxy) {
-            $linkTracker = new LinkTracker();
-            $this->fill($proxy, $orientObject, $linkTracker);
+            $this->fill($proxy, $orientObject);
 
-            return new Result($proxy, $linkTracker);
+            return $proxy;
 
         } elseif (property_exists($orientObject, $classProperty)) {
             $orientClass = $orientObject->$classProperty;
 
             if ($orientClass) {
-                $linkTracker = new LinkTracker();
                 $class       = $this->getMetadataFactory()->findClassMappingInDirectories($orientClass);
-                $document    = $this->createDocument($class, $orientObject, $linkTracker);
+                $document    = $this->createDocument($class, $orientObject);
 
-                return new Result($document, $linkTracker);
+                return $document;
             }
 
             throw new DocumentNotFoundException(self::ORIENT_PROPERTY_CLASS.' property empty.');
@@ -100,28 +110,45 @@ class Hydrator
      * Hydrates an array of documents.
      *
      * @param  Array $json
-     * @return Array
+     * @return ArrayCollection
      */
     public function hydrateCollection(array $collection)
     {
         $records = array();
 
         foreach ($collection as $key => $record) {
-            $records[$key] = $this->hydrate($record);
+            if ($record instanceof \stdClass) {
+                $records[$key] = $this->hydrate($record);
+            } else {
+                $records[$key] = $this->hydrateRid(new Rid($record));
+            }
         }
 
-        return $records;
+        return new ArrayCollection($records);
+    }
+
+    public function hydrateRid(Rid $rid)
+    {
+        $orientClass = $this->clusterMap->identifyClass($rid);
+        $class       = $this->getMetadataFactory()->findClassMappingInDirectories($orientClass);
+        $metadata    = $this->getMetadataFactory()->getMetadataFor($class);
+
+        return $this->getProxyFactory()->getProxy($class, array($metadata->getIdentifierFieldNames()[0] => $rid->getValue()));
     }
 
     /**
+     * Returns the ProxyFactory to which the hydrator is attached.
+     *
      * @return ProxyFactory
      */
-    protected function getProxyFactory()
+    protected  function getProxyFactory()
     {
         return $this->proxyFactory;
     }
 
     /**
+     * Returns the MetadataFactor.
+     *
      * @return ClassMetadataFactory
      */
     protected function getMetadataFactory()
@@ -129,24 +156,41 @@ class Hydrator
         return $this->metadataFactory;
     }
 
+    protected function getUnitOfWork()
+    {
+        return $this->uow;
+    }
 
     /**
-     * Creates a new Proxy $class object, filling it with the properties of
-     * $orientObject.
-     * The proxy class extends from $class and is used to implement
-     * lazy-loading.
+     * Either tries to get the proxy
+     *
      *
      * @param  string      $class
      * @param  \stdClass   $orientObject
-     * @param  LinkTracker $linkTracker
      * @return object of type $class
      */
-    protected function createDocument($class, \stdClass $orientObject, LinkTracker $linkTracker)
+    protected function createDocument($class, \stdClass $orientObject)
     {
         $metadata = $this->getMetadataFactory()->getMetadataFor($class);
-        $document = $this->getProxyFactory()->getProxy($class, array($metadata->getIdentifier()[0] => $orientObject->{'@rid'}));
 
-        $this->fill($document, $orientObject, $linkTracker);
+        /**
+         * when a record from OrientDB doesn't have a RID
+         * it means it's an embedded object, which can not be
+         * lazily loaded.
+         */
+        if (isset($orientObject->{'@rid'})) {
+            $rid = new Rid($orientObject->{'@rid'});
+            if ($this->getUnitOfWork()->hasProxyFor($rid)) {
+                $document = $this->getUnitOfWork()->getProxyFor($rid);
+            } else {
+                $document = $this->getProxyFactory()->getProxy($class, array($metadata->getIdentifier()[0] => $rid->getValue()));
+            }
+        } else {
+            $class = $metadata->getName();
+            $document = new $class;
+        }
+
+        $this->fill($document, $orientObject);
 
         return $document;
     }
@@ -196,10 +240,9 @@ class Hydrator
      *
      * @param  object      $document
      * @param  \stdClass   $object
-     * @param  LinkTracker $linkTracker
      * @return object
      */
-    protected function fill($document, \stdClass $object, LinkTracker $linkTracker)
+    protected function fill($document, \stdClass $object)
     {
         $propertyAnnotations = $this->getMetadataFactory()->getObjectPropertyAnnotations($document);
 
@@ -215,8 +258,7 @@ class Hydrator
                     $document,
                     $documentProperty,
                     $object->$property,
-                    $annotation,
-                    $linkTracker
+                    $annotation
                 );
             }
         }
@@ -238,25 +280,15 @@ class Hydrator
     /**
      * Given a $property and its $value, sets that property on the $given object
      * using a public setter.
-     * The $linkTracker is used to verify if the property has to be retrieved
-     * with an extra query, which is a domain the Mapper should not know about,
-     * so it is used only to keep track of properties that the mapper simply
-     * can't handle (a typical example is a @rid, which requires an extra query
-     * to retrieve the linked entity).
-     *
-     * Generally the LinkTracker is used by a Manager after he call the
-     * ->hydrate() method of its mapper, to verify that the object is ready to
-     * be used in the userland application.
      *
      * @param mixed $document
      * @param string $property
      * @param string $value
      * @param PropertyAnnotation $annotation
-     * @param LinkTracker $linkTracker
      *
      * @throws Exception
      */
-    protected function mapProperty($document, $property, $value, PropertyAnnotation $annotation, LinkTracker $linkTracker)
+    protected function mapProperty($document, $property, $value, PropertyAnnotation $annotation)
     {
         if ($annotation->type) {
             try {
@@ -267,10 +299,6 @@ class Hydrator
                 } else {
                     throw $e;
                 }
-            }
-
-            if ($value instanceof Rid || $value instanceof Rid\Collection || is_array($value)) {
-                $linkTracker->add($property, $value);
             }
         }
 
@@ -295,9 +323,18 @@ class Hydrator
         }
     }
 
+    /**
+     * Sets whether the Hydrator should tolerate mismatches during hydration.
+     *
+     * @param bool $tolerate
+     */
+    public function enableMismatchesTolerance($tolerate)
+    {
+        $this->enableMismatchesTolerance = $tolerate;
+    }
 
     /**
-     * Checks whether the Mapper throws exceptions or not when encountering an
+     * Checks whether the Hydrator throws exceptions or not when encountering an
      * mismatch error during hydration.
      *
      * @return bool

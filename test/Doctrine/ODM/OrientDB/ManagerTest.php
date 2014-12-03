@@ -16,8 +16,6 @@ namespace test\Doctrine\ODM\OrientDB;
 use test\PHPUnit\TestCase;
 use Doctrine\OrientDB\Query\Query;
 use Doctrine\ODM\OrientDB\Manager;
-use Doctrine\ODM\OrientDB\Mapper\LinkTracker;
-use Doctrine\ODM\OrientDB\Mapper\Hydration\Result as HydrationResult;
 use Doctrine\ODM\OrientDB\Types\Rid;
 
 class ManagerTest extends TestCase
@@ -41,19 +39,8 @@ class ManagerTest extends TestCase
                 ->method('execute')
                 ->will($this->returnValue($result));
 
-        $hydrationResultCallback = function ($document) {
-            $linktracker = new LinkTracker();
-            $linktracker->add('capital', new Rid('1:2'));
-
-            return new HydrationResult(new Document\Stub\Contact\Address, $linktracker);
-        };
-
-        $mapper = $this->getMock('\Doctrine\ODM\OrientDB\Mapper', array('hydrate'), array(__DIR__ . '/../../proxies'));
-        $mapper->expects($this->any())
-               ->method('hydrate')
-               ->will($this->returnCallback($hydrationResultCallback));
-
-        $manager = new Manager($mapper, $binding);
+        $configuration = $this->getConfiguration(array('document_dirs' => array('test/Doctrine/ODM/OrientDB/Document/Stub' => 'test')));
+        $manager = new Manager($binding, $configuration);
 
         return $manager;
     }
@@ -61,7 +48,7 @@ class ManagerTest extends TestCase
     public function testMethodUsedToTryTheManager()
     {
         $manager = $this->createTestManager();
-        $metadata = $manager->getClassMetadata('test\ODM\Document\Stub\Contact\Address');
+        $metadata = $manager->getClassMetadata('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address');
 
         $this->assertInstanceOf('Doctrine\ODM\OrientDB\Mapper\ClassMetadata', $metadata);
     }
@@ -72,7 +59,7 @@ class ManagerTest extends TestCase
         $manager = $this->createTestManager();
         $results = $manager->execute($query);
 
-        $this->assertInternalType('array', $results);
+        $this->isInstanceOf(static::COLLECTION_CLASS, $results);
         $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address', $results[0]);
     }
 
@@ -88,9 +75,9 @@ class ManagerTest extends TestCase
         $manager = $this->createManager();
         $cityRepository = $manager->getRepository('test\Doctrine\ODM\OrientDB\Document\Stub\City');
 
-        $this->assertInstanceOf("test\Doctrine\ODM\OrientDB\Document\Stub\CityRepository",$cityRepository);
+        $this->assertInstanceOf('test\Doctrine\ODM\OrientDB\Document\Stub\CityRepository',$cityRepository);
 
         $addressRepository = $manager->getRepository('test\Doctrine\ODM\OrientDB\Document\Stub\Contact\Address');
-        $this->assertInstanceOf("\Doctrine\ODM\OrientDB\Repository",$addressRepository);
+        $this->assertInstanceOf('\Doctrine\ODM\OrientDB\Repository',$addressRepository);
     }
 }

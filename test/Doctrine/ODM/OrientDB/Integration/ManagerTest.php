@@ -39,7 +39,7 @@ class ManagerTest extends TestCase
         $post       = $manager->find($this->postId.':0', '*:0');
         $comments   = $post->getComments();
 
-        $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
+        $this->assertInstanceOf('test\Integration\Document\Comment', $comments[0]);
     }
 
     /**
@@ -53,7 +53,7 @@ class ManagerTest extends TestCase
         $addresses = $manager->execute($query);
 
         $this->assertEquals(40, count($addresses));
-        $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
+        $this->assertInstanceOf('test\Integration\Document\Address', $addresses[0]);
     }
 
     /**
@@ -67,7 +67,7 @@ class ManagerTest extends TestCase
         $addresses = $manager->execute($query);
 
         $this->assertEquals(1, count($addresses));
-        $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
+        $this->assertInstanceOf('test\Integration\Document\Address', $addresses[0]);
     }
 
     /**
@@ -87,7 +87,7 @@ class ManagerTest extends TestCase
 
     /**
      * @group integration
-     * @expectedException Doctrine\OrientDB\Binding\InvalidQueryException
+     * @expectedException \Doctrine\OrientDB\Binding\InvalidQueryException
      */
     public function testAnExceptionGetsRaisedWhenExecutingAWrongQuery()
     {
@@ -107,7 +107,7 @@ class ManagerTest extends TestCase
         $manager = $this->createManager();
         $address = $manager->find($this->addressId.':0');
 
-        $this->assertInstanceOf("test\Integration\Document\Address", $address);
+        $this->assertInstanceOf('test\Integration\Document\Address', $address);
     }
 
     /**
@@ -121,8 +121,7 @@ class ManagerTest extends TestCase
 
         $post = $manager->find($this->postId.':0', '*:-1');
 
-        $this->assertInternalType('array', $post->comments);
-        $this->assertFalse($post->comments instanceOf \Doctrine\OrientDB\ODM\Proxy\Collection);
+        $this->assertInstanceOf(static::COLLECTION_CLASS, $post->comments);
     }
 
     /**
@@ -133,7 +132,7 @@ class ManagerTest extends TestCase
         $manager = $this->createManager();
         $address = $manager->find($this->addressId.':0');
 
-        $this->assertInstanceOf("test\Integration\Document\Country", $address->getCity());
+        $this->assertInstanceOf('test\Integration\Document\Country', $address->getCity());
     }
 
     /**
@@ -148,17 +147,17 @@ class ManagerTest extends TestCase
         $post       = $manager->find($this->postId.':0');
         $comments   = $post->getComments();
 
-        $this->assertInstanceOf("test\Integration\Document\Comment", $comments[0]);
+        $this->assertInstanceOf('test\Integration\Document\Comment', $comments[0]);
     }
 
     /**
      * @group integration
-     * @expectedException Doctrine\ODM\OrientDB\OClassNotFoundException
+     * @expectedException \Doctrine\ODM\OrientDB\OClassNotFoundException
      */
     public function testLookingForANonMappedTypeRaisesAnException()
     {
         $manager = $this->createManager(array(
-            'document_dir' => array('./docs' => '\\'),
+            'document_dirs' => array('./docs' => '\\'),
         ));
 
         $manager->find($this->postId.':0');
@@ -186,7 +185,7 @@ class ManagerTest extends TestCase
         $addresses = $manager->findRecords(array($this->addressId.':0', $this->addressId.':1'));
 
         $this->assertEquals(2, count($addresses));
-        $this->assertInstanceOf("test\Integration\Document\Address", $addresses[0]);
+        $this->assertInstanceOf('test\Integration\Document\Address', $addresses[0]);
     }
 
     /**
@@ -210,7 +209,7 @@ class ManagerTest extends TestCase
 
         $results = $manager->execute($query);
 
-        $this->assertInternalType('array', $results);
+        $this->assertInstanceOf(static::COLLECTION_CLASS, $results);
         $this->assertSame(1, count($results));
     }
 

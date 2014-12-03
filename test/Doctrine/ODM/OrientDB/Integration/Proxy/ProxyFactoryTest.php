@@ -34,7 +34,7 @@ class ProxyFactoryTest extends TestCase
         $manager = $this->createManager();
 
         $rid = '#'.$this->getClassId('City').':0';
-        $proxy = $manager->getReference('test\Integration\Document\Country', $rid);
+        $proxy = $manager->getReference($rid);
         $this->assertEquals($rid, $proxy->rid);
         $this->assertFalse($proxy->__isInitialized());
         $this->assertEquals('Rome1', $proxy->name);
