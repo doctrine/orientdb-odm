@@ -45,15 +45,17 @@ class Hydrator
      */
     public function __construct(UnitOfWork $uow)
     {
-        $this->proxyFactory    = $uow->getManager()->getProxyFactory();
-        $this->metadataFactory = $uow->getManager()->getMetadataFactory();
-        $this->inflector       = $uow->getManager()->getInflector();
-        $this->binding         = $uow->getManager()->getBinding();
+        $manager = $uow->getManager();
+
+        $this->proxyFactory    = $manager->getProxyFactory();
+        $this->metadataFactory = $manager->getMetadataFactory();
+        $this->inflector       = $manager->getInflector();
+        $this->binding         = $manager->getBinding();
         $this->uow             = $uow;
-        $this->clusterMap      = new ClusterMap($this->binding, $uow->getManager()->getCache());
+        $this->clusterMap      = new ClusterMap($this->binding, $manager->getCache());
         $this->caster          = new Caster($this, $this->inflector);
 
-        $this->enableMismatchesTolerance($uow->getManager()->getConfiguration()->getMismatchesTolerance());
+        $this->enableMismatchesTolerance($manager->getConfiguration()->getMismatchesTolerance());
     }
 
     /**

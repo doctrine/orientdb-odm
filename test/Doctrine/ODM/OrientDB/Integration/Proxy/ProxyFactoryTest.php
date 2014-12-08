@@ -2,11 +2,6 @@
 
 namespace test\Doctrine\ODM\OrientDB\Proxy;
 
-use Doctrine\ODM\OrientDB\Configuration;
-use Doctrine\ODM\OrientDB\Manager;
-use Doctrine\OrientDB\Binding\BindingParameters;
-use Doctrine\OrientDB\Binding\HttpBinding;
-use test\Integration\Document\Country;
 use test\PHPUnit\TestCase;
 
 /**
@@ -49,5 +44,19 @@ class ProxyFactoryTest extends TestCase
         $this->assertTrue($proxy->__isInitialized());
         $this->assertEquals($rid, $proxy->rid);
         $this->assertEquals('Rome1', $proxy->name);
+    }
+
+    public function testCloner()
+    {
+        $manager = $this->createManager();
+        $rid = '#'.$this->getClassId('City').':0';
+        $proxy = $manager->getReference($rid);
+
+        $clone = clone $proxy;
+        $this->assertFalse($proxy->__isInitialized());
+        $this->assertTrue($clone->__isInitialized());
+
+        $this->assertEquals($rid, $clone->rid);
+        $this->assertEquals('Rome1', $clone->name);
     }
 }

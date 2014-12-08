@@ -359,6 +359,16 @@ class HttpBinding implements HttpBindingInterface
     }
 
     /**
+     * Returns the name of the current database in use.
+     *
+     * @return string
+     */
+    public function getDatabaseName()
+    {
+        return $this->database;
+    }
+
+    /**
      * Checks wheter the specified database string is valid to perform a request.
      *
      * @throws OrientException

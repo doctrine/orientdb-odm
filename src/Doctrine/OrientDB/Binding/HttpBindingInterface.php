@@ -94,15 +94,6 @@ interface HttpBindingInterface extends BindingInterface
     public function getServer();
 
     /**
-     * Retrieves details regarding the specified database.
-     *
-     * @api
-     * @param string $database
-     * @return BindingResultInterface
-     */
-    public function getDatabase($database = null);
-
-    /**
      * Creates a new database.
      *
      * @api

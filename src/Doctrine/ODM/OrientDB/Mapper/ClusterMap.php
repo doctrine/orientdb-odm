@@ -6,7 +6,6 @@ namespace Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ODM\OrientDB\Types\Rid;
 use Doctrine\OrientDB\Binding\BindingInterface;
-use Doctrine\OrientDB\Binding\HttpBinding;
 
 /**
  * Class ClusterMap
@@ -21,25 +20,18 @@ use Doctrine\OrientDB\Binding\HttpBinding;
  */
 class ClusterMap
 {
-    const CACHE_KEY = '_orientdb_cluster_map';
+    const CACHE_KEY = '_orientdb_%s_cluster_map';
 
     protected $cache;
     protected $binding;
     protected $map;
+    protected $databaseName;
 
     public function __construct(BindingInterface $binding, Cache $cache)
     {
         $this->binding = $binding;
         $this->cache   = $cache;
-    }
-
-    public function getMap()
-    {
-        if (! $this->map) {
-            $this->load();
-        }
-
-        return $this->map;
+        $this->databaseName = $binding->getDatabaseName();
     }
 
     /**
@@ -67,28 +59,37 @@ class ClusterMap
     }
 
     /**
+     * Loads/generates the map in case it's needed.
+     *
+     * @return array
+     */
+    protected function getMap()
+    {
+        if (! $this->map) {
+            $this->load();
+        }
+
+        return $this->map;
+    }
+
+    /**
      * Creates the mapping of classes to clusters,
      * it is public so it can be called forcibly
      * which will be handy if it's done in some
      * cache-warmup task.
      *
-     * @TODO move getDatabase to BindingInterface
      */
     public function generateMap()
     {
         $map = array();
-        if ($this->binding instanceof HttpBinding) {
-            $database = $this->binding->getDatabase()->getData();
+        $database = $this->binding->getDatabase()->getData();
 
-            foreach ($database->classes as $class) {
-                $map[$class->name] = $class->clusters;
-            }
-
-            $this->map = $map;
-            $this->cache->save(static::CACHE_KEY, $map);
-        } else {
-            throw new \Exception('Unsupported binding.');
+        foreach ($database->classes as $class) {
+            $map[$class->name] = $class->clusters;
         }
+
+        $this->map = $map;
+        $this->cache->save($this->getCacheKey(), $map);
     }
 
     /**
@@ -97,11 +98,16 @@ class ClusterMap
      */
     protected function load()
     {
-        if ($this->cache->contains(static::CACHE_KEY)) {
-            $this->map = $this->cache->fetch(static::CACHE_KEY);
+        if ($this->cache->contains($this->getCacheKey())) {
+            $this->map = $this->cache->fetch($this->getCacheKey());
         } else {
             $this->generateMap();
         }
+    }
+
+    protected function getCacheKey()
+    {
+        return sprintf(static::CACHE_KEY, $this->databaseName);
     }
 
 } 

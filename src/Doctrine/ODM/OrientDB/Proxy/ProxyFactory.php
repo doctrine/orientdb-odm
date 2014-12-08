@@ -78,7 +78,7 @@ class ProxyFactory extends AbstractProxyFactory
             $classMetadata->getIdentifierFieldNames(),
             $classMetadata->getReflectionFields(),
             $this->createInitializer($classMetadata, $this->uow->getHydrator(), $reflectionId),
-            function () { throw new \Exception('To be implemented __cloner'); }
+            $this->createCloner($classMetadata, $this->uow->getHydrator(), $reflectionId)
         );
     }
 
@@ -145,6 +145,46 @@ class ProxyFactory extends AbstractProxyFactory
                 throw DocumentNotFoundException::documentNotFound(get_class($proxy), $rid);
             } else {
                 $hydrator->hydrate($loaded[0], $proxy);
+            }
+        };
+    }
+
+    /**
+     * Generates a closure capable of finalizing a cloned proxy
+     *
+     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $classMetadata
+     * @param \ReflectionProperty $reflectionId
+     *
+     * @return \Closure
+     *
+     * @throws \Doctrine\ODM\OrientDB\DocumentNotFoundException
+     */
+    private function createCloner(
+        BaseClassMetadata $classMetadata,
+        Hydrator $hydrator,
+        \ReflectionProperty $reflectionId
+    ) {
+        return function (BaseProxy $proxy) use ($reflectionId, $hydrator, $classMetadata) {
+            if ($proxy->__isInitialized()) {
+                return;
+            }
+            $proxy->__setInitialized(true);
+            $proxy->__setInitializer(null);
+            $rid    = $reflectionId->getValue($proxy);
+            $original = $hydrator->load(array($rid));
+
+            if (null === $original) {
+                throw DocumentNotFoundException::documentNotFound(get_class($proxy), $rid);
+            }
+
+            $original = $hydrator->hydrate($original[0], $proxy);
+
+            foreach ($classMetadata->getReflectionClass()->getProperties() as $reflectionProperty) {
+                $propertyName = $reflectionProperty->getName();
+                if ($classMetadata->hasField($propertyName) || $classMetadata->hasAssociation($propertyName)) {
+                    $reflectionProperty->setAccessible(true);
+                    $reflectionProperty->setValue($proxy, $reflectionProperty->getValue($original));
+                }
             }
         };
     }

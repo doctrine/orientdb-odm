@@ -17,7 +17,6 @@ use test\PHPUnit\TestCase;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Caster\Caster;
 use Doctrine\ODM\OrientDB\Types\Rid;
-use Doctrine\ODM\OrientDB\Types\Rid\Collection;
 
 class CasterTest extends TestCase
 {
