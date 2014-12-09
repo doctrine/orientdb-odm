@@ -21,44 +21,57 @@
 
 namespace Doctrine\ODM\OrientDB;
 
-use Doctrine\ODM\OrientDB\Mapper;
-use Doctrine\ODM\OrientDB\Mapper\Hydration\Result;
+use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Inflector\Inflector;
+use Doctrine\ODM\OrientDB\Collections\ArrayCollection;
+use Doctrine\ODM\OrientDB\Proxy\Proxy;
+use Doctrine\ODM\OrientDB\Proxy\ProxyFactory;
 use Doctrine\ODM\OrientDB\Types\Rid;
 use Doctrine\ODM\OrientDB\Caster\CastingMismatchException;
-use Doctrine\ODM\OrientDB\Mapper\ClassMetadata\Factory as ClassMetadataFactory;
 use Doctrine\OrientDB\Exception;
 use Doctrine\OrientDB\Binding\BindingInterface;
 use Doctrine\OrientDB\Query\Query;
-use Doctrine\OrientDB\Query\Command\Select;
 use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
-use Doctrine\OrientDB\Util\Inflector\Cached as Inflector;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;
 
 class Manager implements ObjectManager
 {
-    protected $mapper;
+    protected $configuration;
     protected $binding;
     protected $metadataFactory;
+    protected $cache;
+    protected $proxyFactory;
+    protected $uow;
 
     /**
      * Instatiates a new Mapper, injecting the $mapper that will be used to
      * hydrate record retrieved through the $binding.
      *
-     * @param Mapper           $mapper
      * @param BindingInterface $binding
-     * @param MetadataFactory  $metadataFactory
+     * @param Configuration $configuration
      */
     public function __construct(
-        Mapper $mapper,
         BindingInterface $binding,
-        Inflector $inflector = null,
-        MetadataFactory $metadataFactory = null
-    ) {
-        $this->mapper = $mapper;
-        $this->binding = $binding;
-        $this->inflector = $inflector ?: new Inflector();
-        $this->metadataFactory = $metadataFactory ?: new ClassMetadataFactory($mapper);
+        Configuration $configuration
+    )
+    {
+        $this->configuration   = $configuration;
+        $this->binding         = $binding;
+        $this->inflector       = $configuration->getInflector();
+        $this->metadataFactory = $configuration->getMetadataFactory();
+        $this->cache           = $configuration->getCache();
+        $this->uow             = new UnitOfWork($this);
+        /**
+         * this must be the last since it will require the Manager to be constructed already.
+         * TODO fixthis
+         */
+        $this->proxyFactory    = new ProxyFactory(
+            $this,
+            $configuration->getProxyDirectory(),
+            $configuration->getProxyNamespace(),
+            $configuration->getAutoGenerateProxyClasses()
+        );
     }
 
     /**
@@ -79,21 +92,25 @@ class Manager implements ObjectManager
      * single record look at ->find*() methods.
      *
      * @param  Query $query
+     *
      * @return array|Mixed
      */
     public function execute(Query $query, $fetchPlan = null)
     {
-        $binding = $this->getBinding();
-        $results = $binding->execute($query, $fetchPlan)->getResult();
+        return $this->getUnitOfWork()->execute($query, $fetchPlan);
+    }
 
-        if (is_array($results) && $query->canHydrate()) {
-            $collection = $this->getMapper()->hydrateCollection($results);
-            $collection = $this->finalizeCollection($collection);
-
-            return $collection;
-        }
-
-        return true;
+    /**
+     * Returns a reference to an entity. It will be lazily and transparently
+     * loaded if anything other than the identifier is touched.
+     *
+     * @param $rid
+     *
+     * @return Proxy
+     */
+    public function getReference($rid)
+    {
+        return $this->getUnitOfWork()->getProxyFor(new Rid($rid), true);
     }
 
     /**
@@ -110,20 +127,17 @@ class Manager implements ObjectManager
      *
      * @param  string $rid
      * @param  string $fetchPlan
+     *
      * @return Proxy|object
      * @throws OClassNotFoundException|CastingMismatchException|Exception
      */
-    public function find($rid, $fetchPlan = '*:0', $lazy = true)
+    public function find($rid, $fetchPlan = '*:0')
     {
         $validator = new RidValidator;
-        $rid = $validator->check($rid);
-
-        if ($lazy === false) {
-            return new Proxy($this, $rid);
-        }
+        $rid       = $validator->check($rid);
 
         try {
-            return $this->doFind($rid, $fetchPlan);
+            return $this->getUnitOfWork()->getProxyFor(new Rid($rid), false, $fetchPlan);
         } catch (OClassNotFoundException $e) {
             throw $e;
         } catch (CastingMismatchException $e) {
@@ -135,34 +149,25 @@ class Manager implements ObjectManager
 
     /**
      * Queries for an array of objects with the given $rids.
+     * In case of laziness a collection of proxies is
+     * returned which contain either uninitialized
+     * proxies for entities the UnitOfWork didn't know
+     * about yet, or already existing ones.
      *
-     * If $lazy loading is used, all of this won't be executed unless the
-     * returned Proxy object is called via __invoke.
+     * @TODO The fetchPlan is ignored in case of lazy collections
      *
      * @see    ->find()
-     * @param  string $rid
-     * @param  mixed  $fetchPlan
-     * @return Proxy\Collection|array
-     * @throws Doctrine\OrientDB\Binding\InvalidQueryException
+     *
+     * @param  array   $rids
+     * @param  boolean $lazy
+     * @param  mixed   $fetchPlan
+     *
+     * @return ArrayCollection
+     * @throws \Doctrine\OrientDB\Binding\InvalidQueryException
      */
-    public function findRecords(array $rids, $fetchPlan = '*:0', $lazy = true)
+    public function findRecords(array $rids, $lazy = false, $fetchPlan = '*:0')
     {
-        if ($lazy === false) {
-            return new Proxy\Collection($this, $rids);
-        }
-
-        $query = new Query($rids);
-        $binding = $this->getBinding();
-        $results = $binding->execute($query, $fetchPlan)->getResult();
-
-        if (is_array($results)) {
-            $collection = $this->getMapper()->hydrateCollection($results);
-            $collection = $this->finalizeCollection($collection);
-
-            return $collection;
-        }
-
-        return array();
+        return $this->getUnitOfWork()->getCollectionFor($rids, $lazy, $fetchPlan);
     }
 
     /**
@@ -179,7 +184,8 @@ class Manager implements ObjectManager
      * Gets the $class Metadata.
      *
      * @param   string $class
-     * @return  Doctrine\Common\Persistence\Mapping\ClassMetadata
+     *
+     * @return  \Doctrine\Common\Persistence\Mapping\ClassMetadata
      */
     public function getClassMetadata($class)
     {
@@ -197,6 +203,41 @@ class Manager implements ObjectManager
     }
 
     /**
+     * Returns the ProxyFactory associated with this manager.
+     *
+     * @return ProxyFactory
+     */
+    public function getProxyFactory()
+    {
+        return $this->proxyFactory;
+    }
+
+    /**
+     * Returns the Cache.
+     *
+     * @return Cache
+     */
+    public function getCache()
+    {
+        return $this->cache;
+    }
+
+    /**
+     * Returns the Inflector associated with this manager.
+     *
+     * @return Inflector
+     */
+    public function getInflector()
+    {
+        return $this->inflector;
+    }
+
+    public function getUnitOfWork()
+    {
+        return $this->uow;
+    }
+
+    /**
      * Returns the Repository class associated with the $class.
      *
      * @param  string $className
@@ -207,10 +248,10 @@ class Manager implements ObjectManager
         $repositoryClass = $className . "Repository";
 
         if (class_exists($repositoryClass)) {
-            return new $repositoryClass($className, $this, $this->getMapper());
+            return new $repositoryClass($className, $this);
         }
 
-        return new Repository($className, $this, $this->getMapper());
+        return new Repository($className, $this);
     }
 
     /**
@@ -286,89 +327,26 @@ class Manager implements ObjectManager
         throw new \Exception();
     }
 
-    /**
-     * Executes a query against OrientDB to find the specified RID and finalizes the
-     * hydration result.
-     *
-     * Optionally the query can be executed using the specified fetch plan.
-     *
-     * @param  type  $rid
-     * @param  mixed $fetchPlan
-     * @return object|null
-     */
-    protected function doFind($rid, $fetchPlan = null)
-    {
-        $query   = new Query(array($rid));
-        $binding = $this->getBinding();
-        $results = $binding->execute($query, $fetchPlan)->getResult();
 
-        if (isset($results) && count($results)) {
-            $record = is_array($results) ? array_shift($results) : $results;
-            $results = $this->getMapper()->hydrate($record);
 
-            return $this->finalize($results);
-        }
-
-        return null;
-    }
-
-    /**
-     * Given an Result, it implements lazy-loading for all its'
-     * document's related links.
-     *
-     * @param  Result $result
-     * @return object
-     */
-    protected function finalize(Result $result)
-    {
-        foreach ($result->getLinkTracker()->getProperties() as $property => $value) {
-            $setter = 'set' . $this->inflector->camelize($property);
-
-            if ($value instanceof Rid\Collection || $value instanceof Rid) {
-                $method = $value instanceof Rid\Collection ? 'findRecords' : 'find';
-                $value = $this->$method($value->getValue(), '*:0', false);
-                $result->getDocument()->$setter($value);
-            } elseif (is_array($value)) {
-                $value = $this->finalizeCollection($value);
-                $result->getDocument()->$setter($value);
-            }
-        }
-
-        return $result->getDocument();
-    }
-
-    /**
-     * Given a collection of Result, it returns an array of POPOs.
-     *
-     * @param  array $collection
-     * @return array
-     */
-    protected function finalizeCollection(array $collection)
-    {
-        foreach ($collection as $key => $hydrationResult) {
-            $collection[$key] = $this->finalize($hydrationResult);
-        }
-
-        return $collection;
-    }
-
-    /**
-     * Returns the mapper of the current object.
-     *
-     * @return Mapper
-     */
-    protected function getMapper()
-    {
-        return $this->mapper;
-    }
 
     /**
      * Returns the binding instance used to communicate OrientDB.
      *
      * @return BindingInterface
      */
-    protected function getBinding()
+    public function getBinding()
     {
         return $this->binding;
+    }
+
+    /**
+     * Returns the Configuration of the Manager
+     *
+     * @return Configuration
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
     }
 }

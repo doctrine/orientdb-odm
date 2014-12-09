@@ -15,25 +15,22 @@
  * @package    Doctrine\ODM
  * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
+ * @author     Tamás Millián <tamas.millian@gmail.com>
  */
 
 namespace Doctrine\ODM\OrientDB\Caster;
 
+use Doctrine\ODM\OrientDB\Mapper\Hydration\Hydrator;
+use Doctrine\ODM\OrientDB\Proxy\Proxy;
 use Doctrine\OrientDB\Exception;
-use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
 use Doctrine\OrientDB\Query\Validator\ValidationException;
 use Doctrine\OrientDB\Util\Inflector\Cached as Inflector;
 use Doctrine\ODM\OrientDB\Mapper;
-use Doctrine\ODM\OrientDB\Mapper\Annotations\Property as PropertyAnnotation;
-use Doctrine\ODM\OrientDB\Proxy;
-use Doctrine\ODM\OrientDB\Proxy\Collection as CollectionProxy;
-use Doctrine\ODM\OrientDB\Proxy\Value as ValueProxy;
 use Doctrine\ODM\OrientDB\Types\Rid;
 
 class Caster implements CasterInterface
 {
     protected $value;
-    protected $mapper;
     protected $dateClass;
     protected $inflector;
     protected $properties   = array();
@@ -44,24 +41,24 @@ class Caster implements CasterInterface
     const LONG_LIMIT        = 9223372036854775807;
     const BYTE_MAX_VALUE    = 127;
     const BYTE_MIN_VALUE    = -128;
-    const MISMATCH_MESSAGE  = "trying to cast \"%s\" as %s";
+    const MISMATCH_MESSAGE  = 'trying to cast "%s" as %s';
 
     /**
      * Instantiates a new Caster.
      *
-     * @param Mapper    $mapper
+     * @param Hydrator  $hydrator
+     * @param Inflector $inflector
      * @param mixed     $value
      * @param string    $dateClass  The class used to cast dates and datetimes
-     * @param Inflector $inflector
      */
     public function __construct(
-        Mapper $mapper,
+        Hydrator $hydrator,
+        Inflector $inflector,
         $value = null,
-        $dateClass = "\DateTime",
-        Inflector $inflector = null
+        $dateClass = '\DateTime'
     ) {
-        $this->mapper = $mapper;
-        $this->inflector = $inflector ?: new Inflector();
+        $this->hydrator = $hydrator;
+        $this->inflector = $inflector;
         $this->assignDateClass($dateClass);
 
         if ($value) {
@@ -216,7 +213,7 @@ class Caster implements CasterInterface
      */
     public function castEmbedded()
     {
-        return $this->getMapper()->hydrate($this->value);
+        return $this->getHydrator()->hydrate($this->value);
     }
 
     /**
@@ -288,27 +285,22 @@ class Caster implements CasterInterface
     }
 
     /**
-     * If the link is a rid, it returns back a rid object, cause the Managar,
-     * which eventually will get back the document, will know from the Mapper
-     * that the Caster was not able to cast the link (via a LinkTracker object),
-     * so the manager will do an extra query to retrieve the link.
-     * If the internal value is not a rid but an already decoded orient
-     * object, it simply hydrates it through the mapper.
      *
      * @see    http://code.google.com/p/orient/wiki/FetchingStrategies
-     * @return ValueProxy|Rid
+     * @return Proxy
      */
     public function castLink()
     {
         if ($this->value instanceof \stdClass) {
-            return new ValueProxy($this->getMapper()->hydrate($this->value)->getDocument());
-        } else {
-            try {
-                return new Rid($this->value);
-            } catch (ValidationException $e) {
-                return null;
-            }
+            return $this->getHydrator()->hydrate($this->value);
         }
+
+        try {
+            return $this->getHydrator()->hydrateRid(new Rid($this->value));
+        } catch (ValidationException $e) {
+            return null;
+        }
+
     }
 
     /**
@@ -467,7 +459,7 @@ class Caster implements CasterInterface
     {
         $results = array();
         $method  = 'cast' . $this->inflector->camelize($type);
-        $innerCaster = new self($this->getMapper());
+        $innerCaster = new self($this->getHydrator(), $this->inflector);
 
         if (!method_exists($innerCaster, $method)) {
             throw new Exception(sprintf('Method %s for %s not found', $method, get_class($innerCaster)));
@@ -498,7 +490,7 @@ class Caster implements CasterInterface
         $listType = $annotation->getCast();
 
         if ($listType == "link") {
-            return $this->getMapper()->hydrateCollection($this->value);
+            return $this->getHydrator()->hydrateCollection($this->value);
         }
 
         try {
@@ -512,7 +504,7 @@ class Caster implements CasterInterface
     }
 
     /**
-     * Given the internl value of the caster (an array), it iterates over each
+     * Given the internal value of the caster (an array), it iterates over each
      * element of the array and hydrates it.
      *
      * @see    Caster::castLink for more insights
@@ -520,36 +512,7 @@ class Caster implements CasterInterface
      */
     protected function castLinkCollection()
     {
-        foreach ($this->value as $key => $value) {
-            if (is_object($value)) {
-                /**
-                 * OrientDB bug
-                 *
-                 * @see https://github.com/nuvolabase/orientdb/issues/1277
-                 */
-                $collection = array();
-                foreach ($this->value as $key => $value) {
-                    if (is_object($value)) {
-                        $collection[$key] = $value;
-                    }
-                }
-
-                return $this->getMapper()->hydrateCollection($collection);
-            }
-            try {
-                $ridCollection = new Rid\Collection(array_map(function ($rid) {
-                    new Rid($rid);
-
-                    return $rid;
-                }, $this->value));
-
-                return $ridCollection;
-            } catch (ValidationException $e) {
-                return null;
-            }
-        }
-
-        return array();
+        return $this->getHydrator()->hydrateCollection($this->value);
     }
 
     /**
@@ -584,13 +547,13 @@ class Caster implements CasterInterface
     }
 
     /**
-     * Returns the internl manager.
+     * Returns the hydrator.
      *
-     * @return Mapper
+     * @return Hydrator
      */
-    protected function getMapper()
+    protected function getHydrator()
     {
-        return $this->mapper;
+        return $this->hydrator;
     }
 
     /**
@@ -609,7 +572,7 @@ class Caster implements CasterInterface
      */
     protected function handleMismatch(\Closure $castFunction, $expectedType)
     {
-        if ($this->mapper->toleratesMismatches()) {
+        if ($this->getHydrator()->toleratesMismatches()) {
             return $castFunction($this->value);
         }
 
@@ -631,4 +594,5 @@ class Caster implements CasterInterface
 
         throw new CastingMismatchException(sprintf(self::MISMATCH_MESSAGE, $value, $expectedType));
     }
+
 }

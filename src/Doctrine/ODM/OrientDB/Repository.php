@@ -20,8 +20,7 @@
 
 namespace Doctrine\ODM\OrientDB;
 
-use Doctrine\ODM\OrientDB\Manager;
-use Doctrine\ODM\OrientDB\Mapper;
+use Doctrine\ODM\OrientDB\Collections\ArrayCollection;
 use Doctrine\OrientDB\Query\Query;
 use Doctrine\OrientDB\Exception;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -31,21 +30,18 @@ use RuntimeException;
 class Repository implements ObjectRepository
 {
     protected $manager;
-    protected $mapper;
     protected $className;
 
     /**
      * Instantiates a new repository.
      *
-     * @param type $className
+     * @param string $className type
      * @param Manager $manager
-     * @param Mapper $mapper
      */
-    public function __construct($className, Manager $manager, Mapper $mapper)
+    public function __construct($className, Manager $manager)
     {
         $this->className = $className;
         $this->manager = $manager;
-        $this->mapper = $mapper;
     }
 
     /**
@@ -85,7 +81,7 @@ class Repository implements ObjectRepository
     /**
      * Finds an object by its primary key / identifier.
      *
-     * @param  $rid The identifier.
+     * @param string $rid The identifier.
      * @return object The object.
      */
     public function find($rid, $fetchPlan = '*:0')
@@ -150,17 +146,17 @@ class Repository implements ObjectRepository
 
             $collection = $this->getManager()->execute($query, $fetchPlan);
 
-            if (!is_array($collection)) {
+            if (!$collection instanceof ArrayCollection) {
                 throw new Exception(
                     "Problems executing the query \"{$query->getRaw()}\".".
-                    "The server returned $collection instead of Array."
+                    "The server returned $collection instead of ArrayCollection."
                 );
             }
 
-            $results = array_merge($results, $collection);
+            $results = array_merge($results, $collection->toArray());
         }
 
-        return $results;
+        return new ArrayCollection($results);
     }
 
     /**
@@ -173,8 +169,8 @@ class Repository implements ObjectRepository
     {
         $documents = $this->findBy($criteria, array(), 1);
 
-        if (is_array($documents) && count($documents)) {
-            return array_shift($documents);
+        if ($documents instanceof ArrayCollection && count($documents)) {
+            return $documents->first();
         }
 
         return null;
@@ -212,16 +208,6 @@ class Repository implements ObjectRepository
     }
 
     /**
-     * Returns the mapper associated with this repository.
-     *
-     * @return Mapper
-     */
-    protected function getMapper()
-    {
-        return $this->mapper;
-    }
-
-    /**
      * Returns the OrientDB classes which are mapper by the
      * Repository's $className.
      *
@@ -229,7 +215,7 @@ class Repository implements ObjectRepository
      */
     protected function getOrientClasses()
     {
-        $classAnnotation = $this->getMapper()->getClassAnnotation($this->getClassName());
+        $classAnnotation = $this->getManager()->getMetadataFactory()->getClassAnnotation($this->getClassName());
 
         return explode(',', $classAnnotation->class);
     }

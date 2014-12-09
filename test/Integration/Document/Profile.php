@@ -28,6 +28,11 @@ use Doctrine\ODM\OrientDB\Mapper\Annotations as ODM;
 class Profile
 {
     /**
+     * @ODM\Property(name="@rid", type="string")
+     */
+    public $rid;
+
+    /**
      * @ODM\Property(type="long")
      */
     public $hash;

@@ -27,4 +27,8 @@ use Doctrine\ODM\OrientDB\Mapper\Annotations as ODM;
 */
 class Comment
 {
+    /**
+     * @ODM\Property(name="@rid", type="string")
+     */
+    public $rid;
 }

@@ -239,6 +239,12 @@ class HttpBindingTest extends TestCase
 
     }
 
+    public function testGetDatabaseName()
+    {
+        $binding = $this->createHttpBinding();
+        $this->assertEquals(TEST_ODB_DATABASE, $binding->getDatabaseName());
+    }
+
     /**
      * @see https://github.com/Reinmar/Orient/commit/6110c61778cd7592f4c1e4f5530ea84e79c0f9cd
      */

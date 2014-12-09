@@ -28,6 +28,11 @@ use Doctrine\ODM\OrientDB\Mapper\Annotations as ODM;
 class ORole
 {
     /**
+     * @ODM\Property(name="@rid", type="string")
+     */
+    public $rid;
+
+    /**
      * @ODM\Property(type="byte")
      */
     public $mode;

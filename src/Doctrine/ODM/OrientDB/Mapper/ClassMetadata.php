@@ -27,20 +27,20 @@ class ClassMetadata implements DoctrineMetadata
 {
     protected $class;
     protected $refClass;
-    protected $mapper;
-    private $singleAssociations = array('link');
-    private $multipleAssociations = array('linklist', 'linkset', 'linkmap');
+    protected $reflFields;
+
+    protected $identifierPropertyName;
+    protected $associations;
+    protected $fields;
 
     /**
      * Instantiates a new Metadata for the given $className.
      *
      * @param string        $className
-     * @param DataMapper    $mapper
      */
-    public function __construct($className, DataMapper $mapper)
+    public function __construct($className)
     {
         $this->class = $className;
-        $this->mapper = $mapper;
     }
 
     /**
@@ -53,6 +53,11 @@ class ClassMetadata implements DoctrineMetadata
         return $this->class;
     }
 
+    public function setIdentifier($property)
+    {
+        $this->identifierPropertyName = $property;
+    }
+
     /**
      * Gets the mapped identifier field name.
      *
@@ -62,13 +67,23 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function getIdentifier()
     {
-        return array('@rid');
+        return array($this->identifierPropertyName);
+    }
+
+    /**
+     * PHP 5.3, no array dereferencing..
+     *
+     * @return string
+     */
+    public function getRidPropertyName()
+    {
+        return $this->identifierPropertyName;
     }
 
     /**
      * Gets the ReflectionClass instance for this mapped class.
      *
-     * @return ReflectionClass
+     * @return \ReflectionClass
      */
     public function getReflectionClass()
     {
@@ -87,7 +102,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function isIdentifier($fieldName)
     {
-        return ($fieldName === "@rid");
+        return ($fieldName === '@rid');
     }
 
     /**
@@ -120,7 +135,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function isSingleValuedAssociation($fieldName)
     {
-        return $this->isValuedAssociation($fieldName, $this->singleAssociations);
+        return $this->isValuedAssociation($fieldName, ClassMetadataFactory::$singleAssociations);
     }
 
     /**
@@ -131,7 +146,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function isCollectionValuedAssociation($fieldName)
     {
-        return $this->isValuedAssociation($fieldName, $this->multipleAssociations);
+        return $this->isValuedAssociation($fieldName, ClassMetadataFactory::$multipleAssociations);
     }
 
     /**
@@ -199,6 +214,28 @@ class ClassMetadata implements DoctrineMetadata
         return null;
     }
 
+    public function getReflectionProperties()
+    {
+        return $this->getReflectionClass()->getProperties();
+    }
+
+    public function getReflectionFields()
+    {
+        if (! $this->reflFields) {
+            $this->discoverReflectionFields();
+        }
+
+        return $this->reflFields;
+    }
+
+    protected function discoverReflectionFields()
+    {
+        $this->reflFields = array();
+        foreach ($this->getReflectionProperties() as $property) {
+            $this->reflFields[$property->getName()] = $property;
+        }
+    }
+
     /**
      * @todo to implement/test
      *
@@ -206,7 +243,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function getIdentifierFieldNames()
     {
-        throw new \Exception('to be implemented');
+        return array($this->identifierPropertyName);
     }
 
     /**
@@ -232,14 +269,15 @@ class ClassMetadata implements DoctrineMetadata
     }
 
     /**
-     * @todo to implement/test
+     * @todo to test
      *
      * @param object $object
      * @return array
      */
     public function getIdentifierValues($object)
     {
-        throw new \Exception('to be implemented');
+        $fields = $this->getReflectionFields();
+        return $fields[$this->identifierPropertyName]->getValue($object);
     }
 
     /**
@@ -260,34 +298,26 @@ class ClassMetadata implements DoctrineMetadata
     }
 
     /**
+     * @param \Doctrine\ODM\OrientDB\Mapper\Annotations\Property[] $associations
+     */
+    public function setAssociations(array $associations)
+    {
+        $this->associations = $associations;
+    }
+
+    public function setFields(array $fields)
+    {
+        $this->fields = $fields;
+    }
+
+    /**
      * Returns all the possible associations mapped in the introspected class.
      *
      * @return Array
      */
     protected function getAssociations()
     {
-        $associations = array();
-
-        foreach ($this->getReflectionClass()->getProperties() as $refProperty) {
-            $association = $this->getMapper()->getPropertyAnnotation($refProperty);
-
-            if ($association && in_array($association->type, $this->getAssociationTypes())) {
-                $associations[] = $association;
-            }
-        }
-
-        return $associations;
-    }
-
-    /**
-     * Returns all the possible association types.
-     * e.g. linklist, linkmap, link...
-     *
-     * @return Array
-     */
-    protected function getAssociationTypes()
-    {
-        return array_merge($this->singleAssociations, $this->multipleAssociations);
+        return $this->associations;
     }
 
     /**
@@ -314,17 +344,7 @@ class ClassMetadata implements DoctrineMetadata
      */
     protected function getFields()
     {
-        $fields = array();
-
-        foreach ($this->getReflectionClass()->getProperties() as $refProperty) {
-            $field = $this->getMapper()->getPropertyAnnotation($refProperty);
-
-            if ($field && !in_array($field->type, $this->getAssociationTypes())) {
-                 $fields[] = $field;
-            }
-        }
-
-         return $fields;
+        return $this->fields;
     }
 
     /**
@@ -343,13 +363,4 @@ class ClassMetadata implements DoctrineMetadata
         }
     }
 
-    /**
-     * Returns the mapper associated with this Metadata.
-     *
-     * @return Mapper
-     */
-    protected function getMapper()
-    {
-        return $this->mapper;
-    }
 }

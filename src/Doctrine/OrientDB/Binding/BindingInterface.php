@@ -39,4 +39,23 @@ interface BindingInterface
      * @return BindingResultInterface
      */
     public function execute(Query $query, $fetchPlan = null);
+
+
+    /**
+     * Returns the name of the database the binding is
+     * currently using.
+     *
+     * @return string
+     */
+    public function getDatabaseName();
+
+
+    /**
+     * Retrieves details regarding the specified database.
+     *
+     * @api
+     * @param string $database
+     * @return BindingResultInterface
+     */
+    public function getDatabase($database = null);
 }

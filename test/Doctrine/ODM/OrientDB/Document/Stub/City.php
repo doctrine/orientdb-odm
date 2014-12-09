@@ -9,5 +9,10 @@ use Doctrine\ODM\OrientDB\Mapper\Annotations as ODM;
 */
 class City
 {
+    /**
+     * @ODM\Property(name="@rid", type="string")
+     */
+    public $rid;
+
     private $name;
 }

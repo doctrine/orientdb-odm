@@ -28,14 +28,14 @@ use Doctrine\ODM\OrientDB\Mapper\Annotations as ODM;
 class Post
 {
     /**
-     * @ODM\Property(type="link_list")
-     */
-    public $comments;
-
-    /**
      * @ODM\Property(name="@rid", type="string")
      */
     public $rid;
+
+    /**
+     * @ODM\Property(type="link_list")
+     */
+    public $comments;
 
     /**
      * @ODM\Property(name="id", type="integer")

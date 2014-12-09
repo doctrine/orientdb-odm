@@ -9,6 +9,7 @@
 
 namespace test\PHPUnit;
 
+use Doctrine\ODM\OrientDB\Configuration;
 use Doctrine\ODM\OrientDB\Manager;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\OrientDB\Binding\HttpBinding;
@@ -19,6 +20,8 @@ use Doctrine\OrientDB\Binding\Client\Http\CurlClient;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
+    const COLLECTION_CLASS = '\Doctrine\ODM\OrientDB\Collections\ArrayCollection';
+
     protected function getBindingParameters($options)
     {
         $parameters = array();
@@ -68,42 +71,36 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     protected function getProxyDirectory()
     {
-        return __DIR__ . '/../../test/proxies';
+        return __DIR__ . '/../../test/proxies/Doctrine/OrientDB/Proxy/test';
     }
 
-    protected function createMapper(Array $opts = array())
+    protected function getConfiguration(array $opts = array())
     {
-        $opts = array_merge(array(
-            'mismatches_tolerance' => false,
-            'proxies_dir' => $this->getProxyDirectory(),
-            'document_dir' => array(__DIR__.'/../../test/Integration/Document' => 'test'),
-        ), $opts);
-
-        $mapper = new Mapper($opts['proxies_dir']);
-        $mapper->setDocumentDirectories($opts['document_dir']);
-
-        if ($opts['mismatches_tolerance']) {
-            $mapper->enableMismatchesTolerance();
-        }
-
-        return $mapper;
+        return new Configuration(array_merge(
+            array(
+                'proxy_dir' => $this->getProxyDirectory(),
+                'document_dirs' => array(__DIR__.'/../../test/Integration/Document' => 'test')
+            ),
+            $opts
+        ));
     }
 
     protected function createManager(Array $opts = array())
     {
-        $mapper = $this->createMapper($opts);
+        $config = $this->getConfiguration($opts);
 
         $parameters = new BindingParameters(TEST_ODB_HOST, TEST_ODB_PORT, TEST_ODB_USER, TEST_ODB_PASSWORD, TEST_ODB_DATABASE);
         $binding = new HttpBinding($parameters);
-        $manager = new Manager($mapper, $binding);
+        $manager = new Manager($binding, $config);
 
         return $manager;
     }
 
     protected function ensureProxy(\stdClass $orientDocument)
     {
-        $mapper = $this->createMapper();
-        $mapper->hydrate($orientDocument);
+        $manager = $this->createManager();
+
+        return $manager->getUnitOfWork()->getHydrator()->hydrate($orientDocument);
     }
 
     public function assertHttpStatus($expected, HttpBindingResultInterface $result, $message = null)

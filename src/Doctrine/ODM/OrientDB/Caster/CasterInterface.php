@@ -19,7 +19,6 @@
 
 namespace Doctrine\ODM\OrientDB\Caster;
 
-use Doctrine\OrientDB\ODM\Mapper\Annotations\Property as PropertyAnnotation;
 
 interface CasterInterface
 {
@@ -153,7 +152,7 @@ interface CasterInterface
      * @param integer   $limit
      * @param string    $type
      * @return integer
-     * @throws Doctrine\OrientDB\Overflow
+     * @throws \Doctrine\OrientDB\Overflow
      */
     public function castInBuffer($limit, $type);
 
