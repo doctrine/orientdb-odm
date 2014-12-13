@@ -24,6 +24,8 @@ class Configuration
     private $cache;
     private $annotationReader;
 
+    private $suppoertedPersisterStrategies = array('sql_batch');
+
     public function __construct(array $options = array())
     {
         $defaults = array(
@@ -104,5 +106,19 @@ class Configuration
         }
 
         return $this->annotationReader;
+    }
+
+    public function getPersisterStrategy()
+    {
+        if (isset($this->options['persister_strategy'])) {
+            $strategy = $this->options['persister_strategy'];
+            if (! in_array($strategy, $this->suppoertedPersisterStrategies)) {
+                throw ConfigurationException::invalidPersisterStrategy($strategy, $this->suppoertedPersisterStrategies);
+            }
+        } else {
+            $strategy = 'sql_batch';
+        }
+
+        return $strategy;
     }
 }

@@ -3,18 +3,8 @@
 namespace Doctrine\ODM\OrientDB\Caster;
 
 
-use Doctrine\ODM\OrientDB\Persistence\DocumentPersister;
-
 class ReverseCaster extends AbstractCaster
 {
-    protected $inflector;
-
-    public function __construct(DocumentPersister $persister)
-    {
-        $this->persister = $persister;
-    }
-
-
     /**
      * Casts the value to string.
      *

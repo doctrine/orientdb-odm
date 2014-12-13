@@ -17,7 +17,7 @@ class PersistenceTest extends TestCase
 
     public function testPersistSingleDocument()
     {
-        $document = new Country();
+        $document       = new Country();
         $document->name = 'SinglePersistTest';
 
         $this->manager->persist($document);

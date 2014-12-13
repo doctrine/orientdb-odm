@@ -359,7 +359,9 @@ class ClassMetadata implements DoctrineMetadata
             );
             $setter($document, $property, $value);
         } else {
-            $this->getReflectionClass()->getProperty($property)->setValue($document, $value);
+            $reflProperty = $this->getReflectionClass()->getProperty($property);
+            $reflProperty->setAccessible(true);
+            $reflProperty->setValue($document, $value);
         }
     }
 

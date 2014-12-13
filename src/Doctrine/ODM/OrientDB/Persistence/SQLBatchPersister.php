@@ -15,7 +15,7 @@ use Doctrine\OrientDB\Binding\HttpBindingInterface;
  * @subpackage OrientDB
  * @author     Tamás Millián <tamas.millian@gmail.com>
  */
-class DocumentPersister
+class SQLBatchPersister implements PersisterInterface
 {
     protected $metadataFactory;
     protected $caster;
@@ -29,7 +29,7 @@ class DocumentPersister
         $this->metadataFactory = $manager->getMetadataFactory();
         $this->binding = $manager->getBinding();
         $this->inflector = $inflector;
-        $this->caster = new ReverseCaster($this);
+        $this->caster = new ReverseCaster();
     }
 
 

@@ -6,7 +6,7 @@ namespace Doctrine\ODM\OrientDB;
 use Doctrine\ODM\OrientDB\Collections\ArrayCollection;
 use Doctrine\ODM\OrientDB\Mapper\Hydration\Hydrator;
 use Doctrine\ODM\OrientDB\Persistence\ChangeSet;
-use Doctrine\ODM\OrientDB\Persistence\DocumentPersister;
+use Doctrine\ODM\OrientDB\Persistence\SQLBatchPersister;
 use Doctrine\ODM\OrientDB\Proxy\Proxy;
 use Doctrine\ODM\OrientDB\Types\Rid;
 use Doctrine\OrientDB\Query\Query;
@@ -46,7 +46,7 @@ class UnitOfWork
         }
 
         $changeSet = new ChangeSet($this->documentUpdates, $this->documentInserts);
-        $persister = new DocumentPersister($this, $this->getInflector());
+        $persister = $this->createPersister();
         $persister->process($changeSet);
 
         $this->documentInserts
@@ -279,4 +279,12 @@ class UnitOfWork
     {
         return $this->getManager()->getInflector();
     }
-} 
+
+    protected function createPersister()
+    {
+        $strategy = $this->manager->getConfiguration()->getPersisterStrategy();
+        if ('sql_batch' === $strategy) {
+            return new SQLBatchPersister($this, $this->getInflector());
+        }
+    }
+}
