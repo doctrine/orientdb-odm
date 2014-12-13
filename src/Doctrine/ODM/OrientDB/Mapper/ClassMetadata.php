@@ -9,6 +9,11 @@
  * file that was distributed with this source code.
  */
 
+namespace Doctrine\ODM\OrientDB\Mapper;
+
+use Doctrine\ODM\OrientDB\Mapper as DataMapper;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineMetadata;
+
 /**
  * Class ClassMetadata
  *
@@ -16,15 +21,11 @@
  * @subpackage OrientDB
  * @author     Alessandro Nadalin <alessandro.nadalin@gmail.com>
  * @author     David Funaro <ing.davidino@gmail.com>
+ * @author     Tamás Millián <tamas.millian@gmail.com>
  */
-
-namespace Doctrine\ODM\OrientDB\Mapper;
-
-use Doctrine\ODM\OrientDB\Mapper as DataMapper;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineMetadata;
-
 class ClassMetadata implements DoctrineMetadata
 {
+    protected $orientClass;
     protected $class;
     protected $refClass;
     protected $reflFields;
@@ -219,6 +220,9 @@ class ClassMetadata implements DoctrineMetadata
         return $this->getReflectionClass()->getProperties();
     }
 
+    /**
+     * @return \ReflectionProperty[]
+     */
     public function getReflectionFields()
     {
         if (! $this->reflFields) {
@@ -311,6 +315,52 @@ class ClassMetadata implements DoctrineMetadata
     }
 
     /**
+     * Returns the ODB field name mapped to the property
+     * or null if it is not mapped to a field.
+     *
+     * @param string $property
+     *
+     * @return string|null
+     */
+    public function getFieldNameForProperty($property)
+    {
+        $mappedField = $this->getField($property);
+        if ($mappedField) {
+            return $mappedField->name ? :$property;
+        }
+
+        return null;
+    }
+
+    public function setOrientClass($orientClass)
+    {
+        $this->orientClass = $orientClass;
+    }
+
+    public function getOrientClass()
+    {
+        return $this->orientClass;
+    }
+
+    /**
+     * Given a $property and its $value, sets that property on the given $document
+     * by using a closure.
+     *
+     * @param mixed $document
+     * @param string $property
+     * @param string $value
+     */
+    public function setDocumentValue($document, $property, $value)
+    {
+        $setter = \Closure::bind(function ($document, $property, $value) {
+                $document->$property = $value;
+            }, null, $document
+        );
+
+        $setter($document, $property, $value);
+    }
+
+    /**
      * Returns all the possible associations mapped in the introspected class.
      *
      * @return Array
@@ -321,12 +371,12 @@ class ClassMetadata implements DoctrineMetadata
     }
 
     /**
-     * Returns the reflection property associated with the $field.
+     * Returns the annotation associated with the $field.
      *
      * @param   string $field
      * @return  Annotations\Property
      */
-    protected function getField($field)
+    public function getField($field)
     {
         foreach ($this->getFields() as $annotatedField) {
             if ($annotatedField->name === $field) {

@@ -80,7 +80,7 @@ class Hydrator
      *
      * @param  \stdClass $orientObject
      * @param  Proxy     $proxy
-     * @return Result
+     * @return Proxy
      * @throws DocumentNotFoundException
      */
     public function hydrate(\stdClass $orientObject, Proxy $proxy = null)
@@ -246,7 +246,9 @@ class Hydrator
      */
     protected function fill($document, \stdClass $object)
     {
+        $metadata = $this->getMetadataFactory()->getMetadataFor(get_class($document));
         $propertyAnnotations = $this->getMetadataFactory()->getObjectPropertyAnnotations($document);
+        $hydratedData = array();
 
         foreach ($propertyAnnotations as $property => $annotation) {
             $documentProperty = $property;
@@ -256,13 +258,15 @@ class Hydrator
             }
 
             if (property_exists($object, $property)) {
-                $this->mapProperty(
-                    $document,
-                    $documentProperty,
-                    $object->$property,
-                    $annotation
-                );
+                $value = $this->hydrateValue($object->$property, $annotation);
+                $hydratedData[$property] = $value;
+                $metadata->setDocumentValue($document, $documentProperty, $value);
             }
+        }
+
+        // attach the original data for non-embedded documents
+        if (isset($object->{'@rid'})) {
+            $this->getUnitOfWork()->attachOriginalData($object->{'@rid'}, $hydratedData);
         }
 
         return $document;
@@ -280,17 +284,15 @@ class Hydrator
     }
 
     /**
-     * Given a $property and its $value, sets that property on the $given object
-     * using a public setter.
+     * Hydrates the value
      *
-     * @param mixed $document
-     * @param string $property
-     * @param string $value
+     * @param $value
      * @param PropertyAnnotation $annotation
      *
-     * @throws Exception
+     * @return mixed|null
+     * @throws \Exception
      */
-    protected function mapProperty($document, $property, $value, PropertyAnnotation $annotation)
+    protected function hydrateValue($value, PropertyAnnotation $annotation)
     {
         if ($annotation->type) {
             try {
@@ -304,25 +306,7 @@ class Hydrator
             }
         }
 
-        $setter = 'set' . $this->inflector->camelize($property);
-
-        if (method_exists($document, $setter)) {
-            $document->$setter($value);
-        }
-        else {
-            $refClass       = new \ReflectionObject($document);
-            $refProperty    = $refClass->getProperty($property);
-
-            if ($refProperty->isPublic()) {
-                $document->$property = $value;
-            } else {
-                throw new Exception(
-                    sprintf("%s has not method %s: you have to added the setter in order to correctly let Doctrine\OrientDB hydrate your object ?",
-                        get_class($document),
-                        $setter)
-                );
-            }
-        }
+        return $value;
     }
 
     /**

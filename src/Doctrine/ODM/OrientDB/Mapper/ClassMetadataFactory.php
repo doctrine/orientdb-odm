@@ -69,6 +69,7 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
      */
     public function getMetadataFor($className)
     {
+        $className = $this->getMetadataClass($className);
         if (!$this->hasMetadataFor($className)) {
             $metadata = new ClassMetadata($className);
             $this->populateMetadata($metadata);
@@ -83,6 +84,8 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
      */
     public function hasMetadataFor($className)
     {
+        $className = $this->getMetadataClass($className);
+
         return isset($this->metadata[$className]);
     }
 
@@ -237,16 +240,31 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
         throw new OClassNotFoundException($OClass);
     }
 
+    protected function getMetadataClass($className)
+    {
+        if (is_a($className, '\Doctrine\ODM\OrientDB\Proxy\Proxy', true)) {
+            return get_parent_class($className);
+        }
+
+        return $className;
+    }
+
     protected function populateMetadata(ClassMetadata $metadata)
     {
         $associations = array();
         $fields = array();
         $foundIdentifier = false;
+        $classAnnotation = $this->getClassAnnotation($metadata->getName());
+        $metadata->setOrientClass($classAnnotation->class);
 
         foreach ($metadata->getReflectionClass()->getProperties() as $refProperty) {
             $annotation = $this->getPropertyAnnotation($refProperty);
 
             if ($annotation) {
+                if (!$annotation->name) {
+                    $annotation->name = $refProperty->getName();
+                }
+
                 if ('@rid' === $annotation->name) {
                     $foundIdentifier = true;
                     $metadata->setIdentifier($refProperty->getName());
@@ -301,7 +319,7 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
             if (class_exists($class)) {
                 $annotation = $this->getClassAnnotation($class);
 
-                if ($annotation && $annotation->hasMatchingClass($OClass)) {
+                if ($annotation && $OClass === $annotation->class) {
                     $this->classMap[$OClass] = $class;
                     return $class;
                 }

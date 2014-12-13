@@ -28,20 +28,14 @@ use Doctrine\OrientDB\Util\Inflector\Cached as Inflector;
 use Doctrine\ODM\OrientDB\Mapper;
 use Doctrine\ODM\OrientDB\Types\Rid;
 
-class Caster implements CasterInterface
+class Caster extends AbstractCaster
 {
     protected $value;
-    protected $dateClass;
     protected $inflector;
-    protected $properties   = array();
     protected $trueValues   = array(1, '1', 'true');
     protected $falseValues  = array(0, '0', 'false');
 
-    const SHORT_LIMIT       = 32767;
-    const LONG_LIMIT        = 9223372036854775807;
-    const BYTE_MAX_VALUE    = 127;
-    const BYTE_MIN_VALUE    = -128;
-    const MISMATCH_MESSAGE  = 'trying to cast "%s" as %s';
+
 
     /**
      * Instantiates a new Caster.
@@ -356,7 +350,7 @@ class Caster implements CasterInterface
      * @return integer
      * @throws CastingMismatchException
      */
-    public function castInBuffer($limit, $type)
+    protected function castInBuffer($limit, $type)
     {
         $castFunction = function ($value) use ($limit) {
             return abs($value) < $limit ? $value : $limit;
@@ -408,46 +402,6 @@ class Caster implements CasterInterface
         return $this->castInBuffer(self::SHORT_LIMIT, 'short');
     }
 
-    /**
-     * Defines properties that can be internally used by the caster.
-     *
-     * @param string $key
-     * @param mixed  $property
-     */
-    public function setProperty($key, $property)
-    {
-        $this->properties[$key] = $property;
-    }
-
-    /**
-     * Sets the internal value to work with.
-     *
-     * @param mixed $value
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-
-        return $this;
-    }
-
-    /**
-     * Assigns the class used to cast dates and datetimes.
-     * If the $class is a subclass of \DateTime, it uses it, it uses \DateTime
-     * otherwise.
-     *
-     * @param string $class
-     */
-    protected function assignDateClass($class)
-    {
-        $refClass = new \ReflectionClass($class);
-
-        if (!($refClass->getName() === 'DateTime' || $refClass->isSubclassOf('DateTime'))) {
-            throw new \InvalidArgumentException("The class used to cast DATE and DATETIME values must be derived from DateTime.");
-        }
-
-        $this->dateClass = $class;
-    }
 
     /**
      * Given a $type, it casts each element of the value array with a method.
@@ -556,16 +510,7 @@ class Caster implements CasterInterface
         return $this->hydrator;
     }
 
-    /**
-     * Returns a property of the Caster, given its $key.
-     *
-     * @param  string $key
-     * @return mixed
-     */
-    protected function getProperty($key)
-    {
-        return isset($this->properties[$key]) ? $this->properties[$key] : null;
-    }
+
 
     /**
      * @todo phpdoc
@@ -577,22 +522,6 @@ class Caster implements CasterInterface
         }
 
         $this->raiseMismatch($expectedType);
-    }
-
-    /**
-     * Throws an exception whenever $value can not be casted as $expectedType.
-     */
-    protected function raiseMismatch($expectedType)
-    {
-        $value = $this->value;
-
-        if (is_object($value)) {
-            $value = get_class($value);
-        } elseif (is_array($value)) {
-            $value = implode(',', $value);
-        }
-
-        throw new CastingMismatchException(sprintf(self::MISMATCH_MESSAGE, $value, $expectedType));
     }
 
 }

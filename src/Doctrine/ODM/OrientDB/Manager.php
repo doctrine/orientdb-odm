@@ -33,7 +33,7 @@ use Doctrine\OrientDB\Binding\BindingInterface;
 use Doctrine\OrientDB\Query\Query;
 use Doctrine\OrientDB\Query\Validator\Rid as RidValidator;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory as MetadataFactory;
+use Doctrine\ODM\OrientDB\Mapper\ClassMetadataFactory as MetadataFactory;
 
 class Manager implements ObjectManager
 {
@@ -173,11 +173,11 @@ class Manager implements ObjectManager
     /**
      * @todo to implement/test
      *
-     * @param \stdClass $object
+     * @param $document
      */
-    public function flush()
+    public function flush($document = null)
     {
-        throw new \Exception;
+        $this->getUnitOfWork()->commit($document);
     }
 
     /**
@@ -185,7 +185,7 @@ class Manager implements ObjectManager
      *
      * @param   string $class
      *
-     * @return  \Doctrine\Common\Persistence\Mapping\ClassMetadata
+     * @return \Doctrine\ODM\OrientDB\Mapper\ClassMetadata
      */
     public function getClassMetadata($class)
     {
@@ -280,11 +280,11 @@ class Manager implements ObjectManager
     /**
      * @todo to implement/test
      *
-     * @param \stdClass $object
+     * @param $document
      */
-    public function persist($object)
+    public function persist($document)
     {
-        throw new \Exception();
+        $this->getUnitOfWork()->attach($document);
     }
 
     /**

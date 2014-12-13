@@ -194,6 +194,18 @@ interface HttpBindingInterface extends BindingInterface
      */
     public function deleteDocument($rid, $version = null, $database = null);
 
+
+    /**
+     * Sends a batch to the database.
+     *
+     * @param      $batch
+     * @param null $database
+     *
+     * @return \Doctrine\OrientDB\Binding\Adapter\CurlClientAdapterResult|\Doctrine\OrientDB\Binding\BindingResultInterface
+     */
+    public function batch($batch, $database = null);
+
+
     /**
      * Sets the username and password used to authenticate to the server.
      *

@@ -38,9 +38,7 @@ class RepositoryTest extends TestCase
         $result->expects($this->at(0))
                ->method('getResult')
                ->will($this->returnValue($rawResult));
-        $result->expects($this->at(1))
-               ->method('getResult')
-               ->will($this->returnValue(array()));
+
 
         $binding = $this->getMock('Doctrine\OrientDB\Binding\BindingInterface');
         $binding->expects($this->any())

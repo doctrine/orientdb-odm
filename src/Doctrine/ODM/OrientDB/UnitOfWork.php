@@ -5,6 +5,8 @@ namespace Doctrine\ODM\OrientDB;
 
 use Doctrine\ODM\OrientDB\Collections\ArrayCollection;
 use Doctrine\ODM\OrientDB\Mapper\Hydration\Hydrator;
+use Doctrine\ODM\OrientDB\Persistence\ChangeSet;
+use Doctrine\ODM\OrientDB\Persistence\DocumentPersister;
 use Doctrine\ODM\OrientDB\Proxy\Proxy;
 use Doctrine\ODM\OrientDB\Types\Rid;
 use Doctrine\OrientDB\Query\Query;
@@ -21,11 +23,37 @@ class UnitOfWork
     private $manager;
     private $hydrator;
     private $proxies = array();
+    private $newDocuments = array();
+    private $originalData = array();
+    private $documentUpdates = array();
+    private $documentInserts = array();
 
     public function __construct(Manager $manager)
     {
         $this->manager = $manager;
     }
+
+    public function commit($document = null)
+    {
+        if (null === $document) {
+            $this->computeChangeSets();
+        } elseif (is_object($document)) {
+            $this->computeSingleDocumentChangeSet($document);
+        } elseif (is_array($document)) {
+            foreach ($document as $object) {
+                $this->computeSingleDocumentChangeSet($object);
+            }
+        }
+
+        $changeSet = new ChangeSet($this->documentUpdates, $this->documentInserts);
+        $persister = new DocumentPersister($this, $this->getInflector());
+        $persister->process($changeSet);
+
+        $this->documentInserts
+            = $this->documentUpdates
+            = array();
+    }
+
 
     public function execute(Query $query, $fetchPlan = null)
     {
@@ -100,10 +128,88 @@ class UnitOfWork
 
     }
 
-    public function attach(Proxy $proxy)
+    public function attachOriginalData($rid, array $orignalData)
     {
-        $this->proxies[$this->getRid($proxy)] = $proxy;
+        $this->originalData[$rid] = $orignalData;
     }
+
+    public function attach($document)
+    {
+        if ($document instanceof Proxy) {
+            $this->proxies[$this->getRid($document)] = $document;
+        } else {
+            $this->newDocuments[spl_object_hash($document)] = $document;
+        }
+    }
+
+    /**
+     * Computes the changesets for all documents attached to the UnitOfWork
+     */
+    protected function computeChangeSets()
+    {
+        foreach ($this->proxies as $proxy) {
+            $this->computeSingleDocumentChangeSet($proxy);
+        }
+
+        foreach ($this->newDocuments as $document) {
+            $this->computeSingleDocumentChangeSet($document);
+        }
+    }
+
+
+    /**
+     * Computes the changeset for the specified document.
+     *
+     * @param $document
+     */
+    protected function computeSingleDocumentChangeSet($document)
+    {
+        if ($document instanceof Proxy) {
+            // if the proxy wasn't loaded, it wasn't touched either
+            if (! $document->__isInitialized()) {
+                return;
+            }
+
+            $identifier = $this->getRid($document);
+            $originalData = isset($this->originalData[$identifier]) ? $this->originalData[$identifier] : null;
+            $changes = $this->extractChangeSet($document, $originalData);
+        } else {
+            $changes = $this->extractChangeSet($document);
+            // identify the document by its hash to avoid duplicates
+            $identifier = spl_object_hash($document);
+        }
+        if ($changes) {
+            $this->documentInserts[$identifier] = array('changes' => $changes, 'document' => $document);
+        }
+    }
+
+    protected function extractChangeSet($document, array $originalData = null)
+    {
+        $changes = array();
+        $metadata = $this->getManager()->getClassMetadata(get_class($document));
+        foreach ($metadata->getReflectionFields() as $reflField) {
+            $fieldAnnotation = $metadata->getField($reflField->getName());
+
+            // if the field isn't mapped we can just ignore it.
+            if (! $fieldAnnotation) {
+                continue;
+            }
+
+            $fieldName = $fieldAnnotation->name;
+            $currentValue = $reflField->getValue($document);
+
+
+            /* if we don't know the original data, or it doesn't have the field, or the field's
+             * value is different we count it as a change
+             */
+            if (! $originalData || ! isset($originalData[$fieldName]) || $originalData[$fieldName] !== $currentValue) {
+                $changes[] = array('field' => $fieldName, 'value' => $currentValue, 'annotation' => $fieldAnnotation);
+            }
+        }
+
+        return $changes;
+    }
+
 
     /**
      * Gets the rid of the proxy.
@@ -114,7 +220,7 @@ class UnitOfWork
      */
     protected function getRid(Proxy $proxy)
     {
-        $metadata = $this->getManager()->getClassMetadata(get_parent_class($proxy));
+        $metadata = $this->getManager()->getClassMetadata(get_class($proxy));
 
         return $metadata->getIdentifierValues($proxy);
     }

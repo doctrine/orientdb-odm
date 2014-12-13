@@ -228,4 +228,5 @@ class ManagerTest extends TestCase
         $this->assertInternalType('bool', $results);
         $this->assertTrue($results);
     }
+
 }

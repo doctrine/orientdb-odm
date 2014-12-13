@@ -383,6 +383,16 @@ class HttpBinding implements HttpBindingInterface
     /**
      * {@inheritdoc}
      */
+    public function batch($batch, $database = null)
+    {
+        $location = $this->getLocation('batch', $database ? :$this->database);
+
+        return $this->adapter->request('POST', $location, array(), $batch);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setAuthentication($username = null, $password = null)
     {
         $this->adapter->setAuthentication($username, $password);

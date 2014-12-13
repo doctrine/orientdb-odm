@@ -5,7 +5,7 @@ namespace test\Doctrine\ODM\OrientDB\Document\Stub\Contact;
 use Doctrine\ODM\OrientDB\Mapper\Annotations as ODM;
 
 /**
-* @ODM\Document(class="Address,ForeignAddress")
+* @ODM\Document(class="Address")
 */
 class Address
 {

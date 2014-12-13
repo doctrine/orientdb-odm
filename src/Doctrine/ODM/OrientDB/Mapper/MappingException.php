@@ -23,4 +23,9 @@ class MappingException extends \Exception
     {
         return new self(sprintf('There is no cluster for %s.', $rid->getValue()));
     }
-} 
+
+    public static function noMappingForProperty($property, $class)
+    {
+        return new self(sprintf('The %s class has no mapping for %s property.', $class, $property));
+    }
+}

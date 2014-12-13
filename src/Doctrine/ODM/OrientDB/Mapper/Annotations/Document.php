@@ -25,23 +25,4 @@ namespace Doctrine\ODM\OrientDB\Mapper\Annotations;
 class Document extends \Doctrine\Common\Annotations\Annotation
 {
     public $class;
-
-    /**
-     * Given a $Doctrine\OrientDBClass, checks wheter this annotation matches it.
-     *
-     * @param  string   $Doctrine\OrientDBClass
-     * @return boolean
-     */
-    public function hasMatchingClass($orientClass)
-    {
-        $classes = explode(',', $this->class);
-
-        foreach ($classes as $class) {
-            if ($class === $orientClass) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

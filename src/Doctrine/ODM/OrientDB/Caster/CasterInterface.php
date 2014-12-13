@@ -145,16 +145,7 @@ interface CasterInterface
      */
     public function castLong();
 
-    /**
-     * Casts the current value into an integer verifying it belongs to a certain
-     * range ( -$limit < $value > + $limit ).
-     *
-     * @param integer   $limit
-     * @param string    $type
-     * @return integer
-     * @throws \Doctrine\OrientDB\Overflow
-     */
-    public function castInBuffer($limit, $type);
+
 
     /**
      * Casts the value to string.
