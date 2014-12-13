@@ -344,7 +344,7 @@ class ClassMetadata implements DoctrineMetadata
 
     /**
      * Given a $property and its $value, sets that property on the given $document
-     * by using a closure.
+     * by using a closures if available, otherwise fall back to reflection.
      *
      * @param mixed $document
      * @param string $property
@@ -352,12 +352,15 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function setDocumentValue($document, $property, $value)
     {
-        $setter = \Closure::bind(function ($document, $property, $value) {
-                $document->$property = $value;
-            }, null, $document
-        );
-
-        $setter($document, $property, $value);
+        if (method_exists('\Closure', 'bind')) {
+            $setter = \Closure::bind(function ($document, $property, $value) {
+                    $document->$property = $value;
+                }, null, $document
+            );
+            $setter($document, $property, $value);
+        } else {
+            $this->getReflectionClass()->getProperty($property)->setValue($document, $value);
+        }
     }
 
     /**
