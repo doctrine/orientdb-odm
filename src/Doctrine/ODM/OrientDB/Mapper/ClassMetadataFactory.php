@@ -250,10 +250,11 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
                 if ('@rid' === $annotation->name) {
                     $foundIdentifier = true;
                     $metadata->setIdentifier($refProperty->getName());
+                    $fields[$refProperty->getName()] = $annotation;
                 } elseif (in_array($annotation->type, $this->getAssociationTypes())) {
-                    $associations[] = $annotation;
+                    $associations[$refProperty->getName()] = $annotation;
                 } else {
-                    $fields[] = $annotation;
+                    $fields[$refProperty->getName()] = $annotation;
                 }
             }
         }

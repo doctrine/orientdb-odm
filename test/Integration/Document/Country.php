@@ -30,10 +30,18 @@ class Country
     /**
      * @ODM\Property(name="@rid", type="string")
      */
-    public $rid;
+    protected $rid;
 
-	/**
-	 * @ODM\Property(name="name", type="string")
-	 */
-	public $name;
+    /**
+     * @ODM\Property(name="name", type="string")
+     */
+    public $name;
+
+    /**
+     * @return mixed
+     */
+    public function getRid()
+    {
+        return $this->rid;
+    }
 }
