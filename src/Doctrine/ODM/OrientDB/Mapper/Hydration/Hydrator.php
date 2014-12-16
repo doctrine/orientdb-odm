@@ -262,6 +262,10 @@ class Hydrator
             }
         }
 
+        if ($document instanceof Proxy) {
+            $document->__setInitialized(true);
+        }
+
         return $document;
     }
 
