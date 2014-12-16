@@ -9,6 +9,7 @@
 
 namespace test\PHPUnit;
 
+use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\ODM\OrientDB\Configuration;
 use Doctrine\ODM\OrientDB\Manager;
 use Doctrine\ODM\OrientDB\Mapper;
@@ -79,6 +80,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return new Configuration(array_merge(
             array(
                 'proxy_dir' => $this->getProxyDirectory(),
+                'proxy_autogenerate_policy' => AbstractProxyFactory::AUTOGENERATE_ALWAYS,
                 'document_dirs' => array(__DIR__.'/../../test/Integration/Document' => 'test')
             ),
             $opts

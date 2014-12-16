@@ -12,7 +12,7 @@ class Address
     /**
      * @ODM\Property(name="@rid", type="string")
      */
-    public $rid;
+    protected $rid;
     /**
      * @ODM\Property(name="nojson", type="nojson")
      */
