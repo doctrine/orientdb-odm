@@ -110,7 +110,7 @@ class Manager implements ObjectManager
      */
     public function getReference($rid)
     {
-        return $this->getUnitOfWork()->getProxyFor(new Rid($rid), true);
+        return $this->getUnitOfWork()->getProxy(new Rid($rid), true);
     }
 
     /**
@@ -137,7 +137,7 @@ class Manager implements ObjectManager
         $rid       = $validator->check($rid);
 
         try {
-            return $this->getUnitOfWork()->getProxyFor(new Rid($rid), false, $fetchPlan);
+            return $this->getUnitOfWork()->getProxy(new Rid($rid), false, $fetchPlan);
         } catch (OClassNotFoundException $e) {
             throw $e;
         } catch (CastingMismatchException $e) {
@@ -167,7 +167,7 @@ class Manager implements ObjectManager
      */
     public function findRecords(array $rids, $lazy = false, $fetchPlan = '*:0')
     {
-        return $this->getUnitOfWork()->getCollectionFor($rids, $lazy, $fetchPlan);
+        return $this->getUnitOfWork()->getCollection($rids, $lazy, $fetchPlan);
     }
 
     /**

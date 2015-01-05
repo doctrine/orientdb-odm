@@ -73,7 +73,7 @@ class UnitOfWork
         return true;
     }
 
-    public function hasProxyFor(Rid $rid)
+    public function hasProxy(Rid $rid)
     {
         return isset($this->proxies[$rid->getValue()]);
     }
@@ -85,9 +85,9 @@ class UnitOfWork
      *
      * @return Proxy
      */
-    public function getProxyFor(Rid $rid, $lazy = true, $fetchPlan = null)
+    public function getProxy(Rid $rid, $lazy = true, $fetchPlan = null)
     {
-        if (! $this->hasProxyFor($rid)) {
+        if (! $this->hasProxy($rid)) {
             if ($lazy) {
                 $proxy = $this->getHydrator()->hydrateRid($rid);
             } else {
@@ -107,12 +107,12 @@ class UnitOfWork
      *
      * @return ArrayCollection|null
      */
-    public function getCollectionFor(array $rids, $lazy = true, $fetchPlan = null)
+    public function getCollection(array $rids, $lazy = true, $fetchPlan = null)
     {
         if ($lazy) {
             $proxies = array();
             foreach ($rids as $rid) {
-                $proxies[] = $this->getProxyFor(new Rid($rid), $lazy);
+                $proxies[] = $this->getProxy(new Rid($rid), $lazy);
             }
 
             return new ArrayCollection($proxies);

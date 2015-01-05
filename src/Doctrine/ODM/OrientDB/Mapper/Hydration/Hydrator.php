@@ -182,8 +182,8 @@ class Hydrator
          */
         if (isset($orientObject->{'@rid'})) {
             $rid = new Rid($orientObject->{'@rid'});
-            if ($this->getUnitOfWork()->hasProxyFor($rid)) {
-                $document = $this->getUnitOfWork()->getProxyFor($rid);
+            if ($this->getUnitOfWork()->hasProxy($rid)) {
+                $document = $this->getUnitOfWork()->getProxy($rid);
             } else {
                 $document = $this->getProxyFactory()->getProxy($class, array($metadata->getRidPropertyName() => $rid->getValue()));
             }
