@@ -27,6 +27,7 @@ class UnitOfWork
     private $originalData = array();
     private $documentUpdates = array();
     private $documentInserts = array();
+    private $documentRemovals = array();
 
     public function __construct(Manager $manager)
     {
@@ -45,7 +46,7 @@ class UnitOfWork
             }
         }
 
-        $changeSet = new ChangeSet($this->documentUpdates, $this->documentInserts);
+        $changeSet = new ChangeSet($this->documentUpdates, $this->documentInserts, $this->documentRemovals);
         $persister = $this->createPersister();
         $persister->process($changeSet);
 
@@ -142,6 +143,27 @@ class UnitOfWork
         }
     }
 
+    public function clear($document)
+    {
+        if ($document instanceof Proxy) {
+            $rid = $this->getRid($document);
+            if (isset($this->proxies[$rid])) {
+                unset($this->proxies[$rid]);
+            }
+        } else {
+            $hash = spl_object_hash($document);
+            if (isset($this->newDocuments[$hash])) {
+                unset($this->newDocuments[$hash]);
+            }
+        }
+    }
+
+    public function markForRemoval(Proxy $proxy)
+    {
+        $rid = $this->getRid($proxy);
+        $this->documentRemovals[$rid] = array('document' => $proxy);
+    }
+
     /**
      * Computes the changesets for all documents attached to the UnitOfWork
      */
@@ -171,14 +193,21 @@ class UnitOfWork
             }
 
             $identifier = $this->getRid($document);
+
+            // if it is marked for removal, ignore the changes
+            if (isset($this->documentRemovals[$identifier])) {
+                return;
+            }
+
             $originalData = isset($this->originalData[$identifier]) ? $this->originalData[$identifier] : null;
             $changes = $this->extractChangeSet($document, $originalData);
+            if ($changes) {
+                $this->documentUpdates[$identifier] = array('changes' => $changes, 'document' => $document);
+            }
         } else {
             $changes = $this->extractChangeSet($document);
             // identify the document by its hash to avoid duplicates
             $identifier = spl_object_hash($document);
-        }
-        if ($changes) {
             $this->documentInserts[$identifier] = array('changes' => $changes, 'document' => $document);
         }
     }

@@ -28,12 +28,23 @@ class QueryWriter
         $cluster = $cluster ? ' cluster '.$cluster : '';
         $this->queries[] = sprintf($query, $identifier, $class, $cluster, $this->flattenFields($fields));
 
+        // returned so we can map the rid to the document
         return count($this->queries)-1;
     }
 
-    public function matchResultToQueries()
+    public function addUpdateQuery($identifier, array $fields, $lock = 'DEFAULT')
     {
+        $query = "UPDATE %s SET %s LOCK %s";
+        $this->queries[] = sprintf($query, $identifier, $this->flattenFields($fields), $lock);
+    }
 
+    /**
+     * @TODO cover vertex/edge deletion
+     */
+    public function addDeleteQuery($identifier, $class, $lock = 'DEFAULT')
+    {
+        $query = "DELETE FROM %s WHERE @rid = %s LOCK %s";
+        $this->queries[] = sprintf($query, $class, $identifier, $lock);
     }
 
     protected function flattenFields(array $fields)

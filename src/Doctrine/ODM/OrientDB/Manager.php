@@ -290,11 +290,11 @@ class Manager implements ObjectManager
     /**
      * @todo to implement/test
      *
-     * @param \stdClass $object
+     * @param $object
      */
     public function remove($object)
     {
-        throw new \Exception();
+        $this->getUnitOfWork()->markForRemoval($object);
     }
 
     /**
@@ -308,13 +308,19 @@ class Manager implements ObjectManager
     }
 
     /**
-     * @todo to implement/test
+     * If an object is given, it is cleared from the uow,
+     * if not an entire new uow is created.
      *
-     * @param \stdClass $object
+     * @param $object
      */
     public function clear($object = null)
     {
-        throw new \Exception();
+        if ($object) {
+            $this->uow->clear($object);
+        }
+
+        unset($this->uow);
+        $this->uow = new UnitOfWork($this);
     }
 
     /**

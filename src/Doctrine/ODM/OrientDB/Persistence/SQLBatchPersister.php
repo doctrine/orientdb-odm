@@ -44,13 +44,28 @@ class SQLBatchPersister implements PersisterInterface
     public function process(ChangeSet $changeSet)
     {
         $queryWriter = new QueryWriter();
-        foreach ($changeSet->getInserts() as $identifier => $insert) {
-            $metadata = $this->metadataFactory->getMetadataFor(get_class($insert['document']));
-            $fields = $this->getCastedFields($insert['changes']);
+        foreach ($changeSet->getInserts() as $identifier => $item) {
+            $metadata = $this->metadataFactory->getMetadataFor(get_class($item['document']));
+            $fields = $this->getCastedFields($item['changes']);
             $position = $queryWriter->addInsertQuery($identifier, $metadata->getOrientClass(), $fields);
-            $this->queryDocumentMap[$position] = array('document' => $insert['document'], 'metadata' => $metadata);
+            $this->queryDocumentMap[$position] = array('document' => $item['document'], 'metadata' => $metadata);
         }
 
+        foreach ($changeSet->getUpdates() as $identifier => $item) {
+            $fields = $this->getCastedFields($item['changes']);
+            $queryWriter->addUpdateQuery($identifier, $fields);
+        }
+
+        foreach ($changeSet->getRemovals() as $identifier => $item) {
+            $metadata = $this->metadataFactory->getMetadataFor(get_class($item['document']));
+            $queryWriter->addDeleteQuery($identifier, $metadata->getOrientClass());
+        }
+
+        $queries = $queryWriter->getQueries();
+        if (! $queries) {
+            // nothing to do
+            return;
+        }
         if ($this->binding instanceof HttpBindingInterface) {
             $batch = array(
                 'transaction' => true,
@@ -71,11 +86,13 @@ class SQLBatchPersister implements PersisterInterface
 
         // set the RID on the created documents
         foreach ($results as $position => $result) {
-            $map = $this->queryDocumentMap[$position];
-            $document = $map['document'];
-            $metadata = $map['metadata'];
+            if (isset($this->queryDocumentMap[$position])) {
+                $map = $this->queryDocumentMap[$position];
+                $document = $map['document'];
+                $metadata = $map['metadata'];
 
-            $metadata->setDocumentValue($document, $metadata->getRidPropertyName(), $result->{'@rid'});
+                $metadata->setDocumentValue($document, $metadata->getRidPropertyName(), $result->{'@rid'});
+            }
         }
     }
 
