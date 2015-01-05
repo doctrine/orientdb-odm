@@ -24,7 +24,7 @@ class Configuration
     private $cache;
     private $annotationReader;
 
-    private $suppoertedPersisterStrategies = array('sql_batch');
+    private $supportedPersisterStrategies = array('sql_batch');
 
     public function __construct(array $options = array())
     {
@@ -112,8 +112,8 @@ class Configuration
     {
         if (isset($this->options['persister_strategy'])) {
             $strategy = $this->options['persister_strategy'];
-            if (! in_array($strategy, $this->suppoertedPersisterStrategies)) {
-                throw ConfigurationException::invalidPersisterStrategy($strategy, $this->suppoertedPersisterStrategies);
+            if (! in_array($strategy, $this->supportedPersisterStrategies)) {
+                throw ConfigurationException::invalidPersisterStrategy($strategy, $this->supportedPersisterStrategies);
             }
         } else {
             $strategy = 'sql_batch';
