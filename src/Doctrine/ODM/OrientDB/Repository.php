@@ -97,7 +97,7 @@ class Repository implements ObjectRepository
         }
 
         throw new Exception(
-            "You are asking to find record $rid through the repository {$this->getClassName()}".
+            "You are asking to find record $rid through the repository {$this->getClassName()} " .
             "but the document belongs to another repository (" . get_class($document) . ")"
         );
     }
@@ -148,7 +148,7 @@ class Repository implements ObjectRepository
 
             if (!$collection instanceof ArrayCollection) {
                 throw new Exception(
-                    "Problems executing the query \"{$query->getRaw()}\".".
+                    "Problems executing the query \"{$query->getRaw()}\". " .
                     "The server returned $collection instead of ArrayCollection."
                 );
             }
