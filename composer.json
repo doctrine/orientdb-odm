@@ -30,8 +30,8 @@
     "require": {
         "php": ">=5.3.3",
         "doctrine/common": "~2.2",
-        "symfony/finder": "~2.3",
-        "symfony/class-loader": "~2.3",
+        "symfony/finder": "~2.3|~3.0",
+        "symfony/class-loader": "~2.3|~3.0",
         "guzzle/guzzle": "*"
     },
     "require-dev": {
