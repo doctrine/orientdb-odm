@@ -14,10 +14,13 @@ $loader->register();
 $parameters = BindingParameters::create('http://admin:admin@127.0.0.1:2480/menu');
 $binding = new HttpBinding($parameters);
 
-$mapper = new ODM\Mapper(__DIR__ . '/../examples/proxies');
-$mapper->setDocumentDirectories(array(__DIR__.'/../examples/' => 'Domain'));
+$configuration = new ODM\Configuration(array(
+    'document_dirs' => array(__DIR__.'/../examples/' => 'Domain'),
+    'proxy_dir' => __DIR__ . '/../examples/proxies'
+));
 
-$manager = new ODM\Manager($mapper, $binding);
+
+$manager = new ODM\Manager($binding, $configuration);
 $menus = $manager->getRepository('Domain\Menu');
 
 foreach ($menus->findAll() as $menu) {

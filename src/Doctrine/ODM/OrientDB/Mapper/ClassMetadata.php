@@ -323,17 +323,11 @@ class ClassMetadata implements DoctrineMetadata
      */
     public function setDocumentValue($document, $property, $value)
     {
-        if (method_exists('\Closure', 'bind')) {
-            $setter = \Closure::bind(function ($document, $property, $value) {
-                    $document->$property = $value;
-                }, null, $document
-            );
-            $setter($document, $property, $value);
-        } else {
-            $reflProperty = $this->getReflectionClass()->getProperty($property);
-            $reflProperty->setAccessible(true);
-            $reflProperty->setValue($document, $value);
-        }
+        $setter = \Closure::bind(function ($document, $property, $value) {
+                $document->$property = $value;
+            }, null, $document
+        );
+        $setter($document, $property, $value);
     }
 
     /**
