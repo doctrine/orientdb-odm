@@ -20,7 +20,6 @@
 namespace Doctrine\OrientDB\Query\Formatter\Query;
 
 use Doctrine\OrientDB\Query\Formatter\Query;
-use Doctrine\OrientDB\Query\Formatter\String;
 
 class Updates extends Query implements TokenInterface
 {
