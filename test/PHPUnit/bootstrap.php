@@ -1,9 +1,6 @@
 <?php
 
-use \RecursiveDirectoryIterator;
-use \RecursiveIteratorIterator;
-use \FilesystemIterator;
-use Symfony\Component\ClassLoader\UniversalClassLoader;
+use Symfony\Component\ClassLoader\ClassLoader;
 
 require_once(__DIR__.'/../../autoload.php');
 
@@ -30,9 +27,9 @@ deleteTree(__DIR__.'/../../test/proxies/Doctrine/OrientDB/Proxy/test/Doctrine');
 deleteTree(__DIR__.'/../../test/proxies/Doctrine/OrientDB/Proxy/test/Integration');
 
 // Set up autoloading for testing
-$loader = new UniversalClassLoader();
+$loader = new ClassLoader();
 
-$loader->registerNamespaces(array(
+$loader->addPrefixes(array(
     'Doctrine\OrientDB\Proxy' => __DIR__.'/../../test/proxies/',
     'test' => __DIR__.'/../../',
 ));
