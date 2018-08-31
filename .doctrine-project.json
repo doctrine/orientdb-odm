@@ -1,0 +1,19 @@
+{
+    "active": false,
+    "name": "OrientDB Object Document Mapper",
+    "shortName": "OrientDB ODM",
+    "slug": "orientdb-odm",
+    "docsSlug": "doctrine-orientdb-odm",
+    "codePath": "/src",
+    "versions": [
+        {
+            "name": "master",
+            "branchName": "master",
+            "slug": "latest",
+            "aliases": [
+                "current",
+                "stable"
+            ]
+        }
+    ]
+}
