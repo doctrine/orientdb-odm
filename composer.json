@@ -1,8 +1,17 @@
 {
     "name": "doctrine/orientdb-odm",
     "type": "library",
-    "description": "A set of PHP libraries in order to use OrientDB from PHP.",
-    "keywords": ["orientdb"],
+    "description": "PHP OrientDB Object Document Mapper (ODM) provides transparent persistence for PHP objects to OrientDB.",
+    "keywords": [
+        "php",
+        "orientdb",
+        "odm",
+        "data",
+        "mapper",
+        "mapping",
+        "object",
+        "graphdb"
+    ],
     "license": "MIT",
     "authors": [
         {
