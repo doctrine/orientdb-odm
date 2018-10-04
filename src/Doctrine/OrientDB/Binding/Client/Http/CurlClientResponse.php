@@ -35,6 +35,7 @@ class CurlClientResponse
     const STATUS_NO_CONTENT                     = 204;
     const STATUS_RESET_CONTENT                  = 205;
     const STATUS_PARTIAL_CONTENT                = 206;
+    const STATUS_CONTINUE                       = 100;
 
     /**
      * Constructs a new object from an existing HTTP response.
@@ -118,7 +119,8 @@ class CurlClientResponse
             self::STATUS_NO_CONTENT,
             self::STATUS_RESET_CONTENT,
             self::STATUS_PARTIAL_CONTENT,
-            self::STATUS_CREATED
+            self::STATUS_CREATED,
+            self::STATUS_CONTINUE
         );
     }
 
