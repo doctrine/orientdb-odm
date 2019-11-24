@@ -69,7 +69,10 @@ class Repository implements ObjectRepository
         foreach ($arguments as $position => $argument) {
             if (is_object($argument)) {
                 if (!method_exists($argument, 'getRid')) {
-                    throw new RuntimeException("When calling \$repository->find*By*(), you can only pass, as arguments, objects that have the getRid() method (shortly, entitites)");
+                    throw new RuntimeException(
+                        "When calling \$repository->find*By*(), you can only pass, as arguments, " .
+                        "objects that have the getRid() method (shortly, entities)"
+                    );
                 }
                 $arguments[$position] = $argument->getRid();
             }
