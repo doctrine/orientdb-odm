@@ -83,7 +83,7 @@ class Dijkstra implements AlgorithmInterface
             $literal .= "{$p->getId()} - ";
         }
 
-        return substr($literal, 0, count($literal) - 4);
+        return substr($literal, 0, strlen($literal) - 3);
     }
 
     /**
