@@ -95,6 +95,11 @@ class RepositoryTest extends TestCase
 
         $posts = $repository->findBy(array(), array('@rid' => 'ASC'), 1);
         $this->assertCount(1, $posts);
+
+        $post0Rid = $posts[0]->getRid();
+        $posts = $repository->findBy(array(), array('@rid' => 'ASC'), 4, 1);
+        $this->assertCount(3, $posts);
+        $this->assertTrue($posts[0]->getRid() != $post0Rid);
     }
 
     public function testRetrievingARecordByCriteria()
