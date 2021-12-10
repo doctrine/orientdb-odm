@@ -177,7 +177,7 @@ class Manager implements ObjectManager
      */
     public function flush()
     {
-        throw new \Exception;
+        return;
     }
 
     /**
@@ -284,7 +284,16 @@ class Manager implements ObjectManager
      */
     public function persist($object)
     {
-        throw new \Exception();
+        $json = $this->toJson($object);
+        if($this->checkExists($object) === false){
+            $response = $this->getBinding()->postDocument($json);
+            $rid = $response->getData();
+            $object->setRid($rid);    
+        } else {
+            $response = $this->getBinding()->putDocument($object->getRid(), $json);
+            $result = $response->getData();
+        }
+        return $object;
     }
 
     /**
@@ -294,7 +303,13 @@ class Manager implements ObjectManager
      */
     public function remove($object)
     {
-        throw new \Exception();
+        if($this->checkExists($object) === false){
+            return false;
+        }
+        $response = $this->getBinding()->deleteDocument($object->getRid());
+        $result = $response->getData();
+        $object->setRid(null);
+        return $result;
     }
 
     /**
@@ -349,4 +364,39 @@ class Manager implements ObjectManager
     {
         return $this->configuration;
     }
+
+    protected function toJson($object)
+    {
+        $data = (array) $object;
+        foreach ($data as $key => $value) {
+            $newKey = preg_replace('/[^a-z]/i', null, $key);
+            $data[$newKey] = $value;
+            unset($data[$key]);
+            if ( $value instanceof \Doctrine\ODM\OrientDB\Proxy\Value ) {
+                $object = $value->__invoke();
+                $data[$newKey] = $object->getRid(); 
+            }elseif ( $value instanceof \DateTime ) {
+                $data[$newKey] = $value->format('Y-m-d H:i:s');
+            }
+        }
+        $data['@class'] = join('', array_slice(explode('\\', get_class($object)), -1));
+        if(array_key_exists('rid', $data)){
+            unset($data['rid']);
+        }
+        if(array_key_exists('version', $data)){
+            $data['@version'] = $data['version'];
+            unset($data['version']);
+        }
+        return json_encode($data);
+    }
+
+    protected function checkExists($object)
+    {
+        $rid = $object->getRid();
+        if(empty($rid)){
+            return false;
+        }
+        return true;
+    }
+
 }
